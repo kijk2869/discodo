@@ -29,11 +29,11 @@ class Loader(threading.Thread):
         if not self.StreamConainer:
             self.StreamConainer = av.open(self.Source, options=AVOption)
         
-        FrameGenerator = self.StreamConainer.decode(audio=0)
+        self.FrameGenerator = self.StreamConainer.decode(audio=0)
 
         with withLock(self._buffering):
             while not self._end.is_set():
-                Frame = next(FrameGenerator, None)
+                Frame = next(self.FrameGenerator, None)
                 if not Frame:
                     self.stop()
                     break
@@ -49,7 +49,10 @@ class Loader(threading.Thread):
             self.stop()
     
     def reload(self):
-        raise NotImplementedError
+        if not self.StreamConainer: return
+
+        self.FrameGenerator = self.StreamConainer.decode(audio=0)
+        self.AudioFifo.reset()
     
     def stop(self):
         self._end.set()
