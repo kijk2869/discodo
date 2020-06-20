@@ -6,3 +6,6 @@ class AudioFifo(AudioFifo):
     
     def read(self, samples=20):
         return self.read(samples)
+    
+    def clear(self):
+        raise NotImplementedError

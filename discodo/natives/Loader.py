@@ -48,6 +48,9 @@ class Loader(threading.Thread):
         finally:
             self.stop()
     
+    def reload(self):
+        raise NotImplementedError
+    
     def stop(self):
         self._end.set()
         if self.StreamConainer:
