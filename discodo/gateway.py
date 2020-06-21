@@ -43,6 +43,10 @@ class keepAlive(threading.Thread):
                         Runner.result(10)
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
+            except:
+                return self.stop()
+            else:
+                pass
     
     def stop(self):
         self.Stopped.set()
