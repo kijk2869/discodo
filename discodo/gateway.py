@@ -2,19 +2,20 @@ import json
 import asyncio
 import websockets
 
+
 class VoiceSocket(websockets.client.WebSocketClientProtocol):
-    IDENTIFY            = 0
-    SELECT_PROTOCOL     = 1
-    READY               = 2
-    HEARTBEAT           = 3
+    IDENTIFY = 0
+    SELECT_PROTOCOL = 1
+    READY = 2
+    HEARTBEAT = 3
     SESSION_DESCRIPTION = 4
-    SPEAKING            = 5
-    HEARTBEAT_ACK       = 6
-    RESUME              = 7
-    HELLO               = 8
-    INVALIDATE_SESSION  = 9
-    CLIENT_CONNECT      = 12
-    CLIENT_DISCONNECT   = 13
+    SPEAKING = 5
+    HEARTBEAT_ACK = 6
+    RESUME = 7
+    HELLO = 8
+    INVALIDATE_SESSION = 9
+    CLIENT_CONNECT = 12
+    CLIENT_DISCONNECT = 13
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,7 +31,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             await ws.resume()
 
         return ws
-    
+
     async def sendJson(self, data):
         await self.send(json.dumps(data))
 
@@ -57,7 +58,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             }
         }
         await self.sendJson(payload)
-    
+
     async def receive(self, message):
         Operation, Data = message['op'], message.get('d')
 
@@ -71,7 +72,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             pass
         elif Operation == self.HELLO:
             pass
-    
+
     async def polling(self):
         try:
             Message = await asyncio.wait_for(self.recv(), timeout=30.0)

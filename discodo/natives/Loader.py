@@ -9,6 +9,7 @@ AVOption = {
     'reconnect_delay_max': '5'
 }
 
+
 class Loader(threading.Thread):
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
         self.daemon = True
@@ -24,11 +25,11 @@ class Loader(threading.Thread):
             rate=48000
         )
         self.AudioFifo = AudioFifo
-    
+
     def _do_run(self):
         if not self.StreamConainer:
             self.StreamConainer = av.open(self.Source, options=AVOption)
-        
+
         self.FrameGenerator = self.StreamConainer.decode(audio=0)
 
         with withLock(self._buffering):
@@ -41,19 +42,20 @@ class Loader(threading.Thread):
                 Frame.pts = None
                 Frame = self.Resampler.resample(Frame)
                 self.AudioFifo.write(Frame)
-    
+
     def run(self):
         try:
             self.do_run()
         finally:
             self.stop()
-    
+
     def reload(self):
-        if not self.StreamConainer: return
+        if not self.StreamConainer:
+            return
 
         self.FrameGenerator = self.StreamConainer.decode(audio=0)
         self.AudioFifo.reset()
-    
+
     def stop(self):
         self._end.set()
         if self.StreamConainer:

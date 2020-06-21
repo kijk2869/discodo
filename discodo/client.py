@@ -1,5 +1,6 @@
 import asyncio
 
+
 class VoiceClient:
     def __init__(self, guild_id, channel_id):
         self.loop = asyncio.get_event_loop()
@@ -7,6 +8,6 @@ class VoiceClient:
 
         self.guild_id = guild_id
         self.channel_id = channel_id
-    
+
     async def connect(self, reconnect=True):
         raise NotImplementedError
