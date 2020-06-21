@@ -1,7 +1,7 @@
 class DiscordEvent:
     def __init__(self):
         pass
-    
+
     def parseReady(self):
         raise NotImplementedError
 
