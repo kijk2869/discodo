@@ -1,4 +1,5 @@
 import av
+import os
 import threading
 from ..utils.threadLock import withLock
 
@@ -9,6 +10,8 @@ AVOption = {
     'reconnect_delay_max': '5'
 }
 
+SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
+CHANNELS = os.getenv('CHANNELS', 2)
 
 class Loader(threading.Thread):
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
@@ -21,8 +24,8 @@ class Loader(threading.Thread):
         self.StreamConainer = None
         self.Resampler = av.AudioResampler(
             format=av.AudioFormat('s16').packed,
-            layout='stereo',
-            rate=48000
+            layout='stereo' if CHANNELS >= 2 else 'mono',
+            rate=SAMPLING_RATE
         )
         self.AudioFifo = AudioFifo
 
