@@ -54,7 +54,6 @@ def loadOpus(name):
 
     return _library is not None
 
-
 def loadDefaultOpus():
     global _library
     try:
@@ -69,7 +68,6 @@ def loadDefaultOpus():
         _library = None
 
     return _library is not None
-
 
 def loadLibopus(name):
     library = ctypes.cdll.LoadLibrary(name)
