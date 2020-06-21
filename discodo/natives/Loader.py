@@ -13,6 +13,7 @@ AVOption = {
 SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 CHANNELS = os.getenv('CHANNELS', 2)
 
+
 class Loader(threading.Thread):
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
         self.daemon = True
