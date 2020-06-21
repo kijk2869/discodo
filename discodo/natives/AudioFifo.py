@@ -14,7 +14,8 @@ class AudioFifo(av.AudioFifo):
 
     def read(self, samples=20):
         AudioFrame = super().read(samples)
-        if not AudioFrame: return
+        if not AudioFrame:
+            return
 
         return AudioFrame.planes[0].to_bytes()
 
