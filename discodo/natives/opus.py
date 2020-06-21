@@ -93,9 +93,11 @@ def loadLibopus(name):
 
     return library
 
+
 def isLoaded():
     global _library
     return _library is not None
+
 
 ENCODER_CTL = {
     'OK': 0,
@@ -123,57 +125,64 @@ SIGNAL_CTL = {
     'music': 3002,
 }
 
+
 class Encoder:
     def __init__(self, application=ENCODER_CTL['APPLICATION_AUDIO']):
         self.application = application
 
         if not isLoaded() and not loadDefaultOpus():
             raise
-        
+
         self.state = self.createState()
         self.setBitrate(BITRATE)
         self.setFec(True)
         self.setExpectedPacketLoss(EXPECTED_PACKETLOSS)
         self.setBandwidth('full')
         self.setSignalType('auto')
-    
+
     def createState(self):
         ret = ctypes.c_int()
         return _library.opus_encoder_create(SAMPLING_RATE, CHANNELS, self.application, ctypes.byref(ret))
-    
+
     def __del__(self):
         if hasattr(self, 'state'):
             _library.opus_encoder_destroy(self.state)
             self.state = None
-    
+
     def setBitrate(self, kbps):
         kbps = min(512, max(16, int(kbps)))
 
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL['CTL_SET_BITRATE'], kbps * 1024)
-    
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL['CTL_SET_BITRATE'], kbps * 1024)
+
     def setBandwidth(self, req):
         if not req in BAND_CTL:
             raise KeyError
 
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL['CTL_SET_BANDWIDTH'], BAND_CTL['req'])
-    
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL['CTL_SET_BANDWIDTH'], BAND_CTL['req'])
+
     def setSignalType(self, req):
         if not req in SIGNAL_CTL:
             raise KeyError
 
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL['CTL_SET_SIGNAL'], SIGNAL_CTL['req'])
-    
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL['CTL_SET_SIGNAL'], SIGNAL_CTL['req'])
+
     def setFec(self, enabled=True):
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL['CTL_SET_FEC'], 1 if enabled else 0)
-    
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL['CTL_SET_FEC'], 1 if enabled else 0)
+
     def setExpectedPacketLoss(self, percentage):
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL['CTL_SET_PLP'], percentage)
-    
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL['CTL_SET_PLP'], percentage)
+
     def encode(self, Pcm, FrameSize):
         max_length = len(Pcm)
         Pcm = ctypes.cast(Pcm, c_int16_pointer)
         Data = (ctypes.c_char * max_length)
 
-        Encoded = _library.opus_encode(self.state, Pcm, FrameSize, Data, max_length)
+        Encoded = _library.opus_encode(
+            self.state, Pcm, FrameSize, Data, max_length)
 
         return array.array('b', Data[:Encoded]).tobytes()
