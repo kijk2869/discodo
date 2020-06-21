@@ -16,6 +16,7 @@ CHANNELS = os.getenv('CHANNELS', 2)
 
 class Loader(threading.Thread):
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
+        threading.Thread.__init__(self)
         self.daemon = True
         self.Source = Source
 
@@ -49,7 +50,7 @@ class Loader(threading.Thread):
 
     def run(self):
         try:
-            self.do_run()
+            self._do_run()
         finally:
             self.stop()
 

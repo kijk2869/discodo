@@ -6,7 +6,10 @@ class AudioFifo(av.AudioFifo):
         super().__init__(*args, **kwargs)
 
     def read(self, samples=20):
-        return self.read(samples)
+        AudioFrame = super().read(samples)
+        if not AudioFrame: return
+
+        return AudioFrame.planes[0].to_bytes()
 
     def reset(self):
         self.ptr = None
