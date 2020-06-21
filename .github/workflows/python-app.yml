@@ -34,7 +34,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with autopep8
-      id: autopep8
-      uses: peter-evans/autopep8@v1
-      with:
-        args: --recursive --in-place --aggressive --aggressive .
+      uses: creyD/action_autopep8@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
