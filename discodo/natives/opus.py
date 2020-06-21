@@ -24,16 +24,19 @@ class EncoderStructure(ctypes.Structure):
 
 EncoderStructurePointer = ctypes.POINTER(EncoderStructure)
 
+
 def _errorNe(result, func, args):
     if result < 0:
         raise
     return result
+
 
 def _errorLt(result, func, args):
     ret = args[-1]._obj
     if ret.value != 0:
         raise
     return result
+
 
 exported_functions = {
     'opus_strerror': ([ctypes.c_int], ctypes.c_char_p, None),
