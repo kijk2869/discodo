@@ -55,13 +55,16 @@ class Loader(threading.Thread):
             self.stop()
 
     def reload(self):
-        if not self.StreamConainer:
-            return
-
-        self.FrameGenerator = self.StreamConainer.decode(audio=0)
+        if self.StreamConainer:
+            self.FrameGenerator = self.StreamConainer.decode(audio=0)
+        
         self.AudioFifo.reset()
+
+        if not self._buffering.locked():
+            self.start()
 
     def stop(self):
         self._end.set()
         if self.StreamConainer:
             self.StreamConainer.close()
+            self.StreamConainer = None
