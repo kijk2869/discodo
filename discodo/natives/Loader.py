@@ -57,7 +57,7 @@ class Loader(threading.Thread):
     def reload(self):
         if self.StreamConainer:
             self.FrameGenerator = self.StreamConainer.decode(audio=0)
-        
+
         self.AudioFifo.reset()
 
         if not self._buffering.locked():
