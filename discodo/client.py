@@ -18,15 +18,15 @@ class VoiceClient:
 
     async def create(self, reconnect=True):
         raise NotImplementedError
-    
+
     async def createSocket(self):
         self.session_id = self.client.session_id
-        
+
         if self.socket:
             try:
                 self.socket.close()
             except:
                 pass
-    
+
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.setblocking = False
