@@ -1,7 +1,51 @@
+import sys
+import time
 import json
 import asyncio
+import threading
 import websockets
+import concurrent.futures
 
+class keepAlive(threading.Thread):
+    def __init__(self, ws, interval: int, *args, **kwargs):
+        threading.Thread.__init__(self, *args, **kwargs)
+        self.daemon = True
+
+        self.ws = ws
+        self.interval = interval
+        self.Stopped = threading.Event()
+
+        self.last_ack = self.last_send = time.perf_counter()
+        self.timeout = ws.heartbeatTimeout
+        self.threadId = ws.threadId
+    
+    def run(self):
+        while not self.Stopped.wait(self.interval):
+            if (self.last_ack + self.timeout) < time.perf_counter():
+                Runner = asyncio.run_coroutine_threadsafe(self.ws.close(4000), self.ws.loop)
+
+                try:
+                    Runner.result()
+                except:
+                    pass
+                finally:
+                    return self.stop()
+            
+            payload = {
+                'op': self.ws.HEARTBEAT,
+                'd': int(time.time() * 1000)
+            }
+            Runner = asyncio.run_coroutine_threadsafe(self.ws.sendJson(payload), self.ws.loop)
+            try:
+                totalBlocked = 0
+                while True:
+                    try:
+                        Runner.result(10)
+                    except concurrent.futures.TimeoutError:
+                        totalBlocked += 10
+    
+    def stop(self):
+        self.Stopped.set()
 
 class VoiceSocket(websockets.client.WebSocketClientProtocol):
     IDENTIFY = 0
@@ -24,6 +68,9 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     async def connect(cls, client, loop=asyncio.get_event_loop(), resume=False):
         ws = await websockets.connect(f'wss://{client.endpoint}/?v=4', loop=loop, klass=cls, compression=None)
         ws.client = client
+
+        ws.heartbeatTimeout = 60.0
+        ws.threadId = threading.get_ident()
 
         if not resume:
             await ws.identify()
