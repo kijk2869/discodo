@@ -5,6 +5,7 @@ import asyncio
 import threading
 import websockets
 import concurrent.futures
+from collections import deque
 
 
 class keepAlive(threading.Thread):
@@ -15,6 +16,8 @@ class keepAlive(threading.Thread):
         self.ws = ws
         self.interval = interval
         self.Stopped = threading.Event()
+        self.latency = None
+        self.recent_latencies = deque(maxlen=20)
 
         self.last_ack = self.last_send = time.perf_counter()
         self.timeout = ws.heartbeatTimeout
@@ -46,10 +49,16 @@ class keepAlive(threading.Thread):
                         Runner.result(10)
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
+                        print(f'Heartbeat blocked for more than {totalBlocked} seconds.')
             except:
                 return self.stop()
             else:
-                pass
+                self._lastSend = time.perf_counter()
+    
+    def ack(self):
+        self._lastAck = time.perf_counter()
+        self.latency = self._lastAck - self._lastSend
+        self.recent_acks.append(self.latency)
 
     def stop(self):
         self.Stopped.set()
@@ -86,6 +95,17 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             await ws.resume()
 
         return ws
+    
+    @property
+    async def latency(self):
+        return self._keepAliver.latency if self._keepAliver else None
+    
+    @property
+    async def averageLatency(self):
+        if not self._keepAliver:
+            return None
+
+        return sum(self._keepAliver.recent_latencies) / len(self._keepAliver.recent_latencies)
 
     async def sendJson(self, data):
         await self.send(json.dumps(data))
@@ -120,13 +140,15 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         if Operation == self.READY:
             pass
         elif Operation == self.HEARTBEAT_ACK:
-            pass
+            self._keepAliver.ack()
         elif Operation == self.INVALIDATE_SESSION:
-            pass
+            await self.identify()
         elif Operation == self.SESSION_DESCRIPTION:
             pass
         elif Operation == self.HELLO:
-            pass
+            interval = Data['heartbeat_interval'] / 1000.0
+            self._keepAliver = keepAlive(self, min(interval, 5.0))
+            self._keepAliver.start()
 
     async def polling(self):
         try:
@@ -134,3 +156,9 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             await self.receive(json.loads(Message))
         except websockets.exceptions.ConnectionClosed as exc:
             raise websockets.exceptions.ConnectionClosed
+    
+    async def close(self, *args, **kwargs):
+        if self._keepAliver:
+            self._keepAliver.stop()
+
+        await super().close_connection(*args, **kwargs)
