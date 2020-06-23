@@ -11,14 +11,13 @@ class VoiceClient:
         self.client = client
         self.guild_id = guild_id
 
+        self.session_id = self.client.session_id
         self.token = data.get('token')
         endpoint = data.get('endpoint')
         self.endpoint = endpoint.replace(':80', '')
         self.endpointIp = socket.gethostbyname(self.endpoint)
 
     async def createSocket(self):
-        self.session_id = self.client.session_id
-
         if self.socket:
             try:
                 self.socket.close()

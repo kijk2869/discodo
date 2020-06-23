@@ -74,8 +74,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     HEARTBEAT_ACK = 6
     RESUME = 7
     HELLO = 8
-    INVALIDATE_SESSION = 9
-    CLIENT_CONNECT = 12
+    RESUMED = 9
     CLIENT_DISCONNECT = 13
 
     def __init__(self, *args, **kwargs):
