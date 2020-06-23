@@ -54,7 +54,7 @@ class keepAlive(threading.Thread):
                 return self.stop()
             else:
                 self._lastSend = time.perf_counter()
-    
+
     def ack(self):
         self._lastAck = time.perf_counter()
         self.latency = self._lastAck - self._lastSend
@@ -95,11 +95,11 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             await ws.resume()
 
         return ws
-    
+
     @property
     async def latency(self):
         return self._keepAliver.latency if self._keepAliver else None
-    
+
     @property
     async def averageLatency(self):
         if not self._keepAliver:
@@ -156,7 +156,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             await self.receive(json.loads(Message))
         except websockets.exceptions.ConnectionClosed as exc:
             raise websockets.exceptions.ConnectionClosed
-    
+
     async def close(self, *args, **kwargs):
         if self._keepAliver:
             self._keepAliver.stop()
