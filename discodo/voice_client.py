@@ -1,6 +1,7 @@
 import socket
 import asyncio
 
+
 class VoiceClient:
     def __init__(self, client, guild_id, data):
         self.loop = asyncio.get_event_loop()
