@@ -16,9 +16,6 @@ class VoiceClient:
         self.endpoint = endpoint.replace(':80', '')
         self.endpointIp = socket.gethostbyname(self.endpoint)
 
-    async def create(self, reconnect=True):
-        raise NotImplementedError
-
     async def createSocket(self):
         self.session_id = self.client.session_id
 
