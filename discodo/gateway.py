@@ -1,11 +1,13 @@
 import sys
 import time
 import json
+import struct
 import asyncio
 import threading
 import websockets
 import concurrent.futures
 from collections import deque
+from .encrypt import Encrypter
 
 
 class keepAlive(threading.Thread):
@@ -51,7 +53,8 @@ class keepAlive(threading.Thread):
                         Runner.result(10)
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
-                        print(f'Heartbeat blocked for more than {totalBlocked} seconds.')
+                        print(
+                            f'Heartbeat blocked for more than {totalBlocked} seconds.')
             except:
                 return self.stop()
             else:
@@ -135,9 +138,22 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         }
         await self.sendJson(payload)
 
+    async def select_protocol(self, ip, port, mode):
+        payload = {
+            'op': self.SELECT_PROTOCOL,
+            'd': {
+                'protocol': 'udp',
+                'data': {
+                    'address': ip,
+                    'port': port,
+                    'mode': mode
+                }
+            }
+        }
+        await self.sendJson(payload)
+
     async def receive(self, message):
         Operation, Data = message['op'], message.get('d')
-        print(message)
 
         if Operation == self.READY:
             await self.createConnection(Data)
@@ -149,11 +165,28 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             interval = Data['heartbeat_interval'] / 1000.0
             self._keepAliver = keepAlive(self, min(interval, 5.0))
             self._keepAliver.start()
-    
+
     async def createConnection(self, data):
-        print(data)
-    
+        self.client.ssrc = data['ssrc']
+        self.client.port = data['port']
+        self.client.endpointIp = data['ip']
+
+        packet = bytearray(70)
+        struct.pack_into('>I', packet, 0, data['ssrc'])
+        self.client.socket.sendto(packet, (data['ip'], data['port']))
+        _recieved = await self.loop.sock_recv(self.client.socket, 70)
+
+        _start, _end = 4, _recieved.index(0, 4)
+        self.client.endpointIp = _recieved[_start:_end].decode('ascii')
+        self.client.port = struct.unpack_from(
+            '>H', _recieved, len(_recieved) - 2)[0]
+
+        encryptModes = [Mode for Mode in data['modes']
+                        if Mode in dir(Encrypter)]
+        encryptMode = self.encryptModes[0]
+
     async def loadKey(self, data):
+        self.client.encryptMode = data['mode']
         self.client.secretKey = data.get('secret_key')
 
     async def poll(self):
