@@ -7,7 +7,7 @@ import threading
 import websockets
 import concurrent.futures
 from collections import deque
-from .encrypt import Encrypter
+from .encrypt import getEncryptModes
 
 
 class keepAlive(threading.Thread):
@@ -182,7 +182,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             '>H', _recieved, len(_recieved) - 2)[0]
 
         encryptModes = [Mode for Mode in data['modes']
-                        if Mode in dir(Encrypter)]
+                        if Mode in dir(getEncryptModes())]
         encryptMode = self.encryptModes[0]
 
     async def loadKey(self, data):
