@@ -185,6 +185,8 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
                         if Mode in dir(getEncryptModes())]
         encryptMode = self.encryptModes[0]
 
+        await self.select_protocol(self.client.endpointIp, self.client.port, encryptMode)
+
     async def loadKey(self, data):
         self.client.encryptMode = data['mode']
         self.client.secretKey = data.get('secret_key')

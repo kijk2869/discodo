@@ -42,7 +42,7 @@ class VoiceClient:
             await self.ws.poll()
         
         if not self._polling:
-            self._polling = self.loop.create_task(pollingWs())
+            self._polling = self.loop.create_task(self.pollingWs())
     
     async def pollingWs(self):
         while True:
