@@ -2,6 +2,7 @@ import socket
 import asyncio
 from .gateway import VoiceSocket
 
+
 class VoiceClient:
     def __init__(self, client, guild_id, data):
         self.loop = asyncio.get_event_loop()
@@ -18,8 +19,7 @@ class VoiceClient:
         self._polling = None
         self.loop.create_task(self.createSocket())
 
-
-    async def createSocket(self, data: dict=None):
+    async def createSocket(self, data: dict = None):
         if data:
             self.data = data
         print(self.data)
@@ -40,10 +40,10 @@ class VoiceClient:
         self.ws = await VoiceSocket.connect(self)
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()
-        
+
         if not self._polling:
             self._polling = self.loop.create_task(self.pollingWs())
-    
+
     async def pollingWs(self):
         while True:
             await self.ws.poll()
