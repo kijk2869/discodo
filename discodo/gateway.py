@@ -23,6 +23,8 @@ class keepAlive(threading.Thread):
         self.timeout = ws.heartbeatTimeout
         self.threadId = ws.threadId
 
+        self._lastAck = self._lastSend = 0.0
+
     def run(self):
         while not self.Stopped.wait(self.interval):
             if (self.last_ack + self.timeout) < time.perf_counter():
@@ -58,7 +60,7 @@ class keepAlive(threading.Thread):
     def ack(self):
         self._lastAck = time.perf_counter()
         self.latency = self._lastAck - self._lastSend
-        self.recent_acks.append(self.latency)
+        self.recent_latencies.append(self.latency)
 
     def stop(self):
         self.Stopped.set()
@@ -113,7 +115,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         payload = {
             'op': self.IDENTIFY,
             'd': {
-                'server_id': str(self.client.server_id),
+                'server_id': str(self.client.guild_id),
                 'user_id': str(self.client.user_id),
                 'session_id': self.client.session_id,
                 'token': self.client.token
@@ -125,7 +127,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         payload = {
             'op': self.RESUME,
             'd': {
-                'server_id': str(self.client.server_id),
+                'server_id': str(self.client.guild_id),
                 'user_id': str(self.client.user_id),
                 'session_id': self.client.session_id,
                 'token': self.client.token
@@ -135,21 +137,26 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def receive(self, message):
         Operation, Data = message['op'], message.get('d')
+        print(message)
 
         if Operation == self.READY:
-            pass
+            await self.createConnection(Data)
         elif Operation == self.HEARTBEAT_ACK:
             self._keepAliver.ack()
-        elif Operation == self.INVALIDATE_SESSION:
-            await self.identify()
         elif Operation == self.SESSION_DESCRIPTION:
-            pass
+            await self.loadKey(Data)
         elif Operation == self.HELLO:
             interval = Data['heartbeat_interval'] / 1000.0
             self._keepAliver = keepAlive(self, min(interval, 5.0))
             self._keepAliver.start()
+    
+    async def createConnection(self, data):
+        print(data)
+    
+    async def loadKey(self, data):
+        self.client.secretKey = data.get('secret_key')
 
-    async def polling(self):
+    async def poll(self):
         try:
             Message = await asyncio.wait_for(self.recv(), timeout=30.0)
             await self.receive(json.loads(Message))
