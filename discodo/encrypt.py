@@ -17,4 +17,4 @@ def xsalsa20_poly1305_suffix(key, header, data):
 
 
 def getEncryptModes():
-    return dir()
+    return globals()
