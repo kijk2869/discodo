@@ -9,6 +9,7 @@ SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 AUDIOBUFFERLIMIT = os.getenv('AUDIOBUFFERLIMIT', 30)
 AUDIOBUFFERLIMITMS = AUDIOBUFFERLIMIT * 1000 * SAMPLES_PER_FRAME
 
+
 class AudioFifo(av.AudioFifo):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
