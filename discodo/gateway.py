@@ -51,6 +51,7 @@ class keepAlive(threading.Thread):
                 while True:
                     try:
                         Runner.result(10)
+                        break
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
                         print(
@@ -112,6 +113,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         return sum(self._keepAliver.recent_latencies) / len(self._keepAliver.recent_latencies)
 
     async def sendJson(self, data):
+        print(data)
         await self.send(json.dumps(data))
 
     async def identify(self):
@@ -208,6 +210,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def poll(self):
         try:
+            print('polling')
             Message = await asyncio.wait_for(self.recv(), timeout=30.0)
             await self.receive(json.loads(Message))
         except websockets.exceptions.ConnectionClosed as exc:
