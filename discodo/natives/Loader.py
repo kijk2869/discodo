@@ -58,7 +58,7 @@ class Loader(threading.Thread):
                 Frame.pts = None
                 Frame = self.Resampler.resample(Frame)
                 Frame.pts = TemporaryPTS
-                
+
                 if not self.AudioFifo.haveToFillBuffer.is_set():
                     self.AudioFifo.haveToFillBuffer.wait()
 
