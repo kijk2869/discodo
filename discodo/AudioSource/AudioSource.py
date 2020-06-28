@@ -1,11 +1,12 @@
 from ..natives import AudioFifo, Loader
 
+
 class AudioSource:
     def __init__(self, file):
         self.AudioFifo = AudioFifo()
         self.Loader = Loader(file)
         self.Loader.start()
-    
+
     def read(self):
         Data = self.AudioFifo.read()
 
