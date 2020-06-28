@@ -21,6 +21,17 @@ class AudioData:
         self.description = data.get('description')
         self.subtitles = data.get('subtitles')
 
+        self.playlist = data.get('playlist')
+    
+    @classmethod
+    async def create(cls, query):
+        Data = await extract(query)
+
+        if isinstance(Data, list):
+            return [cls(Item) for Item in Data]
+        
+        return cls(Data)
+
     async def gather(self):
         Data = await extract(self.webpage_url)
         self.__init__(Data)
@@ -37,4 +48,5 @@ class AudioData:
             'is_live': self.is_live,
             'uploader': self.uploader,
             'description': self.description,
+            'playlist': self.playlist
         }

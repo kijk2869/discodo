@@ -38,8 +38,19 @@ def _extract(query):
     Data = YoutubeDL.extract_info(query, download=False)
 
     if 'entries' in Data:
-        Data = Data['entries']
-
+        Items = []
+        for Item in Data['entries']:
+            Item['playlist'] = {
+                'id': Data['id'],
+                'title': Data['title'],
+                'url': Data['webpage_url'],
+                'uploader': Data['uploader'],
+                'uploader_id': Data['uploader_id'],
+                'uploader_url': Data['uploader_url']
+            }
+            Items.append(Item)
+        
+        return Items
     return Data
 
 
