@@ -41,6 +41,7 @@ class Loader(threading.Thread):
             if not self.StreamConainer:
                 self.StreamConainer = av.open(self.Source, options=AVOption)
 
+            self.selectAudioStream = self.StreamConainer.streams.audio[0]
             self.FrameGenerator = self.StreamConainer.decode(audio=0)
 
             while not self._end.is_set():
@@ -53,9 +54,11 @@ class Loader(threading.Thread):
                     self.FilterGraph.push(Frame)
                     Frame = self.FilterGraph.pull()
 
+                TemporaryPTS = Frame.pts
                 Frame.pts = None
                 Frame = self.Resampler.resample(Frame)
-
+                Frame.pts = TemporaryPTS
+                
                 if not self.AudioFifo.haveToFillBuffer.is_set():
                     self.AudioFifo.haveToFillBuffer.wait()
 
