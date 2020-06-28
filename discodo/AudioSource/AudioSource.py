@@ -31,8 +31,7 @@ class AudioSource:
         return round(self._duration, 2)
 
     def read(self):
-        Frame = self.AudioFifo.read()
-        Data = Frame.planes[0].to_bytes() if Frame else None
+        Data = self.AudioFifo.read()
 
         if not self.AVDurationLoaded:
             self.AudioData.duration = self.Loader.duration
@@ -49,7 +48,7 @@ class AudioSource:
 
         self._duration += 0.02
         self._duration = round(self._duration, 2)
-        
+
         return Data
 
     def seek(self, offset):

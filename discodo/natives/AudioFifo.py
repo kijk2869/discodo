@@ -28,7 +28,7 @@ class AudioFifo(av.AudioFifo):
         else:
             self.haveToFillBuffer.clear()
 
-        return AudioFrame
+        return AudioFrame.planes[0].to_bytes()
 
     def reset(self):
         self.ptr = None
