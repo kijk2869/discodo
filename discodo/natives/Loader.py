@@ -31,6 +31,10 @@ class Loader(threading.Thread):
             rate=SAMPLING_RATE
         )
         self.AudioFifo = AudioFifo
+    
+    @property
+    def duration(self):
+        return round(self.StreamConainer.duration / 1000000) if self.StreamConainer else None
 
     def _do_run(self):
         if not self.StreamConainer:
