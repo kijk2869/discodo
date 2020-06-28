@@ -24,6 +24,7 @@ class Loader(threading.Thread):
         self._buffering = threading.Lock()
 
         self.StreamConainer = None
+        self.FilterGraph = None
         self.Resampler = av.AudioResampler(
             format=av.AudioFormat('s16').packed,
             layout='stereo' if CHANNELS >= 2 else 'mono',
@@ -44,11 +45,16 @@ class Loader(threading.Thread):
                     self.stop()
                     break
 
-                if not self.AudioFifo.haveToFillBuffer.is_set():
-                    self.AudioFifo.haveToFillBuffer.wait()
+                if self.FilterGraph:
+                    self.FilterGraph.push(Frame)
+                    Frame = self.FilterGraph.pull()
 
                 Frame.pts = None
                 Frame = self.Resampler.resample(Frame)
+
+                if not self.AudioFifo.haveToFillBuffer.is_set():
+                    self.AudioFifo.haveToFillBuffer.wait()
+
                 self.AudioFifo.write(Frame)
 
     def run(self):
