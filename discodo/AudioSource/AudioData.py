@@ -1,5 +1,6 @@
 from ..extractor import extract
 
+
 class AudioData:
     def __init__(self, data):
         self.id = data.get('id')
@@ -11,7 +12,7 @@ class AudioData:
         else:
             self.webpage_url = data.get('webpage_url')
             self.thumbnail = data.get('thumbnail')
-        
+
         self.duration = data.get('duration')
         self.stream_url = data.get('url')
         self.is_live = data.get('is_live', False)
@@ -19,13 +20,13 @@ class AudioData:
         self.uploader = data.get('uploader')
         self.description = data.get('description')
         self.subtitles = data.get('subtitles')
-    
+
     async def gather(self):
         Data = await extract(self.webpage_url)
         self.__init__(Data)
 
         return self
-    
+
     def toDict(self):
         return {
             'id': self.id,

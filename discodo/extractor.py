@@ -42,8 +42,9 @@ def _extract(query):
 
     return Data
 
+
 async def extract(self, query, loop=None):
     if not loop:
         loop = asyncio.get_event_loop()
-    
+
     return await loop.run_in_executor(None, _extract, query)
