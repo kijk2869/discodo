@@ -42,7 +42,7 @@ class Player(threading.Thread):
             return
 
         Data = self.current.read()
-        
+
         if not Data:
             self.loop.call_soon_threadsafe(self.current.cleanup)
             del self.sources[0]

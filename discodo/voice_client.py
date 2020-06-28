@@ -60,7 +60,7 @@ class VoiceClient:
 
     async def createSocket(self, data: dict = None):
         self._connected.clear()
-        
+
         if data:
             self.data = data
 
@@ -87,7 +87,7 @@ class VoiceClient:
         self.ws = await VoiceSocket.connect(self)
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()
-            
+
         self._connected.set()
 
         if not self._polling or self._polling.done():
