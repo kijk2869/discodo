@@ -37,12 +37,12 @@ class Loader(threading.Thread):
         return round(self.StreamConainer.duration / 1000000) if self.StreamConainer else None
 
     def _do_run(self):
-        if not self.StreamConainer:
-            self.StreamConainer = av.open(self.Source, options=AVOption)
-
-        self.FrameGenerator = self.StreamConainer.decode(audio=0)
-
         with withLock(self._buffering):
+            if not self.StreamConainer:
+                self.StreamConainer = av.open(self.Source, options=AVOption)
+
+            self.FrameGenerator = self.StreamConainer.decode(audio=0)
+
             while not self._end.is_set():
                 Frame = next(self.FrameGenerator, None)
                 if not Frame:

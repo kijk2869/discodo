@@ -9,10 +9,11 @@ DELAY = FRAME_LENGTH / 1000.0
 
 
 class Player(threading.Thread):
-    def __init__(self, voice_client, volume=1.0):
-        threading.Thread(self)
+    def __init__(self, voice_client, volume=1.0, loop=None):
+        threading.Thread.__init__(self)
         self.daemon = True
         self._end = threading.Event()
+        self.loop = loop or asyncio.get_event_loop()
 
         self.client = voice_client
         self.sources = []
@@ -37,17 +38,21 @@ class Player(threading.Thread):
         return self.sources.index(AudioSource)
 
     def makeFrame(self):
-        Data = self.current.read()
+        if not self.current:
+            return
 
+        Data = self.current.read()
+        
         if not Data:
-            pass # need to load Next Source
+            self.loop.call_soon_threadsafe(self.current.cleanup)
+            del self.sources[0]
 
         return Data
 
     def _do_run(self):
         self.loops = 0
         _start = time.perf_counter()
-        send = self.vc.send
+        send = self.client.send
 
         self.speak(True)
         while not self._end.is_set():

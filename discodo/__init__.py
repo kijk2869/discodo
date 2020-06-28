@@ -4,3 +4,4 @@ from .gateway import VoiceSocket
 from .natives import *
 from .AudioSource import *
 from .utils import *
+from .player import Player

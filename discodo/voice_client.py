@@ -30,6 +30,8 @@ class VoiceClient:
         self._sequence = 0
         self._timestamp = 0
 
+        self._connected = asyncio.Event()
+
         self._polling = None
         self.encoder = opus.Encoder()
         self.loop.create_task(self.createSocket())
@@ -57,6 +59,8 @@ class VoiceClient:
             self._timestamp = value
 
     async def createSocket(self, data: dict = None):
+        self._connected.clear()
+        
         if data:
             self.data = data
 
@@ -83,6 +87,8 @@ class VoiceClient:
         self.ws = await VoiceSocket.connect(self)
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()
+            
+        self._connected.set()
 
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWs())

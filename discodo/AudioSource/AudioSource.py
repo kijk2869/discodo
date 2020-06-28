@@ -1,3 +1,4 @@
+import time
 import audioop
 import traceback
 from ..natives import AudioFifo, Loader
@@ -8,7 +9,7 @@ class AudioSource:
         self._volume = volume
 
         self.AudioFifo = AudioFifo()
-        self.Loader = Loader(file)
+        self.Loader = Loader(file, self.AudioFifo)
         self.Loader.start()
 
         self.AudioData = AudioData
@@ -36,8 +37,11 @@ class AudioSource:
             self.AudioData.duration = self.Loader.duration
             self.AVDurationLoaded = True
 
-        if not Data and self.Loader.locked():
-            return self.read()
+        if not Data and self.Loader._buffering.locked():
+            while self.Loader._buffering.locked():
+                Data = self.AudioFifo.read()
+                if Data:
+                    break
 
         if Data and self.volume != 1.0:
             Data = audioop.mul(Data, 2, min(self._volume, 2.0))

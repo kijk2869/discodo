@@ -37,24 +37,27 @@ def _extract(query):
     YoutubeDL = YoutubeDLClient(option)
     Data = YoutubeDL.extract_info(query, download=False)
 
-    if 'entries' in Data:
-        Items = []
-        for Item in Data['entries']:
-            Item['playlist'] = {
-                'id': Data['id'],
-                'title': Data['title'],
-                'url': Data['webpage_url'],
-                'uploader': Data['uploader'],
-                'uploader_id': Data['uploader_id'],
-                'uploader_url': Data['uploader_url']
-            }
-            Items.append(Item)
+    # if 'entries' in Data:
+    #     Items = []
+    #     for Item in Data['entries']:
+    #         Item['playlist'] = {
+    #             'id': Data['id'],
+    #             'title': Data['title'],
+    #             'url': Data['webpage_url'],
+    #             'uploader': Data['uploader'],
+    #             'uploader_id': Data['uploader_id'],
+    #             'uploader_url': Data['uploader_url']
+    #         }
+    #         Items.append(Item)
 
-        return Items
+    #     return Items
+    if 'entries' in Data:
+        return Data['entries']
+
     return Data
 
 
-async def extract(self, query, loop=None):
+async def extract(query, loop=None):
     if not loop:
         loop = asyncio.get_event_loop()
 
