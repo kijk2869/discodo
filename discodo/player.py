@@ -40,7 +40,7 @@ class Player(threading.Thread):
         Data = self.current.read()
 
         if not Data:
-            pass # need to load Next Source
+            pass  # need to load Next Source
 
         return Data
 
