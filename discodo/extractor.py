@@ -49,7 +49,7 @@ def _extract(query):
                 'uploader_url': Data['uploader_url']
             }
             Items.append(Item)
-        
+
         return Items
     return Data
 

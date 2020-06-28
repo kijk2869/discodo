@@ -22,14 +22,14 @@ class AudioData:
         self.subtitles = data.get('subtitles')
 
         self.playlist = data.get('playlist')
-    
+
     @classmethod
     async def create(cls, query):
         Data = await extract(query)
 
         if isinstance(Data, list):
             return [cls(Item) for Item in Data]
-        
+
         return cls(Data)
 
     async def gather(self):
