@@ -6,9 +6,11 @@ import asyncio
 import threading
 import websockets
 import concurrent.futures
+from logging import getLogger
 from collections import deque
 from .encrypt import getEncryptModes
 
+log = getLogger('discodo.gateway')
 
 class keepAlive(threading.Thread):
     def __init__(self, ws, interval: int, *args, **kwargs):
@@ -21,15 +23,14 @@ class keepAlive(threading.Thread):
         self.latency = None
         self.recent_latencies = deque(maxlen=20)
 
-        self.last_ack = self.last_send = time.perf_counter()
+        self._lastAck = self._lastSend = 0.0
         self.timeout = ws.heartbeatTimeout
         self.threadId = ws.threadId
 
-        self._lastAck = self._lastSend = 0.0
 
     def run(self):
         while not self.Stopped.wait(self.interval):
-            if (self.last_ack + self.timeout) < time.perf_counter():
+            if (self._lastAck + self.timeout) < time.perf_counter():
                 Runner = asyncio.run_coroutine_threadsafe(
                     self.ws.close(4000), self.ws.loop)
 
@@ -54,7 +55,7 @@ class keepAlive(threading.Thread):
                         break
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
-                        print(
+                        log.warning(
                             f'Heartbeat blocked for more than {totalBlocked} seconds.')
             except:
                 return self.stop()
@@ -113,7 +114,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         return sum(self._keepAliver.recent_latencies) / len(self._keepAliver.recent_latencies)
 
     async def sendJson(self, data):
-        print(data)
+        log.debug(f'send to websocket {data}')
         await self.send(json.dumps(data))
 
     async def identify(self):
@@ -166,7 +167,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def receive(self, message):
         Operation, Data = message['op'], message.get('d')
-        print(message)
+        log.debug(f'websocket recieved {Operation}: {Data}')
 
         if Operation == self.READY:
             await self.createConnection(Data)
@@ -198,11 +199,15 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
         encryptModes = [Mode for Mode in data['modes']
                         if Mode in getEncryptModes().keys()]
+        log.debug(f'recieved encrypt modes {data["modes"]}')
+
         encryptMode = encryptModes[0]
+        log.info(f'select encrypt mode {encryptMode}')
 
         await self.select_protocol(self.client.ip, self.client.port, encryptMode)
 
     async def loadKey(self, data):
+        log.info(f'recieved voice secret key.')
         self.client.encryptMode = data['mode']
         self.client.secretKey = data.get('secret_key')
 
@@ -211,7 +216,6 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def poll(self):
         try:
-            print('polling')
             Message = await asyncio.wait_for(self.recv(), timeout=30.0)
             await self.receive(json.loads(Message))
         except websockets.exceptions.ConnectionClosed as exc:

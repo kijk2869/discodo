@@ -2,6 +2,7 @@ import os
 import socket
 import struct
 import asyncio
+from logging import getLogger
 from .gateway import VoiceSocket
 from .encrypt import getEncryptModes
 from .natives import opus
@@ -10,6 +11,7 @@ SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
 SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 
+log = getLogger('discodo.VoiceClient')
 
 class VoiceClient:
     def __init__(self, client, guild_id, data):
@@ -56,11 +58,12 @@ class VoiceClient:
     async def createSocket(self, data: dict = None):
         if data:
             self.data = data
-        print(self.data)
+
         self.token = self.data.get('token')
         endpoint = self.data.get('endpoint')
         self.endpoint = endpoint.replace(':80', '')
         self.endpointIp = socket.gethostbyname(self.endpoint)
+        log.info(f'voice endpoint {self.endpoint} ({self.endpointIp}) detected.')
 
         if self.socket:
             try:
@@ -71,11 +74,14 @@ class VoiceClient:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.setblocking(False)
 
+        if self.ws:
+            await self.ws.close(4000)
+
         self.ws = await VoiceSocket.connect(self)
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()
 
-        if not self._polling:
+        if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWs())
 
     async def pollingWs(self):

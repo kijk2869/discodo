@@ -2,14 +2,13 @@ import av
 import os
 import threading
 from ..utils.threadLock import withLock
+import traceback
 
 AVOption = {
     'reconnect': '1',
-    # 'reconnect_at_eof': '1',
     'reconnect_streamed': '1',
     'reconnect_delay_max': '5'
 }
-TestOption = "-reconnect 1 -reconnect_streamed 1 -reconnect_at_eof 1 -reconnect_delay_max 5 -analyzeduration 0"
 
 SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 CHANNELS = os.getenv('CHANNELS', 2)
@@ -34,7 +33,6 @@ class Loader(threading.Thread):
 
     def _do_run(self):
         if not self.StreamConainer:
-            # , options=AVOption, stream_options )
             self.StreamConainer = av.open(self.Source, options=AVOption)
 
         self.FrameGenerator = self.StreamConainer.decode(audio=0)
@@ -45,9 +43,9 @@ class Loader(threading.Thread):
                 if not Frame:
                     self.stop()
                     break
-
-                while not self.AudioFifo.haveToFillBuffer:
-                    pass
+                
+                if not self.AudioFifo.haveToFillBuffer.is_set():
+                    self.AudioFifo.haveToFillBuffer.wait()
 
                 Frame.pts = None
                 Frame = self.Resampler.resample(Frame)
