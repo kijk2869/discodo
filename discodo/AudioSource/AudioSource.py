@@ -50,7 +50,7 @@ class AudioSource:
         self._duration = round(self._duration, 2)
 
         return Data
-    
+
     def seek(self, offset):
         self.Loader.seek(offset * 1000000, any_frame=True)
 
