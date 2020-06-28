@@ -2,6 +2,7 @@ import audioop
 import traceback
 from ..natives import AudioFifo, Loader
 
+
 class AudioSource:
     def __init__(self, file, volume=1.0):
         self._volume = volume
