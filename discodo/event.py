@@ -4,6 +4,7 @@ from logging import getLogger
 
 log = getLogger('discodo.event')
 
+
 class DiscordEvent:
     def __init__(self, client):
         self.client = client

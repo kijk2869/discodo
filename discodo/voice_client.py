@@ -38,7 +38,6 @@ class VoiceClient:
         self.encoder = opus.Encoder()
         self.loop.create_task(self.createSocket())
 
-
     @property
     def sequence(self):
         return self._sequence
@@ -93,7 +92,7 @@ class VoiceClient:
 
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWs())
-        
+
         if not self.player:
             self.player = Player(self)
             self.player.start()

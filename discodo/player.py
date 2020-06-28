@@ -8,6 +8,7 @@ import threading
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
 DELAY = FRAME_LENGTH / 1000.0
 
+
 class Player(threading.Thread):
     def __init__(self, voice_client, volume=1.0, loop=None):
         threading.Thread.__init__(self)
@@ -56,7 +57,8 @@ class Player(threading.Thread):
         self.speak(True)
         while not self._end.is_set():
             if not self.client._connected.is_set():
-                while not self.client._connected.is_set(): pass
+                while not self.client._connected.is_set():
+                    pass
                 self.loops = 0
                 _start = time.perf_counter()
 
