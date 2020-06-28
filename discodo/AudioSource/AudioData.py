@@ -1,6 +1,7 @@
 from ..extractor import extract
 from .AudioSource import AudioSource
 
+
 class AudioData:
     def __init__(self, data):
         self.id = data.get('id')
@@ -39,14 +40,14 @@ class AudioData:
         self.__init__(Data)
 
         return self
-    
+
     async def source(self, *args, **kwargs):
         if not self.stream_url:
             await self.gather()
-        
+
         if not self._source:
             self._source = AudioSource(self.stream_url, *args, **kwargs)
-        
+
         return self._source
 
     def toDict(self):
