@@ -37,7 +37,12 @@ class Player(threading.Thread):
         return self.sources.index(AudioSource)
 
     def makeFrame(self):
-        raise NotImplementedError
+        Data = self.current.read()
+
+        if not Data:
+            pass # need to load Next Source
+
+        return Data
 
     def _do_run(self):
         self.loops = 0
