@@ -13,7 +13,7 @@ class AudioSource:
     
     @property
     def volume(self):
-        return volume
+        return self._volume
 
     @volume.setter
     def volume(self, value):
