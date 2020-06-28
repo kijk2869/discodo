@@ -12,6 +12,7 @@ from .encrypt import getEncryptModes
 
 log = getLogger('discodo.gateway')
 
+
 class keepAlive(threading.Thread):
     def __init__(self, ws, interval: int, *args, **kwargs):
         threading.Thread.__init__(self, *args, **kwargs)
@@ -26,7 +27,6 @@ class keepAlive(threading.Thread):
         self._lastAck = self._lastSend = 0.0
         self.timeout = ws.heartbeatTimeout
         self.threadId = ws.threadId
-
 
     def run(self):
         while not self.Stopped.wait(self.interval):

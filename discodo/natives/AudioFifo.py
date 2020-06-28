@@ -22,7 +22,7 @@ class AudioFifo(av.AudioFifo):
         AudioFrame = super().read(samples)
         if not AudioFrame:
             return
-        
+
         if self.samples < AUDIOBUFFERLIMITMS:
             self.haveToFillBuffer.set()
         else:

@@ -43,7 +43,7 @@ class Loader(threading.Thread):
                 if not Frame:
                     self.stop()
                     break
-                
+
                 if not self.AudioFifo.haveToFillBuffer.is_set():
                     self.AudioFifo.haveToFillBuffer.wait()
 

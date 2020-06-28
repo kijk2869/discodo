@@ -13,6 +13,7 @@ SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 
 log = getLogger('discodo.VoiceClient')
 
+
 class VoiceClient:
     def __init__(self, client, guild_id, data):
         self.loop = asyncio.get_event_loop()
