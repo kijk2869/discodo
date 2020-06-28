@@ -56,6 +56,11 @@ class Player(threading.Thread):
 
         self.speak(True)
         while not self._end.is_set():
+            if not self.client._connected.is_set():
+                self.client._connected.wait()
+                self.loops = 0
+                _start = time.perf_counter()
+
             Data = self.makeFrame()
 
             if Data:
