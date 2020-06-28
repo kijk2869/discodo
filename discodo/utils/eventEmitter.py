@@ -7,6 +7,8 @@ import collections
 class EventEmitter:
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
         self._Events = collections.defaultdict(list)
+        self._Any = []
+
         self.loop = loop or asyncio.get_event_loop()
 
     def on(self, event: str, func):
@@ -16,8 +18,26 @@ class EventEmitter:
     def off(self, event: str, func):
         self._Events[event].remove(func)
         return self
+    
+    def onAny(self, func):
+        self._Any.append(func)
+        return self
+    
+    def offAny(self, func):
+        self._Any.remove(func)
+        return self
 
     async def emit(self, event: str, *args, **kwargs):
+        if self._Any:
+            for func in self._Any:
+                try:
+                    if asyncio.iscoroutinefunction(func):
+                        await func(*args, **kwargs)
+                    else:
+                        func(*args, **kwargs)
+                except:
+                    traceback.print_exc()
+
         if not event in self._Events:
             return
 

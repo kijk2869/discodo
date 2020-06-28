@@ -15,17 +15,17 @@ log = getLogger('discodo.VoiceClient')
 
 
 class VoiceClient:
-    def __init__(self, client, guild_id, data):
+    def __init__(self, client, data):
         self.loop = asyncio.get_event_loop()
         self.ws = None
         self.socket = None
 
         self.client = client
-        self.guild_id = guild_id
         self.user_id = self.client.user_id
 
         self.data = data
         self.session_id = self.client.session_id
+        self.guild_id = self.data.get('guild_id')
 
         self._sequence = 0
         self._timestamp = 0
@@ -59,6 +59,8 @@ class VoiceClient:
     async def createSocket(self, data: dict = None):
         if data:
             self.data = data
+            
+        self.guild_id = self.data.get('guild_id')
 
         self.token = self.data.get('token')
         endpoint = self.data.get('endpoint')

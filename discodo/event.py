@@ -1,15 +1,35 @@
+from .utils import EventEmitter
+from .voice_client import VoiceClient
+
 class DiscordEvent:
-    def __init__(self):
-        pass
+    def __init__(self, client):
+        self.client = client
 
-    def parseReady(self):
-        raise NotImplementedError
+        self.EventEmitter = EventEmitter()
 
-    def parseResume(self):
-        raise NotImplementedError
+        self.EventEmitter.on('READY', self.parseReady)
+        self.EventEmitter.on('RESUME', self.parseResume)
+        self.EventEmitter.on('VOICE_STATE_UPDATE', self.parseVoiceStateUpdate)
+        self.EventEmitter.on('VOICE_SERVER_UPDATE', self.parseVoiceServerUpdate)
+    
+    async def dispatch(self, event, *args, **kwargs):
+        return await self.EventEmitter.emit(event, *args, **kwargs)
 
-    def parseVoiceStateUpdate(self):
-        raise NotImplementedError
+    async def parseReady(self, data):
+        self.client.session_id = data['session_id']
 
-    def parseVoiceServerUpdate(self):
-        raise NotImplementedError
+    async def parseResume(self, data):
+        self.client.session_id = data['session_id']
+
+    async def parseVoiceStateUpdate(self):
+        return
+
+    async def parseVoiceServerUpdate(self, data):
+        if data['guild_id'] in self.client.voiceClients:
+            vc = self.client.voiceClients[data['guild_id']]
+            await vc.createSocket(data)
+        
+        vc = VoiceClient(self.client, data)
+        self.client.voiceClients[data['guild_id']] = vc
+
+        return vc
