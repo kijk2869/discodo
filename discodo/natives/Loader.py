@@ -66,15 +66,21 @@ class Loader(threading.Thread):
             self._do_run()
         finally:
             self.stop()
+    
+    def seek(self, offset, *args, **kwargs):
+        if not self.StreamConainer and not self._buffering.locked():
+            self.StreamConainer = av.open(self.Source, options=AVOption)
+        elif not self.StreamConainer:
+            while not self.StreamConainer: pass
+        
+        self.StreamConainer.seek(offset, *args, **kwargs)
+        self.reload()
 
     def reload(self):
-        if self.StreamConainer:
-            self.FrameGenerator = self.StreamConainer.decode(audio=0)
-
-        self.AudioFifo.reset()
-
         if not self._buffering.locked():
             self.start()
+        
+        self.AudioFifo.reset()
 
     def stop(self):
         self._end.set()
