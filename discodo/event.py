@@ -1,6 +1,7 @@
 from .utils import EventEmitter
 from .voice_client import VoiceClient
 
+
 class DiscordEvent:
     def __init__(self, client):
         self.client = client
@@ -10,8 +11,9 @@ class DiscordEvent:
         self.EventEmitter.on('READY', self.parseReady)
         self.EventEmitter.on('RESUME', self.parseResume)
         self.EventEmitter.on('VOICE_STATE_UPDATE', self.parseVoiceStateUpdate)
-        self.EventEmitter.on('VOICE_SERVER_UPDATE', self.parseVoiceServerUpdate)
-    
+        self.EventEmitter.on('VOICE_SERVER_UPDATE',
+                             self.parseVoiceServerUpdate)
+
     async def dispatch(self, event, *args, **kwargs):
         return await self.EventEmitter.emit(event, *args, **kwargs)
 
@@ -28,7 +30,7 @@ class DiscordEvent:
         if data['guild_id'] in self.client.voiceClients:
             vc = self.client.voiceClients[data['guild_id']]
             await vc.createSocket(data)
-        
+
         vc = VoiceClient(self.client, data)
         self.client.voiceClients[data['guild_id']] = vc
 

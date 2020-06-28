@@ -10,8 +10,8 @@ class Client:
         self.voiceClients = {}
 
         self.discordEvent = DiscordEvent(self)
-    
+
     async def discordDispatch(self, data):
         Event, Data = data['t'], data['d']
-        
+
         return await self.discordEvent.dispatch(Event, Data)

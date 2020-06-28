@@ -18,11 +18,11 @@ class EventEmitter:
     def off(self, event: str, func):
         self._Events[event].remove(func)
         return self
-    
+
     def onAny(self, func):
         self._Any.append(func)
         return self
-    
+
     def offAny(self, func):
         self._Any.remove(func)
         return self

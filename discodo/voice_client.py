@@ -59,7 +59,7 @@ class VoiceClient:
     async def createSocket(self, data: dict = None):
         if data:
             self.data = data
-            
+
         self.guild_id = self.data.get('guild_id')
 
         self.token = self.data.get('token')
