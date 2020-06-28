@@ -46,7 +46,8 @@ class AudioData:
             await self.gather()
 
         if not self._source:
-            self._source = AudioSource(self.stream_url, *args, AudioData=self, **kwargs)
+            self._source = AudioSource(
+                self.stream_url, *args, AudioData=self, **kwargs)
 
         return self._source
 

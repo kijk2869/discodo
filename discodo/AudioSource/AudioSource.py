@@ -24,7 +24,7 @@ class AudioSource:
     @volume.setter
     def volume(self, value):
         self._volume = max(value, 0.0)
-    
+
     @property
     def duration(self):
         return round(self._duration, 2)
@@ -41,7 +41,7 @@ class AudioSource:
 
         if Data and self.volume != 1.0:
             Data = audioop.mul(Data, 2, min(self._volume, 2.0))
-        
+
         self._duration += 0.02
         self._duration = round(self._duration, 2)
 
