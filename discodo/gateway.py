@@ -224,5 +224,5 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     async def close(self, *args, **kwargs):
         if self._keepAliver:
             self._keepAliver.stop()
-
-        await super().close_connection(*args, **kwargs)
+        
+        await super().close(*args, **kwargs)

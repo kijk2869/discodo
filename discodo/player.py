@@ -2,11 +2,11 @@ import os
 import time
 import audioop
 import asyncio
+import logging
 import threading
 
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
 DELAY = FRAME_LENGTH / 1000.0
-
 
 class Player(threading.Thread):
     def __init__(self, voice_client, volume=1.0, loop=None):
@@ -52,12 +52,11 @@ class Player(threading.Thread):
     def _do_run(self):
         self.loops = 0
         _start = time.perf_counter()
-        send = self.client.send
 
         self.speak(True)
         while not self._end.is_set():
             if not self.client._connected.is_set():
-                self.client._connected.wait()
+                while not self.client._connected.is_set(): pass
                 self.loops = 0
                 _start = time.perf_counter()
 
@@ -67,11 +66,11 @@ class Player(threading.Thread):
                 if self.volume != 1.0:
                     Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
-                self.loops += 1
-                send(Data)
+                self.client.send(Data)
 
-                nextTime = _start + DELAY * self.loops
-                time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
+            self.loops += 1
+            nextTime = _start + DELAY * self.loops
+            time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
 
     def run(self):
         try:

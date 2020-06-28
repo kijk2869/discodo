@@ -6,6 +6,7 @@ from logging import getLogger
 from .gateway import VoiceSocket
 from .encrypt import getEncryptModes
 from .natives import opus
+from .player import Player
 
 SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
@@ -32,9 +33,11 @@ class VoiceClient:
 
         self._connected = asyncio.Event()
 
+        self.player = None
         self._polling = None
         self.encoder = opus.Encoder()
         self.loop.create_task(self.createSocket())
+
 
     @property
     def sequence(self):
@@ -88,10 +91,16 @@ class VoiceClient:
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()
 
-        self._connected.set()
-
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWs())
+        
+        if not self.player:
+            self.player = Player(self)
+            self.player.start()
+        else:
+            await self.ws.speak(True)
+
+        self._connected.set()
 
     async def pollingWs(self):
         while True:
