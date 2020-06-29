@@ -52,7 +52,8 @@ class AudioSource:
         return Data
 
     def seek(self, offset):
-        offset = min(max(offset, 1), self.AudioData.duration - 1) if self.AudioData.duration else max(offset, 1)
+        offset = min(max(offset, 1), self.AudioData.duration -
+                     1) if self.AudioData.duration else max(offset, 1)
         self.Loader.seek(offset * 1000000, any_frame=True)
         self._duration = offset
 
