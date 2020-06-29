@@ -10,12 +10,13 @@ class AudioData:
         if data.get('_type') == 'url' and data.get('ie_key') == 'Youtube':
             self.webpage_url = f'https://www.youtube.com/watch?v={self.id}'
             self.thumbnail = f'https://i.ytimg.com/vi/{self.id}/hqdefault.jpg'
+            self.stream_url = None
         else:
             self.webpage_url = data.get('webpage_url')
             self.thumbnail = data.get('thumbnail')
+            self.stream_url = data.get('url')
 
         self.duration = data.get('duration')
-        self.stream_url = data.get('url')
         self.is_live = data.get('is_live', False)
 
         self.uploader = data.get('uploader')

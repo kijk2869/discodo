@@ -31,4 +31,4 @@ class AudioFifo(av.AudioFifo):
         return AudioFrame.planes[0].to_bytes()
 
     def reset(self):
-        self.ptr = None
+        super().read(samples=max(self.samples - 960, 0), partial=True)

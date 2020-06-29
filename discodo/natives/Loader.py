@@ -14,7 +14,7 @@ SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 CHANNELS = os.getenv('CHANNELS', 2)
 
 
-class Loader(threading.Thread):
+class Loader:
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -31,44 +31,14 @@ class Loader(threading.Thread):
             rate=SAMPLING_RATE
         )
         self.AudioFifo = AudioFifo
+    
+    def start(self):
+        self.BufferLoader = BufferLoader(self)
+        self.BufferLoader.start()
 
     @property
     def duration(self):
         return round(self.StreamConainer.duration / 1000000) if self.StreamConainer else None
-
-    def _do_run(self):
-        with withLock(self._buffering):
-            if not self.StreamConainer:
-                self.StreamConainer = av.open(self.Source, options=AVOption)
-
-            self.selectAudioStream = self.StreamConainer.streams.audio[0]
-            self.FrameGenerator = self.StreamConainer.decode(audio=0)
-
-            while not self._end.is_set():
-                Frame = next(self.FrameGenerator, None)
-                if not Frame:
-                    self.stop()
-                    break
-
-                if self.FilterGraph:
-                    self.FilterGraph.push(Frame)
-                    Frame = self.FilterGraph.pull()
-
-                TemporaryPTS = Frame.pts
-                Frame.pts = None
-                Frame = self.Resampler.resample(Frame)
-                Frame.pts = TemporaryPTS
-
-                if not self.AudioFifo.haveToFillBuffer.is_set():
-                    self.AudioFifo.haveToFillBuffer.wait()
-
-                self.AudioFifo.write(Frame)
-
-    def run(self):
-        try:
-            self._do_run()
-        finally:
-            self.stop()
 
     def seek(self, offset, *args, **kwargs):
         if not self.StreamConainer and not self._buffering.locked():
@@ -82,6 +52,8 @@ class Loader(threading.Thread):
 
     def reload(self):
         if not self._buffering.locked():
+            if self._end.is_set():
+                self._end.clear()
             self.start()
 
         self.AudioFifo.reset()
@@ -91,3 +63,43 @@ class Loader(threading.Thread):
         if self.StreamConainer:
             self.StreamConainer.close()
             self.StreamConainer = None
+
+
+class BufferLoader(threading.Thread):
+    def __init__(self, Loader):
+        threading.Thread.__init__(self)
+        self.daemon = True
+        
+        self.Loader = Loader
+
+    def _do_run(self):
+        with withLock(self.Loader._buffering):
+            if not self.Loader.StreamConainer:
+                self.Loader.StreamConainer = av.open(self.Loader.Source, options=AVOption)
+
+            self.Loader.selectAudioStream = self.Loader.StreamConainer.streams.audio[0]
+            self.Loader.FrameGenerator = self.Loader.StreamConainer.decode(audio=0)
+            
+            while not self.Loader._end.is_set():
+                Frame = next(self.Loader.FrameGenerator, None)
+                if not Frame:
+                    self.Loader.stop()
+                    break
+
+                if self.Loader.FilterGraph:
+                    self.Loader.FilterGraph.push(Frame)
+                    Frame = self.Loader.FilterGraph.pull()
+                
+                Frame.pts = None
+                Frame = self.Loader.Resampler.resample(Frame)
+                
+                if not self.Loader.AudioFifo.haveToFillBuffer.is_set():
+                    self.Loader.AudioFifo.haveToFillBuffer.wait()
+                
+                self.Loader.AudioFifo.write(Frame)
+
+    def run(self):
+        try:
+            self._do_run()
+        finally:
+            self.Loader.stop()
