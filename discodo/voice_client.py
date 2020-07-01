@@ -13,6 +13,7 @@ class VoiceClient(VoiceConnector):
         self.player = None
 
         self._volume = 1.0
+        self._crossfade = 20.0
 
     async def createSocket(self, *args, **kwargs):
         await super().createSocket(*args, **kwargs)
@@ -39,4 +40,12 @@ class VoiceClient(VoiceConnector):
 
     @volume.setter
     def volume(self, value):
-        self._volume = max(value, 0.0)
+        self._volume = round(max(value, 0.0), 2)
+
+    @property
+    def crossfade(self):
+        return self._crossfade
+
+    @crossfade.setter
+    def crossfade(self, value):
+        self._crossfade = round(max(value, 0.0), 1)
