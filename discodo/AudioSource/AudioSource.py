@@ -29,7 +29,7 @@ class AudioSource:
     @property
     def duration(self):
         return round(self._duration, 2)
-    
+
     @property
     def remain(self):
         return round(self.AudioData.duration - self.duration, 2)
