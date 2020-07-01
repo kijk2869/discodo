@@ -4,6 +4,7 @@ import audioop
 import asyncio
 import logging
 import threading
+from .AudioSource import AudioData
 
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
 DELAY = FRAME_LENGTH / 1000.0
@@ -22,16 +23,15 @@ class Player(threading.Thread):
         self._volume = volume
 
     @property
-    def volume(self):
-        return self._volume
-
-    @volume.setter
-    def volume(self, value):
-        self._volume = max(value, 0.0)
-
-    @property
     def current(self):
-        return self.sources[0] if self.sources else None
+        Source = self.sources[0] if self.sources else None
+        if Source and isinstance(Source, AudioData):
+            Future = asyncio.run_coroutine_threadsafe(Source.source(), self.loop)
+            while not Future.done(): pass
+
+            Source = self.sources[0] = Future.result()
+
+        return Source
 
     def add(self, AudioSource):
         self.sources.append(AudioSource)
@@ -64,8 +64,14 @@ class Player(threading.Thread):
 
             Data = self.makeFrame()
 
+            if self._volume != self.client.volume:
+                if self._volume < self.client.volume:
+                    self._volume = round(self._volume + 0.005, 3)
+                if self._volume > self.client.volume:
+                    self._volume = round(self._volume - 0.005, 3)
+
             if Data:
-                if self.volume != 1.0:
+                if self._volume != 1.0:
                     Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
                 self.client.send(Data)
