@@ -37,7 +37,6 @@ class Player(threading.Thread):
             
             if Source.volume != 1.0:
                 Source.volume = 1.0
-                print('set')
 
         return Source
 
@@ -91,6 +90,11 @@ class Player(threading.Thread):
                     self.current.volume = round(self.current.volume - CrossFadeVolume, 10)
                 
                 Data = audioop.add(Data, NextData, 2)
+        else:
+            if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
+                self.current.volume = round(self.current.volume + 0.01, 3)
+            if isinstance(self.next, AudioSource) and self.next.volume != 0.0:
+                self.next.volume = 0.0
 
         return Data
 

@@ -35,6 +35,9 @@ class AudioSource:
         return round(self.AudioData.duration - self.duration, 2)
 
     def read(self):
+        if not self.AudioFifo:
+            return
+
         Data = self.AudioFifo.read()
 
         if not self.AVDurationLoaded and self.Loader.duration:
