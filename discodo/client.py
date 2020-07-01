@@ -2,6 +2,7 @@ import asyncio
 from .event import DiscordEvent
 from .AudioSource import AudioData
 
+
 class Client:
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.get('user_id')
@@ -15,7 +16,7 @@ class Client:
         Event, Data = data['t'], data['d']
 
         return await self.discordEvent.dispatch(Event, Data)
-    
+
     def getVC(self, guildID):
         return self.voiceClients.get(guildID)
 

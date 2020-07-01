@@ -26,8 +26,10 @@ class Player(threading.Thread):
     def current(self):
         Source = self.sources[0] if self.sources else None
         if Source and isinstance(Source, AudioData):
-            Future = asyncio.run_coroutine_threadsafe(Source.source(), self.loop)
-            while not Future.done(): pass
+            Future = asyncio.run_coroutine_threadsafe(
+                Source.source(), self.loop)
+            while not Future.done():
+                pass
 
             Source = self.sources[0] = Future.result()
 

@@ -5,14 +5,15 @@ from .AudioSource import AudioData
 
 log = getLogger('discodo.VoiceClient')
 
+
 class VoiceClient(VoiceConnector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self.player = None
-        
+
         self._volume = 1.0
-    
+
     async def createSocket(self, *args, **kwargs):
         await super().createSocket(*args, **kwargs)
 
@@ -29,9 +30,9 @@ class VoiceClient(VoiceConnector):
 
         for Item in AddingData:
             self.player.add(Item)
-        
+
         return Data
-    
+
     @property
     def volume(self):
         return self._volume
