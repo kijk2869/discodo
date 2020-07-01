@@ -34,7 +34,7 @@ class Player(threading.Thread):
 
             if self.sources[0] == Source:
                 Source = self.sources[0] = Future.result()
-            
+
             if Source.volume != 1.0:
                 Source.volume = 1.0
                 print('set')
@@ -45,10 +45,10 @@ class Player(threading.Thread):
     def next(self):
         return self.sources[1] if self.sources and len(
             self.sources) > 1 else None
-    
+
     def nextReady(self):
         self.loop.create_task(self._nextReady())
-    
+
     async def _nextReady(self):
         Source = self.sources[1] if self.sources and len(
             self.sources) > 1 else None
@@ -57,7 +57,7 @@ class Player(threading.Thread):
 
             if self.sources[1] == Source:
                 Source = self.sources[1] = Data
-            
+
             if Source.volume != 0.0:
                 Source.volume = 0.0
 
@@ -71,12 +71,12 @@ class Player(threading.Thread):
             return
 
         Data = self.current.read()
-        
+
         if not Data:
             self.loop.call_soon_threadsafe(self.current.cleanup)
             del self.sources[0]
             self.speak(True)
-        
+
         if self.next and self.current.remain <= (PRELOAD_TIME + self.client.crossfade):
             if isinstance(self.next, AudioData) and not hasattr(self.next, '_called'):
                 self.next._called = True
@@ -86,10 +86,12 @@ class Player(threading.Thread):
 
                 CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
                 if self.next.volume < 1.0:
-                    self.next.volume = round(self.next.volume + CrossFadeVolume, 10)
+                    self.next.volume = round(
+                        self.next.volume + CrossFadeVolume, 10)
                 if self.current.volume > 0.0:
-                    self.current.volume = round(self.current.volume - CrossFadeVolume, 10)
-                
+                    self.current.volume = round(
+                        self.current.volume - CrossFadeVolume, 10)
+
                 Data = audioop.add(Data, NextData, 2)
 
         return Data
