@@ -117,7 +117,7 @@ class VoiceConnector:
                 await self.ws.poll()
             except ConnectionClosed:
                 self._connected.clear()
-            
+
                 try:
                     await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
                 except asyncio.TimeoutError:
