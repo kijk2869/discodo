@@ -1,12 +1,15 @@
 import asyncio
 from .event import DiscordEvent
 from .AudioSource import AudioData
+from .utils import EventEmitter
 
 
-class Client:
+class Node:
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.get('user_id')
         self.session_id = kwargs.get('session_id')
+
+        self.event = EventEmitter()
 
         self.voiceClients = {}
 
@@ -17,10 +20,10 @@ class Client:
 
         return await self.discordEvent.emit(Event, Data)
 
-    async def discordDispatch(self, data):
+    def discordDispatch(self, data):
         Event, Data = data['t'], data['d']
 
-        return await self.discordEvent.dispatch(Event, Data)
+        return self.discordEvent.dispatch(Event, Data)
 
     def getVC(self, guildID):
         return self.voiceClients.get(guildID)

@@ -1,4 +1,4 @@
-from .client import Client
+from .node import Node
 from .voice_connector import VoiceConnector
 from .voice_client import VoiceClient
 from .gateway import VoiceSocket

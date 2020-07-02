@@ -3,6 +3,7 @@ from logging import getLogger
 from .player import Player
 from .voice_connector import VoiceConnector
 from .AudioSource import AudioData, AudioSource
+from .utils import EventEmitter
 
 log = getLogger('discodo.VoiceClient')
 
@@ -14,12 +15,18 @@ class VoiceClient(VoiceConnector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.event = EventEmitter()
+        self.event.onAny(self.onAnyEvent)
+
         self.Queue = []
 
         self.player = None
 
         self._volume = DEFAULTVOLUME
         self._crossfade = DEFAULTCROSSFADE
+    
+    def onAnyEvent(self, event, *args, **kwargs):
+        self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
 
     def __del__(self):
         super().__del__()
@@ -45,6 +52,7 @@ class VoiceClient(VoiceConnector):
             return
 
         self.Queue.append(Data)
+        self.event.dispatch('putSong', song=Data.toDict(), index=self.Queue.index(Data))
 
         return self.Queue.index(Data)
 

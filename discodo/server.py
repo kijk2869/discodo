@@ -1,4 +1,4 @@
-from websocket import app as WebsocketBlueprint
+from .websocket import app as WebsocketBlueprint
 from sanic import Sanic
 import logging
 logging.basicConfig(level=logging.DEBUG)
