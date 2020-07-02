@@ -20,6 +20,16 @@ class VoiceClient(VoiceConnector):
 
         self._volume = DEFAULTVOLUME
         self._crossfade = DEFAULTCROSSFADE
+    
+    def __del__(self):
+        super().__del__()
+
+        if self.player and self.player.is_alive():
+            self.player.stop()
+        
+        for Item in self.Queue:
+            if isinstance(Item, AudioSource):
+                Item.cleanup()
 
     async def createSocket(self, *args, **kwargs):
         await super().createSocket(*args, **kwargs)

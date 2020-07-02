@@ -25,7 +25,7 @@ def _extract(query):
     YoutubePlaylistMatch = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if YoutubePlaylistMatch:
         if YoutubePlaylistMatch.group(1).startswith(('RD', 'UL', 'PU')):
-            option['playlist_items'] = '25'  # handle Youtube Mix Playlist
+            option['playlist_items'] = '1-25'  # handle Youtube Mix Playlist
 
         option['playliststart'] = int(YoutubePlaylistMatch.group(
             2)) if YoutubePlaylistMatch.group(2).isdigit() else 1

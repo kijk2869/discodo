@@ -3,10 +3,12 @@ import socket
 import struct
 import asyncio
 from logging import getLogger
+from websockets.exceptions import ConnectionClosed
 from .gateway import VoiceSocket
 from .encrypt import getEncryptModes
 from .natives import opus
 
+VCTIMEOUT = os.getenv('VCTIMEOUT', 300.0)
 SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
 FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
 SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
@@ -35,6 +37,19 @@ class VoiceConnector:
         self._polling = None
         self.encoder = opus.Encoder()
         self.loop.create_task(self.createSocket())
+    
+    def __del__(self):
+        if self.socket:
+            try:
+                self.socket.close()
+            except:
+                pass
+        
+        if self.ws:
+            self.loop.create_task(self.ws.close(4000))
+        
+        if self._polling:
+            self._polling.cancel()
 
     @property
     def sequence(self):
@@ -98,7 +113,11 @@ class VoiceConnector:
 
     async def pollingWs(self):
         while True:
-            await self.ws.poll()
+            try:
+                await self.ws.poll()
+            except ConnectionClosed:
+                self._connected.clear()
+                await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
 
     def makePacket(self, data):
         header = bytearray(12)
