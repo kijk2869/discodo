@@ -16,6 +16,7 @@ class AudioData:
             self.thumbnail = data.get('thumbnail')
             self.stream_url = data.get('url')
 
+        self.lyrics = data.get('subtitles')
         self.duration = data.get('duration')
         self.is_live = data.get('is_live', False)
 
@@ -45,6 +46,8 @@ class AudioData:
     async def source(self, *args, **kwargs):
         if not self.stream_url:
             await self.gather()
+
+        print(self.lyrics)
 
         if not self._source:
             self._source = AudioSource(

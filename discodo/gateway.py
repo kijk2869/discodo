@@ -208,11 +208,12 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def loadKey(self, data):
         log.info(f'recieved voice secret key.')
-        self.client.encryptMode = data['mode']
-        self.client.secretKey = data.get('secret_key')
 
         await self.speak(True)
         await self.speak(False)
+
+        self.client.encryptMode = data['mode']
+        self.client.secretKey = data.get('secret_key')
 
     async def poll(self):
         try:

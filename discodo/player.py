@@ -19,21 +19,20 @@ class Player(threading.Thread):
         self.loop = loop or asyncio.get_event_loop()
 
         self.client = voice_client
-        self.sources = []
 
         self._volume = volume
 
     @property
     def current(self):
-        Source = self.sources[0] if self.sources else None
+        Source = self.client.Queue[0] if self.client.Queue else None
         if Source and isinstance(Source, AudioData):
             Future = asyncio.run_coroutine_threadsafe(
                 Source.source(), self.loop)
             while not Future.done():
                 pass
 
-            if self.sources[0] == Source:
-                Source = self.sources[0] = Future.result()
+            if self.client.Queue[0] == Source:
+                Source = self.client.Queue[0] = Future.result()
 
             if Source.volume != 1.0:
                 Source.volume = 1.0
@@ -42,38 +41,33 @@ class Player(threading.Thread):
 
     @property
     def next(self):
-        return self.sources[1] if self.sources and len(
-            self.sources) > 1 else None
+        return self.client.Queue[1] if self.client.Queue and len(
+            self.client.Queue) > 1 else None
 
     def nextReady(self):
         self.loop.create_task(self._nextReady())
 
     async def _nextReady(self):
-        Source = self.sources[1] if self.sources and len(
-            self.sources) > 1 else None
+        Source = self.client.Queue[1] if self.client.Queue and len(
+            self.client.Queue) > 1 else None
         if Source and isinstance(Source, AudioData):
             Data = await Source.source()
 
-            if self.sources[1] == Source:
-                Source = self.sources[1] = Data
+            if self.client.Queue[1] == Source:
+                Source = self.client.Queue[1] = Data
 
             if Source.volume != 0.0:
                 Source.volume = 0.0
 
-    def add(self, AudioSource):
-        self.sources.append(AudioSource)
-
-        return self.sources.index(AudioSource)
-
     def makeFrame(self):
         if not self.current:
             return
-
+        
         Data = self.current.read()
 
         if not Data:
             self.loop.call_soon_threadsafe(self.current.cleanup)
-            del self.sources[0]
+            del self.client.Queue[0]
             self.speak(True)
 
         if self.next and self.current.remain <= (PRELOAD_TIME + self.client.crossfade):

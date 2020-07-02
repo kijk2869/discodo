@@ -1,19 +1,24 @@
+import os
 from logging import getLogger
 from .player import Player
 from .voice_connector import VoiceConnector
-from .AudioSource import AudioData
+from .AudioSource import AudioData, AudioSource
 
 log = getLogger('discodo.VoiceClient')
 
+DEFAULTVOLUME = os.getenv('DEFAULTVOLUME', 1.0)
+DEFAULTCROSSFADE = os.getenv('DEFAULTCROSSFADE', 10.0)
 
 class VoiceClient(VoiceConnector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.Queue = []
+
         self.player = None
 
-        self._volume = 1.0
-        self._crossfade = 20.0
+        self._volume = DEFAULTVOLUME
+        self._crossfade = DEFAULTCROSSFADE
 
     async def createSocket(self, *args, **kwargs):
         await super().createSocket(*args, **kwargs)
@@ -23,6 +28,14 @@ class VoiceClient(VoiceConnector):
             self.player.start()
         else:
             await self.ws.speak(True)
+    
+    def putSong(self, Data):
+        if not isinstance(Data, (AudioData, AudioSource)):
+            return
+            
+        self.Queue.append(Data)
+
+        return self.Queue.index(Data)
 
     async def loadSong(self, Query):
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
@@ -30,7 +43,7 @@ class VoiceClient(VoiceConnector):
         AddingData = [Data] if not isinstance(Data, list) else Data
 
         for Item in AddingData:
-            self.player.add(Item)
+            self.putSong(Item)
 
         return Data
 

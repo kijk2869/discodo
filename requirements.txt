@@ -3,3 +3,4 @@ av
 argparse
 youtube_dl
 markdownify
+aiohttp

@@ -26,29 +26,46 @@ class EventEmitter:
     def offAny(self, func):
         self._Any.remove(func)
         return self
+    
+    async def _runFuncAsync(self, func, *args, **kwargs):
+        try:
+            if asyncio.iscoroutinefunction(func):
+                await func(*args, **kwargs)
+            else:
+                func(*args, **kwargs)
+        except:
+            traceback.print_exc()
+    
+    def _runFuncSync(self, func, *args, **kwargs):
+        try:
+            if asyncio.iscoroutinefunction(func):
+                self.loop.create_task(func(*args, **kwargs))
+            else:
+                self.loop.call_soon_threadsafe(func(*args, **kwargs))
+        except:
+            traceback.print_exc()
 
     async def emit(self, event: str, *args, **kwargs):
         if self._Any:
             for func in self._Any:
-                try:
-                    if asyncio.iscoroutinefunction(func):
-                        await func(*args, **kwargs)
-                    else:
-                        func(*args, **kwargs)
-                except:
-                    traceback.print_exc()
+                await self._runFuncAsync(func, *args, **kwargs)
 
         if not event in self._Events:
             return
 
         for func in self._Events[event]:
-            try:
-                if asyncio.iscoroutinefunction(func):
-                    await func(*args, **kwargs)
-                else:
-                    func(*args, **kwargs)
-            except:
-                traceback.print_exc()
+            await self._runFuncAsync(func, *args, **kwargs)
+
+    async def dispatch(self, event: str, *args, **kwargs):
+        if self._Any:
+            for func in self._Any:
+                self._runFuncSync(func, *args, **kwargs)
+
+        if not event in self._Events:
+            return
+
+        for func in self._Events[event]:
+            self._runFuncSync(func, *args, **kwargs)
 
     def event(self, event: str):
         def wrapper(func):
