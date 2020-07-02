@@ -14,8 +14,10 @@ WEBSOCKETTIMEOUT = os.getenv('WEBSOCKETTIMEOUT', 60.0)
 
 app = Blueprint(__name__)
 
+
 async def sendJson(ws, Data):
     return await ws.send(json.dumps(Data))
+
 
 @app.websocket('/')
 async def feed(request, ws):
@@ -37,6 +39,7 @@ async def feed(request, ws):
 
         print(Data)
 
+
 async def initial_connection(ws):
     payload = {
         'op': 'INITIAL_CONNECTION',
@@ -48,6 +51,7 @@ async def initial_connection(ws):
     }
 
     await sendJson(ws, payload)
+
 
 async def authentication_failed(ws):
     payload = {

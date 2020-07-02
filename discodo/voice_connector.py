@@ -37,17 +37,17 @@ class VoiceConnector:
         self._polling = None
         self.encoder = opus.Encoder()
         self.loop.create_task(self.createSocket())
-    
+
     def __del__(self):
         if self.socket:
             try:
                 self.socket.close()
             except:
                 pass
-        
+
         if self.ws:
             self.loop.create_task(self.ws.close(4000))
-        
+
         if self._polling:
             self._polling.cancel()
 

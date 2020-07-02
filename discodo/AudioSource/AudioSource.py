@@ -17,7 +17,7 @@ class AudioSource:
         self.AVDurationLoaded = False
 
         self._duration = 0.0
-    
+
     def __del__(self):
         self.cleanup()
 
