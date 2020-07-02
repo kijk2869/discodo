@@ -56,8 +56,8 @@ class Player(threading.Thread):
             if self.client.Queue[1] == Source:
                 Source = self.client.Queue[1] = Data
 
-            if Source.volume != 0.0:
-                Source.volume = 0.0
+            if Data.volume != 0.0:
+                Data.volume = 0.0
 
     def makeFrame(self):
         if not self.current:
