@@ -24,7 +24,7 @@ class VoiceClient(VoiceConnector):
 
         self._volume = DEFAULTVOLUME
         self._crossfade = DEFAULTCROSSFADE
-    
+
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
 
@@ -52,7 +52,8 @@ class VoiceClient(VoiceConnector):
             return
 
         self.Queue.append(Data)
-        self.event.dispatch('putSong', song=Data.toDict(), index=self.Queue.index(Data))
+        self.event.dispatch('putSong', song=Data.toDict(),
+                            index=self.Queue.index(Data))
 
         return self.Queue.index(Data)
 

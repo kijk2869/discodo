@@ -47,7 +47,7 @@ async def feed(request, ws):
         }
 
         await sendJson(payload)
-    
+
     async def discodoEvent(guild_id, event, *args, **kwargs):
         payload = {
             'op': event,
@@ -56,7 +56,7 @@ async def feed(request, ws):
         }
 
         await sendJson(payload)
-    
+
     async def identify(Data):
         if Data['user_id'] in request.app.Nodes:
             payload = {
@@ -64,16 +64,17 @@ async def feed(request, ws):
                 'd': 'Node already initialized.'
             }
         else:
-            request.app.Nodes[Data['user_id']] = Node(user_id=Data['user_id'], session_id=Data.get('session_id'))
+            request.app.Nodes[Data['user_id']] = Node(
+                user_id=Data['user_id'], session_id=Data.get('session_id'))
             request.app.Nodes[Data['user_id']].event.onAny(discodoEvent)
-            
+
             payload = {
                 'op': 'IDENTIFIED',
                 'd': 'Node initialized.'
             }
         _Node = request.app.Nodes[Data['user_id']]
         await sendJson(payload)
-    
+
     async def heartbeat(Data):
         payload = {
             'op': 'HEARTBEAT_ACK',

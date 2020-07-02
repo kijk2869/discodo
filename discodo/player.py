@@ -36,10 +36,11 @@ class Player(threading.Thread):
 
             if Source.volume != 1.0:
                 Source.volume = 1.0
-        
+
             if not hasattr(Source, '_dispatched'):
                 Source._dispatched = True
-                self.client.event.dispatch('SongStart', song=Source.AudioData.toDict())
+                self.client.event.dispatch(
+                    'SongStart', song=Source.AudioData.toDict())
 
         return Source
 
@@ -47,11 +48,12 @@ class Player(threading.Thread):
     def next(self):
         Source = self.client.Queue[1] if self.client.Queue and len(
             self.client.Queue) > 1 else None
-        
+
         if Source and isinstance(Source, AudioSource) and not hasattr(Source, '_dispatched'):
             Source._dispatched = True
-            self.client.event.dispatch('SongStart', song=Source.AudioData.toDict())
-        
+            self.client.event.dispatch(
+                'SongStart', song=Source.AudioData.toDict())
+
         return Source
 
     def nextReady(self):
@@ -77,7 +79,8 @@ class Player(threading.Thread):
 
         if not Data:
             self.loop.call_soon_threadsafe(self.current.cleanup)
-            self.client.event.dispatch('SongEnd', song=self.current.AudioData.toDict())
+            self.client.event.dispatch(
+                'SongEnd', song=self.current.AudioData.toDict())
             del self.client.Queue[0]
             self.speak(True)
 

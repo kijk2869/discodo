@@ -57,7 +57,8 @@ class EventEmitter:
                     if asyncio.iscoroutinefunction(func):
                         self.loop.create_task(func(event, *args, **kwargs))
                     else:
-                        self.loop.call_soon_threadsafe(functools.partial(func, event, *args, **kwargs))
+                        self.loop.call_soon_threadsafe(
+                            functools.partial(func, event, *args, **kwargs))
                 except:
                     traceback.print_exc()
 
@@ -69,7 +70,8 @@ class EventEmitter:
                 if asyncio.iscoroutinefunction(func):
                     self.loop.create_task(func(*args, **kwargs))
                 else:
-                    self.loop.call_soon_threadsafe(functools.partial(func, *args, **kwargs))
+                    self.loop.call_soon_threadsafe(
+                        functools.partial(func, *args, **kwargs))
             except:
                 traceback.print_exc()
 
