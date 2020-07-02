@@ -26,7 +26,7 @@ class EventEmitter:
     def offAny(self, func):
         self._Any.remove(func)
         return self
-    
+
     async def _runFuncAsync(self, func, *args, **kwargs):
         try:
             if asyncio.iscoroutinefunction(func):
@@ -35,7 +35,7 @@ class EventEmitter:
                 func(*args, **kwargs)
         except:
             traceback.print_exc()
-    
+
     def _runFuncSync(self, func, *args, **kwargs):
         try:
             if asyncio.iscoroutinefunction(func):

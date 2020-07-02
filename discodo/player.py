@@ -62,7 +62,7 @@ class Player(threading.Thread):
     def makeFrame(self):
         if not self.current:
             return
-        
+
         Data = self.current.read()
 
         if not Data:

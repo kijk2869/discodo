@@ -33,12 +33,12 @@ class Client:
 
     async def loadSong(self, guildID, *args, **kwargs):
         return await self.getVC(guildID).loadSong(*args, **kwargs)
-    
+
     def setVolume(self, guildID, value):
         self.getVC(guildID).volume = value
 
         return self.getVC(guildID).volume
-    
+
     def setCrossfade(self, guildID, value):
         self.getVC(guildID).crossfade = value
 

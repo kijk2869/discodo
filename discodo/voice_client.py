@@ -9,6 +9,7 @@ log = getLogger('discodo.VoiceClient')
 DEFAULTVOLUME = os.getenv('DEFAULTVOLUME', 1.0)
 DEFAULTCROSSFADE = os.getenv('DEFAULTCROSSFADE', 10.0)
 
+
 class VoiceClient(VoiceConnector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,11 +29,11 @@ class VoiceClient(VoiceConnector):
             self.player.start()
         else:
             await self.ws.speak(True)
-    
+
     def putSong(self, Data):
         if not isinstance(Data, (AudioData, AudioSource)):
             return
-            
+
         self.Queue.append(Data)
 
         return self.Queue.index(Data)
