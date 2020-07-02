@@ -117,7 +117,11 @@ class VoiceConnector:
                 await self.ws.poll()
             except ConnectionClosed:
                 self._connected.clear()
-                await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
+            
+                try:
+                    await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
+                except asyncio.TimeoutError:
+                    return self.__del__()
 
     def makePacket(self, data):
         header = bytearray(12)
