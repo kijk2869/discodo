@@ -19,8 +19,10 @@ app = Blueprint(__name__)
 @app.websocket('/')
 async def feedStarter(request, ws):
     Event = asyncio.Event()
-    Future = request.app.loop.create_task(WebsocketFeeder().feed(request, ws, Event))
+    Future = request.app.loop.create_task(
+        WebsocketFeeder().feed(request, ws, Event))
     await Event.wait()
+
 
 class WebsocketFeeder:
     def __init__(self):
@@ -31,7 +33,7 @@ class WebsocketFeeder:
     async def sendJson(self, Data):
         log.debug(f'send to {self.request.socket}: {Data}')
         return await self.ws.send(json.dumps(Data))
-            
+
     async def initial_connection(self):
         payload = {
             'op': 'INITIAL_CONNECTION',
@@ -43,7 +45,7 @@ class WebsocketFeeder:
         }
 
         await self.sendJson(payload)
-    
+
     async def authentication_failed(self):
         payload = {
             'op': 'AUTHENTICATION_FAILED',
@@ -51,7 +53,7 @@ class WebsocketFeeder:
         }
 
         await self.sendJson(payload)
-    
+
     async def discodoEvent(self, guild_id, event, *args, **kwargs):
         payload = {
             'op': event,
@@ -60,7 +62,7 @@ class WebsocketFeeder:
         }
 
         await self.sendJson(payload)
-    
+
     async def identify(self, Data):
         if Data['user_id'] in self.request.app.Nodes:
             payload = {
@@ -70,7 +72,8 @@ class WebsocketFeeder:
         else:
             self.request.app.Nodes[Data['user_id']] = Node(
                 user_id=Data['user_id'], session_id=Data.get('session_id'))
-            self.request.app.Nodes[Data['user_id']].event.onAny(self.discodoEvent)
+            self.request.app.Nodes[Data['user_id']
+                                   ].event.onAny(self.discodoEvent)
 
             payload = {
                 'op': 'IDENTIFIED',
@@ -78,7 +81,7 @@ class WebsocketFeeder:
             }
         self._Node = self.request.app.Nodes[Data['user_id']]
         await self.sendJson(payload)
-    
+
     async def heartbeat(self, Data):
         payload = {
             'op': 'HEARTBEAT_ACK',
@@ -86,7 +89,7 @@ class WebsocketFeeder:
         }
 
         await self.sendJson(payload)
-    
+
     async def discord_event(self, Data):
         if self._Node:
             self._Node.discordDispatch(Data)
