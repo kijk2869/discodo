@@ -32,7 +32,8 @@ class DiscordEvent:
         self.client.session_id = data['session_id']
 
     async def parseVoiceStateUpdate(self, data):
-        if data["user_id"] != str(self.client.user_id): return
+        if data["user_id"] != str(self.client.user_id):
+            return
         log.info(f'recieve self voice update. set session id {data["session_id"]}')
         self.client.session_id = data['session_id']
 
