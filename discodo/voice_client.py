@@ -66,7 +66,7 @@ class VoiceClient(VoiceConnector):
             self.putSong(Item)
 
         return Data
-    
+
     def seek(self, offset):
         if not self.player.current:
             raise ValueError
