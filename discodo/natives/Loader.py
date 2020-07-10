@@ -56,7 +56,7 @@ class Loader:
             self.start()
 
         self.AudioFifo.reset()
-    
+
     def reloadResampler(self):
         self.Resampler = av.AudioResampler(
             format=av.AudioFormat('s16').packed,
