@@ -25,11 +25,8 @@ class Loader:
 
         self.StreamConainer = None
         self.FilterGraph = None
-        self.Resampler = av.AudioResampler(
-            format=av.AudioFormat('s16').packed,
-            layout='stereo' if CHANNELS >= 2 else 'mono',
-            rate=SAMPLING_RATE
-        )
+        self.Resampler = None
+        self.reloadResampler()
         self.AudioFifo = AudioFifo
 
     def start(self):
@@ -51,12 +48,21 @@ class Loader:
         self.reload()
 
     def reload(self):
+        self.reloadResampler()
+
         if not self._buffering.locked():
             if self._end.is_set():
                 self._end.clear()
             self.start()
 
         self.AudioFifo.reset()
+    
+    def reloadResampler(self):
+        self.Resampler = av.AudioResampler(
+            format=av.AudioFormat('s16').packed,
+            layout='stereo' if CHANNELS >= 2 else 'mono',
+            rate=SAMPLING_RATE
+        )
 
     def stop(self):
         self._end.set()
@@ -91,6 +97,9 @@ class BufferLoader(threading.Thread):
                 if self.Loader.FilterGraph:
                     self.Loader.FilterGraph.push(Frame)
                     Frame = self.Loader.FilterGraph.pull()
+
+                    if not Frame:
+                        continue
 
                 Frame.pts = None
                 Frame = self.Loader.Resampler.resample(Frame)
