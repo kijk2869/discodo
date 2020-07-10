@@ -112,7 +112,7 @@ class Player(threading.Thread):
     def _do_run(self):
         self.loops = 0
         _start = time.perf_counter()
-        
+
         while not self._end.is_set():
             if not self.client._connected.is_set():
                 while not self.client._connected.is_set():

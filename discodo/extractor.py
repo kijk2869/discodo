@@ -36,7 +36,7 @@ def _extract(query):
 
     YoutubeDL = YoutubeDLClient(option)
     Data = YoutubeDL.extract_info(query, download=False)
-    
+
     if 'entries' in Data:
         return Data['entries']
 
