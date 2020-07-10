@@ -19,6 +19,7 @@ class Player(threading.Thread):
         self.loop = loop or asyncio.get_event_loop()
 
         self.client = voice_client
+        self.speakState = False
 
         self._volume = volume
 
@@ -111,8 +112,7 @@ class Player(threading.Thread):
     def _do_run(self):
         self.loops = 0
         _start = time.perf_counter()
-
-        self.speak(True)
+        
         while not self._end.is_set():
             if not self.client._connected.is_set():
                 while not self.client._connected.is_set():
@@ -129,10 +129,15 @@ class Player(threading.Thread):
                     self._volume = round(self._volume - 0.01, 3)
 
             if Data:
+                if not self.speakState:
+                    self.speak(True)
+
                 if self._volume != 1.0:
                     Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
                 self.client.send(Data)
+            elif self.speakState:
+                self.speak(False)
 
             self.loops += 1
             nextTime = _start + DELAY * self.loops
@@ -149,5 +154,6 @@ class Player(threading.Thread):
         self.speak(False)
 
     def speak(self, value):
+        self.speakState = value
         asyncio.run_coroutine_threadsafe(
             self.client.ws.speak(value), self.client.loop)

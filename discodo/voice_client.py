@@ -49,7 +49,7 @@ class VoiceClient(VoiceConnector):
 
     def putSong(self, Data):
         if not isinstance(Data, (AudioData, AudioSource)):
-            return
+            raise ValueError
 
         self.Queue.append(Data)
         self.event.dispatch('putSong', song=Data.toDict(),
@@ -66,6 +66,12 @@ class VoiceClient(VoiceConnector):
             self.putSong(Item)
 
         return Data
+    
+    def seek(self, offset):
+        if not self.player.current:
+            raise ValueError
+
+        self.player.current.seek(offset)
 
     @property
     def volume(self):
