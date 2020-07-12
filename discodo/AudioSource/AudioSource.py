@@ -1,7 +1,7 @@
 import time
 import audioop
 import traceback
-from ..natives import AudioFifo, Loader
+from ..natives import AudioFifo, Loader, AudioFilter
 
 
 class AudioSource:
@@ -15,6 +15,9 @@ class AudioSource:
         self.AudioData = AudioData
 
         self.AVDurationLoaded = False
+
+        self._filter = {}
+        self._filterGraph = None
 
         self._duration = 0.0
         self.stopped = False
@@ -37,6 +40,21 @@ class AudioSource:
     @property
     def remain(self):
         return round(self.AudioData.duration - self.duration, 2)
+    
+    @property
+    def filter(self):
+        return self._filter
+    
+    @filter.setter
+    def filter(self, value):
+        self._filter = value
+        self._filterGraph = AudioFilter()
+
+        self._filterGraph.selectAudioStream = self.Loader.selectAudioStream
+        self._filterGraph.setFilters(value)
+        self.Loader.FilterGraph = self._filterGraph
+
+        self.seek(round(self.duration))
 
     def read(self):
         if not self.AudioFifo:
@@ -57,7 +75,7 @@ class AudioSource:
         if Data and self.volume != 1.0:
             Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
-        self._duration += 0.02
+        self._duration += 0.02 * float(self._filter.get('atempo', '1.0'))
         self._duration = round(self._duration, 2)
 
         return Data

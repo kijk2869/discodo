@@ -4,6 +4,7 @@ import audioop
 import asyncio
 import logging
 import threading
+import traceback
 from .AudioSource import AudioData, AudioSource
 
 PRELOAD_TIME = os.getenv('PRELOAD_TIME', 10)
@@ -101,7 +102,7 @@ class Player(threading.Thread):
                         self.current.volume - CrossFadeVolume, 10)
 
                 Data = audioop.add(Data, NextData, 2)
-        elif self.current.stopped:
+        elif self.current and self.current.stopped:
             self.current.stop()
         else:
             if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
@@ -116,34 +117,37 @@ class Player(threading.Thread):
         _start = time.perf_counter()
 
         while not self._end.is_set():
-            if not self.client._connected.is_set():
-                while not self.client._connected.is_set():
-                    pass
-                self.loops = 0
-                _start = time.perf_counter()
+            try:
+                if not self.client._connected.is_set():
+                    while not self.client._connected.is_set():
+                        pass
+                    self.loops = 0
+                    _start = time.perf_counter()
 
-            Data = self.makeFrame()
+                Data = self.makeFrame()
 
-            if self._volume != self.client.volume:
-                if self._volume < self.client.volume:
-                    self._volume = round(self._volume + 0.01, 3)
-                if self._volume > self.client.volume:
-                    self._volume = round(self._volume - 0.01, 3)
+                if self._volume != self.client.volume:
+                    if self._volume < self.client.volume:
+                        self._volume = round(self._volume + 0.01, 3)
+                    if self._volume > self.client.volume:
+                        self._volume = round(self._volume - 0.01, 3)
 
-            if Data:
-                if not self.speakState:
-                    self.speak(True)
+                if Data:
+                    if not self.speakState:
+                        self.speak(True)
 
-                if self._volume != 1.0:
-                    Data = audioop.mul(Data, 2, min(self._volume, 2.0))
+                    if self._volume != 1.0:
+                        Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
-                self.client.send(Data)
-            elif self.speakState:
-                self.speak(False)
+                    self.client.send(Data)
+                elif self.speakState:
+                    self.speak(False)
 
-            self.loops += 1
-            nextTime = _start + DELAY * self.loops
-            time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
+                self.loops += 1
+                nextTime = _start + DELAY * self.loops
+                time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
+            except:
+                traceback.print_exc()
 
     def run(self):
         try:
