@@ -70,7 +70,7 @@ class AudioSource:
                      1) if self.AudioData.duration else max(offset, 1)
         self.Loader.seek(offset * 1000000, any_frame=True)
         self._duration = offset
-    
+
     def stop(self):
         self.stopped = True
         return self.stopped
