@@ -17,6 +17,7 @@ class AudioSource:
         self.AVDurationLoaded = False
 
         self._duration = 0.0
+        self.stopped = False
 
     def __del__(self):
         self.cleanup()
@@ -43,11 +44,11 @@ class AudioSource:
 
         Data = self.AudioFifo.read()
 
-        if not self.AVDurationLoaded and self.Loader.duration:
+        if not self.AVDurationLoaded and self.Loader and self.Loader.duration:
             self.AudioData.duration = self.Loader.duration
             self.AVDurationLoaded = True
 
-        if not Data and self.Loader._buffering.locked():
+        if not Data and self.Loader and self.Loader._buffering.locked():
             while self.Loader._buffering.locked():
                 Data = self.AudioFifo.read()
                 if Data:
@@ -62,10 +63,17 @@ class AudioSource:
         return Data
 
     def seek(self, offset):
+        if not self.Loader:
+            raise ValueError
+
         offset = min(max(offset, 1), self.AudioData.duration -
                      1) if self.AudioData.duration else max(offset, 1)
         self.Loader.seek(offset * 1000000, any_frame=True)
         self._duration = offset
+    
+    def stop(self):
+        self.stopped = True
+        return self.stopped
 
     def cleanup(self):
         self.Loader.stop()

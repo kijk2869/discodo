@@ -176,7 +176,6 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         elif Operation == self.SESSION_DESCRIPTION:
             await self.loadKey(Data)
         elif Operation == self.HELLO:
-            print('new keepaliver started' * 150)
             interval = Data['heartbeat_interval'] / 1000.0
             self._keepAliver = keepAlive(self, min(interval, 5.0))
             self._keepAliver.start()
@@ -221,7 +220,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             Message = await asyncio.wait_for(self.recv(), timeout=30.0)
             await self.receive(json.loads(Message))
         except websockets.exceptions.ConnectionClosed as exc:
-            raise websockets.exceptions.ConnectionClosed
+            raise exc
 
     async def close(self, *args, **kwargs):
         if self._keepAliver:
