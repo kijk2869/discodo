@@ -101,7 +101,7 @@ class VoiceConnector:
 
         if hasattr(self, 'secretKey'):
             del self.secretKey
-
+        
         self.ws = await VoiceSocket.connect(self)
         while not hasattr(self, 'secretKey'):
             await self.ws.poll()

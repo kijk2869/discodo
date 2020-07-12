@@ -24,7 +24,7 @@ class keepAlive(threading.Thread):
         self.latency = None
         self.recent_latencies = deque(maxlen=20)
 
-        self._lastAck = self._lastSend = 0.0
+        self._lastAck = self._lastSend = time.perf_counter()
         self.timeout = ws.heartbeatTimeout
         self.threadId = ws.threadId
 
