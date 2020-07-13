@@ -19,6 +19,7 @@ class VoiceClient(VoiceConnector):
         self.event.onAny(self.onAnyEvent)
 
         self.Queue = []
+        self._filter = {}
 
         self.player = None
 
@@ -99,3 +100,11 @@ class VoiceClient(VoiceConnector):
     @crossfade.setter
     def crossfade(self, value):
         self._crossfade = round(max(value, 0.0), 1)
+
+    @property
+    def filter(self):
+        return self._filter
+    
+    @filter.setter
+    def filter(self, value):
+        self._filter = value

@@ -27,22 +27,25 @@ class Player(threading.Thread):
     @property
     def current(self):
         Source = self.client.Queue[0] if self.client.Queue else None
-        if Source and isinstance(Source, AudioData):
-            Future = asyncio.run_coroutine_threadsafe(
-                Source.source(), self.loop)
-            while not Future.done():
-                pass
+        if Source:
+            if isinstance(Source, AudioData):
+                Future = asyncio.run_coroutine_threadsafe(
+                    Source.source(), self.loop)
+                while not Future.done():
+                    pass
 
-            if self.client.Queue[0] == Source:
-                Source = self.client.Queue[0] = Future.result()
+                if self.client.Queue[0] == Source:
+                    Source = self.client.Queue[0] = Future.result()
 
-            if Source.volume != 1.0:
-                Source.volume = 1.0
+                if Source.volume != 1.0:
+                    Source.volume = 1.0
 
-            if not hasattr(Source, '_dispatched'):
-                Source._dispatched = True
-                self.client.event.dispatch(
-                    'SongStart', song=Source.AudioData.toDict())
+                if not hasattr(Source, '_dispatched'):
+                    Source._dispatched = True
+                    self.client.event.dispatch(
+                        'SongStart', song=Source.AudioData.toDict())
+            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter:
+                Source.filter = self.client.filter
 
         return Source
 
@@ -51,10 +54,13 @@ class Player(threading.Thread):
         Source = self.client.Queue[1] if self.client.Queue and len(
             self.client.Queue) > 1 else None
 
-        if Source and isinstance(Source, AudioSource) and not hasattr(Source, '_dispatched'):
-            Source._dispatched = True
-            self.client.event.dispatch(
-                'SongStart', song=Source.AudioData.toDict())
+        if Source and isinstance(Source, AudioSource):
+            if not hasattr(Source, '_dispatched'):
+                Source._dispatched = True
+                self.client.event.dispatch(
+                    'SongStart', song=Source.AudioData.toDict())
+            if Source.filter != self.client.filter:
+                Source.filter = self.client.filter
 
         return Source
 
@@ -64,14 +70,17 @@ class Player(threading.Thread):
     async def _nextReady(self):
         Source = self.client.Queue[1] if self.client.Queue and len(
             self.client.Queue) > 1 else None
-        if Source and isinstance(Source, AudioData):
-            Data = await Source.source()
+        if Source:
+            if isinstance(Source, AudioData):
+                Data = await Source.source()
 
-            if self.client.Queue[1] == Source:
-                Source = self.client.Queue[1] = Data
+                if self.client.Queue[1] == Source:
+                    Source = self.client.Queue[1] = Data
 
-            if Data.volume != 0.0:
-                Data.volume = 0.0
+                if Data.volume != 0.0:
+                    Data.volume = 0.0
+            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter:
+                Source.filter = self.client.filter
 
     def makeFrame(self):
         if not self.current:
