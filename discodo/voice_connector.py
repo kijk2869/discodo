@@ -135,7 +135,7 @@ class VoiceConnector:
         encryptPacket = getEncryptModes()[self.encryptMode]
         return encryptPacket(self.secretKey, header, data)
 
-    def send(self, data: bytes, encode: bool=True):
+    def send(self, data: bytes, encode: bool = True):
         self.sequence += 1
         if encode:
             data = self.encoder.encode(data)

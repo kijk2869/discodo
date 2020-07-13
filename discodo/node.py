@@ -35,7 +35,7 @@ class Node:
     async def putSong(self, guildID: int, *args, **kwargs) -> AudioData:
         return await self.getVC(guildID).putSong(*args, **kwargs)
 
-    async def loadSong(self, guildID: int, *args, **kwargs)  -> AudioData:
+    async def loadSong(self, guildID: int, *args, **kwargs) -> AudioData:
         return await self.getVC(guildID).loadSong(*args, **kwargs)
 
     def setVolume(self, guildID: int, value: float) -> float:

@@ -38,7 +38,8 @@ def _extract(query: str) -> Optional[dict]:
     YoutubeDL = YoutubeDLClient(option)
     Data = YoutubeDL.extract_info(query, download=False)
 
-    if not Data: return
+    if not Data:
+        return
 
     if 'entries' in Data:
         return Data['entries']

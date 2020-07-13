@@ -58,7 +58,7 @@ class VoiceClient(VoiceConnector):
 
         return self.Queue.index(Data)
 
-    async def loadSong(self, Query:str) -> AudioData:
+    async def loadSong(self, Query: str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
 
         AddingData = [Data] if not isinstance(Data, list) else Data
@@ -74,7 +74,7 @@ class VoiceClient(VoiceConnector):
 
         self.player.current.seek(offset)
 
-    def skip(self, offset: int=1):
+    def skip(self, offset: int = 1):
         if not self.player.current:
             raise ValueError
 
