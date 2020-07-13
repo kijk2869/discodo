@@ -48,7 +48,7 @@ class AudioSource:
     @filter.setter
     def filter(self, value):
         self._filter = value
-        
+
         if value:
             self._filterGraph = AudioFilter()
 
@@ -56,7 +56,7 @@ class AudioSource:
             self._filterGraph.setFilters(value)
         else:
             self._filterGraph = None
-            
+
         self.Loader.FilterGraph = self._filterGraph
         self.seek(round(self.duration))
 
