@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from re import compile as Regex
+from typing import Optional
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
 log = logging.getLogger("discodo.extractor")
@@ -9,7 +10,7 @@ YOUTUBE_PLAYLIST_ID_REGEX = Regex(
     r'(?:http|https|)(?::\/\/|)(?:www.|)(?:music.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{12,})[a-z0-9;:@#?&%=+\/\$_.-]*(?:&index=|)([0-9]*)?')
 
 
-def _extract(query):
+def _extract(query: str) -> Optional[dict]:
     option = {
         'format': '(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]',
         'nocheckcertificate': True,
@@ -36,6 +37,8 @@ def _extract(query):
 
     YoutubeDL = YoutubeDLClient(option)
     Data = YoutubeDL.extract_info(query, download=False)
+
+    if not Data: return
 
     if 'entries' in Data:
         return Data['entries']

@@ -5,6 +5,7 @@ import asyncio
 import logging
 import threading
 import traceback
+from typing import Union
 from .AudioSource import AudioData, AudioSource
 
 PRELOAD_TIME = os.getenv('PRELOAD_TIME', 10)
@@ -25,7 +26,7 @@ class Player(threading.Thread):
         self._volume = volume
 
     @property
-    def current(self):
+    def current(self) -> AudioSource:
         Source = self.client.Queue[0] if self.client.Queue else None
         if Source:
             if isinstance(Source, AudioData):
@@ -50,7 +51,7 @@ class Player(threading.Thread):
         return Source
 
     @property
-    def next(self):
+    def next(self) -> AudioSource:
         Source = self.client.Queue[1] if self.client.Queue and len(
             self.client.Queue) > 1 else None
 
@@ -82,7 +83,7 @@ class Player(threading.Thread):
             elif isinstance(Source, AudioSource) and Source.filter != self.client.filter and hasattr(Source.Loader, 'selectAudioStream'):
                 Source.filter = self.client.filter
 
-    def makeFrame(self):
+    def makeFrame(self) -> bytes:
         if not self.current:
             return
 

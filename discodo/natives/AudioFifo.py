@@ -18,7 +18,7 @@ class AudioFifo(av.AudioFifo):
         self.haveToFillBuffer = threading.Event()
         self.haveToFillBuffer.set()
 
-    def read(self, samples=SAMPLES_PER_FRAME):
+    def read(self, samples: int=SAMPLES_PER_FRAME) -> bytes:
         AudioFrame = super().read(samples)
         if not AudioFrame:
             return

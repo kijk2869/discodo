@@ -27,7 +27,7 @@ class srv1:
         self.current = None
 
     @classmethod
-    async def load(cls, URL):
+    async def load(cls, URL: str):
         async with ClientSession() as session:
             async with session.get(URL) as session:
                 Data = await session.text()
@@ -35,7 +35,7 @@ class srv1:
         Tree = ElementTree.fromstring(Data)
         return cls(Tree)
 
-    def seek(self, time):
+    def seek(self, time: float) -> str:
         self.time = float(time)
 
         if not self.current or not self.current['start'] <= self.time < self.current['end']:
@@ -46,15 +46,15 @@ class srv1:
         return self.lyrics
 
     @property
-    def json(self):
+    def json(self) -> dict:
         return self.TextElements
 
     @property
-    def lyrics(self):
+    def lyrics(self) -> str:
         if self.current:
             return self.current
         return None
 
     @property
-    def is_done(self):
+    def is_done(self) -> bool:
         return self.time >= self.duration

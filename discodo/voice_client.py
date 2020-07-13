@@ -48,7 +48,7 @@ class VoiceClient(VoiceConnector):
         else:
             await self.ws.speak(True)
 
-    def putSong(self, Data):
+    def putSong(self, Data: AudioData) -> int:
         if not isinstance(Data, (AudioData, AudioSource)):
             raise ValueError
 
@@ -58,7 +58,7 @@ class VoiceClient(VoiceConnector):
 
         return self.Queue.index(Data)
 
-    async def loadSong(self, Query):
+    async def loadSong(self, Query:str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
 
         AddingData = [Data] if not isinstance(Data, list) else Data
@@ -68,13 +68,13 @@ class VoiceClient(VoiceConnector):
 
         return Data
 
-    def seek(self, offset):
+    def seek(self, offset: int):
         if not self.player.current:
             raise ValueError
 
         self.player.current.seek(offset)
 
-    def skip(self, offset=1):
+    def skip(self, offset: int=1):
         if not self.player.current:
             raise ValueError
 
@@ -86,25 +86,25 @@ class VoiceClient(VoiceConnector):
         self.player.current.stop()
 
     @property
-    def volume(self):
+    def volume(self) -> float:
         return self._volume
 
     @volume.setter
-    def volume(self, value):
+    def volume(self, value: float):
         self._volume = round(max(value, 0.0), 2)
 
     @property
-    def crossfade(self):
+    def crossfade(self) -> float:
         return self._crossfade
 
     @crossfade.setter
-    def crossfade(self, value):
+    def crossfade(self, value: float):
         self._crossfade = round(max(value, 0.0), 1)
 
     @property
-    def filter(self):
+    def filter(self) -> dict:
         return self._filter
 
     @filter.setter
-    def filter(self, value):
+    def filter(self, value: dict):
         self._filter = value

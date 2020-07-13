@@ -34,10 +34,10 @@ class Loader:
         self.BufferLoader.start()
 
     @property
-    def duration(self):
+    def duration(self) -> float:
         return round(self.StreamConainer.duration / 1000000) if self.StreamConainer else None
 
-    def seek(self, offset, *args, **kwargs):
+    def seek(self, offset: float, *args, **kwargs):
         if not self.StreamConainer and not self._buffering.locked():
             self.StreamConainer = av.open(self.Source, options=AVOption)
         elif not self.StreamConainer:

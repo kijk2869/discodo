@@ -29,7 +29,7 @@ class AudioData:
         self._source = None
 
     @classmethod
-    async def create(cls, query):
+    async def create(cls, query: str):
         Data = await extract(query)
 
         if isinstance(Data, list):
@@ -43,7 +43,7 @@ class AudioData:
 
         return self
 
-    async def source(self, *args, **kwargs):
+    async def source(self, *args, **kwargs) -> AudioSource:
         if not self.stream_url:
             await self.gather()
 
@@ -53,7 +53,7 @@ class AudioData:
 
         return self._source
 
-    def toDict(self):
+    def toDict(self) -> dict:
         return {
             'id': self.id,
             'title': self.title,

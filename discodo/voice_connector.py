@@ -52,22 +52,22 @@ class VoiceConnector:
             self._polling.cancel()
 
     @property
-    def sequence(self):
+    def sequence(self) -> int:
         return self._sequence
 
     @sequence.setter
-    def sequence(self, value):
+    def sequence(self, value: int):
         if self._sequence + value > 65535:
             self._sequence = 0
         else:
             self._sequence = value
 
     @property
-    def timestamp(self):
+    def timestamp(self) -> int:
         return self._timestamp
 
     @timestamp.setter
-    def timestamp(self, value):
+    def timestamp(self, value: int):
         if self._timestamp + value > 4294967295:
             self._timestamp = 0
         else:
@@ -123,7 +123,7 @@ class VoiceConnector:
                 except asyncio.TimeoutError:
                     return self.__del__()
 
-    def makePacket(self, data):
+    def makePacket(self, data: bytes) -> bytes:
         header = bytearray(12)
         header[0] = 0x80
         header[1] = 0x78
@@ -135,7 +135,7 @@ class VoiceConnector:
         encryptPacket = getEncryptModes()[self.encryptMode]
         return encryptPacket(self.secretKey, header, data)
 
-    def send(self, data, encode=True):
+    def send(self, data: bytes, encode: bool=True):
         self.sequence += 1
         if encode:
             data = self.encoder.encode(data)

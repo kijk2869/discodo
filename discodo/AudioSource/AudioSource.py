@@ -26,27 +26,27 @@ class AudioSource:
         self.cleanup()
 
     @property
-    def volume(self):
+    def volume(self) -> float:
         return self._volume
 
     @volume.setter
-    def volume(self, value):
+    def volume(self, value: float):
         self._volume = max(value, 0.0)
 
     @property
-    def duration(self):
+    def duration(self) -> float:
         return round(self._duration, 2)
 
     @property
-    def remain(self):
+    def remain(self) -> float:
         return round(self.AudioData.duration - self.duration, 2)
 
     @property
-    def filter(self):
+    def filter(self) -> dict:
         return self._filter
 
     @filter.setter
-    def filter(self, value):
+    def filter(self, value: dict):
         self._filter = value
 
         if value:
@@ -60,7 +60,7 @@ class AudioSource:
         self.Loader.FilterGraph = self._filterGraph
         self.seek(round(self.duration))
 
-    def read(self):
+    def read(self) -> bytes:
         if not self.AudioFifo:
             return
 
@@ -84,7 +84,7 @@ class AudioSource:
 
         return Data
 
-    def seek(self, offset):
+    def seek(self, offset: int):
         if not self.Loader:
             raise ValueError
 
