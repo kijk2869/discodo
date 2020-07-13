@@ -76,12 +76,12 @@ class VoiceClient(VoiceConnector):
     def skip(self, offset=1):
         if not self.player.current:
             raise ValueError
-        
+
         if len(self.Queue) < offset:
             raise ValueError
-        
+
         del self.Queue[1:(offset-1)]
-        
+
         self.player.current.stop()
 
     @property
