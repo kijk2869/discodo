@@ -44,7 +44,7 @@ class Player(threading.Thread):
                     Source._dispatched = True
                     self.client.event.dispatch(
                         'SongStart', song=Source.AudioData.toDict())
-            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter:
+            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter and hasattr(Source.Loader, 'selectAudioStream'):
                 Source.filter = self.client.filter
 
         return Source
@@ -59,7 +59,7 @@ class Player(threading.Thread):
                 Source._dispatched = True
                 self.client.event.dispatch(
                     'SongStart', song=Source.AudioData.toDict())
-            if Source.filter != self.client.filter:
+            if Source.filter != self.client.filter and hasattr(Source.Loader, 'selectAudioStream'):
                 Source.filter = self.client.filter
 
         return Source
@@ -79,7 +79,7 @@ class Player(threading.Thread):
 
                 if Data.volume != 0.0:
                     Data.volume = 0.0
-            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter:
+            elif isinstance(Source, AudioSource) and Source.filter != self.client.filter and hasattr(Source.Loader, 'selectAudioStream'):
                 Source.filter = self.client.filter
 
     def makeFrame(self):
