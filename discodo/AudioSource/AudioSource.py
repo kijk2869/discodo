@@ -48,12 +48,16 @@ class AudioSource:
     @filter.setter
     def filter(self, value):
         self._filter = value
-        self._filterGraph = AudioFilter()
+        
+        if value:
+            self._filterGraph = AudioFilter()
 
-        self._filterGraph.selectAudioStream = self.Loader.selectAudioStream
-        self._filterGraph.setFilters(value)
+            self._filterGraph.selectAudioStream = self.Loader.selectAudioStream
+            self._filterGraph.setFilters(value)
+        else:
+            self._filterGraph = None
+            
         self.Loader.FilterGraph = self._filterGraph
-
         self.seek(round(self.duration))
 
     def read(self):
