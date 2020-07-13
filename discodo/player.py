@@ -103,7 +103,10 @@ class Player(threading.Thread):
 
                 Data = audioop.add(Data, NextData, 2)
         elif self.current and self.current.stopped:
-            self.current.stop()
+            if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
+                CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
+                self.current.volume = round(
+                    self.current.volume - CrossFadeVolume, 10)
         else:
             if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
                 self.current.volume = round(self.current.volume + 0.01, 3)
