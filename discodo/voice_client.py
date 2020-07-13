@@ -104,7 +104,7 @@ class VoiceClient(VoiceConnector):
     @property
     def filter(self):
         return self._filter
-    
+
     @filter.setter
     def filter(self, value):
         self._filter = value
