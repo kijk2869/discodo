@@ -77,6 +77,7 @@ class BufferLoader(threading.Thread):
         self.daemon = True
 
         self.Loader = Loader
+        self._PreviousFilter = None
 
     def _do_run(self):
         with withLock(self.Loader._buffering):
@@ -95,6 +96,10 @@ class BufferLoader(threading.Thread):
                     break
 
                 if self.Loader.FilterGraph:
+                    if self._PreviousFilter != self.Loader.FilterGraph:
+                        self.Loader.reloadResampler()
+                        self._PreviousFilter = self.Loader.FilterGraph
+
                     self.Loader.FilterGraph.push(Frame)
                     Frame = self.Loader.FilterGraph.pull()
 
