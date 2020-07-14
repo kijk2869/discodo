@@ -1,6 +1,7 @@
 import time
 import audioop
 import traceback
+from typing import Any
 from ..natives import AudioFifo, Loader, AudioFilter
 
 
@@ -24,6 +25,9 @@ class AudioSource:
 
     def __del__(self):
         self.cleanup()
+    
+    #def __getattribute__(self, name: str) -> Any:
+    #    return getattr(self.AudioData, name)
 
     @property
     def volume(self) -> float:

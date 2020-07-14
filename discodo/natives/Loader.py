@@ -2,7 +2,6 @@ import av
 import os
 import threading
 from ..utils.threadLock import withLock
-import traceback
 
 AVOption = {
     'reconnect': '1',
@@ -16,8 +15,6 @@ CHANNELS = os.getenv('CHANNELS', 2)
 
 class Loader:
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
-        threading.Thread.__init__(self)
-        self.daemon = True
         self.Source = Source
 
         self._end = threading.Event()

@@ -30,6 +30,13 @@ class VoiceClient(VoiceConnector):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
 
     def __del__(self):
+        guild_id = int(self.guild_id) if self.guild_id else None
+
+        log.info(f'destroying voice client of {guild_id}.')
+
+        if self.client.voiceClients.get(guild_id) == self:
+            del self.client.voiceClients[guild_id]
+
         super().__del__()
 
         if self.player and self.player.is_alive():
