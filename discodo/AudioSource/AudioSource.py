@@ -25,8 +25,8 @@ class AudioSource:
 
     def __del__(self):
         self.cleanup()
-    
-    #def __getattribute__(self, name: str) -> Any:
+
+    # def __getattribute__(self, name: str) -> Any:
     #    return getattr(self.AudioData, name)
 
     @property
