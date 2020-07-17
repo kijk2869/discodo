@@ -4,6 +4,7 @@ import threading
 from ..utils.threadLock import withLock
 
 AVOption = {
+    'err_detect': 'ignore_err',
     'reconnect': '1',
     'reconnect_streamed': '1',
     'reconnect_delay_max': '5'

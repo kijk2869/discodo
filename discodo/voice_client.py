@@ -58,20 +58,21 @@ class VoiceClient(VoiceConnector):
     def putSong(self, Data: AudioData) -> int:
         if not isinstance(Data, (AudioData, AudioSource)):
             raise ValueError
+        
+        if not isinstance(Data, list):
+            Data = [Data]
+        
+        for Item in Data:
+            self.Queue.append(Item)
 
-        self.Queue.append(Data)
-        self.event.dispatch('putSong', song=Data.toDict(),
-                            index=self.Queue.index(Data))
+        self.event.dispatch('putSong', songs=[dict(Item.toDict(), index=self.Queue.index(Item)) for Item in Data])
 
         return self.Queue.index(Data)
 
     async def loadSong(self, Query: str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
 
-        AddingData = [Data] if not isinstance(Data, list) else Data
-
-        for Item in AddingData:
-            self.putSong(Item)
+        self.putSong(Data)
 
         return Data
 
