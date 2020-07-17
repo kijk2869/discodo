@@ -84,7 +84,7 @@ class AudioSource:
             Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
         self._duration += 0.02 * float(self._filter.get('atempo', '1.0'))
-        self._duration = round(self._duration, 2)
+        self._duration = round(self._duration, 3)
 
         return Data
 
