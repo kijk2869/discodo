@@ -58,14 +58,15 @@ class VoiceClient(VoiceConnector):
     def putSong(self, Data: AudioData) -> int:
         if not isinstance(Data, (AudioData, AudioSource)):
             raise ValueError
-        
+
         if not isinstance(Data, list):
             Data = [Data]
-        
+
         for Item in Data:
             self.Queue.append(Item)
 
-        self.event.dispatch('putSong', songs=[dict(Item.toDict(), index=self.Queue.index(Item)) for Item in Data])
+        self.event.dispatch('putSong', songs=[dict(
+            Item.toDict(), index=self.Queue.index(Item)) for Item in Data])
 
         return self.Queue.index(Data)
 
