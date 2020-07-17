@@ -18,11 +18,11 @@ class Loader:
         self.Source = Source
 
         self._end = threading.Event()
+        self._haveToReloadResampler = threading.Event()
         self._buffering = threading.Lock()
 
         self.StreamConainer = None
         self.FilterGraph = None
-        self.Resampler = None
         self.reloadResampler()
         self.AudioFifo = AudioFifo
 
@@ -55,11 +55,7 @@ class Loader:
         self.AudioFifo.reset()
 
     def reloadResampler(self):
-        self.Resampler = av.AudioResampler(
-            format=av.AudioFormat('s16').packed,
-            layout='stereo' if CHANNELS >= 2 else 'mono',
-            rate=SAMPLING_RATE
-        )
+        self._haveToReloadResampler.set()
 
     def stop(self):
         self._end.set()
@@ -74,6 +70,7 @@ class BufferLoader(threading.Thread):
         self.daemon = True
 
         self.Loader = Loader
+        self.Resampler = None
         self._PreviousFilter = None
 
     def _do_run(self):
@@ -87,6 +84,18 @@ class BufferLoader(threading.Thread):
                 audio=0)
 
             while not self.Loader._end.is_set():
+                if self.Loader.FilterGraph and self._PreviousFilter != self.Loader.FilterGraph:
+                    self.Loader.reloadResampler()
+                    self._PreviousFilter = self.Loader.FilterGraph
+
+                if not self.Resampler or self.Loader._haveToReloadResampler.is_set():
+                    self.Resampler = av.AudioResampler(
+                        format=av.AudioFormat('s16').packed,
+                        layout='stereo' if CHANNELS >= 2 else 'mono',
+                        rate=SAMPLING_RATE
+                    )
+                    self.Loader._haveToReloadResampler.clear()
+
                 Frame = next(self.Loader.FrameGenerator, None)
                 if not Frame:
                     self.Loader.stop()
@@ -104,7 +113,7 @@ class BufferLoader(threading.Thread):
                         continue
 
                 Frame.pts = None
-                Frame = self.Loader.Resampler.resample(Frame)
+                Frame = self.Resampler.resample(Frame)
 
                 if not self.Loader.AudioFifo.haveToFillBuffer.is_set():
                     self.Loader.AudioFifo.haveToFillBuffer.wait()
