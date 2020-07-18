@@ -68,7 +68,7 @@ class VoiceClient(VoiceConnector):
         self.event.dispatch('putSong', songs=[dict(
             Item.toDict(), index=self.Queue.index(Item)) for Item in Data])
 
-        return #self.Queue.index(Data)
+        return  # self.Queue.index(Data)
 
     async def loadSong(self, Query: str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
