@@ -86,10 +86,6 @@ class BufferLoader(threading.Thread):
                 audio=0)
 
             while not self.Loader._end.is_set():
-                if self.Loader.FilterGraph and self._PreviousFilter != self.Loader.FilterGraph:
-                    self.Loader.reloadResampler()
-                    self._PreviousFilter = self.Loader.FilterGraph
-
                 if not self.Resampler or self.Loader._haveToReloadResampler.is_set():
                     self.Resampler = av.AudioResampler(
                         format=av.AudioFormat('s16').packed,
@@ -104,10 +100,6 @@ class BufferLoader(threading.Thread):
                     break
 
                 if self.Loader.FilterGraph:
-                    if self._PreviousFilter != self.Loader.FilterGraph:
-                        self.Loader.reloadResampler()
-                        self._PreviousFilter = self.Loader.FilterGraph
-
                     self.Loader.FilterGraph.push(Frame)
                     Frame = self.Loader.FilterGraph.pull()
 
@@ -115,7 +107,11 @@ class BufferLoader(threading.Thread):
                         continue
 
                 Frame.pts = None
-                Frame = self.Resampler.resample(Frame)
+                try:
+                    Frame = self.Resampler.resample(Frame)
+                except ValueError:
+                    self.Loader.reloadResampler()
+                    continue
 
                 if not self.Loader.AudioFifo.haveToFillBuffer.is_set():
                     self.Loader.AudioFifo.haveToFillBuffer.wait()
