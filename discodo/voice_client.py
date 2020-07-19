@@ -34,7 +34,7 @@ class VoiceClient(VoiceConnector):
 
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
-    
+
     async def getAutoplay(self, current):
         if self.autoplay:
             Related = await self.relatedClient.async_get(current['webpage_url'])
