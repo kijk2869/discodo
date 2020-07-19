@@ -127,7 +127,7 @@ class VoiceClient(VoiceConnector):
 
     @filter.setter
     def filter(self, value: dict):
-        print('''WARNING: AudioFilter has Unknown Critical Bug especially in atempo.
+        print('''WARNING: AudioFilter has Critical Bug at Resampler in Loader especially in atempo.
 Please avoid to use filter in production environment.
 if you know how to fix, please report on https://github.com/kijk2869/discodo''')
         self._filter = value
