@@ -6,8 +6,8 @@ import threading
 import traceback
 from .AudioSource import AudioData, AudioSource
 
-PRELOAD_TIME = os.getenv('PRELOAD_TIME', 10)
-FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
+PRELOAD_TIME = int(os.getenv('PRELOAD_TIME', '10'))
+FRAME_LENGTH = int(os.getenv('FRAME_LENGTH', '20'))
 DELAY = FRAME_LENGTH / 1000.0
 
 
@@ -20,6 +20,7 @@ class Player(threading.Thread):
 
         self.client = voice_client
         self.speakState = False
+        self.__next_called = False
 
         self._volume = volume
 
@@ -95,6 +96,8 @@ class Player(threading.Thread):
             self.speak(True)
 
         if self.next and (self.current.remain <= (PRELOAD_TIME + self.client.crossfade) or self.current.stopped):
+            if self.__next_called:
+                self.__next_called = False
             if isinstance(self.next, AudioData) and not hasattr(self.next, '_called'):
                 self.next._called = True
                 self.nextReady()
@@ -110,6 +113,9 @@ class Player(threading.Thread):
                         self.current.volume - CrossFadeVolume, 10)
 
                 Data = audioop.add(Data, NextData, 2)
+        elif not self.__next_called (self.current.remain <= (PRELOAD_TIME + self.client.crossfade) or self.current.stopped):
+            self.client.event.dispatch('NeedNextSong')
+            self.__next_called = True
         elif self.current and self.current.stopped:
             if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
                 CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)

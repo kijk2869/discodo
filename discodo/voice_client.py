@@ -7,8 +7,9 @@ from .utils import EventEmitter
 
 log = getLogger('discodo.VoiceClient')
 
-DEFAULTVOLUME = os.getenv('DEFAULTVOLUME', 1.0)
-DEFAULTCROSSFADE = os.getenv('DEFAULTCROSSFADE', 10.0)
+DEFAULTVOLUME = float(os.getenv('DEFAULTVOLUME', '1.0'))
+DEFAULTCROSSFADE = (os.getenv('DEFAULTCROSSFADE', '10.0'))
+AUTOPLAY = True if os.getenv('AUTOPLAY', '1') == 1 else False
 
 
 class VoiceClient(VoiceConnector):

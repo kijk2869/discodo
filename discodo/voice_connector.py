@@ -8,9 +8,9 @@ from .gateway import VoiceSocket
 from .encrypt import getEncryptModes
 from .natives import opus
 
-VCTIMEOUT = os.getenv('VCTIMEOUT', 300.0)
-SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
-FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
+VCTIMEOUT = float(os.getenv('VCTIMEOUT', '300.0'))
+SAMPLING_RATE = int(os.getenv('SAMPLING_RATE', '48000'))
+FRAME_LENGTH = int(os.getenv('FRAME_LENGTH', '20'))
 SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 
 log = getLogger('discodo.VoiceConnector')

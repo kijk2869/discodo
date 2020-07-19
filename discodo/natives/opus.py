@@ -3,14 +3,14 @@ import sys
 import array
 import ctypes
 
-SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
-CHANNELS = os.getenv('CHANNELS', 2)
-FRAME_LENGTH = os.getenv('FRAME_LENGTH', 20)
-SAMPLE_SIZE = os.getenv('SAMPLE_SIZE', 4)
+SAMPLING_RATE = int(os.getenv('SAMPLING_RATE', '48000'))
+CHANNELS = int(os.getenv('CHANNELS', '2'))
+FRAME_LENGTH = int(os.getenv('FRAME_LENGTH', '20'))
+SAMPLE_SIZE = int(os.getenv('SAMPLE_SIZE', '4'))
 SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 FRAME_SIZE = SAMPLES_PER_FRAME * SAMPLES_PER_FRAME
-EXPECTED_PACKETLOSS = os.getenv('EXPECTED_PACKETLOSS', 0)
-BITRATE = os.getenv('BITRATE', 128)
+EXPECTED_PACKETLOSS = float(os.getenv('EXPECTED_PACKETLOSS', '0.0'))
+BITRATE = int(os.getenv('BITRATE', '128'))
 
 _library = None
 

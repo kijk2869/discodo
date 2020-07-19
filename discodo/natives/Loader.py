@@ -10,8 +10,8 @@ AVOption = {
     'reconnect_delay_max': '5'
 }
 
-SAMPLING_RATE = os.getenv('SAMPLING_RATE', 48000)
-CHANNELS = os.getenv('CHANNELS', 2)
+SAMPLING_RATE = int(os.getenv('SAMPLING_RATE', '48000'))
+CHANNELS = int(os.getenv('CHANNELS', '2'))
 
 
 class Loader:

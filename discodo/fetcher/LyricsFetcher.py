@@ -1,8 +1,6 @@
 from xml.etree import ElementTree
 from aiohttp import ClientSession
 from markdownify import markdownify
-from asyncio import sleep
-from math import isinf
 
 
 class srv1:
