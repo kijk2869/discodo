@@ -113,7 +113,7 @@ class Player(threading.Thread):
                         self.current.volume - CrossFadeVolume, 10)
 
                 Data = audioop.add(Data, NextData, 2)
-        elif not self.__next_called (self.current.remain <= (PRELOAD_TIME + self.client.crossfade) or self.current.stopped):
+        elif not self.__next_called(self.current.remain <= (PRELOAD_TIME + self.client.crossfade) or self.current.stopped):
             self.client.event.dispatch('NeedNextSong')
             self.__next_called = True
         elif self.current and self.current.stopped:
