@@ -1,4 +1,3 @@
-import asyncio
 from .event import DiscordEvent
 from .AudioSource import AudioData
 from .utils import EventEmitter

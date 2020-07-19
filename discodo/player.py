@@ -2,10 +2,8 @@ import os
 import time
 import audioop
 import asyncio
-import logging
 import threading
 import traceback
-from typing import Union
 from .AudioSource import AudioData, AudioSource
 
 PRELOAD_TIME = os.getenv('PRELOAD_TIME', 10)
