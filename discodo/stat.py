@@ -12,8 +12,10 @@ def getProcessMemory():
 def getProcessCpu():
     return Process.cpu_percent()
 
+
 def getProcessThreads():
     return threading.active_count()
+
 
 def getTotalCpu():
     return psutil.cpu_percent()
@@ -26,11 +28,14 @@ def getMemory():
 def getCpuCount():
     return psutil.cpu_count()
 
+
 def getNetworkInbound():
     return round(psutil.net_io_counters().bytes_recv / 1e+6)
 
+
 def getNetworkOutbound():
     return round(psutil.net_io_counters().bytes_sent / 1e+6)
+
 
 def getStat():
     return {
