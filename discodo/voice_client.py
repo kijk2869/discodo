@@ -1,5 +1,6 @@
 import os
 from logging import getLogger
+from youtube_related import preventDuplication as relatedClient
 from .player import Player
 from .voice_connector import VoiceConnector
 from .AudioSource import AudioData, AudioSource
@@ -8,27 +9,36 @@ from .utils import EventEmitter
 log = getLogger('discodo.VoiceClient')
 
 DEFAULTVOLUME = float(os.getenv('DEFAULTVOLUME', '1.0'))
-DEFAULTCROSSFADE = (os.getenv('DEFAULTCROSSFADE', '10.0'))
-AUTOPLAY = True if os.getenv('AUTOPLAY', '1') == 1 else False
+DEFAULTCROSSFADE = float(os.getenv('DEFAULTCROSSFADE', '10.0'))
+DEFAULAUTOPLAY = True if os.getenv('DEFAULAUTOPLAY', '1') == '1' else False
 
 
 class VoiceClient(VoiceConnector):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.relatedClient = relatedClient()
+
         self.event = EventEmitter()
         self.event.onAny(self.onAnyEvent)
+        self.event.on('NeedNextSong', self.getAutoplay)
 
         self.Queue = []
         self._filter = {}
 
         self.player = None
 
+        self.autoplay = DEFAULAUTOPLAY
         self._volume = DEFAULTVOLUME
         self._crossfade = DEFAULTCROSSFADE
 
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
+    
+    async def getAutoplay(self, current):
+        if self.autoplay:
+            Related = await self.relatedClient.async_get(current['webpage_url'])
+            await self.loadSong(Related['id'])
 
     def __del__(self):
         guild_id = int(self.guild_id) if self.guild_id else None
