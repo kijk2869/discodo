@@ -2,6 +2,7 @@ import os
 import json
 import asyncio
 import logging
+from .. import AudioManager
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
 
@@ -24,8 +25,9 @@ class WebsocketHandler:
         self.request = request
         self.ws = ws
 
-        self.loop.create_task(self.handle())
+        self.AudioManager = AudioManager()
 
+        self.loop.create_task(self.handle())
         self._running = asyncio.Event()
 
     async def join(self):
@@ -54,4 +56,18 @@ class WebsocketHandler:
                 # have to cleanup
                 return
 
-            Data = json.loads(RAWDATA)
+            try:
+                _Data = json.loads(RAWDATA)
+                Operation, Data = _Data.get('op'), _Data.get('d')
+            except:
+                continue
+            
+            if hasattr(WebsocketEvents, Operation):
+                log.info(f'{Operation} dispatched with {Data}')
+
+                Func = getattr(WebsocketEvents, Operation)
+                self.loop.create_task(Func(self, Data))
+
+class WebsocketEvents:
+    def hello(self):
+        print('like this')
