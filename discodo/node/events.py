@@ -10,7 +10,7 @@ def need_data(*keys):
                     'd': 'This event needs `d`.'
                 }
                 return await self.sendJson(payload)
-            
+
             if keys:
                 NeedKeys = [key for key in keys if not key in Data.keys()]
                 if NeedKeys:
@@ -19,11 +19,11 @@ def need_data(*keys):
                         'd': f'This event needs `{NeedKeys[0]}`.'
                     }
                     return await self.sendJson(payload)
-            
+
             return await func(self, Data, **kwargs)
         return wrapper
     return decorator
-            
+
 
 def need_manager(func):
     def wrapper(self, *args, **kwargs):
@@ -47,7 +47,7 @@ class WebsocketEvents:
 
         if self.AudioManager:
             payload['d']['TotalPlayers'] = len(self.AudioManager.voiceClients)
-        
+
         await self.sendJson(payload)
 
     @need_data('user_id')
@@ -80,7 +80,7 @@ class WebsocketEvents:
                 'd': '`Volume` must be intenger..'
             }
             return await self.sendJson(payload)
-        
+
         value = int(Data['volume'])
 
         if value < 0 or value > 100:
@@ -89,13 +89,13 @@ class WebsocketEvents:
                 'd': '`Volume` must be `0~100`..'
             }
             return await self.sendJson(payload)
-        
+
         self.AudioManager.setVolume(Data['guild_id'], value / 100)
-        
+
         payload = {
             'op': 'setVolume',
             'd': {
-                'guild_id':Data['guild_id'],
+                'guild_id': Data['guild_id'],
                 'volume': Data['volume']
             }
         }
@@ -112,13 +112,13 @@ class WebsocketEvents:
                 'd': '`crossfade` must be float..'
             }
             return await self.sendJson(payload)
-        
+
         self.AudioManager.setCrossfade(Data['guild_id'], value)
-        
+
         payload = {
             'op': 'setCrossfade',
             'd': {
-                'guild_id':Data['guild_id'],
+                'guild_id': Data['guild_id'],
                 'crossfade': Data['crossfade']
             }
         }
