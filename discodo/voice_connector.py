@@ -115,7 +115,7 @@ class VoiceConnector:
         while True:
             try:
                 await self.ws.poll()
-            except ConnectionClosed:
+            except (asyncio.TimeoutError, ConnectionClosed):
                 self._connected.clear()
 
                 try:
