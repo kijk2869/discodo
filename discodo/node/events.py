@@ -10,6 +10,7 @@ def need_manager(func):
         return func(self, *args, **kwargs)
     return wrapper
 
+
 class WebsocketEvents:
     async def IDENTIFY(self, Data):
         if self.AudioManager:
@@ -28,7 +29,7 @@ class WebsocketEvents:
                 'op': 'IDENTIFIED',
                 'd': 'AudioManager initialized.'
             }
-        
+
         await self.sendJson(payload)
 
     @need_manager

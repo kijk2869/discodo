@@ -53,7 +53,7 @@ class WebsocketHandler:
                     log.info('websocket connection closing because of timeout.')
                 elif isinstance(exception, ConnectionClosed):
                     log.info(f'websocket connection disconnected. code {exception.code}')
-                
+
                 return
 
             try:
@@ -67,10 +67,10 @@ class WebsocketHandler:
 
                 Func = getattr(WebsocketEvents, Operation)
                 self.loop.create_task(Func(self, Data))
-    
+
     async def sendJson(self, Data):
         await self.ws.send(json.dumps(Data))
-    
+
     async def initialize_manager(self, user_id):
         self.AudioManager = AudioManager(user_id=user_id)
         self.AudioManager.onAny(self.manager_event)
