@@ -10,8 +10,11 @@ from .events import WebsocketEvents
 WSTIMEOUT = float(os.getenv('WSTIMEOUT', '60'))
 
 log = logging.getLogger('discodo.server')
+
+
 class log:
     info = print
+
 
 app = Blueprint(__name__)
 
