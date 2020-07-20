@@ -32,6 +32,11 @@ class WebsocketHandler:
 
         self.loop.create_task(self.handle())
         self._running = asyncio.Event()
+    
+    def __del__(self):
+        if self.AudioManager:
+            self.AudioManager.__del__()
+            self.AudioManager = None
 
     async def join(self):
         return await self._running.wait()
@@ -44,6 +49,7 @@ class WebsocketHandler:
             await self._handle()
         finally:
             self._running.set()
+            self.__del__()
 
     async def _handle(self):
         log.info(f'new websocket connection created from {self.request.ip}.')

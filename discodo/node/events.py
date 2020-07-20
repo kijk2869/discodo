@@ -128,3 +128,18 @@ class WebsocketEvents:
     @need_data('guild_id', 'query')
     async def loadSong(self, Data):
         await self.AudioManager.loadSong(Data['guild_id'], Data['query'])
+
+    @need_manager
+    @need_data('guild_id')
+    async def skip(self, Data):
+        offset = int(Data['offset']) if 'offset' in Data and (isinstance(Data['offset'], int) or Data['offset'].isdigit()) else 1
+        self.AudioManager.skip(Data['guild_id'], offset)
+        
+        payload = {
+            'op': 'skip',
+            'd': {
+                'guild_id':Data['guild_id'],
+                'remain': len(self.AudioManager.getVC(Data['guild_id']).Queue)
+            }
+        }
+        return await self.sendJson(payload)

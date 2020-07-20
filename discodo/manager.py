@@ -1,3 +1,4 @@
+import asyncio
 from .event import DiscordEvent
 from .AudioSource import AudioData
 from .utils import EventEmitter
@@ -6,6 +7,8 @@ from .voice_client import VoiceClient
 
 class AudioManager:
     def __init__(self, *args, **kwargs):
+        self.loop = asyncio.get_event_loop()
+        
         self.user_id = kwargs.get('user_id')
         self.session_id = kwargs.get('session_id')
 
@@ -14,6 +17,10 @@ class AudioManager:
         self.voiceClients = {}
 
         self.discordEvent = DiscordEvent(self)
+    
+    def __del__(self):
+        for voiceClient in self.voiceClients.values():
+            self.loop.call_soon_threadsafe(voiceClient.__del__)
 
     async def discordEmit(self, data: dict):
         Event, Data = data['t'], data['d']
@@ -39,6 +46,9 @@ class AudioManager:
 
     async def loadSong(self, guildID: int, *args, **kwargs) -> AudioData:
         return await self.getVC(guildID).loadSong(*args, **kwargs)
+    
+    def skip(self, guildID: int, offset: int):
+        return self.getVC(guildID).skip(offset)
 
     def setVolume(self, guildID: int, value: float) -> float:
         self.getVC(guildID).volume = value
