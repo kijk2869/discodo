@@ -122,7 +122,7 @@ class VoiceConnector:
             except (asyncio.TimeoutError, ConnectionClosed):
                 self._connected.clear()
                 self._connectedThread.clear()
-                
+
                 log.info(f'voice connection of {self.guild_id} destroyed. wait for events.')
 
                 try:
