@@ -35,7 +35,7 @@ class WebsocketHandler:
 
         self.loop.create_task(self.handle())
         self._running = asyncio.Event()
-    
+
     def __del__(self):
         if self.AudioManager:
             self.AudioManager.__del__()

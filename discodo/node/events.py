@@ -132,13 +132,14 @@ class WebsocketEvents:
     @need_manager
     @need_data('guild_id')
     async def skip(self, Data):
-        offset = int(Data['offset']) if 'offset' in Data and (isinstance(Data['offset'], int) or Data['offset'].isdigit()) else 1
+        offset = int(Data['offset']) if 'offset' in Data and (
+            isinstance(Data['offset'], int) or Data['offset'].isdigit()) else 1
         self.AudioManager.skip(Data['guild_id'], offset)
-        
+
         payload = {
             'op': 'skip',
             'd': {
-                'guild_id':Data['guild_id'],
+                'guild_id': Data['guild_id'],
                 'remain': len(self.AudioManager.getVC(Data['guild_id']).Queue)
             }
         }
