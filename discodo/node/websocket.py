@@ -12,10 +12,12 @@ log = logging.getLogger('discodo.server')
 
 app = Blueprint(__name__)
 
+
 @app.websocket('/')
 async def feed(request, ws):
     handler = WebsocketHandler(request, ws)
     await handler.join()
+
 
 class WebsocketHandler:
     def __init__(self, request, ws):
@@ -29,16 +31,16 @@ class WebsocketHandler:
 
     async def join(self):
         return await self._running.wait()
-    
+
     async def handle(self):
         if self._running.is_set():
             self._running.clear()
-        
+
         try:
             await self._handle()
         finally:
             self._running.set()
-    
+
     async def _handle(self):
         log.info(f'new websocket connection created from {self.request.ip}.')
         while True:
@@ -49,8 +51,8 @@ class WebsocketHandler:
                     log.info('websocket connection closing because of timeout.')
                 elif isinstance(exception, ConnectionClosed):
                     log.info(f'websocket connection disconnected. code {exception.code}')
-                
+
                 # have to cleanup
                 return
-            
+
             Data = json.loads(RAWDATA)
