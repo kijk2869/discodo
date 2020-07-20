@@ -37,6 +37,7 @@ def need_manager(func):
         return func(self, *args, **kwargs)
     return wrapper
 
+
 class WebsocketEvents:
     async def GET_STAT(self, Data):
         payload = {
@@ -62,7 +63,7 @@ class WebsocketEvents:
                 'op': 'IDENTIFIED',
                 'd': 'AudioManager initialized.'
             }
-        
+
         await self.sendJson(payload)
 
     @need_manager
