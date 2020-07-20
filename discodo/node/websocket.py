@@ -4,7 +4,6 @@ import asyncio
 import logging
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
-from websockets import exceptions
 
 WSTIMEOUT = float(os.getenv('WSTIMEOUT', '60'))
 
