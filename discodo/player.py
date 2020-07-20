@@ -137,9 +137,8 @@ class Player(threading.Thread):
 
         while not self._end.is_set():
             try:
-                if not self.client._connected.is_set():
-                    while not self.client._connected.is_set():
-                        pass
+                if not self.client._connectedThread.is_set():
+                    self.client._connectedThread.wait()
                     self.loops = 0
                     _start = time.perf_counter()
 

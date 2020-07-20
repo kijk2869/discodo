@@ -3,6 +3,7 @@ import socket
 import struct
 import asyncio
 from logging import getLogger
+import threading
 from websockets.exceptions import ConnectionClosed
 from .gateway import VoiceSocket
 from .encrypt import getEncryptModes
@@ -33,6 +34,7 @@ class VoiceConnector:
         self._timestamp = 0
 
         self._connected = asyncio.Event()
+        self._connectedThread = threading.Event()
 
         self._polling = None
         self.encoder = opus.Encoder()
@@ -75,6 +77,7 @@ class VoiceConnector:
 
     async def createSocket(self, data: dict = None):
         self._connected.clear()
+        self._connectedThread.clear()
 
         if data:
             self.data = data
@@ -110,6 +113,7 @@ class VoiceConnector:
             self._polling = self.loop.create_task(self.pollingWs())
 
         self._connected.set()
+        self._connectedThread.set()
 
     async def pollingWs(self):
         while True:
@@ -117,6 +121,9 @@ class VoiceConnector:
                 await self.ws.poll()
             except (asyncio.TimeoutError, ConnectionClosed):
                 self._connected.clear()
+                self._connectedThread.clear()
+                
+                log.info(f'voice connection of {self.guild_id} destroyed. wait for events.')
 
                 try:
                     await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
