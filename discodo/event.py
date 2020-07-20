@@ -20,8 +20,8 @@ class DiscordEvent:
     async def emit(self, event, *args, **kwargs):
         return await self.EventEmitter.emit(event, *args, **kwargs)
 
-    async def dispatch(self, event, *args, **kwargs):
-        return await self.EventEmitter.dispatch(event, *args, **kwargs)
+    def dispatch(self, event, *args, **kwargs):
+        return self.EventEmitter.dispatch(event, *args, **kwargs)
 
     async def parseReady(self, data):
         log.info(f'ready event dispatched. set session id {data["session_id"]}')

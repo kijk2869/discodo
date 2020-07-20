@@ -26,7 +26,7 @@ class AudioManager:
         return self.discordEvent.dispatch(Event, Data)
 
     def getVC(self, guildID: int) -> VoiceClient:
-        return self.voiceClients.get(guildID)
+        return self.voiceClients.get(int(guildID))
 
     def delVC(self, guildID: int):
         self.getVC(guildID).__del__()

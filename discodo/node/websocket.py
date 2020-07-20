@@ -10,6 +10,8 @@ from .events import WebsocketEvents
 WSTIMEOUT = float(os.getenv('WSTIMEOUT', '60'))
 
 log = logging.getLogger('discodo.server')
+class log:
+    info = print
 
 app = Blueprint(__name__)
 
@@ -63,7 +65,8 @@ class WebsocketHandler:
                 continue
 
             if Operation and hasattr(WebsocketEvents, Operation):
-                log.info(f'{Operation} dispatched with {Data}')
+                if not Operation == 'DISCORD_EVENT':
+                    log.info(f'{Operation} dispatched with {Data}')
 
                 Func = getattr(WebsocketEvents, Operation)
                 self.loop.create_task(Func(self, Data))
@@ -73,7 +76,7 @@ class WebsocketHandler:
     
     async def initialize_manager(self, user_id):
         self.AudioManager = AudioManager(user_id=user_id)
-        self.AudioManager.onAny(self.manager_event)
+        self.AudioManager.event.onAny(self.manager_event)
 
     async def manager_event(self, guild_id, Event, **kwargs):
         payload = {
