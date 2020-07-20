@@ -28,6 +28,9 @@ class AudioManager:
     def getVC(self, guildID: int) -> VoiceClient:
         return self.voiceClients.get(guildID)
 
+    def delVC(self, guildID: int):
+        self.getVC(guildID).__del__()
+
     async def getSong(self, Query: str) -> AudioData:
         return await AudioData.create(Query)
 

@@ -2,9 +2,10 @@ import os
 import json
 import asyncio
 import logging
-from .. import AudioManager
+from .. import AudioManager, getStat
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
+from .events import WebsocketEvents
 
 WSTIMEOUT = float(os.getenv('WSTIMEOUT', '60'))
 
@@ -25,7 +26,7 @@ class WebsocketHandler:
         self.request = request
         self.ws = ws
 
-        self.AudioManager = AudioManager()
+        self.AudioManager = None
 
         self.loop.create_task(self.handle())
         self._running = asyncio.Event()
@@ -52,8 +53,7 @@ class WebsocketHandler:
                     log.info('websocket connection closing because of timeout.')
                 elif isinstance(exception, ConnectionClosed):
                     log.info(f'websocket connection disconnected. code {exception.code}')
-
-                # have to cleanup
+                
                 return
 
             try:
@@ -62,13 +62,26 @@ class WebsocketHandler:
             except:
                 continue
 
-            if hasattr(WebsocketEvents, Operation):
+            if Operation and hasattr(WebsocketEvents, Operation):
                 log.info(f'{Operation} dispatched with {Data}')
 
                 Func = getattr(WebsocketEvents, Operation)
                 self.loop.create_task(Func(self, Data))
+    
+    async def sendJson(self, Data):
+        await self.ws.send(json.dumps(Data))
+    
+    async def initialize_manager(self, user_id):
+        self.AudioManager = AudioManager(user_id=user_id)
+        self.AudioManager.onAny(self.manager_event)
 
+    async def manager_event(self, guild_id, Event, **kwargs):
+        payload = {
+            'op': Event,
+            'd': {
+                'guild_id': guild_id
+            }
+        }
+        payload['d'] = dict(payload['d'], **kwargs)
 
-class WebsocketEvents:
-    def hello(self):
-        print('like this')
+        await self.sendJson(payload)

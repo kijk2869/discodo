@@ -1,4 +1,4 @@
-from .audiomanager import AudioManager
+from .manager import AudioManager
 from .voice_connector import VoiceConnector
 from .voice_client import VoiceClient
 from .gateway import VoiceSocket
