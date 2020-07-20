@@ -61,12 +61,13 @@ class WebsocketHandler:
                 Operation, Data = _Data.get('op'), _Data.get('d')
             except:
                 continue
-            
+
             if hasattr(WebsocketEvents, Operation):
                 log.info(f'{Operation} dispatched with {Data}')
 
                 Func = getattr(WebsocketEvents, Operation)
                 self.loop.create_task(Func(self, Data))
+
 
 class WebsocketEvents:
     def hello(self):
