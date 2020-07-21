@@ -19,7 +19,7 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v2.1.1
       with:
         python-version: 3.8
     - name: Install dependencies
