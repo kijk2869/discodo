@@ -106,22 +106,21 @@ class Player(threading.Thread):
                 Source.filter = self.client.filter
 
     def makeFrame(self) -> bytes:
-        current = self.current
-        if not current:
+        if not self.current:
             return
 
-        Data = current.read()
+        Data = self.current.read()
 
-        if not Data or current.volume == 0.0:
-            self.loop.call_soon_threadsafe(current.cleanup)
+        if not Data or self.current.volume == 0.0:
+            self.loop.call_soon_threadsafe(self.current.cleanup)
             self.client.event.dispatch(
-                "SongEnd", song=current.AudioData.toDict())
+                "SongEnd", song=self.current.AudioData.toDict())
             del self.client.Queue[0]
             self.speak(True)
 
         if self.next and (
-            current.remain <= (PRELOAD_TIME + self.client.crossfade)
-            or current.stopped
+            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            or self.current.stopped
         ):
             if self.__next_called:
                 self.__next_called = False
@@ -133,7 +132,7 @@ class Player(threading.Thread):
                 and isinstance(self.next, AudioSource)
                 and (self.next.AudioFifo.samples > SAMPLES_PER_FRAME)
                 and (
-                    current.remain <= self.client.crossfade or current.stopped
+                    self.current.remain <= self.client.crossfade or self.current.stopped
                 )
             ):
                 NextData = self.next.read()
@@ -143,28 +142,28 @@ class Player(threading.Thread):
                     if self.next.volume < 1.0:
                         self.next.volume = round(
                             self.next.volume + CrossFadeVolume, 10)
-                    if current.volume > 0.0:
-                        current.volume = round(
-                            current.volume - CrossFadeVolume, 10
+                    if self.current.volume > 0.0:
+                        self.current.volume = round(
+                            self.current.volume - CrossFadeVolume, 10
                         )
 
                     Data = audioop.add(Data, NextData, 2)
         elif not self.__next_called and (
-            current.remain <= (PRELOAD_TIME + self.client.crossfade)
-            or current.stopped
+            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            or self.current.stopped
         ):
             self.client.event.dispatch(
-                "NeedNextSong", current=current.AudioData.toDict()
+                "NeedNextSong", current=self.current.AudioData.toDict()
             )
             self.__next_called = True
-        elif current and current.stopped:
-            if isinstance(self.current, AudioSource) and current.volume > 0.0:
+        elif self.current and self.current.stopped:
+            if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
                 CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
-                current.volume = round(
-                    current.volume - CrossFadeVolume, 10)
+                self.current.volume = round(
+                    self.current.volume - CrossFadeVolume, 10)
         else:
-            if isinstance(current, AudioSource) and current.volume < 1.0:
-                current.volume = round(current.volume + 0.01, 3)
+            if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
+                self.current.volume = round(self.current.volume + 0.01, 3)
             if isinstance(self.next, AudioSource) and self.next.volume != 0.0:
                 self.next.volume = 0.0
 
