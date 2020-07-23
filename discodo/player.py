@@ -22,6 +22,7 @@ class Player(threading.Thread):
         self.client = voice_client
         self.speakState = False
         self.__next_called = False
+        self.__current_future = None
 
         self._volume = volume
 
@@ -30,22 +31,25 @@ class Player(threading.Thread):
         Source = self.client.Queue[0] if self.client.Queue else None
         if Source:
             if isinstance(Source, AudioData):
-                Future = asyncio.run_coroutine_threadsafe(
-                    Source.source(), self.loop)
-                while not Future.done():
-                    pass
+                if not self.self.__current_future:
+                    self.__current_future = asyncio.run_coroutine_threadsafe(
+                        Source.source(), self.loop)
+                elif self.__current_future.done():
+                    if self.client.Queue[0] == Source:
+                        Source = self.client.Queue[0] = self.__current_future.result()
 
-                if self.client.Queue[0] == Source:
-                    Source = self.client.Queue[0] = Future.result()
+                    self.__current_future = None
+                    
+                    if Source.volume != 1.0:
+                        Source.volume = 1.0
 
-                if Source.volume != 1.0:
-                    Source.volume = 1.0
-
-                if not hasattr(Source, "_dispatched"):
-                    Source._dispatched = True
-                    self.client.event.dispatch(
-                        "SongStart", song=Source.AudioData.toDict()
-                    )
+                    if not hasattr(Source, "_dispatched"):
+                        Source._dispatched = True
+                        self.client.event.dispatch(
+                            "SongStart", song=Source.AudioData.toDict()
+                        )
+                else:
+                    Source = None
             elif (
                 isinstance(Source, AudioSource)
                 and Source.filter != self.client.filter
