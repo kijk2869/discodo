@@ -6,3 +6,4 @@ youtube-related
 markdownify
 aiohttp
 sanic
+PyNaCl
