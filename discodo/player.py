@@ -34,6 +34,7 @@ class Player(threading.Thread):
                 if not self.__current_future:
                     self.__current_future = asyncio.run_coroutine_threadsafe(
                         Source.source(), self.loop)
+                    Source = None
                 elif self.__current_future.done():
                     if self.client.Queue[0] == Source:
                         Source = self.client.Queue[0] = self.__current_future.result(
