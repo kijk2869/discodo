@@ -31,7 +31,7 @@ class Player(threading.Thread):
         Source = self.client.Queue[0] if self.client.Queue else None
         if Source:
             if isinstance(Source, AudioData):
-                if not self.self.__current_future:
+                if not self.__current_future:
                     self.__current_future = asyncio.run_coroutine_threadsafe(
                         Source.source(), self.loop)
                 elif self.__current_future.done():
