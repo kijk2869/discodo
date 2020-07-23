@@ -18,7 +18,7 @@ class Node:
         self.user_id = user_id
         self.reconnect = reconnect
 
-        self.URL = URL or "ws://localhost:8000"
+        self.URL = URL
 
         self.voiceClients = {}
         self.emitter.onAny(self.onAnyEvent)
