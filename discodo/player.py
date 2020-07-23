@@ -36,10 +36,11 @@ class Player(threading.Thread):
                         Source.source(), self.loop)
                 elif self.__current_future.done():
                     if self.client.Queue[0] == Source:
-                        Source = self.client.Queue[0] = self.__current_future.result()
+                        Source = self.client.Queue[0] = self.__current_future.result(
+                        )
 
                     self.__current_future = None
-                    
+
                     if Source.volume != 1.0:
                         Source.volume = 1.0
 
