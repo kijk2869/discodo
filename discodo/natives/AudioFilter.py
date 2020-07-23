@@ -10,11 +10,11 @@ class AudioFilter:
         self.Graph = None
         self.configured = False
 
-    def setFilters(self, filters):
+    def setFilters(self, filters: dict):
         self._Filters = {}
         for filter, value in filters.items():
             self._Filters[filter] = value
-        self._Filters['abuffersink'] = None
+        self._Filters["abuffersink"] = None
 
         self.configure()
 
@@ -33,13 +33,13 @@ class AudioFilter:
 
         self.configured = True
 
-    def push(self, Frame):
+    def push(self, Frame: av.AudioFrame):
         if not self.Graph:
             return
 
         return self.Graph.push(Frame)
 
-    def pull(self):
+    def pull(self) -> av.AudioFrame:
         if not self.Graph:
             return
 

@@ -1,3 +1,3 @@
 import argparse
 
-print('test standalone')
+print("test standalone")
