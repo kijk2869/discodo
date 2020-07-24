@@ -7,8 +7,8 @@ from .utils import EventEmitter
 
 class Node:
     def __init__(self, *args, **kwargs):
-        self.user_id = kwargs.get('user_id')
-        self.session_id = kwargs.get('session_id')
+        self.user_id = kwargs.get("user_id")
+        self.session_id = kwargs.get("session_id")
 
         self.event = EventEmitter()
 
@@ -17,12 +17,12 @@ class Node:
         self.discordEvent = DiscordEvent(self)
 
     async def discordEmit(self, data):
-        Event, Data = data['t'], data['d']
+        Event, Data = data["t"], data["d"]
 
         return await self.discordEvent.emit(Event, Data)
 
     def discordDispatch(self, data):
-        Event, Data = data['t'], data['d']
+        Event, Data = data["t"], data["d"]
 
         return self.discordEvent.dispatch(Event, Data)
 

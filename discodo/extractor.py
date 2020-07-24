@@ -36,8 +36,7 @@ def _extract(query: str) -> Optional[dict]:
         )
         option["dump_single_json"] = True
         option["extract_flat"] = True
-        query = "https://www.youtube.com/playlist?list=" + \
-            YoutubePlaylistMatch.group(1)
+        query = "https://www.youtube.com/playlist?list=" + YoutubePlaylistMatch.group(1)
     else:
         option["noplaylist"] = True
 

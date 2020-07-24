@@ -85,8 +85,7 @@ class VoiceClient(VoiceConnector):
 
         self.event.dispatch(
             "putSong",
-            songs=[dict(Item.toDict(), index=self.Queue.index(Item))
-                   for Item in Data],
+            songs=[dict(Item.toDict(), index=self.Queue.index(Item)) for Item in Data],
         )
 
         return (
@@ -115,7 +114,7 @@ class VoiceClient(VoiceConnector):
         if len(self.Queue) < offset:
             raise ValueError
 
-        del self.Queue[1: (offset - 1)]
+        del self.Queue[1 : (offset - 1)]
 
         self.player.current.stop()
 
