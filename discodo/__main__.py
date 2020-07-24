@@ -24,7 +24,7 @@ stdoutHandler.addFilter(loggingFilter(logging.WARNING))
 
 
 def setLoggingLevel(level):
-    for logger in [log, logging.getLogger('av')]:
+    for logger in [log, logging.getLogger('libav')]:
         addLoggingHandler(logger)
         logger.setLevel(logging.DEBUG)
         stdoutHandler.setLevel(level)
