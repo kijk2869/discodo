@@ -89,11 +89,11 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         return ws
 
     @property
-    def latency(self):
+    def latency(self) -> float:
         return self._keepAliver.latency if self._keepAliver else None
 
     @property
-    def averageLatency(self):
+    def averageLatency(self) -> float:
         if not self._keepAliver:
             return None
 

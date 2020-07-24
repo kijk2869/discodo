@@ -84,7 +84,7 @@ class Node:
             if guild_id in self.voiceClients:
                 self.voiceClients[guild_id].__del__()
 
-    def getVC(self, guildID):
+    def getVC(self, guildID: int) -> VoiceClient:
         return self.voiceClients.get(int(guildID))
 
     async def discordDispatch(self, payload):
@@ -98,7 +98,7 @@ class Node:
 
         return await self.send("DISCORD_EVENT", payload)
 
-    async def getStat(self):
+    async def getStat(self) -> dict:
         await self.send("GET_STAT", None)
 
         return await self.emitter.wait_for("STAT")
