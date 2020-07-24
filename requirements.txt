@@ -1,9 +1,9 @@
 websockets
 av
-argparse
 youtube_dl
 youtube-related
 markdownify
 aiohttp
 sanic
 PyNaCl
+colorlog
