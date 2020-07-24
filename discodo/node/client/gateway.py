@@ -76,7 +76,10 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
     @classmethod
     async def connect(cls, client, loop=asyncio.get_event_loop()):
         ws = await websockets.connect(
-            client.URL, loop=loop, klass=cls, compression=None
+            client.URL, loop=loop, klass=cls,
+            extra_headers = {
+                'Authorization': client.password
+            }
         )
 
         ws.client = client

@@ -12,7 +12,7 @@ log = getLogger("discodo.client")
 
 
 class Node:
-    def __init__(self, URL=None, user_id=None, reconnect=True):
+    def __init__(self, URL=None, password='hellodiscodo', user_id=None, reconnect=True):
         self.ws = None
         self.emitter = EventEmitter()
 
@@ -21,6 +21,7 @@ class Node:
         self.reconnect = reconnect
 
         self.URL = URL
+        self.password = password
 
         self.voiceClients = {}
         self.emitter.onAny(self.onAnyEvent)

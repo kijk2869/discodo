@@ -11,6 +11,7 @@ from .events import WebsocketEvents
 
 WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
 WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
+PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
 log = logging.getLogger("discodo.server")
 
@@ -55,6 +56,11 @@ class WebsocketHandler:
 
     async def _handle(self):
         log.info(f"new websocket connection created from {self.request.ip}.")
+
+        if self.request.headers.get('Authorization') != PASSWORD:
+            log.warning(f"websocket connection from {self.request.ip} forbidden: password mismatch.")
+            await self.forbidden("Password mismatch.")
+            return
 
         await self.hello()
 
@@ -101,3 +107,9 @@ class WebsocketHandler:
         payload = {"op": "HELLO", "d": {"heartbeat_interval": WSINTERVAL}}
 
         await self.sendJson(payload)
+
+    async def forbidden(self, message):
+        payload = {"op": "FORBIDDEN", "d": message}
+
+        await self.sendJson(payload)
+
