@@ -98,6 +98,8 @@ class VoiceClient(VoiceConnector):
     async def loadSong(self, Query: str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
 
+        self.event.dispatch("loadSong", song=[Item.toDict() for Item in Data if isinstance(Item, AudioData)])
+
         self.putSong(Data)
 
         return Data
