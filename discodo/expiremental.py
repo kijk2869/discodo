@@ -1,6 +1,7 @@
 import sys
 import math
 import numpy as np
+import audioop
 
 def volumeDetect(Data):
     volume = audioop.rms(Data,2)
