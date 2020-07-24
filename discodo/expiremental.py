@@ -1,7 +1,8 @@
-import sys
-import math
-import numpy as np
 import audioop
+import math
+import sys
+
+import numpy as np
 
 
 def volumeDetect(Data):

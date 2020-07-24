@@ -1,11 +1,12 @@
 import os
-from sanic import Sanic, response
-from sanic.exceptions import abort
 from functools import wraps
 
-from .websocket import app as WebsocketBlueprint
+from sanic import Sanic, response
+from sanic.exceptions import abort
+
 from ...AudioSource import AudioData
 from ...stat import getStat
+from .websocket import app as WebsocketBlueprint
 
 PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 

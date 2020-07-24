@@ -1,4 +1,3 @@
-from .node import server
 import argparse
 import asyncio
 import logging
@@ -6,6 +5,8 @@ import os
 import sys
 
 import colorlog
+
+from .node import server
 
 log = logging.getLogger("discodo")
 
