@@ -177,7 +177,7 @@ class WebsocketEvents:
             "op": "skip",
             "d": {
                 "guild_id": Data["guild_id"],
-                "remain": len(self.AudioManager.getVC(Data["guild_id"]).Queue),
+                "remain": len(self.AudioManager.getVC(Data["guild_id"]).Queue) - 1,
             },
         }
         return await self.sendJson(payload)
