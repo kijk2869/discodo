@@ -121,12 +121,17 @@ class VoiceConnector:
         while True:
             try:
                 await self.ws.poll()
-            except (asyncio.TimeoutError, ConnectionClosed):
+            except (asyncio.TimeoutError, ConnectionClosed) as e:
                 self._connected.clear()
                 self._connectedThread.clear()
 
+                if isinstance(e, ConnectionClosed):
+                    reason = f'with {e.code}'
+                else:
+                    reason = 'because timed out.'
+
                 log.info(
-                    f"voice connection of {self.guild_id} destroyed. wait for events."
+                    f"voice connection of {self.guild_id} destroyed {reason}. wait for events."
                 )
 
                 try:
