@@ -112,4 +112,3 @@ class WebsocketHandler:
         payload = {"op": "FORBIDDEN", "d": message}
 
         await self.sendJson(payload)
-
