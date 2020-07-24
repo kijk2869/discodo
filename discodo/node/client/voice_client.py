@@ -58,6 +58,11 @@ class VoiceClient:
 
         return await self.emitter.wait_for("Queue")
 
+    async def getCurrent(self):
+        await self.send("getCurrent")
+
+        return await self.emitter.wait_for("Current")
+
     async def shuffle(self):
         await self.send("shuffle")
 

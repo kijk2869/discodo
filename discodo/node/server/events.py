@@ -217,6 +217,30 @@ class WebsocketEvents:
 
     @need_manager
     @need_data("guild_id")
+    async def getCurrent(self, Data):
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        payload = {
+            "op": "Current",
+            "d": {
+                "guild_id": Data["guild_id"],
+                'current': vc.player.current.toDict(),
+                'position': {
+                    'duration': vc.player.current.duration,
+                    'remain': vc.player.current.remain
+                },
+                'options': {
+                    'autoplay': vc.autoplay,
+                    'volume': int(vc.volume * 100),
+                    'crossfade': vc.crossfade,
+                    'filter': vc.filter
+                }
+            },
+        }
+        return await self.sendJson(payload)
+
+    @need_manager
+    @need_data("guild_id")
     async def shuffle(self, Data):
         vc = self.AudioManager.getVC(Data["guild_id"])
 
