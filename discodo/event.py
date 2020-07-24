@@ -1,6 +1,7 @@
+from logging import getLogger
+
 from .utils import EventEmitter
 from .voice_client import VoiceClient
-from logging import getLogger
 
 log = getLogger("discodo.event")
 

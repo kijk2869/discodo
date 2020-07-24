@@ -1,6 +1,7 @@
 import os
-import psutil
 import threading
+
+import psutil
 
 Process = psutil.Process(os.getpid())
 

@@ -1,3 +1,3 @@
-from .threadLock import *
-from .eventEmitter import *
 from .equalizer import *
+from .eventEmitter import *
+from .threadLock import *

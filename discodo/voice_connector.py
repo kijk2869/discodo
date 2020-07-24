@@ -1,12 +1,14 @@
+import asyncio
 import os
 import socket
 import struct
-import asyncio
-from logging import getLogger
 import threading
+from logging import getLogger
+
 from websockets.exceptions import ConnectionClosed
-from .gateway import VoiceSocket
+
 from .encrypt import getEncryptModes
+from .gateway import VoiceSocket
 from .natives import opus
 
 VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))

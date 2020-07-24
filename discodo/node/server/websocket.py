@@ -1,10 +1,12 @@
-import os
-import json
 import asyncio
+import json
 import logging
-from ... import AudioManager
+import os
+
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
+
+from ... import AudioManager
 from .events import WebsocketEvents
 
 WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))

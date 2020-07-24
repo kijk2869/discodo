@@ -1,8 +1,10 @@
 import asyncio
-from traceback import print_exc
-import websockets
-from ...utils import EventEmitter
 from logging import getLogger
+from traceback import print_exc
+
+import websockets
+
+from ...utils import EventEmitter
 from .gateway import NodeConnection
 from .voice_client import VoiceClient
 

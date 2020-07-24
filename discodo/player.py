@@ -1,10 +1,12 @@
-from discodo.AudioSource.AudioSource import SAMPLES_PER_FRAME
-import os
-import time
-import audioop
 import asyncio
+import audioop
+import os
 import threading
+import time
 import traceback
+
+from discodo.AudioSource.AudioSource import SAMPLES_PER_FRAME
+
 from .AudioSource import AudioData, AudioSource
 
 PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))

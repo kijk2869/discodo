@@ -1,7 +1,7 @@
 import asyncio
-import traceback
-import functools
 import collections
+import functools
+import traceback
 
 
 class EventEmitter:

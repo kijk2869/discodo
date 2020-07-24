@@ -1,10 +1,12 @@
 import os
 from logging import getLogger
+
 from youtube_related import preventDuplication as relatedClient
-from .player import Player
-from .voice_connector import VoiceConnector
+
 from .AudioSource import AudioData, AudioSource
+from .player import Player
 from .utils import EventEmitter
+from .voice_connector import VoiceConnector
 
 log = getLogger("discodo.VoiceClient")
 

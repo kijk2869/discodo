@@ -1,7 +1,8 @@
-import logging
 import asyncio
+import logging
 from re import compile as Regex
 from typing import Optional
+
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
 log = logging.getLogger("discodo.extractor")

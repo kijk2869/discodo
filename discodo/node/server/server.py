@@ -1,7 +1,8 @@
 import asyncio
 
-from .websocket import app as WebsocketBlueprint
 from sanic import Sanic
+
+from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
 

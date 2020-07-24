@@ -1,7 +1,7 @@
-import os
-import sys
 import array
 import ctypes
+import os
+import sys
 
 SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
 CHANNELS = int(os.getenv("CHANNELS", "2"))

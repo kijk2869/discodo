@@ -1,9 +1,10 @@
 import argparse
-import logging
-import sys
-import colorlog
-import os
 import asyncio
+import logging
+import os
+import sys
+
+import colorlog
 
 log = logging.getLogger('discodo')
 

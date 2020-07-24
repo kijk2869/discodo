@@ -1,12 +1,14 @@
-import time
+import asyncio
+import concurrent.futures
 import json
 import struct
-import asyncio
 import threading
-import websockets
-import concurrent.futures
-from logging import getLogger
+import time
 from collections import deque
+from logging import getLogger
+
+import websockets
+
 from .encrypt import getEncryptModes
 
 log = getLogger("discodo.gateway")

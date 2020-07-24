@@ -1,10 +1,11 @@
-import time
 import asyncio
-import threading
 import concurrent.futures
-from logging import getLogger
-from collections import deque
 import json
+import threading
+import time
+from collections import deque
+from logging import getLogger
+
 import websockets
 
 log = getLogger("discodo.client")

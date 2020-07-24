@@ -1,6 +1,8 @@
-import av
 import os
 import threading
+
+import av
+
 from ..utils.threadLock import withLock
 from .AudioFilter import AudioFilter
 

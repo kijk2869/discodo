@@ -1,5 +1,6 @@
 import aiohttp
-from ..extractor import extract, clear_cache
+
+from ..extractor import clear_cache, extract
 from .AudioSource import AudioSource
 
 
