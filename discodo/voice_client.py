@@ -40,7 +40,7 @@ class VoiceClient(VoiceConnector):
 
     async def getAutoplay(self, **kwargs):
         current = list(kwargs.values()).pop()
-        if self.autoplay and not self.player.next:
+        if self.autoplay and (not self.Queue or (self.Queue[0] == current and len(self.Queue) <= 1)):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
 
