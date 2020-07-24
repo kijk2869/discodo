@@ -23,10 +23,12 @@ stderrHandler = logging.StreamHandler(sys.stderr)
 stdoutHandler.addFilter(loggingFilter(logging.WARNING))
 
 
-def setLoggingLevel(logger, level):
-    logger.setLevel(logging.DEBUG)
-    stdoutHandler.setLevel(level)
-    stderrHandler.setLevel(max(level, logging.WARNING))
+def setLoggingLevel(level):
+    for logger in [log, logging.getLogger('av')]:
+        addLoggingHandler(logger)
+        logger.setLevel(logging.DEBUG)
+        stdoutHandler.setLevel(level)
+        stderrHandler.setLevel(max(level, logging.WARNING))
 
 
 ColoredFormatter = colorlog.ColoredFormatter(
@@ -51,8 +53,6 @@ def addLoggingHandler(logger):
     logger.addHandler(stdoutHandler)
     logger.addHandler(stderrHandler)
 
-
-addLoggingHandler(log)
 
 parser = argparse.ArgumentParser("discodo")
 
@@ -140,9 +140,9 @@ logParser.add_argument(
 args = parser.parse_args()
 
 if args.verbose:
-    setLoggingLevel(log, logging.DEBUG)
+    setLoggingLevel(logging.DEBUG)
 else:
-    setLoggingLevel(log, logging.INFO)
+    setLoggingLevel(logging.INFO)
 
 os.environ["VCTIMEOUT"] = str(args.timeout)
 os.environ["DEFAULTVOLUME"] = str(round(args.default_volume / 100, 3))
