@@ -9,6 +9,7 @@ import colorlog
 
 log = logging.getLogger('discodo')
 
+
 class loggingFilter(logging.Filter):
     def __init__(self, level):
         self.level = level
@@ -45,9 +46,11 @@ ColoredFormatter = colorlog.ColoredFormatter(
 stdoutHandler.setFormatter(ColoredFormatter)
 stderrHandler.setFormatter(ColoredFormatter)
 
+
 def addLoggingHandler(logger):
     logger.addHandler(stdoutHandler)
     logger.addHandler(stderrHandler)
+
 
 addLoggingHandler(log)
 
