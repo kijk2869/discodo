@@ -3,9 +3,11 @@ import math
 import numpy as np
 import audioop
 
+
 def volumeDetect(Data):
-    volume = audioop.rms(Data,2)
+    volume = audioop.rms(Data, 2)
     return volume
+
 
 def volumeNorm(Data):
     if not Data:
@@ -13,7 +15,8 @@ def volumeNorm(Data):
 
     try:
         detected = volumeDetect(Data)
-        sys.stdout.write("" + str(detected) + '|' + '#' * round(detected / 150) + '\n')
+        sys.stdout.write("" + str(detected) + '|' + '#' *
+                         round(detected / 150) + '\n')
         a = (7000 / detected)
         print(a)
         _Data = audioop.mul(Data, 2, a)
