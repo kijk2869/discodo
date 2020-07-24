@@ -10,7 +10,7 @@ class VoiceClient:
 
     def __del__(self):
         vc = self.Node.voiceClients.get(self.guild_id)
-        if vc and vc == self:
+        if vc and vc is self:
             self.Node.voiceClients.pop(self.guild_id)
 
     async def send(self, Operation, Data={}):
