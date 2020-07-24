@@ -9,7 +9,6 @@ import colorlog
 
 log = logging.getLogger('discodo')
 
-
 class loggingFilter(logging.Filter):
     def __init__(self, level):
         self.level = level
@@ -23,7 +22,8 @@ stderrHandler = logging.StreamHandler(sys.stderr)
 stdoutHandler.addFilter(loggingFilter(logging.WARNING))
 
 
-def setLoggingLevel(level):
+def setLoggingLevel(logger, level):
+    logger.setLevel(logging.DEBUG)
     stdoutHandler.setLevel(level)
     stderrHandler.setLevel(max(level, logging.WARNING))
 
@@ -42,14 +42,12 @@ ColoredFormatter = colorlog.ColoredFormatter(
     secondary_log_colors={},
     style='%'
 )
-stdoutHandler.setFormatter(stdoutHandler)
-stderrHandler.setFormatter(stderrHandler)
-
+stdoutHandler.setFormatter(ColoredFormatter)
+stderrHandler.setFormatter(ColoredFormatter)
 
 def addLoggingHandler(logger):
     logger.addHandler(stdoutHandler)
     logger.addHandler(stderrHandler)
-
 
 addLoggingHandler(log)
 
@@ -89,9 +87,9 @@ logParser.add_argument('--verbose', '-v', action='store_true',
 args = parser.parse_args()
 
 if args.verbose:
-    setLoggingLevel(logging.DEBUG)
+    setLoggingLevel(log, logging.DEBUG)
 else:
-    setLoggingLevel(logging.INFO)
+    setLoggingLevel(log, logging.INFO)
 
 os.environ['VCTIMEOUT'] = str(args.timeout)
 os.environ['DEFAULTVOLUME'] = str(round(args.default_volume / 100, 3))
