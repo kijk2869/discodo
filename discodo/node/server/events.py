@@ -1,6 +1,6 @@
 import random
 
-from ... import getStat
+from ...stat import getStat
 
 
 def need_data(*keys):
