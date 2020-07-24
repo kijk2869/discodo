@@ -21,10 +21,6 @@ def authorized(func):
         return func(request, *args, **kwargs)
     return wrapper
 
-@app.route('/')
-async def index(request):
-    return response.json({'hello': 'discodo'})
-
 @app.route('/stat')
 async def stat(request):
     return response.json(getStat())
