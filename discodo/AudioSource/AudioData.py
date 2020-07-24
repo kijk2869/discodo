@@ -61,7 +61,8 @@ class AudioData:
                     await clear_cache()
                     return await self.source(*args, _retry=_retry + 1, **kwargs)
 
-            self._source = AudioSource(self.stream_url, *args, AudioData=self, **kwargs)
+            self._source = AudioSource(
+                self.stream_url, *args, AudioData=self, **kwargs)
 
         return self._source
 

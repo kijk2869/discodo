@@ -32,7 +32,8 @@ def need_data(*keys):
 def need_manager(func):
     def wrapper(self, *args, **kwargs):
         if not self.AudioManager:
-            payload = {"op": func.__name__, "d": {"NOT_IDENTIFIED": "Identify first."}}
+            payload = {"op": func.__name__, "d": {
+                "NOT_IDENTIFIED": "Identify first."}}
 
             return self.sendJson(payload)
         return func(self, *args, **kwargs)
@@ -234,7 +235,8 @@ class WebsocketEvents:
     @need_data("guild_id", "index")
     async def remove(self, Data):
         if not isinstance(Data["index"], (int)):
-            payload = {"op": "remove", "d": {"BAD_REQUEST": "`index` must be int.."}}
+            payload = {"op": "remove", "d": {
+                "BAD_REQUEST": "`index` must be int.."}}
             return await self.sendJson(payload)
 
         vc = self.AudioManager.getVC(Data["guild_id"])

@@ -131,7 +131,8 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         await super().close(*args, **kwargs)
 
     async def HELLO(self, Data):
-        self._keepAliver = keepAlive(self, min(Data["heartbeat_interval"], 5.0))
+        self._keepAliver = keepAlive(
+            self, min(Data["heartbeat_interval"], 5.0))
         self._keepAliver.start()
 
     async def HEARTBEAT_ACK(self, Data):

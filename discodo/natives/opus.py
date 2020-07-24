@@ -195,13 +195,15 @@ class Encoder:
         )
 
     def setExpectedPacketLoss(self, percentage):
-        _library.opus_encoder_ctl(self.state, ENCODER_CTL["CTL_SET_PLP"], percentage)
+        _library.opus_encoder_ctl(
+            self.state, ENCODER_CTL["CTL_SET_PLP"], percentage)
 
     def encode(self, Pcm, FrameSize=SAMPLES_PER_FRAME):
         max_length = len(Pcm)
         Pcm = ctypes.cast(Pcm, c_int16_pointer)
         Data = (ctypes.c_char * max_length)()
 
-        Encoded = _library.opus_encode(self.state, Pcm, FrameSize, Data, max_length)
+        Encoded = _library.opus_encode(
+            self.state, Pcm, FrameSize, Data, max_length)
 
         return array.array("b", Data[:Encoded]).tobytes()
