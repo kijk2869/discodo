@@ -70,12 +70,12 @@ class Node:
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
             self.voiceClients[guild_id] = VoiceClient(self, guild_id)
-        
+
         if Data and isinstance(Data, dict) and "guild_id" in Data:
             vc = self.getVC(Data["guild_id"])
             if vc:
                 vc.emitter.dispatch(Operation, Data)
-        
+
         if Operation == "VC_DESTROYED":
             guild_id = int(Data["guild_id"])
             if guild_id in self.voiceClients:
