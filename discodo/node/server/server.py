@@ -22,6 +22,7 @@ def authorized(func):
         return func(request, *args, **kwargs)
     return wrapper
 
+
 @app.route('/stat')
 async def stat(request):
     return response.json(getStat())
