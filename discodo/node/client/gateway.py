@@ -108,7 +108,6 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
     async def send(self, Operation, Data):
         payload = {"op": Operation, "d": Data}
 
-        log.debug(f"send to websocket {payload}")
         await self.sendJson(payload)
 
     async def poll(self):
