@@ -23,14 +23,15 @@ class VoiceClient(VoiceConnector):
 
         self.event = EventEmitter()
         self.event.onAny(self.onAnyEvent)
-        self.event.on("NeedNextSong", self.getAutoplay)
-        self.event.on("SongEnd", self.getAutoplay)
+        self.event.on("NeedNextSong", self.getNext)
+        self.event.on("SongEnd", self.getNext)
 
         self.Queue = []
         self._filter = {}
 
         self.player = None
         self.paused = False
+        self.repeat = False
 
         self.autoplay = DEFAULAUTOPLAY
         self._volume = DEFAULTVOLUME
@@ -39,8 +40,12 @@ class VoiceClient(VoiceConnector):
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
 
-    async def getAutoplay(self, **kwargs):
+    async def getNext(self, **kwargs):
         current = list(kwargs.values()).pop()
+
+        if self.repeat:
+            self.Queue.append(await self.getSong(current['webpage_url']))
+
         if self.autoplay and (not self.Queue or (self.Queue[0] == current.toDict() and len(self.Queue) <= 1)):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
