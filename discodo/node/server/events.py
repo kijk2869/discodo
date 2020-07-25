@@ -225,7 +225,7 @@ class WebsocketEvents:
             "d": {
                 "guild_id": Data["guild_id"],
                 'state': vc.state,
-                'current': vc.player.current.toDict(),
+                'current': vc.player.current.toDict() if vc.player.current else None,
                 'position': {
                     'duration': vc.player.current.duration,
                     'remain': vc.player.current.remain
