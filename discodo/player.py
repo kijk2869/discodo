@@ -121,6 +121,12 @@ class Player(threading.Thread):
                 "SongEnd", song=self.current.AudioData.toDict())
             del self.client.Queue[0]
             self.speak(True)
+        
+        if self.__next_called and not (
+            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            or self.current.stopped
+        ):
+            self.__next_called = False
 
         if self.next and (
             self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
