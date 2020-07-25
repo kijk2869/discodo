@@ -176,11 +176,11 @@ class VoiceClient(VoiceConnector):
         if self.paused:
             return 'paused'
         return 'playing'
-    
+
     @property
     def repeat(self) -> bool:
         return self._repeat
-    
+
     @repeat.setter
     def repeat(self, value: bool):
         self._repeat = value
