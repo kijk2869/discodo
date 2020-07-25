@@ -53,6 +53,21 @@ class VoiceClient:
 
         return await self.emitter.wait_for("setFilter", timeout=10.0)
 
+    async def pause(self) -> dict:
+        await self.send("pause", )
+
+        return await self.emitter.wait_for("pause", timeout=10.0)
+
+    async def resume(self) -> dict:
+        await self.send("resume")
+
+        return await self.emitter.wait_for("resume", timeout=10.0)
+
+    async def changePause(self) -> dict:
+        await self.send("changePause")
+
+        return await self.emitter.wait_for("changePause", timeout=10.0)
+
     async def getQueue(self) -> dict:
         await self.send("getQueue")
 

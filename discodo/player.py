@@ -184,7 +184,10 @@ class Player(threading.Thread):
                     self.loops = 0
                     _start = time.perf_counter()
 
-                Data = self.makeFrame()
+                if not self.client.paused:
+                    Data = self.makeFrame()
+                else:
+                    Data = None
 
                 if self._volume != self.client.volume:
                     if self._volume < self.client.volume:

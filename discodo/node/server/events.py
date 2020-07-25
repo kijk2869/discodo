@@ -224,6 +224,7 @@ class WebsocketEvents:
             "op": "Current",
             "d": {
                 "guild_id": Data["guild_id"],
+                'state': vc.state,
                 'current': vc.player.current.toDict(),
                 'position': {
                     'duration': vc.player.current.duration,
@@ -235,6 +236,54 @@ class WebsocketEvents:
                     'crossfade': vc.crossfade,
                     'filter': vc.filter
                 }
+            },
+        }
+        return await self.sendJson(payload)
+
+    @need_manager
+    @need_data("guild_id")
+    async def pause(self, Data):
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        vc.pause()
+
+        payload = {
+            "op": "pause",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "state": vc.state
+            },
+        }
+        return await self.sendJson(payload)
+
+    @need_manager
+    @need_data("guild_id")
+    async def resume(self, Data):
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        vc.resume()
+
+        payload = {
+            "op": "resume",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "state": vc.state
+            },
+        }
+        return await self.sendJson(payload)
+
+    @need_manager
+    @need_data("guild_id")
+    async def changePause(self, Data):
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        vc.changePause()
+
+        payload = {
+            "op": "changePause",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "state": vc.state
             },
         }
         return await self.sendJson(payload)
