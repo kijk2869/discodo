@@ -101,4 +101,4 @@ class Node:
     async def getStat(self) -> dict:
         await self.send("GET_STAT", None)
 
-        return await self.emitter.wait_for("STAT")
+        return await self.emitter.wait_for("STAT", timeout=10.0)
