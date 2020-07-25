@@ -31,7 +31,7 @@ class VoiceClient(VoiceConnector):
 
         self.player = None
         self.paused = False
-        self.repeat = False
+        self._repeat = False
 
         self.autoplay = DEFAULAUTOPLAY
         self._volume = DEFAULTVOLUME
@@ -176,3 +176,11 @@ class VoiceClient(VoiceConnector):
         if self.paused:
             return 'paused'
         return 'playing'
+    
+    @property
+    def repeat(self) -> bool:
+        return self._repeat
+    
+    @repeat.setter
+    def repeat(self, value: bool):
+        self._repeat = value

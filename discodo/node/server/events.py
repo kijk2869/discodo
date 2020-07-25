@@ -289,6 +289,29 @@ class WebsocketEvents:
         return await self.sendJson(payload)
 
     @need_manager
+    @need_data("guild_id", "repeat")
+    async def repeat(self, Data):
+        if not isinstance(Data["repeat"], bool):
+            payload = {
+                "op": "repeat",
+                "d": {"BAD_REQUEST": "`repeat` must be bool.."},
+            }
+            return await self.sendJson(payload)
+
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        vc.repeat = Data['repeat']
+
+        payload = {
+            "op": "repeat",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "repeat": vc.repeat,
+            },
+        }
+        return await self.sendJson(payload)
+
+    @need_manager
     @need_data("guild_id")
     async def shuffle(self, Data):
         vc = self.AudioManager.getVC(Data["guild_id"])
