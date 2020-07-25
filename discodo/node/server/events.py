@@ -50,7 +50,8 @@ class WebsocketEvents:
     async def GET_STAT(self, Data):
         payload = {"op": "STAT", "d": getStat()}
 
-        payload["d"]["TotalPlayers"] = len(self.AudioManager.voiceClients) if self.AudioManager else 0
+        payload["d"]["TotalPlayers"] = len(
+            self.AudioManager.voiceClients) if self.AudioManager else 0
 
         await self.sendJson(payload)
 
