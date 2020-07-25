@@ -125,15 +125,15 @@ class VoiceClient(VoiceConnector):
         del self.Queue[1: (offset - 1)]
 
         self.player.current.stop()
-    
+
     def pause(self) -> bool:
         self.paused = True
         return self.paused
-    
+
     def resume(self) -> bool:
         self.paused = False
         return self.paused
-    
+
     def changePause(self) -> bool:
         if self.paused:
             return self.resume()
