@@ -73,10 +73,10 @@ class VoiceClient:
 
         return await self.emitter.wait_for("Queue", timeout=10.0)
 
-    async def getCurrent(self) -> dict:
-        await self.send("getCurrent")
+    async def getState(self) -> dict:
+        await self.send("getState")
 
-        return await self.emitter.wait_for("Current", timeout=10.0)
+        return await self.emitter.wait_for("State", timeout=10.0)
 
     async def shuffle(self) -> dict:
         await self.send("shuffle")

@@ -217,11 +217,11 @@ class WebsocketEvents:
 
     @need_manager
     @need_data("guild_id")
-    async def getCurrent(self, Data):
+    async def getState(self, Data):
         vc = self.AudioManager.getVC(Data["guild_id"])
 
         payload = {
-            "op": "Current",
+            "op": "State",
             "d": {
                 "guild_id": Data["guild_id"],
                 'state': vc.state,
