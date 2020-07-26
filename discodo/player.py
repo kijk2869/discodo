@@ -122,7 +122,7 @@ class Player(threading.Thread):
             del self.client.Queue[0]
             self.speak(True)
 
-        if self.__next_called and not (
+        if self.__next_called and self.current and not (
             self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
             or self.current.stopped
         ):

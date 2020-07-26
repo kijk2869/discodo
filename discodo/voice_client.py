@@ -46,7 +46,7 @@ class VoiceClient(VoiceConnector):
         if self.repeat:
             self.Queue.append(await self.getSong(current['webpage_url']))
 
-        if self.autoplay and (not self.Queue or (self.Queue[0] == current.toDict() and len(self.Queue) <= 1)):
+        if self.autoplay and (not self.Queue or (self.Queue[0].toDict() == current and len(self.Queue) <= 1)):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
 
