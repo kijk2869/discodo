@@ -1,4 +1,5 @@
 import asyncio
+from discodo.exceptions import NodeNotConnected
 from logging import getLogger
 from traceback import print_exc
 
@@ -65,7 +66,7 @@ class Node:
 
     def send(self, *args, **kwargs):
         if not self.ws:
-            raise ValueError
+            raise NodeNotConnected
 
         return self.ws.send(*args, **kwargs)
 

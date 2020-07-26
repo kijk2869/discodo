@@ -1,0 +1,19 @@
+from discord.errors import ClientException
+
+
+class DiscodoException(Exception):
+    """Base exception class for Discodo
+    """
+    pass
+
+class VoiceClientNotFound(DiscodoException):
+    pass
+
+class NoSearchResults(DiscodoException):
+    pass
+
+class AudioSourceNotPlaying(DiscodoException):
+    pass
+
+class NodeNotConnected(DiscodoException):
+    pass

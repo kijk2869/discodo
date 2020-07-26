@@ -1,4 +1,5 @@
 import asyncio
+from discodo.exceptions import NoSearchResults
 import logging
 from re import compile as Regex
 from typing import Optional
@@ -45,7 +46,7 @@ def _extract(query: str) -> Optional[dict]:
     Data = YoutubeDL.extract_info(query, download=False)
 
     if not Data:
-        return
+        raise NoSearchResults
 
     if "entries" in Data:
         return Data["entries"]

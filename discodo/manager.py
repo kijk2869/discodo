@@ -1,4 +1,5 @@
 import asyncio
+from discodo.exceptions import VoiceClientNotFound
 
 from .AudioSource import AudioData
 from .event import DiscordEvent
@@ -29,6 +30,9 @@ class AudioManager:
         return self.discordEvent.dispatch(Event, Data)
 
     def getVC(self, guildID: int) -> VoiceClient:
+        if not int(guildID) in self.voiceClients:
+            raise VoiceClientNotFound
+
         return self.voiceClients.get(int(guildID))
 
     def delVC(self, guildID: int):

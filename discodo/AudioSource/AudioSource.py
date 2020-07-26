@@ -2,6 +2,7 @@ import audioop
 import os
 
 from ..natives import AudioFifo, Loader
+from ..exceptions import AudioSourceNotPlaying
 
 SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
 FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
@@ -88,7 +89,7 @@ class AudioSource:
 
     def seek(self, offset: float):
         if not self.Loader:
-            raise ValueError
+            raise AudioSourceNotPlaying
 
         offset = (
             min(max(offset, 1), self.AudioData.duration - 1)

@@ -2,6 +2,7 @@ import asyncio
 import discord
 from itertools import chain
 from .node.client import Node as NodeClient
+from .exceptions import VoiceClientNotFound
 
 class DPYClient:
     def __init__(self, client):
@@ -79,7 +80,7 @@ class DPYClient:
     
     async def destroy(self, guild):
         if not guild.id in self.voiceClients:
-            raise ValueError
+            raise VoiceClientNotFound
             
         vc = self.getVC(guild.id)
         ws = self.__get_websocket(guild.shard_id)
