@@ -6,14 +6,18 @@ class DiscodoException(Exception):
     """
     pass
 
+
 class VoiceClientNotFound(DiscodoException):
     pass
+
 
 class NoSearchResults(DiscodoException):
     pass
 
+
 class AudioSourceNotPlaying(DiscodoException):
     pass
+
 
 class NodeNotConnected(DiscodoException):
     pass
