@@ -84,7 +84,7 @@ class DPYClient:
     async def destroy(self, guild):
         if not guild.id in self.voiceClients:
             raise VoiceClientNotFound
-            
+
         vc = self.getVC(guild.id)
         ws = self.__get_websocket(guild.shard_id)
 
