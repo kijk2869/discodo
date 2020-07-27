@@ -27,7 +27,7 @@ class DPYClient:
         await ws.voice_state(guild.id, None)
 
     async def getBestNode(self):
-        async def getWithNodeData(self, Node):
+        async def getWithNodeData(Node):
             Data = await Node.getStat()
             Data['Node'] = Node
 
