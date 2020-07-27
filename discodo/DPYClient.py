@@ -53,6 +53,7 @@ class DPYClient:
                     [
                         Node.voiceClients.items()
                         for Node in self.Nodes
+                        if Node.connected.is_set()
                     ]
                 )
             )

@@ -20,6 +20,7 @@ class Node:
         self.loop = asyncio.get_event_loop()
         self.user_id = user_id
         self.reconnect = reconnect
+        self.connected = asyncio.Event()
 
         self.URL = URL
         self.password = password
@@ -35,6 +36,7 @@ class Node:
             await self.ws.close()
 
         self.ws = await NodeConnection.connect(self)
+        self.connected.set()
 
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWs())
@@ -47,11 +49,12 @@ class Node:
             try:
                 Operation, Data = await self.ws.poll()
             except (asyncio.TimeoutError, websockets.ConnectionClosedError):
+                self.connected.clear()
                 if self.ws.closed and self.reconnect:
                     await self.connect()
                     continue
 
-                if self.ws and not self.ws.closed:
+                if self.ws:
                     await self.ws.close()
 
                 self.ws = None
