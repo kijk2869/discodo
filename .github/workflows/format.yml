@@ -29,8 +29,8 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Setup Git
       run: |
-        git config --global user.name github-actions
-        git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
+        git config --global user.name GitHub Action
+        git config --global user.email 'actions@github.com'
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
     - name: Lint with flake8
       run: |
@@ -38,15 +38,17 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Lint with black and isort
-      run: |
-        pip install black isort
-        black --check .
-        isort . --check --diff
     - name: Apply code style changes
       if: ${{ failure() }}
       run: |
+        pip install black isort
         black .
         isort .
-        git commit -am "fixup: reformat with black and isort"
-        git push
+        _git_changed() {
+            [[ -n "$(git status -s)" ]]
+        }
+        if _git_changed;
+        then
+          git commit -am "fixup: reformat with black and isort" --author="$GITHUB_ACTOR <$GITHUB_ACTOR@users.noreply.github.com>"
+          git push
+        fi
