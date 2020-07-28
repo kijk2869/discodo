@@ -23,6 +23,11 @@ class VoiceClient:
 
         return await self.emitter.wait_for("loadSong", timeout=10.0)
 
+    async def putSong(self, Song: dict) -> dict:
+        await self.send("putSong", {"song": Song})
+
+        return await self.emitter.wait_for("putSong", timeout=10.0)
+
     async def skip(self, offset: int = 1) -> dict:
         await self.send("skip", {"offset": offset})
 

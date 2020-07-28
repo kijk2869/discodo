@@ -1,6 +1,7 @@
 import random
 
 from ...stat import getStat
+from ...AudioSource import AudioData
 
 
 def need_data(*keys):
@@ -162,6 +163,20 @@ class WebsocketEvents:
     @need_data("guild_id", "query")
     async def loadSong(self, Data):
         await self.AudioManager.loadSong(Data["guild_id"], Data["query"])
+
+    @need_manager
+    @need_data("guild_id", "song")
+    async def putSong(self, Data):
+        if not isinstance(Data["offset"], dict):
+            payload = {
+                "op": "putSong",
+                "d": {"BAD_REQUEST": "`song` must be dict.."},
+            }
+            return await self.sendJson(payload)
+
+        Song = AudioData.fromDict(Data['song'])
+
+        await self.AudioManager.putSong(Data["guild_id"], Song)
 
     @need_manager
     @need_data("guild_id")
