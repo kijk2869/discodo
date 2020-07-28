@@ -24,8 +24,7 @@ class AudioFilter:
 
         self.Graph = av.filter.Graph()
         self._FilterChains = []
-        self._FilterChains.append(
-            self.Graph.add_abuffer(self.selectAudioStream))
+        self._FilterChains.append(self.Graph.add_abuffer(self.selectAudioStream))
         for filter, value in self._Filters.items():
             self._FilterChains.append(self.Graph.add(filter, value))
             self._FilterChains[-2].link_to(self._FilterChains[-1])

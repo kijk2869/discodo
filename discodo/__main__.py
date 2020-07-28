@@ -25,7 +25,7 @@ stdoutHandler.addFilter(loggingFilter(logging.WARNING))
 
 
 def setLoggingLevel(level):
-    for logger in [log, logging.getLogger('libav')]:
+    for logger in [log, logging.getLogger("libav")]:
         addLoggingHandler(logger)
         logger.setLevel(logging.DEBUG)
         stdoutHandler.setLevel(level)
@@ -158,7 +158,6 @@ os.environ["PASSWORD"] = str(args.auth)
 
 loop = asyncio.get_event_loop()
 loop.create_task(
-    server.create_server(host=args.host, port=args.port,
-                         return_asyncio_server=True)
+    server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
 )
 loop.run_forever()

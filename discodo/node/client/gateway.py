@@ -76,10 +76,10 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
     @classmethod
     async def connect(cls, client, loop=asyncio.get_event_loop()):
         ws = await websockets.connect(
-            client.URL, loop=loop, klass=cls,
-            extra_headers={
-                'Authorization': client.password
-            }
+            client.URL,
+            loop=loop,
+            klass=cls,
+            extra_headers={"Authorization": client.password},
         )
 
         ws.client = client
@@ -133,8 +133,7 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         await super().close(*args, **kwargs)
 
     async def HELLO(self, Data):
-        self._keepAliver = keepAlive(
-            self, min(Data["heartbeat_interval"], 5.0))
+        self._keepAliver = keepAlive(self, min(Data["heartbeat_interval"], 5.0))
         self._keepAliver.start()
 
     async def HEARTBEAT_ACK(self, Data):

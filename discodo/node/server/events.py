@@ -1,7 +1,7 @@
 import random
 
-from ...stat import getStat
 from ...AudioSource import AudioData
+from ...stat import getStat
 
 
 def need_data(*keys):
@@ -33,8 +33,7 @@ def need_data(*keys):
 def need_manager(func):
     def wrapper(self, *args, **kwargs):
         if not self.AudioManager:
-            payload = {"op": func.__name__, "d": {
-                "NOT_IDENTIFIED": "Identify first."}}
+            payload = {"op": func.__name__, "d": {"NOT_IDENTIFIED": "Identify first."}}
 
             return self.sendJson(payload)
         return func(self, *args, **kwargs)
@@ -51,8 +50,9 @@ class WebsocketEvents:
     async def GET_STAT(self, Data):
         payload = {"op": "STAT", "d": getStat()}
 
-        payload["d"]["TotalPlayers"] = len(
-            self.AudioManager.voiceClients) if self.AudioManager else 0
+        payload["d"]["TotalPlayers"] = (
+            len(self.AudioManager.voiceClients) if self.AudioManager else 0
+        )
 
         await self.sendJson(payload)
 
@@ -174,7 +174,7 @@ class WebsocketEvents:
             }
             return await self.sendJson(payload)
 
-        Song = AudioData.fromDict(Data['song'])
+        Song = AudioData.fromDict(Data["song"])
 
         await self.AudioManager.putSong(Data["guild_id"], Song)
 
@@ -239,18 +239,18 @@ class WebsocketEvents:
             "op": "State",
             "d": {
                 "guild_id": Data["guild_id"],
-                'state': vc.state,
-                'current': vc.player.current.toDict() if vc.player.current else None,
-                'position': {
-                    'duration': vc.player.current.duration,
-                    'remain': vc.player.current.remain
+                "state": vc.state,
+                "current": vc.player.current.toDict() if vc.player.current else None,
+                "position": {
+                    "duration": vc.player.current.duration,
+                    "remain": vc.player.current.remain,
                 },
-                'options': {
-                    'autoplay': vc.autoplay,
-                    'volume': int(vc.volume * 100),
-                    'crossfade': vc.crossfade,
-                    'filter': vc.filter
-                }
+                "options": {
+                    "autoplay": vc.autoplay,
+                    "volume": int(vc.volume * 100),
+                    "crossfade": vc.crossfade,
+                    "filter": vc.filter,
+                },
             },
         }
         return await self.sendJson(payload)
@@ -264,10 +264,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "pause",
-            "d": {
-                "guild_id": Data["guild_id"],
-                "state": vc.state
-            },
+            "d": {"guild_id": Data["guild_id"], "state": vc.state},
         }
         return await self.sendJson(payload)
 
@@ -280,10 +277,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "resume",
-            "d": {
-                "guild_id": Data["guild_id"],
-                "state": vc.state
-            },
+            "d": {"guild_id": Data["guild_id"], "state": vc.state},
         }
         return await self.sendJson(payload)
 
@@ -296,10 +290,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "changePause",
-            "d": {
-                "guild_id": Data["guild_id"],
-                "state": vc.state
-            },
+            "d": {"guild_id": Data["guild_id"], "state": vc.state},
         }
         return await self.sendJson(payload)
 
@@ -315,14 +306,11 @@ class WebsocketEvents:
 
         vc = self.AudioManager.getVC(Data["guild_id"])
 
-        vc.repeat = Data['repeat']
+        vc.repeat = Data["repeat"]
 
         payload = {
             "op": "repeat",
-            "d": {
-                "guild_id": Data["guild_id"],
-                "repeat": vc.repeat,
-            },
+            "d": {"guild_id": Data["guild_id"], "repeat": vc.repeat,},
         }
         return await self.sendJson(payload)
 
@@ -346,8 +334,7 @@ class WebsocketEvents:
     @need_data("guild_id", "index")
     async def remove(self, Data):
         if not isinstance(Data["index"], (int)):
-            payload = {"op": "remove", "d": {
-                "BAD_REQUEST": "`index` must be int.."}}
+            payload = {"op": "remove", "d": {"BAD_REQUEST": "`index` must be int.."}}
             return await self.sendJson(payload)
 
         vc = self.AudioManager.getVC(Data["guild_id"])

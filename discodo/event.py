@@ -15,8 +15,7 @@ class DiscordEvent:
         self.EventEmitter.on("READY", self.parseReady)
         self.EventEmitter.on("RESUME", self.parseResume)
         self.EventEmitter.on("VOICE_STATE_UPDATE", self.parseVoiceStateUpdate)
-        self.EventEmitter.on("VOICE_SERVER_UPDATE",
-                             self.parseVoiceServerUpdate)
+        self.EventEmitter.on("VOICE_SERVER_UPDATE", self.parseVoiceServerUpdate)
 
     async def emit(self, event, *args, **kwargs):
         return await self.EventEmitter.emit(event, *args, **kwargs)

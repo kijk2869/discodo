@@ -126,9 +126,9 @@ class VoiceConnector:
                 self._connectedThread.clear()
 
                 if isinstance(e, ConnectionClosed):
-                    reason = f'with {e.code}'
+                    reason = f"with {e.code}"
                 else:
-                    reason = 'because timed out.'
+                    reason = "because timed out."
 
                 log.info(
                     f"voice connection of {self.guild_id} destroyed {reason}. wait for events."

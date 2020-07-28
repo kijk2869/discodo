@@ -69,7 +69,7 @@ class VoiceClient:
         return await self.emitter.wait_for("resume", timeout=10.0)
 
     async def repeat(self, repeat: bool) -> dict:
-        await self.send("repeat", {'repeat': repeat})
+        await self.send("repeat", {"repeat": repeat})
 
         return await self.emitter.wait_for("repeat", timeout=10.0)
 

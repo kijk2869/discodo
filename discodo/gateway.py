@@ -157,8 +157,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         await self.sendJson(payload)
 
     async def speak(self, state: bool = True):
-        payload = {"op": self.SPEAKING, "d": {
-            "speaking": int(state), "delay": 0}}
+        payload = {"op": self.SPEAKING, "d": {"speaking": int(state), "delay": 0}}
         await self.sendJson(payload)
 
     async def receive(self, message):
@@ -191,8 +190,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
         _start, _end = 4, _recieved.index(0, 4)
         self.client.ip = _recieved[_start:_end].decode("ascii")
-        self.client.port = struct.unpack_from(
-            ">H", _recieved, len(_recieved) - 2)[0]
+        self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
 
         encryptModes = [
             Mode for Mode in data["modes"] if Mode in getEncryptModes().keys()

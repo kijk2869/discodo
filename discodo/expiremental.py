@@ -16,13 +16,12 @@ def volumeNorm(Data):
 
     try:
         detected = volumeDetect(Data)
-        sys.stdout.write("" + str(detected) + '|' + '#' *
-                         round(detected / 150) + '\n')
-        a = (7000 / detected)
+        sys.stdout.write("" + str(detected) + "|" + "#" * round(detected / 150) + "\n")
+        a = 7000 / detected
         print(a)
         _Data = audioop.mul(Data, 2, a)
         b = volumeDetect(Data)
-        sys.stdout.write("->" + str(b) + '|' + '#' * round(b / 150) + '\n')
+        sys.stdout.write("->" + str(b) + "|" + "#" * round(b / 150) + "\n")
         return _Data
     except:
         return Data

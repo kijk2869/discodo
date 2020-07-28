@@ -1,8 +1,8 @@
 import audioop
 import os
 
-from ..natives import AudioFifo, Loader
 from ..exceptions import AudioSourceNotPlaying
+from ..natives import AudioFifo, Loader
 
 SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
 FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))

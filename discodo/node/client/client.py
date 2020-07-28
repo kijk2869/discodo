@@ -1,9 +1,10 @@
 import asyncio
-from discodo.exceptions import NodeNotConnected
 from logging import getLogger
 from traceback import print_exc
 
 import websockets
+
+from discodo.exceptions import NodeNotConnected
 
 from ...utils import EventEmitter
 from .gateway import NodeConnection
@@ -13,7 +14,7 @@ log = getLogger("discodo.client")
 
 
 class Node:
-    def __init__(self, URL=None, password='hellodiscodo', user_id=None, reconnect=True):
+    def __init__(self, URL=None, password="hellodiscodo", user_id=None, reconnect=True):
         self.ws = None
         self.emitter = EventEmitter()
 

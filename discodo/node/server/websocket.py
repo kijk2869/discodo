@@ -57,8 +57,10 @@ class WebsocketHandler:
     async def _handle(self):
         log.info(f"new websocket connection created from {self.request.ip}.")
 
-        if self.request.headers.get('Authorization') != PASSWORD:
-            log.warning(f"websocket connection from {self.request.ip} forbidden: password mismatch.")
+        if self.request.headers.get("Authorization") != PASSWORD:
+            log.warning(
+                f"websocket connection from {self.request.ip} forbidden: password mismatch."
+            )
             await self.forbidden("Password mismatch.")
             return
 

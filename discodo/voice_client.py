@@ -44,9 +44,12 @@ class VoiceClient(VoiceConnector):
         current = list(kwargs.values()).pop()
 
         if self.repeat:
-            self.Queue.append(await self.getSong(current['webpage_url']))
+            self.Queue.append(await self.getSong(current["webpage_url"]))
 
-        if self.autoplay and (not self.Queue or (self.Queue[0].toDict() == current and len(self.Queue) <= 1)):
+        if self.autoplay and (
+            not self.Queue
+            or (self.Queue[0].toDict() == current and len(self.Queue) <= 1)
+        ):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
 
@@ -91,8 +94,7 @@ class VoiceClient(VoiceConnector):
 
         self.event.dispatch(
             "putSong",
-            songs=[dict(Item.toDict(), index=self.Queue.index(Item))
-                   for Item in Data],
+            songs=[dict(Item.toDict(), index=self.Queue.index(Item)) for Item in Data],
         )
 
         return (
@@ -104,10 +106,13 @@ class VoiceClient(VoiceConnector):
     async def loadSong(self, Query: str) -> AudioData:
         Data = await AudioData.create(Query) if isinstance(Query, str) else Query
 
-        self.event.dispatch("loadSong", song=(
-            [Item.toDict() for Item in Data]
-            if isinstance(Data, list) else Data.toDict()
-        )
+        self.event.dispatch(
+            "loadSong",
+            song=(
+                [Item.toDict() for Item in Data]
+                if isinstance(Data, list)
+                else Data.toDict()
+            ),
         )
 
         self.putSong(Data)
@@ -127,7 +132,7 @@ class VoiceClient(VoiceConnector):
         if len(self.Queue) < offset:
             raise ValueError
 
-        del self.Queue[1: (offset - 1)]
+        del self.Queue[1 : (offset - 1)]
 
         self.player.current.stop()
 
@@ -172,10 +177,10 @@ class VoiceClient(VoiceConnector):
     @property
     def state(self) -> str:
         if not self.Queue:
-            return 'stopped'
+            return "stopped"
         if self.paused:
-            return 'paused'
-        return 'playing'
+            return "paused"
+        return "playing"
 
     @property
     def repeat(self) -> bool:

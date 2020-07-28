@@ -17,24 +17,25 @@ app.register_blueprint(WebsocketBlueprint)
 
 def authorized(func):
     def wrapper(request, *args, **kwargs):
-        if request.headers.get('Authorization') != PASSWORD:
-            abort(403, 'Password mismatch.')
+        if request.headers.get("Authorization") != PASSWORD:
+            abort(403, "Password mismatch.")
 
         return func(request, *args, **kwargs)
+
     return wrapper
 
 
-@app.route('/stat')
+@app.route("/stat")
 async def stat(request):
     return response.json(getStat())
 
 
-@app.route('/getSong')
+@app.route("/getSong")
 @authorized
 async def getSong(request):
-    query = ''.join(request.args.get('query', [])).strip()
+    query = "".join(request.args.get("query", [])).strip()
 
     if not query:
-        abort(400, 'Missing parameter query.')
+        abort(400, "Missing parameter query.")
 
     return response.json(await AudioData.create(query))

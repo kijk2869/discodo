@@ -90,8 +90,7 @@ class BufferLoader(threading.Thread):
                 )
 
             self.Loader.selectAudioStream = self.Loader.StreamConainer.streams.audio[0]
-            self.Loader.FrameGenerator = self.Loader.StreamConainer.decode(
-                audio=0)
+            self.Loader.FrameGenerator = self.Loader.StreamConainer.decode(audio=0)
 
             while not self.Loader._end.is_set():
                 if self.Loader.Filter != self.Loader._Filter:
@@ -130,8 +129,7 @@ class BufferLoader(threading.Thread):
                     self.Loader.stop()
                     break
 
-                _current = float(
-                    Frame.pts * self.Loader.selectAudioStream.time_base)
+                _current = float(Frame.pts * self.Loader.selectAudioStream.time_base)
 
                 if self.Loader.FilterGraph:
                     self.Loader.FilterGraph.push(Frame)

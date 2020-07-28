@@ -1,10 +1,11 @@
 import asyncio
-from discodo.exceptions import NoSearchResults
 import logging
 from re import compile as Regex
 from typing import Optional
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
+
+from discodo.exceptions import NoSearchResults
 
 log = logging.getLogger("discodo.extractor")
 
@@ -37,8 +38,7 @@ def _extract(query: str) -> Optional[dict]:
         )
         option["dump_single_json"] = True
         option["extract_flat"] = True
-        query = "https://www.youtube.com/playlist?list=" + \
-            YoutubePlaylistMatch.group(1)
+        query = "https://www.youtube.com/playlist?list=" + YoutubePlaylistMatch.group(1)
     else:
         option["noplaylist"] = True
 

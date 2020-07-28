@@ -4,6 +4,7 @@ from discord.errors import ClientException
 class DiscodoException(Exception):
     """Base exception class for Discodo
     """
+
     pass
 
 
