@@ -78,7 +78,7 @@ class AudioData:
             "description": self.description,
             "playlist": self.playlist,
         }
-    
+
     @classmethod
     def fromDict(cls, Data):
         return cls(Data)
