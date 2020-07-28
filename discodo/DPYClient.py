@@ -1,46 +1,71 @@
 import asyncio
 import discord
 from itertools import chain
-from .node.client import Node as NodeClient
+from .node.client import Node as OriginNode
 from .exceptions import VoiceClientNotFound
 
+class NodeClient(OriginNode):
+    def __init__(self, DPYClient, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.DPYClient = DPYClient
+
+    async def destroy(self, *args, **kwargs):
+        await super().destroy(*args, **kwargs)
+
+        if self in self.DPYClient.Nodes:
+            self.DPYClient.Nodes.remove(self)
 
 class DPYClient:
     def __init__(self, client):
         self.client = client
+        self.loop = client.loop or asyncio.get_event_loop()
 
         self.Nodes = []
+        self.__register_event()
+    
+    def __register_event(self):
+        if hasattr(self.client, 'on_socket_response'):
+            originFunc = self.client.on_socket_response
+        else:
+            originFunc = None
+
+        @self.client.event
+        async def on_socket_response(*args, **kwargs):
+            self.loop.create_task(self.discord_socket_response(*args, **kwargs))
+
+            if originFunc:
+                return await originFunc()
+
+    async def discord_socket_response(self, payload):
+        if payload["t"] == "VOICE_SERVER_UPDATE":
+            VC = self.getVC(payload['d']['guild_id'])
+            SelectNodes = [VC.Node] if VC else [await self.getBestNode()]
+        else:
+            SelectNodes = self.Nodes
+        
+        await asyncio.wait(
+            [Node.discordDispatch(payload) for Node in SelectNodes],
+            return_when='ALL_COMPLETED'
+        )
 
     def register_node(self, *args, **kwargs):
-        Node = NodeClient(*args, **kwargs)
+        Node = NodeClient(self, *args, **kwargs)
 
         self.Nodes.append(Node)
 
-        Node.event.on('VC_DESTROYED', self._node_destroyed)
+        Node.event.on('VC_DESTROYED', self._vc_destroyed)
 
         return self
 
-    async def _node_destroyed(self, Data):
+    async def _vc_destroyed(self, Data):
         guild = self.client.get_guild(int(Data['guild_id']))
         ws = self.__get_websocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
 
     async def getBestNode(self):
-        async def getWithNodeData(Node):
-            Data = await Node.getStat()
-            Data['Node'] = Node
-
-            return Data
-
-        Futures, _ = await asyncio.wait(
-            [getWithNodeData(Node) for Node in self.Nodes],
-            return_when='ALL_COMPLETED'
-        )
-
-        Stats = [Future.result() for Future in Futures if Future.result()]
         SortedWithPerformance = sorted(
-            Stats, key=lambda x: x['TotalPlayers'], reverse=True)
+            self.Nodes, key=lambda Node: len(Node.voiceClients), reverse=True)
 
         return SortedWithPerformance[0]
 
@@ -59,8 +84,8 @@ class DPYClient:
             )
         }
 
-    def getVC(self, guildID):
-        return self.voiceClients.get(guildID)
+    def getVC(self, guildID:int):
+        return self.voiceClients.get(int(guildID))
 
     def __get_websocket(self, id):
         if isinstance(self.client, discord.AutoShardedClient):
