@@ -3,7 +3,10 @@ import discord
 from itertools import chain
 from .node.client import Node as OriginNode
 from .exceptions import VoiceClientNotFound
+from logging import getLogger
 
+
+log = getLogger("discodo.DPYClient")
 
 class NodeClient(OriginNode):
     def __init__(self, DPYClient, *args, **kwargs):
@@ -11,6 +14,7 @@ class NodeClient(OriginNode):
         self.DPYClient = DPYClient
 
     async def destroy(self, *args, **kwargs):
+        log.info(f'destroying Node {self.URL}')
         await super().destroy(*args, **kwargs)
 
         if self in self.DPYClient.Nodes:
@@ -53,6 +57,7 @@ class DPYClient:
 
     def register_node(self, *args, **kwargs):
         Node = NodeClient(self, *args, **kwargs)
+        log.info(f'registering Node {Node.URL}')
 
         self.Nodes.append(Node)
 
@@ -97,6 +102,7 @@ class DPYClient:
             return self.client.ws
 
     async def connect(self, channel):
+        log.info(f'connecting to {channel.id} of {channel.guild.id} without destroying')
         if not hasattr(channel, 'guild'):
             raise ValueError
 
@@ -105,11 +111,13 @@ class DPYClient:
         await ws.voice_state(channel.guild.id, channel.id)
 
     async def disconnect(self, guild):
+        log.info(f'disconnecting voice of {guild.id} without destroying')
         ws = self.__get_websocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
 
     async def destroy(self, guild):
+        log.info(f'destroying voice client of {guild.id}')
         if not guild.id in self.voiceClients:
             raise VoiceClientNotFound
 
