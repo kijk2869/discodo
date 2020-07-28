@@ -58,7 +58,7 @@ class DPYClient:
             )
 
     def register_node(self, *args, **kwargs):
-        kwargs['user_id'] = self.client.user.id
+        kwargs["user_id"] = self.client.user.id
         Node = NodeClient(self, *args, **kwargs)
         log.info(f"registering Node {Node.URL}")
 
