@@ -42,7 +42,7 @@ class DPYClient:
     async def discord_socket_response(self, payload):
         if payload["t"] == "VOICE_SERVER_UPDATE":
             VC = self.getVC(payload['d']['guild_id'])
-            SelectNodes = [VC.Node] if VC else [await self.getBestNode()]
+            SelectNodes = [VC.Node] if VC else [self.getBestNode()]
         else:
             SelectNodes = self.Nodes
 
@@ -66,7 +66,7 @@ class DPYClient:
 
         await ws.voice_state(guild.id, None)
 
-    async def getBestNode(self):
+    def getBestNode(self):
         SortedWithPerformance = sorted(
             self.Nodes, key=lambda Node: len(Node.voiceClients), reverse=True)
 
