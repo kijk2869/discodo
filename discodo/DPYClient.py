@@ -51,18 +51,20 @@ class DPYClient:
         else:
             SelectNodes = self.Nodes
 
-        await asyncio.wait(
-            [Node.discordDispatch(payload) for Node in SelectNodes],
-            return_when="ALL_COMPLETED",
-        )
+        if SelectNodes:
+            await asyncio.wait(
+                [Node.discordDispatch(payload) for Node in SelectNodes],
+                return_when="ALL_COMPLETED",
+            )
 
     def register_node(self, *args, **kwargs):
+        kwargs['user_id'] = self.client.user.id
         Node = NodeClient(self, *args, **kwargs)
         log.info(f"registering Node {Node.URL}")
 
         self.Nodes.append(Node)
 
-        Node.event.on("VC_DESTROYED", self._vc_destroyed)
+        Node.emitter.on("VC_DESTROYED", self._vc_destroyed)
 
         return self
 

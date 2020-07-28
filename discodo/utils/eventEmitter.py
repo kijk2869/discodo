@@ -39,8 +39,6 @@ class EventEmitter:
                             functools.partial(func, event, *args, **kwargs)
                         )
                 except:
-                    import traceback
-
                     traceback.print_exc()
 
         listeners = self._listeners.get(event)

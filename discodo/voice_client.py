@@ -37,6 +37,8 @@ class VoiceClient(VoiceConnector):
         self._volume = DEFAULTVOLUME
         self._crossfade = DEFAULTCROSSFADE
 
+        self.event.dispatch("VC_CREATED")
+
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
 
@@ -73,7 +75,6 @@ class VoiceClient(VoiceConnector):
                 Item.cleanup()
 
     async def createSocket(self, data: dict = None):
-        self.event.dispatch("VC_CREATED")
         await super().createSocket(data)
 
         if not self.player:
