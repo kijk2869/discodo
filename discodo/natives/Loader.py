@@ -66,8 +66,6 @@ class Loader:
                 self._end.clear()
             self.start()
 
-        self.AudioFifo.reset()
-
     def reloadResampler(self):
         self._haveToReloadResampler.set()
 
@@ -116,7 +114,18 @@ class BufferLoader(threading.Thread):
                     )
                     self.Loader._haveToReloadResampler.clear()
 
+                if self.Loader._seeking.locked():
+                    self.Loader._seeking.acquire()
+                    __seek_locked = True
+                else:
+                    __seek_locked = False
+
                 Frame = next(self.Loader.FrameGenerator, None)
+
+                if __seek_locked:
+                    self.Loader._seeking.release()
+                    self.Loader.AudioFifo.reset()
+
                 if not Frame:
                     self.Loader.stop()
                     break
