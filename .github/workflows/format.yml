@@ -40,7 +40,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with black and isort
       run: |
-        pip install black, isort
+        pip install black isort
         black --check .
         isort . --check --diff
     - name: Apply code style changes
