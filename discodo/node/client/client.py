@@ -44,14 +44,14 @@ class Node:
 
         if self.user_id:
             await self.send("IDENTIFY", {"user_id": self.user_id})
-    
+
     async def destroy(self):
         if self._polling and not self._polling.done():
             self._polling.cancel()
-        
+
         if self.ws and not self.ws.closed:
             await self.ws.close()
-        
+
         self.connected.clear()
         self.ws = None
         self.voiceClients = {}

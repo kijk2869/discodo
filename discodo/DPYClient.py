@@ -4,6 +4,7 @@ from itertools import chain
 from .node.client import Node as OriginNode
 from .exceptions import VoiceClientNotFound
 
+
 class NodeClient(OriginNode):
     def __init__(self, DPYClient, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -15,6 +16,7 @@ class NodeClient(OriginNode):
         if self in self.DPYClient.Nodes:
             self.DPYClient.Nodes.remove(self)
 
+
 class DPYClient:
     def __init__(self, client):
         self.client = client
@@ -22,7 +24,7 @@ class DPYClient:
 
         self.Nodes = []
         self.__register_event()
-    
+
     def __register_event(self):
         if hasattr(self.client, 'on_socket_response'):
             originFunc = self.client.on_socket_response
@@ -31,7 +33,8 @@ class DPYClient:
 
         @self.client.event
         async def on_socket_response(*args, **kwargs):
-            self.loop.create_task(self.discord_socket_response(*args, **kwargs))
+            self.loop.create_task(
+                self.discord_socket_response(*args, **kwargs))
 
             if originFunc:
                 return await originFunc()
@@ -42,7 +45,7 @@ class DPYClient:
             SelectNodes = [VC.Node] if VC else [await self.getBestNode()]
         else:
             SelectNodes = self.Nodes
-        
+
         await asyncio.wait(
             [Node.discordDispatch(payload) for Node in SelectNodes],
             return_when='ALL_COMPLETED'
@@ -84,7 +87,7 @@ class DPYClient:
             )
         }
 
-    def getVC(self, guildID:int):
+    def getVC(self, guildID: int):
         return self.voiceClients.get(int(guildID))
 
     def __get_websocket(self, id):
