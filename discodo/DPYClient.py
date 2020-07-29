@@ -16,7 +16,7 @@ class NodeClient(OriginNode):
         self.DPYClient = DPYClient
 
     async def destroy(self, *args, **kwargs):
-        log.info(f"destroying Node {self.URL}")
+        log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
 
         if self in self.DPYClient.Nodes:
@@ -101,8 +101,11 @@ class DPYClient:
             )
         }
 
-    def getVC(self, guildID: int):
-        return self.voiceClients.get(int(guildID))
+    def getVC(self, guild):
+        if isinstance(guild, discord.Guild):
+            guild = guild.id
+
+        return self.voiceClients.get(int(guild))
 
     def __get_websocket(self, id):
         if isinstance(self.client, discord.AutoShardedClient):
