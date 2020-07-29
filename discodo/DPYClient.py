@@ -58,6 +58,11 @@ class DPYClient:
             )
 
     def register_node(self, *args, **kwargs):
+        return self.loop.create_task(self.__register_event(*args, **kwargs))
+    
+    async def __register_event(self, *args, **kwargs):
+        await self.client.wait_until_ready()
+
         kwargs["user_id"] = self.client.user.id
         Node = NodeClient(self, *args, **kwargs)
         log.info(f"registering Node {Node.URL}")
