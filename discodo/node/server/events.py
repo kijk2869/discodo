@@ -404,15 +404,15 @@ class WebsocketEvents:
             Element = lyricsLoader.seek(current.duration)
 
             if Element and Element["markdown"] and Now != Element["markdown"]:
-                NextElements = Elements[Elements.index(Element)+1:]
+                NextElements = Elements[Elements.index(Element) + 1 :]
 
                 Previous = Now
                 Now = Element["markdown"]
 
                 Next = None
                 for NextElement in NextElements:
-                    if NextElement['markdown'] != Now:
-                        Next = NextElement['markdown']
+                    if NextElement["markdown"] != Now:
+                        Next = NextElement["markdown"]
                         break
 
                 payload = {
