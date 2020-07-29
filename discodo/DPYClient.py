@@ -58,9 +58,9 @@ class DPYClient:
             )
 
     def register_node(self, *args, **kwargs):
-        return self.loop.create_task(self.__register_event(*args, **kwargs))
+        return self.loop.create_task(self._register_event(*args, **kwargs))
 
-    async def __register_event(self, *args, **kwargs):
+    async def _register_event(self, *args, **kwargs):
         await self.client.wait_until_ready()
 
         kwargs["user_id"] = self.client.user.id
@@ -81,7 +81,7 @@ class DPYClient:
 
     def getBestNode(self):
         SortedWithPerformance = sorted(
-            self.Nodes, key=lambda Node: len(Node.voiceClients), reverse=True
+            self.Nodes, key=lambda Node: len(Node.voiceClients)
         )
 
         return SortedWithPerformance[0]
@@ -114,7 +114,7 @@ class DPYClient:
             return self.client.ws
 
     async def connect(self, channel):
-        log.info(f"connecting to {channel.id} of {channel.guild.id} without destroying")
+        log.info(f"connecting to {channel.id} of {channel.guild.id}")
         if not hasattr(channel, "guild"):
             raise ValueError
 

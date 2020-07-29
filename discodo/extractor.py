@@ -49,6 +49,9 @@ def _extract(query: str) -> Optional[dict]:
         raise NoSearchResults
 
     if "entries" in Data:
+        if len(Data['entries']) == 1:
+            return Data['entries'][0]
+
         return Data["entries"]
 
     return Data

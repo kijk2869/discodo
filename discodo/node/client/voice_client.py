@@ -21,17 +21,17 @@ class VoiceClient:
     async def loadSong(self, Query: str) -> dict:
         await self.send("loadSong", {"query": Query})
 
-        return await self.emitter.wait_for("loadSong", timeout=10.0)
+        return (await self.emitter.wait_for("loadSong", timeout=10.0))['song']
 
     async def putSong(self, Song: dict) -> dict:
         await self.send("putSong", {"song": Song})
 
-        return await self.emitter.wait_for("putSong", timeout=10.0)
+        return (await self.emitter.wait_for("putSong", timeout=10.0))['song']
 
     async def skip(self, offset: int = 1) -> dict:
         await self.send("skip", {"offset": offset})
 
-        return await self.emitter.wait_for("skip", timeout=10.0)
+        return (await self.emitter.wait_for("skip", timeout=10.0))['remain']
 
     async def seek(self, offset: float) -> dict:
         await self.send("seek", {"offset": offset})
@@ -41,7 +41,7 @@ class VoiceClient:
     async def setVolume(self, volume: int) -> dict:
         await self.send("setVolume", {"volume": volume})
 
-        return await self.emitter.wait_for("setVolume", timeout=10.0)
+        return (await self.emitter.wait_for("setVolume", timeout=10.0))['volume']
 
     async def setCrossfade(self, crossfade: float) -> dict:
         await self.send("setCrossfade", {"crossfade": crossfade})
@@ -81,7 +81,7 @@ class VoiceClient:
     async def getQueue(self) -> dict:
         await self.send("getQueue")
 
-        return await self.emitter.wait_for("Queue", timeout=10.0)
+        return (await self.emitter.wait_for("Queue", timeout=10.0))['entries']
 
     async def getState(self) -> dict:
         await self.send("getState")
