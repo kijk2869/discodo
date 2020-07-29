@@ -81,7 +81,8 @@ class DPYClient:
 
     def getBestNode(self):
         SortedWithPerformance = sorted(
-            [Node for Node in self.Nodes if Node.connected.is_set()], key=lambda Node: len(Node.voiceClients)
+            [Node for Node in self.Nodes if Node.connected.is_set()],
+            key=lambda Node: len(Node.voiceClients),
         )
 
         return SortedWithPerformance[0]
