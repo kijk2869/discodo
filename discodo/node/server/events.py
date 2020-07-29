@@ -1,7 +1,10 @@
+import asyncio
 import random
+import uuid
 
 from ...AudioSource import AudioData
 from ...stat import getStat
+from ...fetcher import LyricsFetcher
 
 
 def need_data(*keys):
@@ -277,7 +280,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "resume",
-            "d": {"guild_id": Data["guild_id"], "state": vc.state},
+            "d": {"guild_id": Data["guild_id"], "state": vc.state}
         }
         return await self.sendJson(payload)
 
@@ -300,7 +303,7 @@ class WebsocketEvents:
         if not isinstance(Data["repeat"], bool):
             payload = {
                 "op": "repeat",
-                "d": {"BAD_REQUEST": "`repeat` must be bool.."},
+                "d": {"BAD_REQUEST": "`repeat` must be bool.."}
             }
             return await self.sendJson(payload)
 
@@ -310,7 +313,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "repeat",
-            "d": {"guild_id": Data["guild_id"], "repeat": vc.repeat,},
+            "d": {"guild_id": Data["guild_id"], "repeat": vc.repeat}
         }
         return await self.sendJson(payload)
 
@@ -326,7 +329,7 @@ class WebsocketEvents:
             "d": {
                 "guild_id": Data["guild_id"],
                 "entries": [Item.toDict() for Item in vc.Queue],
-            },
+            }
         }
         return await self.sendJson(payload)
 
@@ -348,7 +351,7 @@ class WebsocketEvents:
                 "guild_id": Data["guild_id"],
                 "removed": removed.toDict(),
                 "entries": [Item.toDict() for Item in vc.Queue],
-            },
+            }
         }
         return await self.sendJson(payload)
 
@@ -356,3 +359,78 @@ class WebsocketEvents:
     @need_data("guild_id")
     async def VC_DESTROY(self, Data):
         self.AudioManager.delVC(Data["guild_id"])
+    
+    @need_manager
+    @need_data("guild_id", "language")
+    async def requestLyrics(self, Data):
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        if not vc.player.current:
+            payload = {
+                "op": "requestLyrics",
+                "d": {
+                    "guild_id": Data["guild_id"],
+                    "NotPlaying": "There is no current.",
+                }
+            }
+            return await self.sendJson(payload)
+
+        if not Data['language'] in vc.player.current.lyrics:
+            payload = {
+                "op": "requestLyrics",
+                "d": {
+                    "guild_id": Data["guild_id"],
+                    "NoLyrics": f"There is no lyrics in {Data['language']}",
+                }
+            }
+            return await self.sendJson(payload)
+        
+        current = vc.player.current
+        _identify_token = str(uuid.uuid4())
+        lyricsLoader = await LyricsFetcher.srv1.load(vc.player.current.lyrics[Data['language']])
+
+        payload = {
+            "op": "requestLyrics",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "identify": _identify_token,
+                "language": Data["language"]
+            }
+        }
+        await self.sendJson(payload)
+
+        Previous = Now = Next = ""
+        Elements = list(lyricsLoader.TextElements.values())
+        while not lyricsLoader.is_done and vc.player.current == current:
+            Element = lyricsLoader.seek(current.duration)
+
+            if Element and Element['markdown'] and Now != Element['markdown']:
+                NextElement = Elements[Elements.index(Element)]
+
+                Previous = Now
+                Now = Element['markdown']
+                Next = NextElement['markdown'] if NextElement else None
+
+                payload = {
+                    "op": "Lyrics",
+                    "d": {
+                        "guild_id": Data["guild_id"],
+                        "identify": _identify_token,
+                        "previous": Previous,
+                        "current": Now,
+                        "next": Next
+                    },
+                }
+                await self.sendJson(payload)
+            
+            await asyncio.sleep(0.1)
+        
+        payload = {
+            "op": "lyricsDone",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "identify": _identify_token,
+                "language": Data["language"]
+            }
+        }
+        return await self.sendJson(payload)

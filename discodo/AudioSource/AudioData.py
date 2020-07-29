@@ -18,7 +18,10 @@ class AudioData:
             self.thumbnail = data.get("thumbnail")
             self.stream_url = data.get("url")
 
-        self.lyrics = data.get("subtitles")
+        self.lyrics = {
+            lang: [LyricsData['url'] for LyricsData in lyrics if LyricsData['ext'] == 'srv1'][0]
+            for lang, lyrics in data['subtitles'].items()
+        } if 'subtitles' in data else {}
         self.duration = data.get("duration")
         self.is_live = data.get("is_live", False)
 

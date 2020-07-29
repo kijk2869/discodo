@@ -18,7 +18,7 @@ class srv1:
                     2,
                 ),
                 "text": TextElement.text,
-                "markdown": markdownify(TextElement.text),
+                "markdown": markdownify(TextElement.text).strip(),
             }
             for TextElement in self.Tree.findall("text")
         }
