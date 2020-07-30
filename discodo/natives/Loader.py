@@ -118,33 +118,33 @@ class BufferLoader(threading.Thread):
                     __seek_locked = True
                 else:
                     __seek_locked = False
-                
+
                 Frame = next(self.Loader.FrameGenerator, None)
-                
+
                 if __seek_locked:
                     self.Loader._seeking.release()
                     self.Loader.AudioFifo.reset()
-                
+
                 if not Frame:
                     self.Loader.stop()
                     break
-                
+
                 _current = float(Frame.pts * self.Loader.selectAudioStream.time_base)
-                
+
                 if self.Loader.FilterGraph:
                     self.Loader.FilterGraph.push(Frame)
                     Frame = self.Loader.FilterGraph.pull()
 
                     if not Frame:
                         continue
-                
+
                 Frame.pts = None
                 try:
                     Frame = self.Resampler.resample(Frame)
                 except ValueError:
                     self.Loader.reloadResampler()
                     continue
-                
+
                 if not self.Loader.AudioFifo.haveToFillBuffer.is_set():
                     self.Loader.AudioFifo.haveToFillBuffer.wait()
 
