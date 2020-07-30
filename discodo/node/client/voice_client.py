@@ -46,12 +46,12 @@ class VoiceClient:
     async def setCrossfade(self, crossfade: float) -> dict:
         await self.send("setCrossfade", {"crossfade": crossfade})
 
-        return await self.emitter.wait_for("setCrossfade", timeout=10.0)
+        return (await self.emitter.wait_for("setCrossfade", timeout=10.0))["crossfade"]
 
     async def setAutoplay(self, autoplay: bool) -> dict:
         await self.send("setAutoplay", {"autoplay": autoplay})
 
-        return await self.emitter.wait_for("setAutoplay", timeout=10.0)
+        return (await self.emitter.wait_for("setAutoplay", timeout=10.0))["autoplay"]
 
     async def setFilter(self, filter: dict) -> dict:
         await self.send("setFilter", {"filter": filter})
@@ -71,7 +71,7 @@ class VoiceClient:
     async def repeat(self, repeat: bool) -> dict:
         await self.send("repeat", {"repeat": repeat})
 
-        return await self.emitter.wait_for("repeat", timeout=10.0)
+        return (await self.emitter.wait_for("repeat", timeout=10.0))["repeat"]
 
     async def changePause(self) -> dict:
         await self.send("changePause")
