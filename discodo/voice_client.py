@@ -1,6 +1,6 @@
 import os
-from logging import getLogger
 import random
+from logging import getLogger
 
 from youtube_related import preventDuplication as relatedClient
 
