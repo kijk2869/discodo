@@ -319,7 +319,7 @@ class WebsocketEvents:
     async def shuffle(self, Data):
         vc = self.AudioManager.getVC(Data["guild_id"])
 
-        random.shuffle(vc.Queue)
+        vc.shuffle()
 
         payload = {
             "op": "shuffle",

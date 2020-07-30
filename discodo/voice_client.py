@@ -1,5 +1,6 @@
 import os
 from logging import getLogger
+from random import random
 
 from youtube_related import preventDuplication as relatedClient
 
@@ -155,6 +156,13 @@ class VoiceClient(VoiceConnector):
             return self.resume()
         else:
             return self.pause()
+    
+    def shuffle(self):
+        if not self.InternalQueue:
+            raise ValueError
+
+        self.InternalQueue = self.InternalQueue[0] + random.shuffle(self.Queue, k=len(self.Queue))
+        return self.Queue
 
     @property
     def volume(self) -> float:
