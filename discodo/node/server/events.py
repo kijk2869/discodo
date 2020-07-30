@@ -94,7 +94,7 @@ class WebsocketEvents:
         if value < 0 or value > 100:
             payload = {
                 "op": "setVolume",
-                "d": {"BAD_REQUEST": "`Volume` must be `0~100`.."},
+                "d": {"BAD_REQUEST": "`Volume` must be `0~200`.."},
             }
             return await self.sendJson(payload)
 
