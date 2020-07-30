@@ -160,5 +160,5 @@ class BufferLoader(threading.Thread):
             if self.Loader.StreamConainer:
                 self.Loader.StreamConainer.close()
                 self.Loader.StreamConainer = None
-            
+
             self.Loader.stop()
