@@ -30,7 +30,7 @@ class Player(threading.Thread):
 
     @property
     def current(self) -> AudioSource:
-        Source = self.client.Queue[0] if self.client.Queue else None
+        Source = self.client.InternalQueue[0] if self.client.InternalQueue else None
         if Source:
             if isinstance(Source, AudioData):
                 if not self.__current_future:
@@ -39,8 +39,8 @@ class Player(threading.Thread):
                     )
                     Source = None
                 elif self.__current_future.done():
-                    if self.client.Queue[0] == Source:
-                        Source = self.client.Queue[0] = self.__current_future.result()
+                    if self.client.InternalQueue[0] == Source:
+                        Source = self.client.InternalQueue[0] = self.__current_future.result()
 
                     self.__current_future = None
 
@@ -66,8 +66,8 @@ class Player(threading.Thread):
     @property
     def next(self) -> AudioSource:
         Source = (
-            self.client.Queue[1]
-            if self.client.Queue and len(self.client.Queue) > 1
+            self.client.InternalQueue[1]
+            if self.client.InternalQueue and len(self.client.InternalQueue) > 1
             else None
         )
 
@@ -87,16 +87,16 @@ class Player(threading.Thread):
 
     async def _nextReady(self):
         Source = (
-            self.client.Queue[1]
-            if self.client.Queue and len(self.client.Queue) > 1
+            self.client.InternalQueue[1]
+            if self.client.InternalQueue and len(self.client.InternalQueue) > 1
             else None
         )
         if Source:
             if isinstance(Source, AudioData):
                 Data = await Source.source()
 
-                if self.client.Queue[1] == Source:
-                    Source = self.client.Queue[1] = Data
+                if self.client.InternalQueue[1] == Source:
+                    Source = self.client.InternalQueue[1] = Data
 
                 if Data.volume != 0.0:
                     Data.volume = 0.0
@@ -116,7 +116,7 @@ class Player(threading.Thread):
         if not Data or self.current.volume == 0.0:
             self.loop.call_soon_threadsafe(self.current.cleanup)
             self.client.event.dispatch("SongEnd", song=self.current.AudioData.toDict())
-            del self.client.Queue[0]
+            del self.client.InternalQueue[0]
 
         if (
             self.__next_called

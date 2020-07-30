@@ -26,7 +26,7 @@ class VoiceClient(VoiceConnector):
         self.event.on("NeedNextSong", self.getNext)
         self.event.on("SongEnd", self.getNext)
 
-        self.Queue = []
+        self.InternalQueue = []
         self._filter = {}
 
         self.player = None
@@ -38,6 +38,11 @@ class VoiceClient(VoiceConnector):
         self._crossfade = DEFAULTCROSSFADE
 
         self.event.dispatch("VC_CREATED")
+    
+    @property
+    def Queue(self):
+        """Read only, if you want to edit queue use InternalQueue."""
+        return self.InternalQueue[1:] if self.InternalQueue and len(self.InternalQueue) > 1 else []
 
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
@@ -46,11 +51,11 @@ class VoiceClient(VoiceConnector):
         current = list(kwargs.values()).pop()
 
         if self.repeat:
-            self.Queue.append(await self.getSong(current["webpage_url"]))
+            self.InternalQueue.append(await self.getSong(current["webpage_url"]))
 
         if self.autoplay and (
-            not self.Queue
-            or (self.Queue[0].toDict() == current and len(self.Queue) <= 1)
+            not self.InternalQueue
+            or (self.InternalQueue[0].toDict() == current and len(self.InternalQueue) <= 1)
         ):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
@@ -70,7 +75,7 @@ class VoiceClient(VoiceConnector):
         if self.player and self.player.is_alive():
             self.player.stop()
 
-        for Item in self.Queue:
+        for Item in self.InternalQueue:
             if isinstance(Item, AudioSource):
                 self.loop.call_soon_threadsafe(Item.cleanup)
 
@@ -91,17 +96,17 @@ class VoiceClient(VoiceConnector):
             Data = [Data]
 
         for Item in Data:
-            self.Queue.append(Item)
+            self.InternalQueue.append(Item)
 
         self.event.dispatch(
             "putSong",
-            songs=[dict(Item.toDict(), index=self.Queue.index(Item)) for Item in Data],
+            songs=[dict(Item.toDict(), index=self.InternalQueue.index(Item)) for Item in Data],
         )
 
         return (
-            self.Queue.index(Data[0])
+            self.InternalQueue.index(Data[0])
             if len(Data) == 1
-            else [self.Queue.index(Item) for Item in Data]
+            else [self.InternalQueue.index(Item) for Item in Data]
         )
 
     async def loadSong(self, Query: str) -> AudioData:
@@ -130,10 +135,10 @@ class VoiceClient(VoiceConnector):
         if not self.player.current:
             raise ValueError
 
-        if len(self.Queue) < offset:
+        if len(self.InternalQueue) < offset:
             raise ValueError
 
-        del self.Queue[1 : (offset - 1)]
+        del self.InternalQueue[1 : (offset - 1)]
 
         self.player.current.stop()
 
@@ -177,7 +182,7 @@ class VoiceClient(VoiceConnector):
 
     @property
     def state(self) -> str:
-        if not self.Queue:
+        if not self.InternalQueue:
             return "stopped"
         if self.paused:
             return "paused"
