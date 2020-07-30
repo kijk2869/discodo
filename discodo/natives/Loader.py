@@ -151,14 +151,14 @@ class BufferLoader(threading.Thread):
                 self.Loader.AudioFifo.write(Frame)
                 self.Loader.current = _current
 
-            if self.Loader.StreamConainer:
-                self.Loader.StreamConainer.close()
-                self.Loader.StreamConainer = None
-
     def run(self):
         try:
             self._do_run()
         except:
             pass
         finally:
+            if self.Loader.StreamConainer:
+                self.Loader.StreamConainer.close()
+                self.Loader.StreamConainer = None
+            
             self.Loader.stop()
