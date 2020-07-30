@@ -1,6 +1,6 @@
 import os
 from logging import getLogger
-from random import random
+import random
 
 from youtube_related import preventDuplication as relatedClient
 
@@ -171,7 +171,7 @@ class VoiceClient(VoiceConnector):
         if not self.InternalQueue:
             raise ValueError
 
-        self.InternalQueue = self.InternalQueue[0] + random.shuffle(
+        self.InternalQueue = self.InternalQueue[:1] + random.sample(
             self.Queue, k=len(self.Queue)
         )
         return self.Queue
