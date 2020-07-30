@@ -40,7 +40,9 @@ class Player(threading.Thread):
                     Source = None
                 elif self.__current_future.done():
                     if self.client.InternalQueue[0] == Source:
-                        Source = self.client.InternalQueue[0] = self.__current_future.result()
+                        Source = self.client.InternalQueue[
+                            0
+                        ] = self.__current_future.result()
 
                     self.__current_future = None
 

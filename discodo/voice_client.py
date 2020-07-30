@@ -39,11 +39,15 @@ class VoiceClient(VoiceConnector):
         self._crossfade = DEFAULTCROSSFADE
 
         self.event.dispatch("VC_CREATED")
-    
+
     @property
     def Queue(self):
         """Read only, if you want to edit queue use InternalQueue."""
-        return self.InternalQueue[1:] if self.InternalQueue and len(self.InternalQueue) > 1 else []
+        return (
+            self.InternalQueue[1:]
+            if self.InternalQueue and len(self.InternalQueue) > 1
+            else []
+        )
 
     def onAnyEvent(self, event, *args, **kwargs):
         self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
@@ -56,7 +60,10 @@ class VoiceClient(VoiceConnector):
 
         if self.autoplay and (
             not self.InternalQueue
-            or (self.InternalQueue[0].toDict() == current and len(self.InternalQueue) <= 1)
+            or (
+                self.InternalQueue[0].toDict() == current
+                and len(self.InternalQueue) <= 1
+            )
         ):
             Related = await self.relatedClient.async_get(current["webpage_url"])
             await self.loadSong(Related["id"])
@@ -101,7 +108,10 @@ class VoiceClient(VoiceConnector):
 
         self.event.dispatch(
             "putSong",
-            songs=[dict(Item.toDict(), index=self.InternalQueue.index(Item)) for Item in Data],
+            songs=[
+                dict(Item.toDict(), index=self.InternalQueue.index(Item))
+                for Item in Data
+            ],
         )
 
         return (
