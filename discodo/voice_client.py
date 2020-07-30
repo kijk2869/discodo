@@ -72,7 +72,7 @@ class VoiceClient(VoiceConnector):
 
         for Item in self.Queue:
             if isinstance(Item, AudioSource):
-                Item.cleanup()
+                self.loop.call_soon_threadsafe(Item.cleanup)
 
     async def createSocket(self, data: dict = None):
         await super().createSocket(data)
