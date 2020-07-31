@@ -3,8 +3,8 @@
 import os
 import re
 
-from setuptools import setup
 import py2exe
+from setuptools import setup
 
 version = ""
 with open("discodo/__init__.py", encoding="UTF8") as f:
