@@ -104,6 +104,6 @@ class AudioSource:
 
     def cleanup(self):
         self.Loader.stop()
-        if not self.AudioFifo.haveToFillBuffer.is_set():
+        if self.AudioFifo and not self.AudioFifo.haveToFillBuffer.is_set():
             self.AudioFifo.haveToFillBuffer.set()
         self.AudioFifo = self.Loader.AudioFifo = None
