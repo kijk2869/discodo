@@ -22,7 +22,7 @@ if not version:
     raise RuntimeError("version is not defined")
 
 readme = ""
-with open(f"{path}/README.mds", encoding="UTF8") as f:
+with open(f"{path}/README.md", encoding="UTF8") as f:
     readme = f.read()
 
 py2exe_params = {
