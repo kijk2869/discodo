@@ -1,9 +1,9 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-__title__ = 'discodo'
-__author__ = 'kijk2869'
-__lisence__ = 'MIT'
-__version__ = '0.0.1a'
+__title__ = "discodo"
+__author__ = "kijk2869"
+__lisence__ = "MIT"
+__version__ = "0.0.1a"
 
 from collections import namedtuple
 
@@ -25,6 +25,6 @@ except ModuleNotFoundError:
 else:
     from .DPYClient import DPYClient
 
-VersionInfo = namedtuple('VersionInfo', 'major minor micro releaselevel serial')
+VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
-version_info = VersionInfo(major=0, minor=0, micro=1, releaselevel='alpha', serial=0)
+version_info = VersionInfo(major=0, minor=0, micro=1, releaselevel="alpha", serial=0)
