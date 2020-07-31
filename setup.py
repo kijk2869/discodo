@@ -3,7 +3,6 @@
 import os
 import re
 
-import py2exe
 from setuptools import setup
 
 version = ""
@@ -24,30 +23,6 @@ if not version:
 readme = ""
 with open(f"{path}/README.md", encoding="UTF8") as f:
     readme = f.read()
-
-py2exe_params = {
-    "console": [
-        {
-            "script": "./discodo/__main__.py",
-            "dest_base": "discodo",
-            "version": version,
-            "description": "Audio Player for Discord",
-            "comments": "Discodo Node Server which is an Audio Player for Discord.",
-            "product_name": "discodo",
-            "product_version": version,
-        }
-    ],
-    "options": {
-        "py2exe": {
-            "bundle_files": 1,
-            "compressed": 1,
-            "optimize": 2,
-            "dist_dir": ".",
-            "dll_excludes": ["w9xpopen.exe", "crypt32.dll"],
-        }
-    },
-    "zipfile": None,
-}
 
 setup(
     name="discodo",
@@ -72,6 +47,5 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation",
         "Programming Language :: Python :: Implementation :: CPython",
-    ],
-    **py2exe_params,
+    ]
 )
