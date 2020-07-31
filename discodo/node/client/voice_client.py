@@ -98,6 +98,11 @@ class VoiceClient:
 
         return await self.emitter.wait_for("remove", timeout=10.0)
 
+    async def requestLyrics(self, language: int) -> dict:
+        await self.send("requestLyrics", {"language": language})
+
+        return await self.emitter.wait_for("requestLyrics", timeout=10.0)
+
     async def destroy(self) -> dict:
         await self.send("VC_DESTROY")
 
