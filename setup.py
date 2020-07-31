@@ -3,11 +3,11 @@
 import os
 import re
 
-import py2exe
 from setuptools import setup
+import py2exe
 
 version = ""
-with open("koreanbots/__init__.py", encoding="UTF8") as f:
+with open("discodo/__init__.py", encoding="UTF8") as f:
     version = re.search(
         r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
     ).group(1)
