@@ -1,3 +1,12 @@
+#-*- coding: utf-8 -*-
+
+__title__ = 'discodo'
+__author__ = 'kijk2869'
+__lisence__ = 'MIT'
+__version__ = '0.0.1a'
+
+from collections import namedtuple
+
 from .AudioSource import *
 from .gateway import VoiceSocket
 from .manager import AudioManager
@@ -15,3 +24,7 @@ except ModuleNotFoundError:
     pass
 else:
     from .DPYClient import DPYClient
+
+VersionInfo = namedtuple('VersionInfo', 'major minor micro releaselevel serial')
+
+version_info = VersionInfo(major=0, minor=0, micro=1, releaselevel='alpha', serial=0)
