@@ -112,7 +112,7 @@ async def on_message(message):
 
         autoplay = await vc.setAutoplay(offset)
 
-        return await message.channel.send(f'auto related play {"enabled" if repeat else "disabled"}.')
+        return await message.channel.send(f'auto related play {"enabled" if autoplay else "disabled"}.')
 
     if message.content.startswith('!repeat'):
         vc = Audio.getVC(message.guild)
