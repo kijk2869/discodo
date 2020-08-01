@@ -1,6 +1,6 @@
 """
 
-This example issn't recommanded in production.
+This example issn't recommended in production.
 Just use it only to learn the structure.
 This code is not perfect and can be complex.
 
