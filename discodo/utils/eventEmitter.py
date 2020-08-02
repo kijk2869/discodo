@@ -67,15 +67,8 @@ class EventEmitter:
                 traceback.print_exc()
 
     def event(self, event: str):
-        """Should Fix, Not work"""
-        raise NotImplementedError
-
         def wrapper(func):
-            def decorator(*args, **kwargs):
-                self.on(event, func)
-
-            return decorator
-
+            self.on(event, func)
         return wrapper
 
     def once(self, event: str, func):
