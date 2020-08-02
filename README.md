@@ -42,4 +42,4 @@ python -m discodo
 ## Supported sources
 
 + All sources that can be extracted from [youtube_dl](https://github.com/ytdl-org/youtube-dl)
-+ All file that can be demuxed by [libav](https://libav.org/)
++ All formats that can be demuxed by [libav](https://libav.org/)
