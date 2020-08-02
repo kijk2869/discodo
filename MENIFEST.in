@@ -1,4 +1,4 @@
 include LICENSE
 include requirements.txt
 include README.md
-include discodo/native/bin/*.dll
+include discodo/natives/bin/*.dll
