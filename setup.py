@@ -3,7 +3,7 @@
 import os
 import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 version = ""
 with open("discodo/__init__.py", encoding="UTF8") as f:
