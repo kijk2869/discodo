@@ -69,6 +69,7 @@ class EventEmitter:
     def event(self, event: str):
         def wrapper(func):
             self.on(event, func)
+
         return wrapper
 
     def once(self, event: str, func):
