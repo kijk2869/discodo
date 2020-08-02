@@ -200,9 +200,7 @@ Now playing: {State["current"]["title"]} `{State["position"]["duration"]}:{State
         offset = (
             int(message.content[10:].strip()) if message.content[10:].strip() else 0
         )
-        filter = (
-            {"anequalizer": discodo.equalizer.bassboost(offset)} if offset != 0 else {}
-        )
+        filter = discodo.equalizer.bassboost(offset) if offset != 0 else {}
 
         await vc.setFilter(filter)
 
