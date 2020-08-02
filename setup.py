@@ -3,7 +3,7 @@
 import os
 import re
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version = ""
 with open("discodo/__init__.py", encoding="UTF8") as f:
@@ -33,7 +33,7 @@ setup(
         "Tracker": "https://github.com/kijk2869/discodo/issues",
     },
     version=version,
-    packages=["discodo"],
+    packages=find_packages(),
     license="MIT",
     description="Audio Player for Discord",
     long_description=readme,
