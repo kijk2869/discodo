@@ -1,3 +1,4 @@
+import asyncio
 from ...utils import EventEmitter
 
 
@@ -98,10 +99,42 @@ class VoiceClient:
 
         return await self.emitter.wait_for("remove", timeout=10.0)
 
-    async def requestLyrics(self, language: int) -> dict:
+    async def requestLyrics(self, language: str) -> dict:
         await self.send("requestLyrics", {"language": language})
 
         return await self.emitter.wait_for("requestLyrics", timeout=10.0)
+
+    async def getLyrics(self, language: str, callback: callable):
+        if not asyncio.iscoroutinefunction(callback):
+            raise ValueError('Callback function must be coroutine function.')
+        
+        Data = await self.requestLyrics(language)
+
+        identify_token = Data.get('identify')
+        if not identify_token:
+            raise ValueError(f'Lyrics of {language} not found.')
+        
+        _lyricsLock = asyncio.Lock()
+        async def lyricsRecieve(lyrics):
+            if (
+                lyrics['identify'] != identify_token
+                or _lyricsLock.locked()
+            ): return
+
+            await _lyricsLock.acquire()
+            await callback(lyrics)
+            _lyricsLock.release()
+        
+        async def lyricsDone(Data):
+            if Data['identify'] != identify_token: return
+
+            self.emitter.off('Lyrics', lyricsRecieve)
+            self.emitter.off('lyricsDone', lyricsDone)
+        
+        self.emitter.on('Lyrics', lyricsRecieve)
+        self.emitter.on('lyricsDone', lyricsDone)
+
+        return Data
 
     async def destroy(self) -> dict:
         await self.send("VC_DESTROY")
