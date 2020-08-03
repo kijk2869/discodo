@@ -242,11 +242,13 @@ Now playing: {State["current"]["title"]} `{State["position"]["duration"]}:{State
 
         language = message.content[7:].strip() if message.content[7:].strip() else None
         if not language:
-            return await message.channel.send('Please type language.')
+            return await message.channel.send("Please type language.")
 
-        _msg = await message.channel.send('asdf')
+        _msg = await message.channel.send("asdf")
+
         async def callback(lyrics):
-            await _msg.edit(content=lyrics['current'])
+            await _msg.edit(content=lyrics["current"])
+
         Data = await vc.getLyrics(language, callback)
 
 
