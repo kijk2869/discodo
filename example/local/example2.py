@@ -14,7 +14,6 @@ import logging
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import Bot
 
 import discodo
 
@@ -210,6 +209,6 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    bot = Bot(command_prefix="!")
+    bot = commands.Bot(command_prefix="!")
     bot.add_cog(MusicBot(bot))
     bot.run("SUPERRRSECRETTOKENNNNNN")
