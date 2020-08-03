@@ -60,7 +60,7 @@ Recieveing HELLO payload, the client should begin sending HEARTBEAT payloads eve
 
 #### Exmaple HEARTBEAT Payload
 
-```json
+```json5
 {
     "op": "HEARTBEAT",
     "d": 1596417937 // timestamp
@@ -71,7 +71,7 @@ Event Data (`d`) can be None, Server will echo them.
 
 #### Example HEARTBEAT_ACK
 
-```json
+```json5
 {
     "op": "HEARTBEAT_ACK",
     "d": 1596417937 // timestamp
