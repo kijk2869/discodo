@@ -29,7 +29,7 @@ class MusicBot(commands.Cog):
         self.Audio.discordDispatch(payload)
 
     @commands.Cog.listener()
-    async def on_ready(self, c):
+    async def on_ready(self):
         print("bot is now ready.")
 
     @commands.command(name="join")
