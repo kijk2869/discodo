@@ -51,6 +51,6 @@ Get the information of the video searched on Youtube
     "thumbnail": "...",
     "title": "...",
     "uploader": "...",
-    "webpage_url": "...
+    "webpage_url": "..."
 }
 ```
