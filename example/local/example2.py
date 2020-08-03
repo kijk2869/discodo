@@ -13,6 +13,7 @@ Just know there is a way to do this.
 import logging
 
 import discord
+from discord.ext import commands
 from discord.ext.commands import Bot
 
 import discodo
