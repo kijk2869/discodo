@@ -43,7 +43,7 @@ async def on_message(message):
 
         await app.ws.voice_state(message.guild.id, message.author.voice.channel.id)
         return await message.channel.send(
-            f"connected to {message.author.voice.channel.mention}."
+            f"Connected to {message.author.voice.channel.mention}."
         )
 
     if message.content.startswith("!stop"):
@@ -54,7 +54,7 @@ async def on_message(message):
 
         await vc.destroy()
 
-        return await message.channel.send(f"player stopped and cleaned the queue.")
+        return await message.channel.send("Player stopped and cleaned the queue.")
 
     if message.content.startswith("!play"):
         vc = Audio.getVC(message.guild.id)
@@ -95,7 +95,7 @@ async def on_message(message):
 
         Volume = vc.setVolume(offset / 100)
 
-        return await message.channel.send(f"set volume to {Volume * 100}%.")
+        return await message.channel.send(f"Set volume to {Volume * 100}%.")
 
     if message.content.startswith("!crossfade"):
         vc = Audio.getVC(message.guild.id)
@@ -110,7 +110,7 @@ async def on_message(message):
         Crossfade = vc.setCrossfade(offset)
 
         return await message.channel.send(
-            f"set crossfade seconds to {Crossfade} seconds."
+            f"Set crossfade seconds to {Crossfade} seconds."
         )
 
     if message.content.startswith("!autoplay"):
@@ -127,7 +127,7 @@ async def on_message(message):
         autoplay = vc.setAutoplay(offset)
 
         return await message.channel.send(
-            f'auto related play {"enabled" if autoplay else "disabled"}.'
+            f'Auto related play {"enabled" if autoplay else "disabled"}.'
         )
 
     if message.content.startswith("!repeat"):
@@ -144,7 +144,7 @@ async def on_message(message):
         repeat = vc.setRepeat(offset)
 
         return await message.channel.send(
-            f'repeat {"enabled" if repeat else "disabled"}.'
+            f'Repeat {"enabled" if repeat else "disabled"}.'
         )
 
     if message.content.startswith("!np"):
@@ -163,9 +163,9 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        await vc.shuffle()
+        vc.shuffle()
 
-        return await message.channel.send("shuffle the queue.")
+        return await message.channel.send("Shuffle the queue.")
 
     if message.content.startswith("!queue"):
         vc = Audio.getVC(message.guild.id)
@@ -200,7 +200,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
         vc.setFilter(filter)
 
-        return await message.channel.send(f"set bassboost level {offset}%.")
+        return await message.channel.send(f"Set bassboost level {offset}%.")
 
     if message.content.startswith("!tempo"):
         vc = Audio.getVC(message.guild)
@@ -214,7 +214,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
         vc.setFilter({"atempo": str(offset)})
 
-        return await message.channel.send(f"set tempo to {offset}.")
+        return await message.channel.send(f"Set tempo to {offset}.")
 
     if message.content.startswith("!seek"):
         vc = Audio.getVC(message.guild)
@@ -226,7 +226,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
         vc.seek(offset)
 
-        return await message.channel.send(f"seek to {offset}.")
+        return await message.channel.send(f"Seek to {offset}.")
 
 
 app.run("SUPERRRSECRETTOKENNNNNN")
