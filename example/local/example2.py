@@ -13,12 +13,11 @@ Just know there is a way to do this.
 import logging
 
 import discord
-from discord.ext import commands
 
 import discodo
 
 
-
+from discord.ext import commands
 class MusicBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
