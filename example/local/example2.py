@@ -12,25 +12,27 @@ Just know there is a way to do this.
 
 import logging
 
-from discord import ext
+import discord
+from discord.ext import commands
+from discord.ext.commands import Bot
 
 import discodo
 
 
-class MusicBot(ext.commands.Cog):
+class MusicBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.Audio = discodo.self.AudioManager()
 
-    @ext.commands.Cog.listener()
+    @commands.Cog.listener()
     async def on_socket_response(self, payload):
         self.Audio.discordDispatch(payload)
 
-    @ext.commands.Cog.listener()
+    @commands.Cog.listener()
     async def on_ready(self):
         print("bot is now ready.")
 
-    @ext.commands.command(name="join")
+    @commands.command(name="join")
     async def _join(self, ctx):
         if not ctx.author.voice:
             return await ctx.send("Join the voice channel first.")
@@ -38,7 +40,7 @@ class MusicBot(ext.commands.Cog):
         await self.bot.ws.voice_state(ctx.guild.id, ctx.author.voice.channel.id)
         return await ctx.send(f"Connected to {ctx.author.voice.channel.id}.")
 
-    @ext.commands.command(name="stop")
+    @commands.command(name="stop")
     async def _stop(self, ctx):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -49,7 +51,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send("Player stopped and cleaned the queue.")
 
-    @ext.commands.command(name="play")
+    @commands.command(name="play")
     async def _play(self, ctx, music):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -65,7 +67,7 @@ class MusicBot(ext.commands.Cog):
         else:
             return await ctx.send(f"{Song.title} added.")
 
-    @ext.commands.command(name="skip")
+    @commands.command(name="skip")
     async def _skip(self, ctx, offset: int = 1):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -76,7 +78,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send(f"{offset} skipped.")
 
-    @ext.commands.command(name="volume")
+    @commands.command(name="volume")
     async def _volume(self, ctx, offset: int = 100):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -87,7 +89,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send(f"Set volume to {Volume * 100}%.")
 
-    @ext.commands.command(name="crossfade")
+    @commands.command(name="crossfade")
     async def _crossfade(self, ctx, offset: int = 10):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -98,7 +100,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send(f"Set crossfade seconds to {Crossfade} seconds.")
 
-    @ext.commands.command(name="autoplay")
+    @commands.command(name="autoplay")
     async def _autoplay(self, ctx, offset: str = "on"):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -113,7 +115,7 @@ class MusicBot(ext.commands.Cog):
             f'Auto related play {"enabled" if autoplay else "disabled"}.'
         )
 
-    @ext.commands.command(name="repeat")
+    @commands.command(name="repeat")
     async def _repeat(self, ctx, offset: str = "on"):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -126,7 +128,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send(f'Repeat {"enabled" if repeat else "disabled"}.')
 
-    @ext.commands.command(name="np")
+    @commands.command(name="np")
     async def _np(self, ctx):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -137,7 +139,7 @@ class MusicBot(ext.commands.Cog):
             f"Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.self.AudioData.duration}`"
         )
 
-    @ext.commands.command(name="shuffle")
+    @commands.command(name="shuffle")
     async def _shuffle(self, ctx):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -148,7 +150,7 @@ class MusicBot(ext.commands.Cog):
 
         return await ctx.send("Shuffle the queue.")
 
-    @ext.commands.command(name="queue")
+    @commands.command(name="queue")
     async def _queue(self, ctx):
         vc = self.Audio.getVC(ctx.guild.id)
 
@@ -167,7 +169,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 """
         )
 
-    @ext.commands.command(name="bassboost")
+    @commands.command(name="bassboost")
     async def _bassboost(self, ctx, offset: int = 0):
         vc = self.Audio.getVC(ctx.guild)
 
@@ -182,7 +184,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
         return await ctx.send(f"Set bassboost level {offset}%.")
 
-    @ext.commands.command(name="tempo")
+    @commands.command(name="tempo")
     async def _tempo(self, ctx, offset: float = 1.0):
         vc = self.Audio.getVC(ctx.guild)
 
@@ -193,7 +195,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
         return await ctx.send(f"Set tempo to {offset}.")
 
-    @ext.commands.command(name="seek")
+    @commands.command(name="seek")
     async def _seek(self, ctx, offset: int = 1):
         vc = self.self.Audio.getVC(ctx.guild)
 
@@ -207,6 +209,6 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    bot = ext.commands.Bot(command_prefix="!")
+    bot = Bot(command_prefix="!")
     bot.add_cog(MusicBot(bot))
     bot.run("SUPERRRSECRETTOKENNNNNN")
