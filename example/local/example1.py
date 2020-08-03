@@ -27,6 +27,7 @@ Audio = discodo.AudioManager()
 async def on_ready():
     print("bot is now ready.")
 
+
 @app.event
 async def on_socket_response(payload):
     Audio.discordDispatch(payload)
@@ -35,7 +36,7 @@ async def on_socket_response(payload):
 @app.event
 async def on_message(message):
     await app.wait_until_ready()
-    
+
     if message.content.startswith("!join"):
         if not message.author.voice:
             return await message.channel.send("Join the voice channel first.")
@@ -65,10 +66,10 @@ async def on_message(message):
 
         if isinstance(Song, list):
             return await message.channel.send(
-                f'{len(Song) - 1} songs except {Song[0].title} added.'
+                f"{len(Song) - 1} songs except {Song[0].title} added."
             )
         else:
-            return await message.channel.send(f'{Song.title} added.')
+            return await message.channel.send(f"{Song.title} added.")
 
     if message.content.startswith("!skip"):
         vc = Audio.getVC(message.guild.id)
@@ -153,7 +154,7 @@ async def on_message(message):
             return await message.channel.send("Please type `!join` first.")
 
         return await message.channel.send(
-            f'Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.AudioData.duration}`'
+            f"Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.AudioData.duration}`"
         )
 
     if message.content.startswith("!shuffle"):

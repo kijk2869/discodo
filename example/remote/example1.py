@@ -24,6 +24,7 @@ Audio.register_node("ws://yourwonderfulnode:prettyport", password="hellodiscodo"
 async def on_ready():
     print("bot is now ready.")
 
+
 @app.event
 async def on_message(message):
     await app.wait_until_ready()
