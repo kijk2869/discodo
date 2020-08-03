@@ -1,4 +1,5 @@
 import asyncio
+
 from ...utils import EventEmitter
 
 
@@ -106,33 +107,33 @@ class VoiceClient:
 
     async def getLyrics(self, language: str, callback: callable):
         if not asyncio.iscoroutinefunction(callback):
-            raise ValueError('Callback function must be coroutine function.')
-        
+            raise ValueError("Callback function must be coroutine function.")
+
         Data = await self.requestLyrics(language)
 
-        identify_token = Data.get('identify')
+        identify_token = Data.get("identify")
         if not identify_token:
-            raise ValueError(f'Lyrics of {language} not found.')
-        
+            raise ValueError(f"Lyrics of {language} not found.")
+
         _lyricsLock = asyncio.Lock()
+
         async def lyricsRecieve(lyrics):
-            if (
-                lyrics['identify'] != identify_token
-                or _lyricsLock.locked()
-            ): return
+            if lyrics["identify"] != identify_token or _lyricsLock.locked():
+                return
 
             await _lyricsLock.acquire()
             await callback(lyrics)
             _lyricsLock.release()
-        
-        async def lyricsDone(Data):
-            if Data['identify'] != identify_token: return
 
-            self.emitter.off('Lyrics', lyricsRecieve)
-            self.emitter.off('lyricsDone', lyricsDone)
-        
-        self.emitter.on('Lyrics', lyricsRecieve)
-        self.emitter.on('lyricsDone', lyricsDone)
+        async def lyricsDone(Data):
+            if Data["identify"] != identify_token:
+                return
+
+            self.emitter.off("Lyrics", lyricsRecieve)
+            self.emitter.off("lyricsDone", lyricsDone)
+
+        self.emitter.on("Lyrics", lyricsRecieve)
+        self.emitter.on("lyricsDone", lyricsDone)
 
         return Data
 
