@@ -163,7 +163,7 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        await vc.shuffle()
+        vc.shuffle()
 
         return await message.channel.send("Shuffle the queue.")
 

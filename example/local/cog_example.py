@@ -146,7 +146,7 @@ class MusicBot(commands.Cog):
         if not vc:
             return await ctx.send("Please type `!join` first.")
 
-        await vc.shuffle()
+        vc.shuffle()
 
         return await ctx.send("Shuffle the queue.")
 
