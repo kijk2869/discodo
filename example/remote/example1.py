@@ -234,5 +234,20 @@ Now playing: {State["current"]["title"]} `{State["position"]["duration"]}:{State
 
         return await message.channel.send(f"seek to {offset}.")
 
+    if message.content.startswith("!lyrics"):
+        vc = Audio.getVC(message.guild)
+
+        if not vc:
+            return await message.channel.send("Please type `!join` first.")
+
+        language = message.content[7:].strip() if message.content[7:].strip() else None
+        if not language:
+            return await message.channel.send('Please type language.')
+
+        _msg = await message.channel.send('asdf')
+        async def callback(lyrics):
+            await _msg.edit(content=lyrics['current'])
+        Data = await vc.getLyrics(language, callback)
+
 
 app.run("SUPERRRSECRETTOKENNNNNN")
