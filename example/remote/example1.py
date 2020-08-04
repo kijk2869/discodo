@@ -242,18 +242,20 @@ Now playing: {State["current"]["title"]} `{State["position"]["duration"]}:{State
 
         language = message.content[7:].strip() if message.content[7:].strip() else None
         if not language:
-            return await message.channel.send('Please type language.')
+            return await message.channel.send("Please type language.")
 
         class lyricsCallback:
             def __init__(self):
                 self._msg = None
+
             async def callback(self, lyrics):
                 if not self._msg or message.channel.last_message.id != self._msg.id:
                     if self._msg:
                         await self._msg.delete()
-                    self._msg = await message.channel.send(lyrics['current'])
+                    self._msg = await message.channel.send(lyrics["current"])
                 else:
-                    await self._msg.edit(content=lyrics['current'])
+                    await self._msg.edit(content=lyrics["current"])
+
         Data = await vc.getLyrics(language, lyricsCallback().callback)
 
 
