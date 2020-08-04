@@ -20,9 +20,12 @@ class VoiceClient:
         Data["guild_id"] = self.guild_id
 
         return await self.Node.send(Operation, Data)
-    
-    async def query(self, Operation: str, Data: dict={}, Event: str = None, timeout: float=10.0) -> dict:
-        if not Event: Event = Operation
+
+    async def query(
+        self, Operation: str, Data: dict = {}, Event: str = None, timeout: float = 10.0
+    ) -> dict:
+        if not Event:
+            Event = Operation
 
         Future = self.loop.create_task(
             self.emitter.wait_for(Operation, timeout=timeout)
