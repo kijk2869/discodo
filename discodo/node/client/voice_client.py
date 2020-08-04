@@ -28,7 +28,7 @@ class VoiceClient:
             Event = Operation
 
         Future = self.loop.create_task(
-            self.emitter.wait_for(Operation, timeout=timeout)
+            self.emitter.wait_for(Event, timeout=timeout)
         )
 
         await self.send(Operation, Data)
