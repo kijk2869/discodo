@@ -3,7 +3,7 @@
 __title__ = "discodo"
 __author__ = "kijk2869"
 __lisence__ = "MIT"
-__version__ = "0.0.6a"
+__version__ = "0.0.7a"
 
 from collections import namedtuple
 
