@@ -63,8 +63,8 @@ class AudioSource:
 
     @filter.setter
     def filter(self, value: dict):
-        if self.AudioData.is_live and 'atempo' in value:
-            del value['atempo']
+        if self.AudioData.is_live and "atempo" in value:
+            del value["atempo"]
 
         self._filter = value
         self.Loader.Filter = value
