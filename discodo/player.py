@@ -120,18 +120,23 @@ class Player(threading.Thread):
             self.client.event.dispatch("SongEnd", song=self.current.AudioData.toDict())
             del self.client.InternalQueue[0]
 
+        _crossfadeState = (
+            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            and not self.current.AudioData.is_live
+        )
+
         if (
             self.__next_called
             and self.current
             and not (
-                self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+                _crossfadeState
                 or self.current.stopped
             )
         ):
             self.__next_called = False
 
         if self.next and (
-            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            _crossfadeState
             or self.current.stopped
         ):
             if self.__next_called:
@@ -160,7 +165,7 @@ class Player(threading.Thread):
 
                     Data = audioop.add(Data, NextData, 2)
         elif not self.__next_called and (
-            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            _crossfadeState
             or self.current.stopped
         ):
             self.client.event.dispatch(
