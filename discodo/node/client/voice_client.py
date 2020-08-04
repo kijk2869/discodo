@@ -122,8 +122,11 @@ class VoiceClient:
                 return
 
             await _lyricsLock.acquire()
-            await callback(lyrics)
-            _lyricsLock.release()
+
+            try:
+                await callback(lyrics)
+            finally:
+                _lyricsLock.release()
 
         async def lyricsDone(Data):
             if Data["identify"] != identify_token:
