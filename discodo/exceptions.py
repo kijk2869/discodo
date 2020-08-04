@@ -20,5 +20,6 @@ class AudioSourceNotPlaying(DiscodoException):
 class NodeNotConnected(DiscodoException):
     pass
 
+
 class NotSeekable(DiscodoException):
     pass

@@ -1,7 +1,8 @@
 import asyncio
-from discodo.exceptions import NotSeekable
 import random
 import uuid
+
+from discodo.exceptions import NotSeekable
 
 from ...AudioSource import AudioData
 from ...fetcher import LyricsFetcher
@@ -211,7 +212,7 @@ class WebsocketEvents:
                 "d": {"BAD_REQUEST": "`offset` must be int or float.."},
             }
             return await self.sendJson(payload)
-        
+
         try:
             self.AudioManager.seek(Data["guild_id"], Data["offset"])
         except NotSeekable:
@@ -224,7 +225,7 @@ class WebsocketEvents:
                 "op": "seek",
                 "d": {"guild_id": Data["guild_id"], "offset": Data["offset"]},
             }
-        
+
         return await self.sendJson(payload)
 
     @need_manager
