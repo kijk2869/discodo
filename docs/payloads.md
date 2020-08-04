@@ -31,7 +31,7 @@
 
 ### DISCORD_EVENT
 
-```json
+```json5
 {
     "op": "DISCORD_EVENT",
     "d": {
@@ -42,6 +42,8 @@
 **Just need `READY`, `RESUME`, `VOICE_STATE_UPDATE`, `VOICE_SERVER_UPDATE` payloads**
 
 ## Audio Player
+
+Can use after connect to voice channel.
 
 ### setVolume
 
