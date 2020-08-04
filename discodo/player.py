@@ -128,17 +128,11 @@ class Player(threading.Thread):
         if (
             self.__next_called
             and self.current
-            and not (
-                _crossfadeState
-                or self.current.stopped
-            )
+            and not (_crossfadeState or self.current.stopped)
         ):
             self.__next_called = False
 
-        if self.next and (
-            _crossfadeState
-            or self.current.stopped
-        ):
+        if self.next and (_crossfadeState or self.current.stopped):
             if self.__next_called:
                 self.__next_called = False
             if isinstance(self.next, AudioData) and not hasattr(self.next, "_called"):
@@ -164,10 +158,7 @@ class Player(threading.Thread):
                         )
 
                     Data = audioop.add(Data, NextData, 2)
-        elif not self.__next_called and (
-            _crossfadeState
-            or self.current.stopped
-        ):
+        elif not self.__next_called and (_crossfadeState or self.current.stopped):
             self.client.event.dispatch(
                 "NeedNextSong", current=self.current.AudioData.toDict()
             )
