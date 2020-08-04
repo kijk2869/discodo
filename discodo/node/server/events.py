@@ -1,4 +1,5 @@
 import asyncio
+from discodo.exceptions import NotSeekable
 import random
 import uuid
 
@@ -210,13 +211,20 @@ class WebsocketEvents:
                 "d": {"BAD_REQUEST": "`offset` must be int or float.."},
             }
             return await self.sendJson(payload)
-
-        self.AudioManager.seek(Data["guild_id"], Data["offset"])
-
-        payload = {
-            "op": "seek",
-            "d": {"guild_id": Data["guild_id"], "offset": Data["offset"]},
-        }
+        
+        try:
+            self.AudioManager.seek(Data["guild_id"], Data["offset"])
+        except NotSeekable:
+            payload = {
+                "op": "seek",
+                "d": {"guild_id": Data["guild_id"], "NotSeekable": "The song is live."},
+            }
+        else:
+            payload = {
+                "op": "seek",
+                "d": {"guild_id": Data["guild_id"], "offset": Data["offset"]},
+            }
+        
         return await self.sendJson(payload)
 
     @need_manager

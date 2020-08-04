@@ -1,7 +1,7 @@
 import audioop
 import os
 
-from ..exceptions import AudioSourceNotPlaying
+from ..exceptions import AudioSourceNotPlaying, NotSeekable
 from ..natives import AudioFifo, Loader
 
 SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
@@ -88,6 +88,9 @@ class AudioSource:
         return Data
 
     def seek(self, offset: float):
+        if self.AudioData.is_live:
+            raise NotSeekable
+
         if not self.Loader:
             raise AudioSourceNotPlaying
 
