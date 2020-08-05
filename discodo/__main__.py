@@ -163,9 +163,8 @@ os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
 os.environ["PASSWORD"] = str(args.auth)
 os.environ["AUTO_UPDATE"] = "1" if args.update else "0"
 
-check_version()
-
 loop = asyncio.get_event_loop()
+loop.run_until_complete(check_version())
 loop.create_task(
     server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
 )

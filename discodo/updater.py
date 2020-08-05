@@ -11,7 +11,7 @@ from discodo.exceptions import NeedUpdate
 
 from . import __version__
 
-AUTO_UPDATE = True if os.getenv("AUTO_UPDATE", "1") == "1" else False
+AUTO_UPDATE = True if os.getenv("AUTO_UPDATE", "0") == "1" else False
 log = getLogger("discodo.updater")
 
 loop = asyncio.get_event_loop()
@@ -45,6 +45,5 @@ async def check_version():
             raise NeedUpdate
 
         os.system(f"{sys.executable} -m pip install --upgrade discodo")
-        os.execv(sys.executable, ["python"] + sys.argv)
     else:
         log.info(f"package is now up to date | Now {__version__}")
