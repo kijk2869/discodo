@@ -16,10 +16,18 @@ class AudioManager:
         self.session_id = kwargs.get("session_id")
 
         self.emitter = EventEmitter()
+        self._emitter = EventEmitter()
+        self.emitter.onAny(self.onAnyEvent)
+        self.event = self._emitter.event
 
         self.voiceClients = {}
 
         self.discordEvent = DiscordEvent(self)
+    
+    async def onAnyEvent(self, guild_id, event, *args, **kwargs):
+        vc = self.getVC(guild_id)
+        
+        self._emitter.dispatch(event, vc, *args, **kwargs)
 
     def __del__(self):
         for voiceClient in self.voiceClients.values():
