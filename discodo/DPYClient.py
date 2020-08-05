@@ -86,7 +86,7 @@ class DPYClient:
         await ws.voice_state(guild.id, None)
 
     async def _node_event(self, Event, Data):
-        if not "guild_id" in Data:
+        if not isinstance(Data, dict) or not "guild_id" in Data:
             return
 
         guild = self.client.get_guild(int(Data["guild_id"]))
