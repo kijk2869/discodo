@@ -79,9 +79,9 @@ class DPYClient:
         Node.emitter.onAny(self._node_event)
 
         return self
-    
+
     async def _resumed(self, Data):
-        for guild_id, channel_id in Data['voice_clients']:
+        for guild_id, channel_id in Data["voice_clients"]:
             guild = self.client.get_guild(guild_id)
             if channel_id:
                 channel = guild.get_channel(channel_id)

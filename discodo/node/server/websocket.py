@@ -151,8 +151,8 @@ class WebsocketHandler:
             "d": {
                 "voice_clients": [
                     (
-                        voiceClient.guild_id, 
-                        self.AudioManager.connectedChannels.get(voiceClient.guild_id)
+                        voiceClient.guild_id,
+                        self.AudioManager.connectedChannels.get(voiceClient.guild_id),
                     )
                     for voiceClient in self.AudioManager.voiceClients
                 ]
