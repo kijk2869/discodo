@@ -5,9 +5,6 @@ import sys
 from logging import getLogger
 
 import aiohttp
-import pip
-
-from discodo.exceptions import NeedUpdate
 
 from . import __version__
 
