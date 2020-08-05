@@ -93,7 +93,7 @@ class WebsocketEvents:
 
         value = int(Data["volume"])
 
-        if value < 0 or value > 100:
+        if value < 0 or value > 200:
             payload = {
                 "op": "setVolume",
                 "d": {"BAD_REQUEST": "`Volume` must be `0~200`.."},
