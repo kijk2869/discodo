@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+from asyncio.tasks import wait_for
 
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
@@ -11,6 +12,7 @@ from .events import WebsocketEvents
 
 WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
 WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
+VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
 PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
 log = logging.getLogger("discodo.server")
@@ -25,11 +27,21 @@ async def feed(request, ws):
     await handler.join()
 
 
+class ModifyAudioManager(AudioManager):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._binded = asyncio.Event()
+
+
 class WebsocketHandler:
     def __init__(self, request, ws):
         self.loop = asyncio.get_event_loop()
         self.request = request
         self.ws = ws
+
+        if not hasattr(request.app, "AudioManagers"):
+            request.app.AudioManagers = {}
 
         self.AudioManager = None
 
@@ -38,7 +50,16 @@ class WebsocketHandler:
 
     def __del__(self):
         if self.AudioManager:
+            self.loop.create_task(self.wait_for_bind())
+
+    async def wait_for_bind(self):
+        self.AudioManager._binded.clear()
+
+        try:
+            await asyncio.wait_for(self.AudioManager._binded.wait(), timeout=VCTIMEOUT)
+        except asyncio.TimeoutError:
             self.AudioManager.__del__()
+            del self.request.app.AudioManagers[int(self.AudioManager.user_id)]
             self.AudioManager = None
 
     async def join(self):
@@ -96,7 +117,16 @@ class WebsocketHandler:
         await self.ws.send(json.dumps(Data))
 
     async def initialize_manager(self, user_id):
-        self.AudioManager = AudioManager(user_id=user_id)
+        if int(user_id) in self.request.app.AudioManagers:
+            self.AudioManager = self.request.app.AudioManagers[int(user_id)]
+            self.AudioManager._binded.set()
+            self.loop.create_task(self.resumed())
+            log.debug(f"AudioManager of {user_id} resumed.")
+        else:
+            self.AudioManager = ModifyAudioManager(user_id=user_id)
+            self.request.app.AudioManagers[int(user_id)] = self.AudioManager
+            log.debug(f"AudioManager of {user_id} intalized.")
+
         self.AudioManager.emitter.onAny(self.manager_event)
 
     async def manager_event(self, guild_id, Event, **kwargs):
@@ -112,5 +142,18 @@ class WebsocketHandler:
 
     async def forbidden(self, message):
         payload = {"op": "FORBIDDEN", "d": message}
+
+        await self.sendJson(payload)
+
+    async def resumed(self):
+        payload = {
+            "op": "RESUMED",
+            "d": {
+                "voice_clients": [
+                    (guild_id, self.AudioManager.connectedChannels.get(guild_id),)
+                    for guild_id, voiceClient in self.AudioManager.voiceClients.items()
+                ]
+            },
+        }
 
         await self.sendJson(payload)

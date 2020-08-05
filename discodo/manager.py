@@ -21,6 +21,7 @@ class AudioManager:
         self.event = self._emitter.event
 
         self.voiceClients = {}
+        self.connectedChannels = {}
 
         self.discordEvent = DiscordEvent(self)
 

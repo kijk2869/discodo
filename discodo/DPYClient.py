@@ -74,10 +74,20 @@ class DPYClient:
 
         self.Nodes.append(Node)
 
+        Node.emitter.on("RESUMED", self._resumed)
         Node.emitter.on("VC_DESTROYED", self._vc_destroyed)
         Node.emitter.onAny(self._node_event)
 
         return self
+
+    async def _resumed(self, Data):
+        for guild_id, channel_id in Data["voice_clients"]:
+            guild = self.client.get_guild(guild_id)
+            if channel_id:
+                channel = guild.get_channel(channel_id)
+                self.loop.create_task(self.connect(channel))
+            else:
+                self.loop.create_task(self.disconnect(guild))
 
     async def _vc_destroyed(self, Data):
         guild = self.client.get_guild(int(Data["guild_id"]))

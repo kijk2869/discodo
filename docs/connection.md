@@ -88,15 +88,29 @@ The client must send IDENTIFY payload to configure the audio manager.
 {
     "op": "IDENTIFY",
     "d": {
-        "user_id": "my bot id",
-        "session_id": "my bot session id to discord"
+        "user_id": "my bot id"
     }
 }
 ```
 
-`user_id` and `session_id` can be `None`.
+### Resumed
 
-In this case, Server will fetch them from `READY` and `RESUME` payloads of discord.
+If the same user id is connected before VC_TIMEOUT, it will be resumed.
+
+#### Example RESUMED Payload
+
+```json5
+{
+    "op": "RESUMED",
+    "d": {
+        "voice_clients": [
+            [0, 0] // guild_id, voicechannel_id(can be null)
+        ]
+    }
+}
+```
+
+If the client recieve RESUMED payload, must reconnect to the voice channel.
 
 ### Disconnections
 
