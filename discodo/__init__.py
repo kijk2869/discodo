@@ -17,6 +17,7 @@ from .stat import getStat
 from .utils import *
 from .voice_client import VoiceClient
 from .voice_connector import VoiceConnector
+from .updater import check_version
 
 try:
     import discord
@@ -27,4 +28,4 @@ else:
 
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
-version_info = VersionInfo(major=0, minor=0, micro=1, releaselevel="alpha", serial=0)
+version_info = VersionInfo(major=0, minor=0, micro=7, releaselevel="alpha", serial=0)

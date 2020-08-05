@@ -23,3 +23,6 @@ class NodeNotConnected(DiscodoException):
 
 class NotSeekable(DiscodoException):
     pass
+
+class NeedUpdate(DiscodoException):
+    pass
