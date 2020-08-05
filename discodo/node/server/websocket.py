@@ -120,6 +120,7 @@ class WebsocketHandler:
         if int(user_id) in self.request.app.AudioManagers:
             self.AudioManager = self.request.app.AudioManagers[int(user_id)]
             self.AudioManager._binded.set()
+            self.loop.create_task(self.resumed())
             log.debug(f"AudioManager of {user_id} resumed.")
         else:
             self.AudioManager = ModifyAudioManager(user_id=user_id)
@@ -141,5 +142,15 @@ class WebsocketHandler:
 
     async def forbidden(self, message):
         payload = {"op": "FORBIDDEN", "d": message}
+
+        await self.sendJson(payload)
+    
+    async def resumed(self):
+        payload = {
+            "op": "RESUMED",
+            "d": {
+                "voice_clients": [voiceClient.guild_id for voiceClient in self.voiceClients]
+            }
+        }
 
         await self.sendJson(payload)
