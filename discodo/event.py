@@ -43,6 +43,11 @@ class DiscordEvent:
         log.info(f'recieve self voice update. set session id {data["session_id"]}')
         self.client.session_id = data["session_id"]
 
+        if data["channel_id"]:
+            self.client.connectedChannels[int(data["guild_id"])] = int(data["channel_id"])
+        elif int(data["guild_id"]) in self.client.connectedChannels:
+            del self.client.connectedChannels[int(data["guild_id"])]
+
     async def parseVoiceServerUpdate(self, data):
         if int(data["guild_id"]) in self.client.voiceClients:
             log.info(

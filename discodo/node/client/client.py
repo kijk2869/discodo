@@ -91,7 +91,7 @@ class Node:
             for voice_client in self.voiceClients:
                 voice_client.__del__()
 
-            for guild_id in Data['voice_clients']:
+            for guild_id, _ in Data['voice_clients']:
                 self.voiceClients[guild_id] = VoiceClient(self, guild_id)
 
         if Operation == "VC_CREATED":
