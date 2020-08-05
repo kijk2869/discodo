@@ -24,6 +24,14 @@ Audio.register_node("ws://yourwonderfulnode:prettyport", password="hellodiscodo"
 async def on_ready():
     print("bot is now ready.")
 
+@Audio.event('SongStart')
+async def sendPlaying(VC, Data):
+    await VC.channel.send(f'playing {Data["song"]["title"]}')
+
+@Audio.event('SongEnd')
+async def sendStopped(VC, Data):
+    await VC.channel.send(f'{Data["song"]["title"]} Done')
+
 
 @app.event
 async def on_message(message):
