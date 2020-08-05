@@ -85,6 +85,7 @@ class VoiceConnector:
             self.data = data
 
         self.guild_id = self.data.get("guild_id")
+        self.session_id = self.client.session_id
 
         self.token = self.data.get("token")
         endpoint = self.data.get("endpoint")
