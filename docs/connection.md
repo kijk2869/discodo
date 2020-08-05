@@ -88,15 +88,10 @@ The client must send IDENTIFY payload to configure the audio manager.
 {
     "op": "IDENTIFY",
     "d": {
-        "user_id": "my bot id",
-        "session_id": "my bot session id to discord"
+        "user_id": "my bot id"
     }
 }
 ```
-
-`user_id` and `session_id` can be `None`.
-
-In this case, Server will fetch them from `READY` and `RESUME` payloads of discord.
 
 ### Resumed
 
