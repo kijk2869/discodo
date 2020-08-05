@@ -1,8 +1,8 @@
 import asyncio
-from asyncio.tasks import wait_for
 import json
 import logging
 import os
+from asyncio.tasks import wait_for
 
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
@@ -20,10 +20,12 @@ log = logging.getLogger("discodo.server")
 
 app = Blueprint(__name__)
 
+
 @app.websocket("/")
 async def feed(request, ws):
     handler = WebsocketHandler(request, ws)
     await handler.join()
+
 
 class ModifyAudioManager(AudioManager):
     def __init__(self, *args, **kwargs):
@@ -31,13 +33,14 @@ class ModifyAudioManager(AudioManager):
 
         self._binded = asyncio.Event()
 
+
 class WebsocketHandler:
     def __init__(self, request, ws):
         self.loop = asyncio.get_event_loop()
         self.request = request
         self.ws = ws
 
-        if not hasattr(request.app, 'AudioManagers'):
+        if not hasattr(request.app, "AudioManagers"):
             request.app.AudioManagers = {}
 
         self.AudioManager = None
@@ -48,10 +51,10 @@ class WebsocketHandler:
     def __del__(self):
         if self.AudioManager:
             self.loop.create_task(self.wait_for_bind())
-    
+
     async def wait_for_bind(self):
         self.AudioManager._binded.clear()
-        
+
         try:
             await asyncio.wait_for(self.AudioManager._binded.wait(), timeout=VCTIMEOUT)
         except asyncio.TimeoutError:
@@ -117,11 +120,11 @@ class WebsocketHandler:
         if int(user_id) in self.request.app.AudioManagers:
             self.AudioManager = self.request.app.AudioManagers[int(user_id)]
             self.AudioManager._binded.set()
-            log.debug(f'AudioManager of {user_id} resumed.')
+            log.debug(f"AudioManager of {user_id} resumed.")
         else:
             self.AudioManager = ModifyAudioManager(user_id=user_id)
             self.request.app.AudioManagers[int(user_id)] = self.AudioManager
-            log.debug(f'AudioManager of {user_id} intalized.')
+            log.debug(f"AudioManager of {user_id} intalized.")
 
         self.AudioManager.emitter.onAny(self.manager_event)
 
