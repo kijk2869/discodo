@@ -150,10 +150,7 @@ class WebsocketHandler:
             "op": "RESUMED",
             "d": {
                 "voice_clients": [
-                    (
-                        guild_id,
-                        self.AudioManager.connectedChannels.get(guild_id),
-                    )
+                    (guild_id, self.AudioManager.connectedChannels.get(guild_id),)
                     for guild_id, voiceClient in self.AudioManager.voiceClients.items()
                 ]
             },
