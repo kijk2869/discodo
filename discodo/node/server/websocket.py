@@ -144,13 +144,15 @@ class WebsocketHandler:
         payload = {"op": "FORBIDDEN", "d": message}
 
         await self.sendJson(payload)
-    
+
     async def resumed(self):
         payload = {
             "op": "RESUMED",
             "d": {
-                "voice_clients": [voiceClient.guild_id for voiceClient in self.voiceClients]
-            }
+                "voice_clients": [
+                    voiceClient.guild_id for voiceClient in self.voiceClients
+                ]
+            },
         }
 
         await self.sendJson(payload)
