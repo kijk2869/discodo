@@ -50,7 +50,7 @@ class VoiceClient(VoiceConnector):
         )
 
     def onAnyEvent(self, event, *args, **kwargs):
-        self.client.event.dispatch(self.guild_id, event, *args, **kwargs)
+        self.client.emitter.dispatch(self.guild_id, event, *args, **kwargs)
 
     async def getNext(self, **kwargs):
         current = list(kwargs.values()).pop()
