@@ -87,6 +87,13 @@ class Node:
         return self.ws.send(*args, **kwargs)
 
     async def onAnyEvent(self, Operation, Data):
+        if Operation == "RESUMED":
+            for voice_client in self.voiceClients:
+                voice_client.__del__()
+
+            for guild_id in Data['voice_clients']:
+                self.voiceClients[guild_id] = VoiceClient(self, guild_id)
+
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
             self.voiceClients[guild_id] = VoiceClient(self, guild_id)
