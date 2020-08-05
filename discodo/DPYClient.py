@@ -16,9 +16,6 @@ class NodeClient(OriginNode):
         super().__init__(*args, **kwargs)
         self.DPYClient = DPYClient
 
-        self.emitter = EventEmitter()
-        self.event = self.emitter.event
-
     async def destroy(self, *args, **kwargs):
         log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
@@ -31,6 +28,9 @@ class DPYClient:
     def __init__(self, client):
         self.client = client
         self.loop = client.loop or asyncio.get_event_loop()
+
+        self.emitter = EventEmitter()
+        self.event = self.emitter.event
 
         self.Nodes = []
         self.__register_event()
