@@ -32,11 +32,13 @@ async def on_ready():
 async def on_socket_response(payload):
     Audio.discordDispatch(payload)
 
-@Audio.event('SongStart')
+
+@Audio.event("SongStart")
 async def sendPlaying(VC, song):
     await VC.channel.send(f'playing {song["title"]}')
 
-@Audio.event('SongEnd')
+
+@Audio.event("SongEnd")
 async def sendStopped(VC, song):
     await VC.channel.send(f'{song["title"]} Done')
 
@@ -69,8 +71,8 @@ async def on_message(message):
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
-        
-        if not hasattr(vc, 'channel'):
+
+        if not hasattr(vc, "channel"):
             vc.channel = message.channel
 
         Song = await vc.loadSong(message.content[5:].strip())

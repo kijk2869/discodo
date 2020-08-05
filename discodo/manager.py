@@ -23,10 +23,10 @@ class AudioManager:
         self.voiceClients = {}
 
         self.discordEvent = DiscordEvent(self)
-    
+
     async def onAnyEvent(self, guild_id, event, *args, **kwargs):
         vc = self.getVC(guild_id)
-        
+
         self._emitter.dispatch(event, vc, *args, **kwargs)
 
     def __del__(self):
