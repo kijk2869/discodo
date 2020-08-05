@@ -1,4 +1,5 @@
 import asyncio
+from discodo.utils.eventEmitter import EventEmitter
 from itertools import chain
 from logging import getLogger
 
@@ -14,6 +15,9 @@ class NodeClient(OriginNode):
     def __init__(self, DPYClient, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.DPYClient = DPYClient
+
+        self.emitter = EventEmitter()
+        self.event = self.emitter.event
 
     async def destroy(self, *args, **kwargs):
         log.infmo(f"destroying Node {self.URL}")
@@ -70,6 +74,7 @@ class DPYClient:
         self.Nodes.append(Node)
 
         Node.emitter.on("VC_DESTROYED", self._vc_destroyed)
+        Node.emitter.onAny(self._node_event)
 
         return self
 
@@ -78,6 +83,14 @@ class DPYClient:
         ws = self.__get_websocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
+    
+    async def _node_event(self, Event, Data):
+        if not 'guild_id' in Data: return
+
+        guild = self.client.get_guild(int(Data["guild_id"]))
+        vc = self.getVC(guild)
+        
+        self.emitter.dispatch(Event, vc, Data)
 
     def getBestNode(self):
         SortedWithPerformance = sorted(
