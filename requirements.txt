@@ -2,7 +2,7 @@ aiohttp==3.6.2
 av==8.0.2
 colorlog==4.2.1
 youtube_dl==2020.7.28
-youtube-related==0.0.2
+youtube-related==0.0.3
 markdownify==0.4.1
 PyNaCl==1.4.0
 sanic==20.6.3
