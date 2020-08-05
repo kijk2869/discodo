@@ -133,12 +133,6 @@ playerGroup.add_argument(
     help="seconds to cleanup player when connection of discord terminated (default: 300)",
 )
 
-genParser = parser.add_argument_group("General Option")
-
-genParser.add_argument(
-    "--update", "-U", action="store_true", help="Auto update when there is new version."
-)
-
 logParser = parser.add_argument_group("Logging Option")
 
 logParser.add_argument(
@@ -161,7 +155,6 @@ os.environ["WSINTERVAL"] = str(args.ws_interval)
 os.environ["WSTIMEOUT"] = str(args.ws_timeout)
 os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
 os.environ["PASSWORD"] = str(args.auth)
-os.environ["AUTO_UPDATE"] = "1" if args.update else "0"
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(check_version())
