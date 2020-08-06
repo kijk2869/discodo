@@ -42,4 +42,4 @@ async def check_version():
         except Exception as e:
             print(f"Auto updating failed, {e.__name__}: {e}")
     else:
-        log.info(f"package is now up to date | Now {__version__}")
+        log.info(f"package is up to date | Now {__version__}")

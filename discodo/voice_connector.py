@@ -90,8 +90,8 @@ class VoiceConnector:
         self.token = self.data.get("token")
         endpoint = self.data.get("endpoint")
         self.endpoint = endpoint.replace(":80", "").replace(":443", "")
-        self.endpointIp = socket.gethostbyname(self.endpoint)
-        log.info(f"voice endpoint {self.endpoint} ({self.endpointIp}) detected.")
+        self.endpointIp = None
+        log.info(f"voice endpoint {self.endpoint} detected.")
 
         if self.socket:
             try:
