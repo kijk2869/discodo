@@ -18,6 +18,7 @@ from .updater import check_version
 from .utils import *
 from .voice_client import VoiceClient
 from .voice_connector import VoiceConnector
+from .planner import *
 
 try:
     import discord
