@@ -37,8 +37,7 @@ class IPRotator:
     @property
     def usableAddresses(self):
         return [Address for Address in self.IPAddresses if not Address.blocked]
-
-    @property
+    
     def get(self):
         if self.Mode == "ROTATE":
             SelectedIP = self.usableAddresses[0]
