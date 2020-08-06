@@ -73,9 +73,8 @@ class VoiceClient(VoiceConnector):
 
         log.info(f"destroying voice client of {guild_id}.")
 
-        self.event.dispatch("VC_DESTROYED")
-
         if self.client.voiceClients.get(guild_id) == self:
+            self.event.dispatch("VC_DESTROYED")
             del self.client.voiceClients[guild_id]
 
         super().__del__()
