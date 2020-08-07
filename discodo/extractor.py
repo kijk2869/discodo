@@ -2,11 +2,11 @@ import asyncio
 import logging
 from re import compile as Regex
 from typing import Optional
-from urllib.request import HTTPErrorProcessor
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
-from discodo.exceptions import NoSearchResults
+from .exceptions import NoSearchResults
+from urllib.error import HTTPError
 
 log = logging.getLogger("discodo.extractor")
 
@@ -51,7 +51,7 @@ def _extract(query: str, planner=None) -> Optional[dict]:
     YoutubeDL = YoutubeDLClient(option)
     try:
         Data = YoutubeDL.extract_info(query, download=False)
-    except HTTPErrorProcessor as e:
+    except HTTPError as e:
         if e.cause.code == 429:
             IPAddress.givePenalty()
         
