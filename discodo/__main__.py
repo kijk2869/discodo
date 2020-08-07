@@ -1,12 +1,12 @@
 import argparse
 import asyncio
+import json
 import logging
 import os
 import sys
 
 import colorlog
 
-from .node import server
 from .updater import check_version
 
 log = logging.getLogger("discodo")
@@ -179,11 +179,14 @@ os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
 os.environ["PASSWORD"] = str(args.auth)
 os.environ["MAX_PENALTY"] = str(args.max_penalty)
 os.environ["ROTATE_MODE"] = str(args.rotate_mode)
-os.environ["USABLE_IP"] = '|'.join(args.ip)
+os.environ["USABLE_IP"] = json.dumps(args.ip)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(check_version())
-loop.create_task(
-    server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
-)
-loop.run_forever()
+if __name__ == '__main__':
+    from .node import server
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(check_version())
+    loop.create_task(
+        server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
+    )
+    loop.run_forever()

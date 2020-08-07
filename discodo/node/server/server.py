@@ -1,3 +1,4 @@
+import json
 import os
 from functools import wraps
 
@@ -10,7 +11,7 @@ from ...planner import IPRotator
 from .websocket import app as WebsocketBlueprint
 
 PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
-USABLE_IP = os.getenv("USABLE_IP", "").split('|')
+USABLE_IP = json.loads(os.getenv("USABLE_IP", "[]"))
 
 app = Sanic(__name__)
 
