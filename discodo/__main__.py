@@ -183,7 +183,6 @@ if __name__ == "__main__":
     from .node import server
     from .updater import check_version
 
-
     loop = asyncio.get_event_loop()
     loop.run_until_complete(check_version())
     loop.create_task(

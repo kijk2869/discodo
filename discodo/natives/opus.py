@@ -198,7 +198,8 @@ class Encoder:
         _library.opus_encoder_ctl(self.state, ENCODER_CTL["CTL_SET_PLP"], percentage)
 
     def encode(self, Pcm, FrameSize=None):
-        if not FrameSize: FrameSize = self.SAMPLES_PER_FRAME 
+        if not FrameSize:
+            FrameSize = self.SAMPLES_PER_FRAME
 
         max_length = len(Pcm)
         Pcm = ctypes.cast(Pcm, c_int16_pointer)

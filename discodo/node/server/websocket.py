@@ -56,7 +56,9 @@ class WebsocketHandler:
         self.AudioManager._binded.clear()
 
         try:
-            await asyncio.wait_for(self.AudioManager._binded.wait(), timeout=self.VCTIMEOUT)
+            await asyncio.wait_for(
+                self.AudioManager._binded.wait(), timeout=self.VCTIMEOUT
+            )
         except asyncio.TimeoutError:
             self.AudioManager.__del__()
             del self.request.app.AudioManagers[int(self.AudioManager.user_id)]

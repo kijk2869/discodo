@@ -12,7 +12,8 @@ from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
 
-@app.listener('before_server_start')
+
+@app.listener("before_server_start")
 async def applyVariables(app, loop):
     app.PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
@@ -22,7 +23,9 @@ async def applyVariables(app, loop):
     for IP in USABLE_IP if USABLE_IP else []:
         app.planner.add(IP)
 
+
 app.register_blueprint(WebsocketBlueprint)
+
 
 def authorized(func):
     def wrapper(request, *args, **kwargs):
