@@ -12,6 +12,7 @@ from .gateway import VoiceSocket
 from .manager import AudioManager
 from .natives import *
 from .node import *
+from .planner import *
 from .player import Player
 from .stat import getStat
 from .updater import check_version

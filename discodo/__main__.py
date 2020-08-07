@@ -1,13 +1,11 @@
 import argparse
 import asyncio
+import json
 import logging
 import os
 import sys
 
 import colorlog
-
-from .node import server
-from .updater import check_version
 
 log = logging.getLogger("discodo")
 
@@ -133,6 +131,28 @@ playerGroup.add_argument(
     help="seconds to cleanup player when connection of discord terminated (default: 300)",
 )
 
+plannerGroup = parser.add_argument_group("IP Planner Option")
+plannerGroup.add_argument(
+    "--ip",
+    "-I",
+    type=str,
+    action="append",
+    default=[],
+    help="Client-side IP addresses to use",
+)
+plannerGroup.add_argument(
+    "--rotate-mode",
+    type=str,
+    default="ROTATE",
+    help="IP planner rotate mode [ROTATE, SEQUENCE] (default: ROTATE)",
+)
+plannerGroup.add_argument(
+    "--max-penalty",
+    type=int,
+    default=5,
+    help="max penalty to block ip address (default: 5)",
+)
+
 logParser = parser.add_argument_group("Logging Option")
 
 logParser.add_argument(
@@ -155,10 +175,17 @@ os.environ["WSINTERVAL"] = str(args.ws_interval)
 os.environ["WSTIMEOUT"] = str(args.ws_timeout)
 os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
 os.environ["PASSWORD"] = str(args.auth)
+os.environ["MAX_PENALTY"] = str(args.max_penalty)
+os.environ["ROTATE_MODE"] = str(args.rotate_mode)
+os.environ["USABLE_IP"] = json.dumps(args.ip)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(check_version())
-loop.create_task(
-    server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
-)
-loop.run_forever()
+if __name__ == "__main__":
+    from .node import server
+    from .updater import check_version
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(check_version())
+    loop.create_task(
+        server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
+    )
+    loop.run_forever()

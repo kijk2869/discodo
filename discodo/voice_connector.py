@@ -11,11 +11,6 @@ from .encrypt import getEncryptModes
 from .gateway import VoiceSocket
 from .natives import opus
 
-VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
-SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-
 log = getLogger("discodo.VoiceConnector")
 
 
@@ -24,6 +19,11 @@ class VoiceConnector:
         self.loop = asyncio.get_event_loop()
         self.ws = None
         self.socket = None
+
+        self.VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
+        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.SAMPLES_PER_FRAME = int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
 
         self.client = client
         self.user_id = self.client.user_id
@@ -136,7 +136,9 @@ class VoiceConnector:
                 )
 
                 try:
-                    await asyncio.wait_for(self._connected.wait(), timeout=VCTIMEOUT)
+                    await asyncio.wait_for(
+                        self._connected.wait(), timeout=self.VCTIMEOUT
+                    )
                 except asyncio.TimeoutError:
                     return self.__del__()
 
@@ -160,4 +162,4 @@ class VoiceConnector:
         Packet = self.makePacket(data)
 
         self.socket.sendto(Packet, (self.endpointIp, self.endpointPort))
-        self.timestamp += SAMPLES_PER_FRAME
+        self.timestamp += self.SAMPLES_PER_FRAME

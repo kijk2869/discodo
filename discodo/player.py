@@ -5,13 +5,7 @@ import threading
 import time
 import traceback
 
-from discodo.AudioSource.AudioSource import SAMPLES_PER_FRAME
-
 from .AudioSource import AudioData, AudioSource
-
-PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
-FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-DELAY = FRAME_LENGTH / 1000.0
 
 
 class Player(threading.Thread):
@@ -20,6 +14,10 @@ class Player(threading.Thread):
         self.daemon = True
         self._end = threading.Event()
         self.loop = loop or asyncio.get_event_loop()
+
+        self.PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
+        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.DELAY = self.FRAME_LENGTH / 1000.0
 
         self.client = voice_client
         self.speakState = False
@@ -121,7 +119,7 @@ class Player(threading.Thread):
             del self.client.InternalQueue[0]
 
         _crossfadeState = (
-            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            self.current.remain <= (self.PRELOAD_TIME + self.client.crossfade)
             and not self.current.AudioData.is_live
         )
 
@@ -141,7 +139,7 @@ class Player(threading.Thread):
             elif (
                 self.client.crossfade
                 and isinstance(self.next, AudioSource)
-                and (self.next.AudioFifo.samples > SAMPLES_PER_FRAME)
+                and (self.next.AudioFifo.samples > self.SAMPLES_PER_FRAME)
                 and (
                     self.current.remain <= self.client.crossfade or self.current.stopped
                 )
@@ -149,7 +147,7 @@ class Player(threading.Thread):
                 NextData = self.next.read()
 
                 if NextData:
-                    CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
+                    CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
                     if self.next.volume < 1.0:
                         self.next.volume = round(self.next.volume + CrossFadeVolume, 10)
                     if self.current.volume > 0.0:
@@ -165,7 +163,7 @@ class Player(threading.Thread):
             self.__next_called = True
         elif self.current and self.current.stopped:
             if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
-                CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
+                CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
                 self.current.volume = round(self.current.volume - CrossFadeVolume, 10)
         else:
             if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
@@ -209,8 +207,8 @@ class Player(threading.Thread):
                     self.speak(False)
 
                 self.loops += 1
-                nextTime = _start + DELAY * self.loops
-                time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
+                nextTime = _start + self.DELAY * self.loops
+                time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
 
