@@ -62,7 +62,7 @@ class VoiceClient(VoiceConnector):
                 and len(self.InternalQueue) <= 1
             )
         ):
-            IPAddress = self.planner.get() if self.planner else None
+            IPAddress = self.client.planner.get() if self.client.planner else None
             try:
                 Related = await self.relatedClient.async_get(
                     current["webpage_url"], IPAddress.__str__()
