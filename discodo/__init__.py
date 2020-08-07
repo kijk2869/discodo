@@ -3,7 +3,7 @@
 __title__ = "discodo"
 __author__ = "kijk2869"
 __lisence__ = "MIT"
-__version__ = "0.2.1a"
+__version__ = "1.0.0"
 
 from collections import namedtuple
 
@@ -29,4 +29,4 @@ else:
 
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
-version_info = VersionInfo(major=0, minor=2, micro=1, releaselevel="alpha", serial=0)
+version_info = VersionInfo(major=1, minor=0, micro=0, releaselevel="beta", serial=0)
