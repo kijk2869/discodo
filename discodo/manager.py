@@ -24,6 +24,7 @@ class AudioManager:
         self.connectedChannels = {}
 
         self.discordEvent = DiscordEvent(self)
+        self.planner = None
 
     async def onAnyEvent(self, guild_id, event, *args, **kwargs):
         vc = self.getVC(guild_id)
@@ -49,7 +50,7 @@ class AudioManager:
         self.getVC(guildID).__del__()
 
     async def getSong(self, Query: str) -> AudioData:
-        return await AudioData.create(Query)
+        return await AudioData.create(Query, self.planner)
 
     async def putSong(self, guildID: int, *args, **kwargs) -> AudioData:
         return await self.getVC(guildID).putSong(*args, **kwargs)

@@ -65,7 +65,8 @@ class VoiceClient(VoiceConnector):
                 and len(self.InternalQueue) <= 1
             )
         ):
-            Related = await self.relatedClient.async_get(current["webpage_url"])
+            local_addr = self.planner.get() if self.planner else None
+            Related = await self.relatedClient.async_get(current["webpage_url"], local_addr)
             await self.loadSong(Related["id"])
 
     def __del__(self):

@@ -14,7 +14,7 @@ YOUTUBE_PLAYLIST_ID_REGEX = Regex(
 )
 
 
-def _extract(query: str) -> Optional[dict]:
+def _extract(query: str, planner=None) -> Optional[dict]:
     option = {
         "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
         "nocheckcertificate": True,
@@ -26,6 +26,9 @@ def _extract(query: str) -> Optional[dict]:
         "skip_download": True,
         "writesubtitles": True,
     }
+
+    if planner:
+        option['source_address'] = planner.get()
 
     YoutubePlaylistMatch = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if YoutubePlaylistMatch and not YoutubePlaylistMatch.group(1).startswith(
@@ -64,11 +67,11 @@ def _clear_cache():
     YoutubeDL.cache.remove()
 
 
-async def extract(query, loop=None):
+async def extract(query, planner=None, loop=None):
     if not loop:
         loop = asyncio.get_event_loop()
 
-    return await loop.run_in_executor(None, _extract, query)
+    return await loop.run_in_executor(None, _extract, query, planner)
 
 
 async def clear_cache(loop=None):
