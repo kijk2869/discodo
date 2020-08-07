@@ -2,6 +2,7 @@ import os
 import random
 from logging import getLogger
 
+from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
 
 from .AudioSource import AudioData, AudioSource
@@ -10,10 +11,6 @@ from .utils import EventEmitter
 from .voice_connector import VoiceConnector
 
 log = getLogger("discodo.VoiceClient")
-
-DEFAULTVOLUME = float(os.getenv("DEFAULTVOLUME", "1.0"))
-DEFAULTCROSSFADE = float(os.getenv("DEFAULTCROSSFADE", "10.0"))
-DEFAULAUTOPLAY = True if os.getenv("DEFAULAUTOPLAY", "1") == "1" else False
 
 
 class VoiceClient(VoiceConnector):
@@ -34,9 +31,9 @@ class VoiceClient(VoiceConnector):
         self.paused = False
         self._repeat = False
 
-        self.autoplay = DEFAULAUTOPLAY
-        self._volume = DEFAULTVOLUME
-        self._crossfade = DEFAULTCROSSFADE
+        self.autoplay = True if os.getenv("DEFAULAUTOPLAY", "1") == "1" else False
+        self._volume = float(os.getenv("DEFAULTVOLUME", "1.0"))
+        self._crossfade = float(os.getenv("DEFAULTCROSSFADE", "10.0"))
 
         self.event.dispatch("VC_CREATED")
 
@@ -65,7 +62,16 @@ class VoiceClient(VoiceConnector):
                 and len(self.InternalQueue) <= 1
             )
         ):
-            Related = await self.relatedClient.async_get(current["webpage_url"])
+            IPAddress = self.planner.get() if self.planner else None
+            try:
+                Related = await self.relatedClient.async_get(
+                    current["webpage_url"], IPAddress.__str__()
+                )
+            except RateLimited as e:
+                IPAddress.givePenalty()
+
+                raise e
+
             await self.loadSong(Related["id"])
 
     def __del__(self):
@@ -120,7 +126,11 @@ class VoiceClient(VoiceConnector):
         )
 
     async def loadSong(self, Query: str) -> AudioData:
-        Data = await AudioData.create(Query) if isinstance(Query, str) else Query
+        Data = (
+            await AudioData.create(Query, self.client.planner)
+            if isinstance(Query, str)
+            else Query
+        )
 
         self.event.dispatch(
             "loadSong",
