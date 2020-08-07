@@ -6,8 +6,8 @@ from sanic import Sanic, response
 from sanic.exceptions import abort
 
 from ...AudioSource import AudioData
-from ...stat import getStat
 from ...planner import IPRotator
+from ...stat import getStat
 from .websocket import app as WebsocketBlueprint
 
 PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
@@ -16,7 +16,7 @@ USABLE_IP = json.loads(os.getenv("USABLE_IP", "[]"))
 app = Sanic(__name__)
 
 app.planner = IPRotator() if USABLE_IP else None
-for IP in (USABLE_IP if USABLE_IP else []):
+for IP in USABLE_IP if USABLE_IP else []:
     app.planner.add(IP)
 
 app.register_blueprint(WebsocketBlueprint)
