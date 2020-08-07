@@ -2,6 +2,7 @@ import os
 from logging import getLogger
 
 MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
+ROTATE_MODE = os.getenv("ROTATE_MODE", "ROTATE")
 
 log = getLogger("discodo.VoiceClient")
 
