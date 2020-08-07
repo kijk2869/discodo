@@ -181,7 +181,7 @@ os.environ["MAX_PENALTY"] = str(args.max_penalty)
 os.environ["ROTATE_MODE"] = str(args.rotate_mode)
 os.environ["USABLE_IP"] = json.dumps(args.ip)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from .node import server
 
     loop = asyncio.get_event_loop()
