@@ -136,9 +136,9 @@ playerGroup.add_argument(
 plannerGroup = parser.add_argument_group("IP Planner Option")
 plannerGroup.add_argument(
     "--ip",
-    '-I',
+    "-I",
     type=str,
-    action='append',
+    action="append",
     default=[],
     help="Client-side IP addresses to use",
 )
