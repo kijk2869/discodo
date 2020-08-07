@@ -28,7 +28,7 @@ def _extract(query: str, planner=None) -> Optional[dict]:
     }
 
     if planner:
-        option['source_address'] = planner.get()
+        option["source_address"] = planner.get()
 
     YoutubePlaylistMatch = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if YoutubePlaylistMatch and not YoutubePlaylistMatch.group(1).startswith(

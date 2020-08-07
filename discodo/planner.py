@@ -1,9 +1,10 @@
-from logging import getLogger
 import os
+from logging import getLogger
 
 MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
 
 log = getLogger("discodo.VoiceClient")
+
 
 class IPAddress:
     def __init__(self, IP):
@@ -14,7 +15,7 @@ class IPAddress:
         return self.IP
 
     def givePenalty(self):
-        log.debug(f'penalty is given to {self}')
+        log.debug(f"penalty is given to {self}")
         self.penalty += 1
 
     @property
@@ -31,7 +32,7 @@ class IPRotator:
         if IP in [_IP.__str__() for _IP in self.IPAddresses]:
             raise ValueError("already exists")
 
-        log.debug(f'add {IP} to address list')
+        log.debug(f"add {IP} to address list")
         _IP = IPAddress(IP)
         self.IPAddresses.append(_IP)
 
@@ -44,7 +45,7 @@ class IPRotator:
     def get(self):
         IP = self.get()
 
-        log.debug(f'IP {IP} selected.')
+        log.debug(f"IP {IP} selected.")
 
         return IP
 

@@ -44,7 +44,7 @@ class AudioData:
         self._source = None
 
     @classmethod
-    async def create(cls, query: str, planner = None):
+    async def create(cls, query: str, planner=None):
         Data = await extract(query, planner)
 
         if isinstance(Data, list):
