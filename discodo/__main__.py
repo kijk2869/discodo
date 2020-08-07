@@ -179,7 +179,7 @@ os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
 os.environ["PASSWORD"] = str(args.auth)
 os.environ["MAX_PENALTY"] = str(args.max_penalty)
 os.environ["ROTATE_MODE"] = str(args.rotate_mode)
-os.environ["USABLE_IP"] = '|'.join(args.ip)
+os.environ["USABLE_IP"] = "|".join(args.ip)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(check_version())
