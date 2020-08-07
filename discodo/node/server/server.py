@@ -50,4 +50,4 @@ async def getSong(request):
     if not query:
         abort(400, "Missing parameter query.")
 
-    return response.json(await AudioData.create(query))
+    return response.json(await AudioData.create(query, app.planner))

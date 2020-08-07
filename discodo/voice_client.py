@@ -3,6 +3,7 @@ import random
 from logging import getLogger
 
 from youtube_related import preventDuplication as relatedClient
+from youtube_related import RateLimited
 
 from .AudioSource import AudioData, AudioSource
 from .player import Player
@@ -61,10 +62,16 @@ class VoiceClient(VoiceConnector):
                 and len(self.InternalQueue) <= 1
             )
         ):
-            local_addr = self.planner.get() if self.planner else None
-            Related = await self.relatedClient.async_get(
-                current["webpage_url"], local_addr
-            )
+            IPAddress = self.planner.get() if self.planner else None
+            try:
+                Related = await self.relatedClient.async_get(
+                    current["webpage_url"], IPAddress.__str__()
+                )
+            except RateLimited as e:
+                IPAddress.givePenalty()
+
+                raise e
+
             await self.loadSong(Related["id"])
 
     def __del__(self):
@@ -120,7 +127,7 @@ class VoiceClient(VoiceConnector):
         )
 
     async def loadSong(self, Query: str) -> AudioData:
-        Data = await AudioData.create(Query) if isinstance(Query, str) else Query
+        Data = await AudioData.create(Query, self.client.planner) if isinstance(Query, str) else Query
 
         self.event.dispatch(
             "loadSong",

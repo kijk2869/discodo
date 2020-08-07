@@ -27,8 +27,10 @@ def _extract(query: str, planner=None) -> Optional[dict]:
         "writesubtitles": True,
     }
 
-    if planner:
-        option["source_address"] = planner.get()
+    
+    IPAddress = planner.get() if planner else None
+    if IPAddress:
+        option["source_address"] = IPAddress.__str__()
 
     YoutubePlaylistMatch = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if YoutubePlaylistMatch and not YoutubePlaylistMatch.group(1).startswith(
@@ -46,7 +48,13 @@ def _extract(query: str, planner=None) -> Optional[dict]:
         option["noplaylist"] = True
 
     YoutubeDL = YoutubeDLClient(option)
-    Data = YoutubeDL.extract_info(query, download=False)
+    try:
+        Data = YoutubeDL.extract_info(query, download=False)
+    except HTTPError as e:
+        if e.cause.code == 429:
+            IPAddress.givePenalty()
+        
+        raise e
 
     if not Data:
         raise NoSearchResults

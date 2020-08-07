@@ -43,7 +43,7 @@ class IPRotator:
         return [Address for Address in self.IPAddresses if not Address.blocked]
 
     def get(self):
-        IP = self.get()
+        IP = self._get()
 
         log.debug(f"IP {IP} selected.")
 
