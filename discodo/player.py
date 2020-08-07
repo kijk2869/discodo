@@ -17,6 +17,8 @@ class Player(threading.Thread):
 
         self.PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
         self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        self.SAMPLES_PER_FRAME = int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
         self.DELAY = self.FRAME_LENGTH / 1000.0
 
         self.client = voice_client
