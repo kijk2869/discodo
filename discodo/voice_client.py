@@ -2,8 +2,8 @@ import os
 import random
 from logging import getLogger
 
-from youtube_related import preventDuplication as relatedClient
 from youtube_related import RateLimited
+from youtube_related import preventDuplication as relatedClient
 
 from .AudioSource import AudioData, AudioSource
 from .player import Player
@@ -127,7 +127,11 @@ class VoiceClient(VoiceConnector):
         )
 
     async def loadSong(self, Query: str) -> AudioData:
-        Data = await AudioData.create(Query, self.client.planner) if isinstance(Query, str) else Query
+        Data = (
+            await AudioData.create(Query, self.client.planner)
+            if isinstance(Query, str)
+            else Query
+        )
 
         self.event.dispatch(
             "loadSong",
