@@ -2,6 +2,7 @@ import asyncio
 import logging
 from re import compile as Regex
 from typing import Optional
+from urllib.request import HTTPErrorProcessor
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
@@ -50,7 +51,7 @@ def _extract(query: str, planner=None) -> Optional[dict]:
     YoutubeDL = YoutubeDLClient(option)
     try:
         Data = YoutubeDL.extract_info(query, download=False)
-    except HTTPError as e:
+    except HTTPErrorProcessor as e:
         if e.cause.code == 429:
             IPAddress.givePenalty()
         
