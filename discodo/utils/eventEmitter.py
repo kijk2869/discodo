@@ -45,7 +45,9 @@ class EventEmitter:
         if listeners:
             for Future in listeners:
                 if not (Future.done() or Future.cancelled()):
-                    Future.set_result(args if len(args) > 1 else (args[0] if args else None))
+                    Future.set_result(
+                        args if len(args) > 1 else (args[0] if args else None)
+                    )
 
                 listeners.remove(Future)
 
