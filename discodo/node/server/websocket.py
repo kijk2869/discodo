@@ -124,6 +124,7 @@ class WebsocketHandler:
             log.debug(f"AudioManager of {user_id} resumed.")
         else:
             self.AudioManager = ModifyAudioManager(user_id=user_id)
+            self.AudioManager.planner = self.request.app.planner
             self.request.app.AudioManagers[int(user_id)] = self.AudioManager
             log.debug(f"AudioManager of {user_id} intalized.")
 
