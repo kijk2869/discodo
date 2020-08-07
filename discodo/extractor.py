@@ -2,11 +2,11 @@ import asyncio
 import logging
 from re import compile as Regex
 from typing import Optional
+from urllib.error import HTTPError
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
 from .exceptions import NoSearchResults
-from urllib.error import HTTPError
 
 log = logging.getLogger("discodo.extractor")
 
