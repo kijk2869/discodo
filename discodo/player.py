@@ -5,8 +5,6 @@ import threading
 import time
 import traceback
 
-from discodo.AudioSource.AudioSource import SAMPLES_PER_FRAME
-
 from .AudioSource import AudioData, AudioSource
 
 
