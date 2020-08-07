@@ -28,7 +28,6 @@ def _extract(query: str, planner=None) -> Optional[dict]:
         "writesubtitles": True,
     }
 
-    
     IPAddress = planner.get() if planner else None
     if IPAddress:
         option["source_address"] = IPAddress.__str__()
@@ -54,7 +53,7 @@ def _extract(query: str, planner=None) -> Optional[dict]:
     except HTTPError as e:
         if e.cause.code == 429:
             IPAddress.givePenalty()
-        
+
         raise e
 
     if not Data:
