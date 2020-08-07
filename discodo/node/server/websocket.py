@@ -10,11 +10,6 @@ from sanic.websocket import ConnectionClosed
 from ...manager import AudioManager
 from .events import WebsocketEvents
 
-WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
-WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
-VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
-PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
-
 log = logging.getLogger("discodo.server")
 
 
@@ -35,6 +30,11 @@ class ModifyAudioManager(AudioManager):
 
 
 class WebsocketHandler:
+    WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
+    WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
+    VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
+    PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
+
     def __init__(self, request, ws):
         self.loop = asyncio.get_event_loop()
         self.request = request
@@ -56,7 +56,7 @@ class WebsocketHandler:
         self.AudioManager._binded.clear()
 
         try:
-            await asyncio.wait_for(self.AudioManager._binded.wait(), timeout=VCTIMEOUT)
+            await asyncio.wait_for(self.AudioManager._binded.wait(), timeout=self.VCTIMEOUT)
         except asyncio.TimeoutError:
             self.AudioManager.__del__()
             del self.request.app.AudioManagers[int(self.AudioManager.user_id)]
@@ -78,7 +78,7 @@ class WebsocketHandler:
     async def _handle(self):
         log.info(f"new websocket connection created from {self.request.ip}.")
 
-        if self.request.headers.get("Authorization") != PASSWORD:
+        if self.request.headers.get("Authorization") != self.PASSWORD:
             log.warning(
                 f"websocket connection from {self.request.ip} forbidden: password mismatch."
             )
@@ -89,7 +89,7 @@ class WebsocketHandler:
 
         while True:
             try:
-                RAWDATA = await asyncio.wait_for(self.ws.recv(), timeout=WSTIMEOUT)
+                RAWDATA = await asyncio.wait_for(self.ws.recv(), timeout=self.WSTIMEOUT)
             except (asyncio.TimeoutError, ConnectionClosed) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
                     log.info("websocket connection closing because of timeout.")
@@ -137,7 +137,7 @@ class WebsocketHandler:
         await self.sendJson(payload)
 
     async def hello(self):
-        payload = {"op": "HELLO", "d": {"heartbeat_interval": WSINTERVAL}}
+        payload = {"op": "HELLO", "d": {"heartbeat_interval": self.WSINTERVAL}}
 
         await self.sendJson(payload)
 

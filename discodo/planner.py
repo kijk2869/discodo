@@ -1,13 +1,13 @@
 import os
 from logging import getLogger
 
-MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
-ROTATE_MODE = os.getenv("ROTATE_MODE", "ROTATE")
-
 log = getLogger("discodo.VoiceClient")
 
 
 class IPAddress:
+    MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
+    ROTATE_MODE = os.getenv("ROTATE_MODE", "ROTATE")
+
     def __init__(self, IP):
         self.IP = IP
         self.penalty = 0
@@ -21,7 +21,7 @@ class IPAddress:
 
     @property
     def blocked(self):
-        return self.penalty >= MAX_PENALTY
+        return self.penalty >= self.MAX_PENALTY
 
 
 class IPRotator:

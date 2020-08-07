@@ -9,12 +9,12 @@ from discodo.AudioSource.AudioSource import SAMPLES_PER_FRAME
 
 from .AudioSource import AudioData, AudioSource
 
-PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
-FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-DELAY = FRAME_LENGTH / 1000.0
-
 
 class Player(threading.Thread):
+    PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
+    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+    DELAY = FRAME_LENGTH / 1000.0
+
     def __init__(self, voice_client, volume=1.0, loop=None):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -121,7 +121,7 @@ class Player(threading.Thread):
             del self.client.InternalQueue[0]
 
         _crossfadeState = (
-            self.current.remain <= (PRELOAD_TIME + self.client.crossfade)
+            self.current.remain <= (self.PRELOAD_TIME + self.client.crossfade)
             and not self.current.AudioData.is_live
         )
 
@@ -149,7 +149,7 @@ class Player(threading.Thread):
                 NextData = self.next.read()
 
                 if NextData:
-                    CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
+                    CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
                     if self.next.volume < 1.0:
                         self.next.volume = round(self.next.volume + CrossFadeVolume, 10)
                     if self.current.volume > 0.0:
@@ -165,7 +165,7 @@ class Player(threading.Thread):
             self.__next_called = True
         elif self.current and self.current.stopped:
             if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
-                CrossFadeVolume = 1.0 / (self.client.crossfade / DELAY)
+                CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
                 self.current.volume = round(self.current.volume - CrossFadeVolume, 10)
         else:
             if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
@@ -209,8 +209,8 @@ class Player(threading.Thread):
                     self.speak(False)
 
                 self.loops += 1
-                nextTime = _start + DELAY * self.loops
-                time.sleep(max(0, DELAY + (nextTime - time.perf_counter())))
+                nextTime = _start + self.DELAY * self.loops
+                time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
 

@@ -3,15 +3,6 @@ import ctypes
 import os
 import sys
 
-SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-CHANNELS = int(os.getenv("CHANNELS", "2"))
-FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
-SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-FRAME_SIZE = SAMPLES_PER_FRAME * SAMPLES_PER_FRAME
-EXPECTED_PACKETLOSS = int(os.getenv("EXPECTED_PACKETLOSS", "0"))
-BITRATE = int(os.getenv("BITRATE", "128"))
-
 _library = None
 
 c_int_pointer = ctypes.POINTER(ctypes.c_int)
@@ -142,6 +133,15 @@ SIGNAL_CTL = {
 
 
 class Encoder:
+    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+    CHANNELS = int(os.getenv("CHANNELS", "2"))
+    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+    SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
+    SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
+    FRAME_SIZE = SAMPLES_PER_FRAME * SAMPLES_PER_FRAME
+    EXPECTED_PACKETLOSS = int(os.getenv("EXPECTED_PACKETLOSS", "0"))
+    BITRATE = int(os.getenv("BITRATE", "128"))
+
     def __init__(self, application=ENCODER_CTL["APPLICATION_AUDIO"]):
         self.application = application
 
@@ -149,16 +149,16 @@ class Encoder:
             raise ValueError
 
         self.state = self.createState()
-        self.setBitrate(BITRATE)
+        self.setBitrate(self.BITRATE)
         self.setFec(True)
-        self.setExpectedPacketLoss(EXPECTED_PACKETLOSS)
+        self.setExpectedPacketLoss(self.EXPECTED_PACKETLOSS)
         self.setBandwidth("full")
         self.setSignalType("auto")
 
     def createState(self):
         ret = ctypes.c_int()
         return _library.opus_encoder_create(
-            SAMPLING_RATE, CHANNELS, self.application, ctypes.byref(ret)
+            self.SAMPLING_RATE, self.CHANNELS, self.application, ctypes.byref(ret)
         )
 
     def __del__(self):
@@ -197,7 +197,9 @@ class Encoder:
     def setExpectedPacketLoss(self, percentage):
         _library.opus_encoder_ctl(self.state, ENCODER_CTL["CTL_SET_PLP"], percentage)
 
-    def encode(self, Pcm, FrameSize=SAMPLES_PER_FRAME):
+    def encode(self, Pcm, FrameSize=None):
+        if not FrameSize: FrameSize = self.SAMPLES_PER_FRAME 
+
         max_length = len(Pcm)
         Pcm = ctypes.cast(Pcm, c_int16_pointer)
         Data = (ctypes.c_char * max_length)()

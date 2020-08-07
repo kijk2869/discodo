@@ -4,13 +4,12 @@ import os
 from ..exceptions import AudioSourceNotPlaying, NotSeekable
 from ..natives import AudioFifo, Loader
 
-SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
-SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-
 
 class AudioSource:
+    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+    SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
+
     def __init__(self, file, volume=1.0, AudioData=None):
         self._volume = volume
 
@@ -47,7 +46,7 @@ class AudioSource:
         return round(
             self.Loader.current
             - self.AudioFifo.samples
-            / SAMPLES_PER_FRAME
+            / self.SAMPLES_PER_FRAME
             / 50
             / float(self._filter.get("atempo", "1.0")),
             2,

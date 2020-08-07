@@ -13,9 +13,6 @@ AVOption = {
     "reconnect_delay_max": "5",
 }
 
-SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-CHANNELS = int(os.getenv("CHANNELS", "2"))
-
 
 class Loader:
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
@@ -74,6 +71,9 @@ class Loader:
 
 
 class BufferLoader(threading.Thread):
+    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+    CHANNELS = int(os.getenv("CHANNELS", "2"))
+
     def __init__(self, Loader):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -108,8 +108,8 @@ class BufferLoader(threading.Thread):
                 if not self.Resampler or self.Loader._haveToReloadResampler.is_set():
                     self.Resampler = av.AudioResampler(
                         format=av.AudioFormat("s16").packed,
-                        layout="stereo" if CHANNELS >= 2 else "mono",
-                        rate=SAMPLING_RATE,
+                        layout="stereo" if self.CHANNELS >= 2 else "mono",
+                        rate=self.SAMPLING_RATE,
                     )
                     self.Loader._haveToReloadResampler.clear()
 

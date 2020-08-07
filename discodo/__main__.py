@@ -7,8 +7,6 @@ import sys
 
 import colorlog
 
-from .updater import check_version
-
 log = logging.getLogger("discodo")
 
 
@@ -183,6 +181,8 @@ os.environ["USABLE_IP"] = json.dumps(args.ip)
 
 if __name__ == "__main__":
     from .node import server
+    from .updater import check_version
+
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(check_version())
