@@ -30,15 +30,15 @@ class ModifyAudioManager(AudioManager):
 
 
 class WebsocketHandler:
-    WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
-    WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
-    VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
-    PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
-
     def __init__(self, request, ws):
         self.loop = asyncio.get_event_loop()
         self.request = request
         self.ws = ws
+
+        self.WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
+        self.WSTIMEOUT = float(os.getenv("WSTIMEOUT", "60"))
+        self.VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
+        self.PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
         if not hasattr(request.app, "AudioManagers"):
             request.app.AudioManagers = {}

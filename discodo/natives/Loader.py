@@ -71,12 +71,12 @@ class Loader:
 
 
 class BufferLoader(threading.Thread):
-    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-    CHANNELS = int(os.getenv("CHANNELS", "2"))
-
     def __init__(self, Loader):
         threading.Thread.__init__(self)
         self.daemon = True
+        
+        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        self.CHANNELS = int(os.getenv("CHANNELS", "2"))
 
         self.Loader = Loader
         self.Resampler = None

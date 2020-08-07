@@ -6,11 +6,11 @@ from ..natives import AudioFifo, Loader
 
 
 class AudioSource:
-    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-    SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-
     def __init__(self, file, volume=1.0, AudioData=None):
+        SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
+
         self._volume = volume
 
         self.AudioFifo = AudioFifo()

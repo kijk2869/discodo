@@ -5,12 +5,11 @@ log = getLogger("discodo.VoiceClient")
 
 
 class IPAddress:
-    MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
-    ROTATE_MODE = os.getenv("ROTATE_MODE", "ROTATE")
-
     def __init__(self, IP):
         self.IP = IP
         self.penalty = 0
+
+        self.MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
 
     def __str__(self):
         return self.IP
@@ -26,7 +25,7 @@ class IPAddress:
 
 class IPRotator:
     def __init__(self):
-        self.Mode = "ROTATE"
+        self.Mode = os.getenv("ROTATE_MODE", "ROTATE")
         self.IPAddresses = []
 
     def add(self, IP: str):

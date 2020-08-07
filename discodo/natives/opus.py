@@ -133,17 +133,17 @@ SIGNAL_CTL = {
 
 
 class Encoder:
-    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-    CHANNELS = int(os.getenv("CHANNELS", "2"))
-    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-    SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
-    SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-    FRAME_SIZE = SAMPLES_PER_FRAME * SAMPLES_PER_FRAME
-    EXPECTED_PACKETLOSS = int(os.getenv("EXPECTED_PACKETLOSS", "0"))
-    BITRATE = int(os.getenv("BITRATE", "128"))
-
     def __init__(self, application=ENCODER_CTL["APPLICATION_AUDIO"]):
         self.application = application
+
+        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        self.CHANNELS = int(os.getenv("CHANNELS", "2"))
+        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
+        self.SAMPLES_PER_FRAME = int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
+        self.FRAME_SIZE = self.SAMPLES_PER_FRAME * self.SAMPLES_PER_FRAME
+        self.EXPECTED_PACKETLOSS = int(os.getenv("EXPECTED_PACKETLOSS", "0"))
+        self.BITRATE = int(os.getenv("BITRATE", "128"))
 
         if not isLoaded() and not loadDefaultOpus():
             raise ValueError

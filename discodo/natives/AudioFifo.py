@@ -5,21 +5,22 @@ import av
 
 
 class AudioFifo(av.AudioFifo):
-    SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-    SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
-    SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
-
-    AUDIOBUFFERLIMIT = int(os.getenv("AUDIOBUFFERLIMIT", "5"))
-    AUDIOBUFFERLIMITMS = AUDIOBUFFERLIMIT * 50 * SAMPLES_PER_FRAME
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
+        FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
+
+        AUDIOBUFFERLIMIT = int(os.getenv("AUDIOBUFFERLIMIT", "5"))
+        self.AUDIOBUFFERLIMITMS = AUDIOBUFFERLIMIT * 50 * self.SAMPLES_PER_FRAME
 
         self.haveToFillBuffer = threading.Event()
         self.haveToFillBuffer.set()
 
-    def read(self, samples: int = SAMPLES_PER_FRAME) -> bytes:
+    def read(self, samples: int = None) -> bytes:
+        if not samples: samples = self.SAMPLES_PER_FRAME
+
         AudioFrame = super().read(samples)
         if not AudioFrame:
             return

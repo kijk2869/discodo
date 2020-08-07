@@ -13,10 +13,6 @@ log = getLogger("discodo.VoiceClient")
 
 
 class VoiceClient(VoiceConnector):
-    DEFAULTVOLUME = float(os.getenv("DEFAULTVOLUME", "1.0"))
-    DEFAULTCROSSFADE = float(os.getenv("DEFAULTCROSSFADE", "10.0"))
-    DEFAULAUTOPLAY = True if os.getenv("DEFAULAUTOPLAY", "1") == "1" else False
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -34,9 +30,9 @@ class VoiceClient(VoiceConnector):
         self.paused = False
         self._repeat = False
 
-        self.autoplay = self.DEFAULAUTOPLAY
-        self._volume = self.DEFAULTVOLUME
-        self._crossfade = self.DEFAULTCROSSFADE
+        self.autoplay = True if os.getenv("DEFAULAUTOPLAY", "1") == "1" else False
+        self._volume = float(os.getenv("DEFAULTVOLUME", "1.0"))
+        self._crossfade = float(os.getenv("DEFAULTCROSSFADE", "10.0"))
 
         self.event.dispatch("VC_CREATED")
 

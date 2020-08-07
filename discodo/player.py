@@ -9,15 +9,15 @@ from .AudioSource import AudioData, AudioSource
 
 
 class Player(threading.Thread):
-    PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
-    FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-    DELAY = FRAME_LENGTH / 1000.0
-
     def __init__(self, voice_client, volume=1.0, loop=None):
         threading.Thread.__init__(self)
         self.daemon = True
         self._end = threading.Event()
         self.loop = loop or asyncio.get_event_loop()
+
+        self.PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
+        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
+        self.DELAY = self.FRAME_LENGTH / 1000.0
 
         self.client = voice_client
         self.speakState = False
@@ -139,7 +139,7 @@ class Player(threading.Thread):
             elif (
                 self.client.crossfade
                 and isinstance(self.next, AudioSource)
-                and (self.next.AudioFifo.samples > SAMPLES_PER_FRAME)
+                and (self.next.AudioFifo.samples > self.SAMPLES_PER_FRAME)
                 and (
                     self.current.remain <= self.client.crossfade or self.current.stopped
                 )
