@@ -1,5 +1,6 @@
 import array
 import ctypes
+import ctypes.util
 import os
 import sys
 
