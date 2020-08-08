@@ -180,10 +180,18 @@ os.environ["ROTATE_MODE"] = str(args.rotate_mode)
 os.environ["USABLE_IP"] = json.dumps(args.ip)
 
 if __name__ == "__main__":
+    try:
+        import uvloop
+    except ModuleNotFound:
+        pass
+    else:
+        asyncio.set_event_loop(uvloop.new_event_loop())
+    
+    loop = asyncio.get_event_loop()
+    
     from .node import server
     from .updater import check_version
 
-    loop = asyncio.get_event_loop()
     loop.run_until_complete(check_version())
     loop.create_task(
         server.create_server(host=args.host, port=args.port, return_asyncio_server=True)

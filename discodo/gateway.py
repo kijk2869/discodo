@@ -89,9 +89,9 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    async def connect(cls, client, loop=asyncio.get_event_loop(), resume=False):
+    async def connect(cls, client, resume=False):
         ws = await websockets.connect(
-            f"wss://{client.endpoint}/?v=4", loop=loop, klass=cls, compression=None
+            f"wss://{client.endpoint}/?v=4", loop=client.loop, klass=cls, compression=None
         )
         ws.client = client
 
