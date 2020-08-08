@@ -186,9 +186,9 @@ if __name__ == "__main__":
         pass
     else:
         asyncio.set_event_loop(uvloop.new_event_loop())
-    
+
     loop = asyncio.get_event_loop()
-    
+
     from .node import server
     from .updater import check_version
 
