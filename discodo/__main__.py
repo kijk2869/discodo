@@ -182,7 +182,7 @@ os.environ["USABLE_IP"] = json.dumps(args.ip)
 if __name__ == "__main__":
     try:
         import uvloop
-    except ModuleNotFound:
+    except ModuleNotFoundError:
         pass
     else:
         asyncio.set_event_loop(uvloop.new_event_loop())
