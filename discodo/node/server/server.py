@@ -1,8 +1,8 @@
 import asyncio
 import json
 import os
-import aiohttp
 
+import aiohttp
 from sanic import Sanic, response
 from sanic.exceptions import abort
 
