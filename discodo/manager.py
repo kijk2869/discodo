@@ -61,8 +61,8 @@ class AudioManager:
     def skip(self, guildID: int, offset: int):
         return self.getVC(guildID).skip(offset)
 
-    def seek(self, guildID: int, offset: int):
-        return self.getVC(guildID).seek(offset)
+    async def seek(self, guildID: int, offset: int):
+        return await self.getVC(guildID).seek(offset)
 
     def setVolume(self, guildID: int, value: float) -> float:
         self.getVC(guildID).volume = value

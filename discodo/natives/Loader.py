@@ -1,5 +1,6 @@
 import os
 import threading
+import urllib.parse
 
 import av
 
@@ -16,7 +17,16 @@ AVOption = {
 
 class Loader:
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
-        self.Source = Source
+        _ServerHost = os.getenv("HOST", "0.0.0.0")
+        self.Source = (
+            "http://" + _ServerHost
+            if _ServerHost != "0.0.0.0"
+            else "localhost"
+            + ":"
+            + os.getenv("PORT", "8000")
+            + "/stream?url="
+            + urllib.parse.quote(Source)
+        )
 
         self._end = threading.Event()
         self._haveToReloadResampler = threading.Event()

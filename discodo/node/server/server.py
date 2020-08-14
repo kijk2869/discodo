@@ -1,6 +1,7 @@
+import asyncio
 import json
 import os
-from functools import wraps
+import aiohttp
 
 from sanic import Sanic, response
 from sanic.exceptions import abort
@@ -35,6 +36,56 @@ def authorized(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+class StreamSender:
+    def __init__(self, session, response):
+        self.loop = asyncio.get_event_loop()
+        self.session = session
+        self.response = response
+
+    def __del__(self):
+        if self.response:
+            self.response.close()
+        self.loop.create_task(self.session.close())
+
+    @classmethod
+    async def create(cls, url, headers={}):
+        if "host" in headers:
+            del headers["host"]
+
+        session = aiohttp.ClientSession()
+        response = await session.get(url, headers=headers)
+
+        return cls(session, response)
+
+    async def send(self, response):
+        try:
+            async for data, _ in self.response.content.iter_chunks():
+                if len(data) < 1:
+                    break
+
+                try:
+                    await response.write(data)
+                except:
+                    break
+        finally:
+            self.__del__()
+
+
+@app.route("/stream")
+async def streamSong(request):
+    url = "".join(request.args.get("url", [])).strip()
+    if not url:
+        abort(400, "Missing parameter url.")
+
+    StreamServer = await StreamSender.create(url, headers=request.headers)
+
+    return response.stream(
+        StreamServer.send,
+        status=StreamServer.response.status,
+        headers=StreamServer.response.headers,
+    )
 
 
 @app.route("/stat")

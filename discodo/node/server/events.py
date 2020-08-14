@@ -214,7 +214,7 @@ class WebsocketEvents:
             return await self.sendJson(payload)
 
         try:
-            self.AudioManager.seek(Data["guild_id"], Data["offset"])
+            await self.AudioManager.seek(Data["guild_id"], Data["offset"])
         except NotSeekable:
             payload = {
                 "op": "seek",

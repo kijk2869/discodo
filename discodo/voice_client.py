@@ -146,11 +146,11 @@ class VoiceClient(VoiceConnector):
 
         return Data
 
-    def seek(self, offset: int):
+    async def seek(self, offset: int):
         if not self.player.current:
             raise ValueError
 
-        self.player.current.seek(offset)
+        await self.loop.run_in_executor(None, self.player.current.seek, offset)
 
     def skip(self, offset: int = 1):
         if not self.player.current:

@@ -166,6 +166,8 @@ if args.verbose:
 else:
     setLoggingLevel(logging.INFO)
 
+os.environ["HOST"] = args.host
+os.environ["PORT"] = str(args.port)
 os.environ["VCTIMEOUT"] = str(args.timeout)
 os.environ["DEFAULTVOLUME"] = str(round(args.default_volume / 100, 3))
 os.environ["DEFAULTCROSSFADE"] = str(args.default_crossfade)
