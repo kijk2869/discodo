@@ -1,6 +1,8 @@
 import asyncio
 import json
 import os
+from threading import local
+import uuid
 
 import aiohttp
 from sanic import Sanic, response
@@ -12,6 +14,7 @@ from ...stat import getStat
 from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
+app.stream_authorize = uuid.uuid4()
 
 
 @app.listener("before_server_start")
@@ -50,11 +53,11 @@ class StreamSender:
         self.loop.create_task(self.session.close())
 
     @classmethod
-    async def create(cls, url, headers={}):
+    async def create(cls, url, headers={}, session_kwargs={}):
         if "host" in headers:
             del headers["host"]
 
-        session = aiohttp.ClientSession()
+        session = aiohttp.ClientSession(**session_kwargs)
         response = await session.get(url, headers=headers)
 
         return cls(session, response)
@@ -69,6 +72,8 @@ class StreamSender:
                     await response.write(data)
                 except:
                     break
+        except:
+            pass
         finally:
             self.__del__()
 
@@ -79,7 +84,15 @@ async def streamSong(request):
     if not url:
         abort(400, "Missing parameter url.")
 
-    StreamServer = await StreamSender.create(url, headers=request.headers)
+    local_addr = "".join(request.args.get("localaddr", [])).strip()
+    Connector = aiohttp.TCPConnector(local_addr=(local_addr, 0)) if local_addr else None
+
+    try:
+        StreamServer = await StreamSender.create(
+            url, headers=request.headers, session_kwargs={"connector": Connector}
+        )
+    except aiohttp.client_exceptions.ClientConnectorError:
+        abort(400, "Unavailable local address.")
 
     return response.stream(
         StreamServer.send,

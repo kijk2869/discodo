@@ -5,8 +5,9 @@ from .AudioSource import AudioSource
 
 
 class AudioData:
-    def __init__(self, data, planner=None):
+    def __init__(self, data, planner=None, IPAddress=None):
         self.planner = planner
+        self.IPAddress = IPAddress
 
         self.id = data.get("id")
         self.title = data.get("title")
@@ -45,16 +46,19 @@ class AudioData:
 
     @classmethod
     async def create(cls, query: str, planner=None):
-        Data = await extract(query, planner)
+        IPAddress = planner.get() if planner else None
+        Data = await extract(query, IPAddress)
 
         if isinstance(Data, list):
             return [cls(Item) for Item in Data]
 
-        return cls(Data, planner)
+        return cls(Data, planner, IPAddress)
 
     async def gather(self):
+        self.IPAddress = self.planner.get() if self.planner else None
+
         Data = await extract(self.webpage_url, self.planner)
-        self.__init__(Data)
+        self.__init__(Data, self.planner, self.IPAddress)
 
         return self
 

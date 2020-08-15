@@ -15,7 +15,7 @@ YOUTUBE_PLAYLIST_ID_REGEX = Regex(
 )
 
 
-def _extract(query: str, planner=None) -> Optional[dict]:
+def _extract(query: str, IPAddress=None) -> Optional[dict]:
     option = {
         "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
         "nocheckcertificate": True,
@@ -27,8 +27,7 @@ def _extract(query: str, planner=None) -> Optional[dict]:
         "skip_download": True,
         "writesubtitles": True,
     }
-
-    IPAddress = planner.get() if planner else None
+    
     if IPAddress:
         option["source_address"] = IPAddress.__str__()
 
