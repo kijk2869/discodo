@@ -15,7 +15,11 @@ class AudioSource:
 
         self.AudioFifo = AudioFifo()
         self.Loader = Loader(
-            file, AudioData.IPAddress.__str__() if AudioData else None, self.AudioFifo
+            file,
+            AudioData.IPAddress.__str__()
+            if AudioData and AudioData.IPAddress
+            else None,
+            self.AudioFifo,
         )
         self.Loader.start()
 
