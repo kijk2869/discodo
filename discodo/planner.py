@@ -1,7 +1,6 @@
+import ipaddress
 import os
 from logging import getLogger
-
-import ipaddress
 
 log = getLogger("discodo.VoiceClient")
 
