@@ -1,8 +1,8 @@
 import asyncio
 import json
 import os
-from threading import local
 import uuid
+from threading import local
 
 import aiohttp
 from sanic import Sanic, response

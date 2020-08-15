@@ -27,7 +27,7 @@ def _extract(query: str, IPAddress=None) -> Optional[dict]:
         "skip_download": True,
         "writesubtitles": True,
     }
-    
+
     if IPAddress:
         option["source_address"] = IPAddress.__str__()
 
