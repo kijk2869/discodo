@@ -16,7 +16,7 @@ AVOption = {
 
 
 class Loader:
-    def __init__(self, Source: str, AudioFifo: av.AudioFifo):
+    def __init__(self, Source: str, IPAddress: str, AudioFifo: av.AudioFifo):
         _ServerHost = os.getenv("HOST", "0.0.0.0")
         self.Source = (
             "http://"
@@ -25,6 +25,9 @@ class Loader:
             + os.getenv("PORT", "8000")
             + "/stream?url="
             + urllib.parse.quote(Source)
+            + "&auth="
+            + os.getenv("PASSWORD", "hellodiscodo")
+            + (("&localaddr=" + urllib.parse.quote(IPAddress)) if IPAddress else "")
         )
 
         self._end = threading.Event()

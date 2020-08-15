@@ -64,14 +64,15 @@ class VoiceClient(VoiceConnector):
         ):
             IPAddress = self.client.planner.get() if self.client.planner else None
             try:
-                print(current["webpage_url"])
                 Related = await self.relatedClient.async_get(
                     current["webpage_url"], IPAddress.__str__() if IPAddress else None
                 )
             except RateLimited as e:
-                IPAddress.givePenalty()
+                if not IPAddress:
+                    raise e
 
-                raise e
+                IPAddress.givePenalty()
+                return await self.getNext(**kwargs)
 
             await self.loadSong(Related["id"])
 

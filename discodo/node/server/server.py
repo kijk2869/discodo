@@ -80,6 +80,10 @@ class StreamSender:
 
 @app.route("/stream")
 async def streamSong(request):
+    authorize = "".join(request.args.get("auth", [])).strip()
+    if authorize != app.PASSWORD:
+        abort(403, "Password mismatch.")
+
     url = "".join(request.args.get("url", [])).strip()
     if not url:
         abort(400, "Missing parameter url.")

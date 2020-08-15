@@ -62,8 +62,10 @@ class AudioData:
 
         return self
 
-    async def source(self, *args, _retry: int = 0, **kwargs) -> AudioSource:
-        if not self.stream_url:
+    async def source(
+        self, *args, _retry: int = 0, _limited=False, **kwargs
+    ) -> AudioSource:
+        if not self.stream_url or _limited:
             await self.gather()
 
         if not self._source:
@@ -77,6 +79,11 @@ class AudioData:
                 elif _retry == 1:
                     await clear_cache()
                     return await self.source(*args, _retry=_retry + 1, **kwargs)
+            if Status == 429 and self.planner:
+                if self.IPAddress:
+                    self.IPAddress.givePenalty()
+
+                return await self.source(*args, _retry=_retry, _limited=True, **kwargs)
 
             self._source = AudioSource(self.stream_url, *args, AudioData=self, **kwargs)
 
