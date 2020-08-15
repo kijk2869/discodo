@@ -35,11 +35,11 @@ class IterableIPAddress:
         self.MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
 
     def __str__(self):
-        if self.blocked:
+        if not self.IP or self.penalty >= self.MAX_PENALTY:
             IP = next(self.iterator, None)
 
             if IP:
-                self.IP = IP
+                self.IP = str(IP)
                 self.penalty = 0
 
         return self.IP
@@ -66,7 +66,7 @@ class IPRotator:
         log.debug(f"add {IP} to address list")
         if "/" in IP:
             network = ipaddress.ip_network(IP)
-            _IP = IterableIPAddress(network)
+            _IP = IterableIPAddress(network.hosts())
         else:
             _IP = IPAddress(IP)
         self.IPAddresses.append(_IP)
