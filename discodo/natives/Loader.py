@@ -19,9 +19,8 @@ class Loader:
     def __init__(self, Source: str, AudioFifo: av.AudioFifo):
         _ServerHost = os.getenv("HOST", "0.0.0.0")
         self.Source = (
-            "http://" + _ServerHost
-            if _ServerHost != "0.0.0.0"
-            else "localhost"
+            "http://"
+            + (_ServerHost if _ServerHost != "0.0.0.0" else "localhost")
             + ":"
             + os.getenv("PORT", "8000")
             + "/stream?url="
