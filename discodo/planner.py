@@ -1,6 +1,8 @@
 import os
 from logging import getLogger
 
+import ipaddress
+
 log = getLogger("discodo.VoiceClient")
 
 
@@ -23,6 +25,35 @@ class IPAddress:
         return self.penalty >= self.MAX_PENALTY
 
 
+class IterableIPAddress:
+    def __init__(self, iterator):
+        self.iterator = iterator
+        self.penalty = 0
+
+        self.IP = None
+
+        self.MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
+
+    def __str__(self):
+        if self.blocked:
+            IP = next(self.iterator, None)
+
+            if IP:
+                self.IP = IP
+                self.penalty = 0
+
+        return self.IP
+
+    def givePenalty(self):
+        log.debug(f"penalty is given to {self}")
+        self.penalty += 1
+
+    @property
+    def blocked(self):
+        self.__str__()
+        return self.penalty >= self.MAX_PENALTY
+
+
 class IPRotator:
     def __init__(self):
         self.Mode = os.getenv("ROTATE_MODE", "ROTATE")
@@ -33,7 +64,11 @@ class IPRotator:
             raise ValueError("already exists")
 
         log.debug(f"add {IP} to address list")
-        _IP = IPAddress(IP)
+        if "/" in IP:
+            network = ipaddress.ip_network(IP)
+            _IP = IterableIPAddress(network)
+        else:
+            _IP = IPAddress(IP)
         self.IPAddresses.append(_IP)
 
         return _IP
