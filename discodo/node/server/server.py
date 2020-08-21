@@ -65,9 +65,6 @@ class StreamSender:
     async def send(self, response):
         try:
             async for data, _ in self.response.content.iter_chunks():
-                if len(data) < 1:
-                    break
-
                 try:
                     await response.write(data)
                 except:
