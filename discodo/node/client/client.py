@@ -14,13 +14,21 @@ log = getLogger("discodo.client")
 
 
 class Node:
-    def __init__(self, URL=None, password="hellodiscodo", user_id=None, reconnect=True):
+    def __init__(
+        self,
+        URL=None,
+        password="hellodiscodo",
+        user_id=None,
+        reconnect=True,
+        retry_count=5,
+    ):
         self.ws = None
         self.emitter = EventEmitter()
 
         self.loop = asyncio.get_event_loop()
         self.user_id = user_id
         self.reconnect = reconnect
+        self.retry_count = retry_count
         self.connected = asyncio.Event()
 
         self.URL = URL
@@ -33,6 +41,9 @@ class Node:
         self.loop.create_task(self.connect())
 
     async def connect(self):
+        if self.connected.is_set():
+            raise ValueError("Node already connected")
+
         if self.ws and not self.ws.closed:
             await self.ws.close()
 
@@ -64,8 +75,14 @@ class Node:
             except (asyncio.TimeoutError, websockets.ConnectionClosedError):
                 self.connected.clear()
                 if self.ws.closed and self.reconnect:
-                    await self.connect()
-                    continue
+                    try:
+                        await self.connect()
+                    except:
+                        if self.retry_count > 0:
+                            self.retry_count += -1
+                            continue
+
+                    return
 
                 if self.ws:
                     await self.ws.close()
