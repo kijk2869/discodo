@@ -98,6 +98,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         )
         ws.client = client
 
+        ws._keepAliver = None
         ws.heartbeatTimeout = 60.0
         ws.threadId = threading.get_ident()
 
