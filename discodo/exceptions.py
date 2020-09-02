@@ -1,6 +1,5 @@
 class DiscodoException(Exception):
-    """Base exception class for Discodo
-    """
+    """Base exception class for Discodo"""
 
     pass
 
