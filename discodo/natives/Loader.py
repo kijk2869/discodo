@@ -1,7 +1,7 @@
+import json
 import os
 import threading
 import urllib.parse
-import json
 
 import av
 
