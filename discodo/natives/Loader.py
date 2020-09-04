@@ -1,6 +1,7 @@
 import os
 import threading
 import urllib.parse
+import json
 
 import av
 
@@ -31,6 +32,7 @@ class Loader:
                 + (("&localaddr=" + urllib.parse.quote(IPAddress)) if IPAddress else "")
             )
             if os.getenv("USE_SERVER", "0") == "1"
+            and json.loads(os.getenv("USABLE_IP", "[]"))
             else Source
         )
 
