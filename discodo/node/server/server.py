@@ -19,7 +19,7 @@ app.stream_authorize = uuid.uuid4()
 
 @app.listener("before_server_start")
 async def applyVariables(app, loop):
-    os.environ['USE_SERVER'] = '1'
+    os.environ["USE_SERVER"] = "1"
     app.PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
     USABLE_IP = json.loads(os.getenv("USABLE_IP", "[]"))
