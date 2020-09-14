@@ -1,7 +1,7 @@
 aiohttp==3.6.2
 av==8.0.2
 colorlog==4.2.1
-youtube_dl==2020.9.6
+youtube_dl==2020.9.14
 youtube-related==0.0.4
 markdownify==0.5.3
 psutil==5.7.2
