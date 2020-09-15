@@ -4,10 +4,10 @@ import json
 import logging
 import os
 import sys
-from hypercorn.config import Config
-from hypercorn.asyncio import serve
 
 import colorlog
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 
 log = logging.getLogger("discodo")
 
