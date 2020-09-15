@@ -4,6 +4,8 @@ import json
 import logging
 import os
 import sys
+from hypercorn.config import Config
+from hypercorn.asyncio import serve
 
 import colorlog
 
@@ -194,8 +196,10 @@ if __name__ == "__main__":
     from .node import server
     from .updater import check_version
 
+    config = Config()
+    config.bind = f"{args.host}:{args.port}"
+    config.loglevel = "debug" if args.verbose else "info"
+
     loop.run_until_complete(check_version())
-    loop.create_task(
-        server.create_server(host=args.host, port=args.port, return_asyncio_server=True)
-    )
+    loop.create_task(serve(server, config))
     loop.run_forever()

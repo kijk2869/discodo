@@ -1,24 +1,21 @@
 import asyncio
 import json
 import os
-import uuid
-from threading import local
 
 import aiohttp
-from sanic import Sanic, response
-from sanic.exceptions import abort
+from fastapi import FastAPI, HTTPException, Header, Depends, Request
+from fastapi.responses import StreamingResponse
 
 from ...AudioSource import AudioData
 from ...planner import IPRotator
 from ...stat import getStat
 from .websocket import app as WebsocketBlueprint
 
-app = Sanic(__name__)
-app.stream_authorize = uuid.uuid4()
+app = FastAPI()
 
 
-@app.listener("before_server_start")
-async def applyVariables(app, loop):
+@app.on_event("startup")
+async def applyVariables():
     os.environ["USE_SERVER"] = "1"
     app.PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
@@ -29,17 +26,14 @@ async def applyVariables(app, loop):
         app.planner.add(IP)
 
 
-app.register_blueprint(WebsocketBlueprint)
+app.include_router(WebsocketBlueprint)
 
 
-def authorized(func):
-    def wrapper(request, *args, **kwargs):
-        if request.headers.get("Authorization") != app.PASSWORD:
-            abort(403, "Password mismatch.")
+def authorized(Authorization: str = Header(None)):
+    if Authorization != app.PASSWORD:
+        raise HTTPException(403, "Password mismatch.")
 
-        return func(request, *args, **kwargs)
-
-    return wrapper
+    return Authorization
 
 
 class StreamSender:
@@ -63,13 +57,10 @@ class StreamSender:
 
         return cls(session, response)
 
-    async def send(self, response):
+    async def send(self):
         try:
             async for data, _ in self.response.content.iter_chunks():
-                try:
-                    await response.write(data)
-                except:
-                    break
+                yield data
         except:
             pass
         finally:
@@ -77,43 +68,41 @@ class StreamSender:
 
 
 @app.route("/stream")
-async def streamSong(request):
-    authorize = "".join(request.args.get("auth", [])).strip()
-    if authorize != app.PASSWORD:
-        abort(403, "Password mismatch.")
-
-    url = "".join(request.args.get("url", [])).strip()
+async def streamSong(
+    request: Request, url: str = None, auth: str = None, local_addr: str = None
+):
+    if request.query_params["auth"] != app.PASSWORD:
+        raise HTTPException(403, "Password mismatch.")
+    url = request.query_params["url"]
     if not url:
-        abort(400, "Missing parameter url.")
+        raise HTTPException(400, "Missing parameter url.")
 
-    local_addr = "".join(request.args.get("localaddr", [])).strip()
+    local_addr = request.query_params["localaddr"]
+
     Connector = aiohttp.TCPConnector(local_addr=(local_addr, 0)) if local_addr else None
 
     try:
         StreamServer = await StreamSender.create(
-            url, headers=request.headers, session_kwargs={"connector": Connector}
+            url, headers=dict(request.headers), session_kwargs={"connector": Connector}
         )
     except aiohttp.client_exceptions.ClientConnectorError:
-        abort(400, "Unavailable local address.")
+        raise HTTPException(400, "Unavailable local address.")
 
-    return response.stream(
-        StreamServer.send,
-        status=StreamServer.response.status,
+    return StreamingResponse(
+        StreamServer.send(),
+        status_code=StreamServer.response.status,
         headers=StreamServer.response.headers,
     )
 
 
-@app.route("/stat")
-async def stat(request):
-    return response.json(getStat())
+@app.get("/stat")
+async def stat():
+    return getStat()
 
 
-@app.route("/getSong")
-@authorized
-async def getSong(request):
-    query = "".join(request.args.get("query", [])).strip()
-
+@app.get("/getSong", dependencies=[Depends(authorized)])
+async def getSong(query: str = None):
     if not query:
-        abort(400, "Missing parameter query.")
+        raise HTTPException(400, "Missing parameter query.")
 
-    return response.json(await AudioData.create(query, app.planner))
+    return await AudioData.create(query, app.planner)

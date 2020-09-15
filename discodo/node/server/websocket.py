@@ -4,8 +4,7 @@ import logging
 import os
 from asyncio.tasks import wait_for
 
-from sanic import Blueprint
-from sanic.websocket import ConnectionClosed
+from fastapi import APIRouter, WebSocketDisconnect, WebSocket
 
 from ...manager import AudioManager
 from .events import WebsocketEvents
@@ -13,12 +12,13 @@ from .events import WebsocketEvents
 log = logging.getLogger("discodo.server")
 
 
-app = Blueprint(__name__)
+app = APIRouter()
 
 
 @app.websocket("/")
-async def feed(request, ws):
-    handler = WebsocketHandler(request, ws)
+async def socket_feed(ws: WebSocket):
+    await ws.accept()
+    handler = WebsocketHandler(ws)
     await handler.join()
 
 
@@ -30,9 +30,8 @@ class ModifyAudioManager(AudioManager):
 
 
 class WebsocketHandler:
-    def __init__(self, request, ws):
+    def __init__(self, ws):
         self.loop = asyncio.get_event_loop()
-        self.request = request
         self.ws = ws
 
         self.WSINTERVAL = float(os.getenv("WSINTERVAL", "15"))
@@ -40,8 +39,8 @@ class WebsocketHandler:
         self.VCTIMEOUT = float(os.getenv("VCTIMEOUT", "300.0"))
         self.PASSWORD = os.getenv("PASSWORD", "hellodiscodo")
 
-        if not hasattr(request.app, "AudioManagers"):
-            request.app.AudioManagers = {}
+        if not hasattr(ws.app, "AudioManagers"):
+            ws.app.AudioManagers = {}
 
         self.AudioManager = None
 
@@ -61,7 +60,7 @@ class WebsocketHandler:
             )
         except asyncio.TimeoutError:
             self.AudioManager.__del__()
-            del self.request.app.AudioManagers[int(self.AudioManager.user_id)]
+            del self.ws.app.AudioManagers[int(self.AudioManager.user_id)]
             self.AudioManager = None
 
     async def join(self):
@@ -78,12 +77,10 @@ class WebsocketHandler:
             self.__del__()
 
     async def _handle(self):
-        log.info(f"new websocket connection created from {self.request.ip}.")
+        log.info(f"new websocket connection created..")
 
-        if self.request.headers.get("Authorization") != self.PASSWORD:
-            log.warning(
-                f"websocket connection from {self.request.ip} forbidden: password mismatch."
-            )
+        if self.ws.headers.get("Authorization") != self.PASSWORD:
+            log.warning(f"websocket connection forbidden: password mismatch.")
             await self.forbidden("Password mismatch.")
             return
 
@@ -91,11 +88,13 @@ class WebsocketHandler:
 
         while True:
             try:
-                RAWDATA = await asyncio.wait_for(self.ws.recv(), timeout=self.WSTIMEOUT)
-            except (asyncio.TimeoutError, ConnectionClosed) as exception:
+                RAWDATA = await asyncio.wait_for(
+                    self.ws.receive_text(), timeout=self.WSTIMEOUT
+                )
+            except (asyncio.TimeoutError, WebSocketDisconnect) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
                     log.info("websocket connection closing because of timeout.")
-                elif isinstance(exception, ConnectionClosed):
+                elif isinstance(exception, WebSocketDisconnect):
                     log.info(
                         f"websocket connection disconnected. code {exception.code}"
                     )
@@ -115,19 +114,19 @@ class WebsocketHandler:
                 self.loop.create_task(Func(self, Data))
 
     async def sendJson(self, Data):
-        log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
-        await self.ws.send(json.dumps(Data))
+        log.debug(f"send {Data} to websocket connection.")
+        await self.ws.send_text(json.dumps(Data))
 
     async def initialize_manager(self, user_id):
-        if int(user_id) in self.request.app.AudioManagers:
-            self.AudioManager = self.request.app.AudioManagers[int(user_id)]
+        if int(user_id) in self.ws.app.AudioManagers:
+            self.AudioManager = self.ws.app.AudioManagers[int(user_id)]
             self.AudioManager._binded.set()
             self.loop.create_task(self.resumed())
             log.debug(f"AudioManager of {user_id} resumed.")
         else:
             self.AudioManager = ModifyAudioManager(user_id=user_id)
-            self.AudioManager.planner = self.request.app.planner
-            self.request.app.AudioManagers[int(user_id)] = self.AudioManager
+            self.AudioManager.planner = self.ws.app.planner
+            self.ws.app.AudioManagers[int(user_id)] = self.AudioManager
             log.debug(f"AudioManager of {user_id} intalized.")
 
         self.AudioManager.emitter.onAny(self.manager_event)
