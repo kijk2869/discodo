@@ -68,9 +68,7 @@ class StreamSender:
 
 
 @app.route("/stream")
-async def streamSong(
-    request: Request, url: str = None, auth: str = None, local_addr: str = None
-):
+async def streamSong(request: Request):
     if request.query_params["auth"] != app.PASSWORD:
         raise HTTPException(403, "Password mismatch.")
     url = request.query_params["url"]
