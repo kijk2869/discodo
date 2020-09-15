@@ -4,7 +4,7 @@ import logging
 import os
 from asyncio.tasks import wait_for
 
-from fastapi import APIRouter, WebSocketDisconnect, WebSocket
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from ...manager import AudioManager
 from .events import WebsocketEvents

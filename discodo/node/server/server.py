@@ -3,7 +3,7 @@ import json
 import os
 
 import aiohttp
-from fastapi import FastAPI, HTTPException, Header, Depends, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from ...AudioSource import AudioData
