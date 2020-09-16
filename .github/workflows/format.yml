@@ -5,9 +5,9 @@ name: Python application
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, rewrite ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, rewrite ]
 
 jobs:
   build:
@@ -15,17 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-
       - name: Install Python dependencies
         run: pip install black flake8
-
       - name: Run linters
         uses: wearerequired/lint-action@v1
         with:
