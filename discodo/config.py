@@ -9,12 +9,16 @@ class Config:
     ]
 
     def __init__(self) -> None:
+        # Audio
         self.SAMPLING_RATE = 48000
         self.CHANNELS = 2
         self.FRAME_LENGTH = 20
         self.SAMPLE_SIZE = 4
         self.EXPECTED_PACKETLOSS = 0.0
         self.BITRATE = 128
+
+        # BUFFER
+        self.BUFFERLIMIT = 5
 
     @property
     def SAMPLES_PER_FRAME(self) -> int:
