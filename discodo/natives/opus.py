@@ -149,7 +149,9 @@ class Encoder:
         self.BITRATE = Config.BITRATE
 
         if not isLoaded() and not loadDefaultOpus():
-            raise ValueError
+            raise ValueError(
+                "Cannot load libopus, please install `libopus-dev` if you are using linux."
+            )
 
         self.state = self.createState()
         self.setBitrate(self.BITRATE)
