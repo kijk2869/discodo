@@ -10,13 +10,13 @@ class AudioFifo(av.AudioFifo):
 
         self.AUDIOBUFFERLIMITMS = Config.BufferLimit * 50 * 960
 
-        self.DontFillBuffer = threading.Event()
+        self.haveToFillBuffer = threading.Event()
 
     def check_buffer(self) -> None:
         if self.samples < self.AUDIOBUFFERLIMITMS:
-            self.DontFillBuffer.clear()
+            self.haveToFillBuffer.set()
         else:
-            self.DontFillBuffer.set()
+            self.haveToFillBuffer.clear()
 
     def read(self, samples: int = 960) -> bytes:
         AudioFrame = super().read(samples)
