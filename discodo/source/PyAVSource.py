@@ -54,7 +54,13 @@ class PyAVSource:
     @property
     def position(self) -> float:
         return round(
-            self._position - self.AudioFifo.samples / 960 / 50,
+            self._position
+            - (
+                self.AudioFifo.samples
+                / 960
+                / 50
+                * (self.filter["atempo"] if "atempo" in self.filter else 1.0)
+            ),
             2,
         )
 
