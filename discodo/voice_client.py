@@ -1,9 +1,12 @@
+from .errors import NotPlaying
+from typing import Union
 from .utils import EventDispatcher
 from .voice_connector import VoiceConnector
 from .player import Player
 from .config import Config
 import logging
-from .natives import AudioSource
+from .source import AudioSource, AudioData
+import random
 
 log = logging.getLogger("discodo.VoiceClient")
 
@@ -104,3 +107,64 @@ class VoiceClient(VoiceConnector):
             return TypeError("`repeat` property must be `bool`.")
 
         self._repeat = value
+
+    def putSource(self, Source: Union[list, AudioData, AudioSource]) -> int:
+        if not isinstance(Source, (list, AudioData, AudioSource)):
+            raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
+
+        self.Queue += Source if isinstance(Source, list) else [Source]
+
+        self.event.dispatch(
+            "putSource", sources=(Source if isinstance(Source, list) else [Source])
+        )
+
+        return (
+            self.Queue.index(Source)
+            if not isinstance(Source, list)
+            else [self.Queue.index(Item) for Item in Source]
+        )
+
+    async def getSource(self, Query: str) -> AudioData:
+        return await AudioData.create(Query)
+
+    async def loadSource(self, Query: str) -> AudioData:
+        Data = self.getSource(Query)
+
+        self.event.dispatch(
+            "loadSource", source=(Data if isinstance(Data, list) else Data)
+        )
+
+        self.putSource(Data)
+
+        return Data
+
+    async def seek(self, offset: int) -> None:
+        return await self.player.seek(offset)
+
+    def skip(self, offset: int = 1) -> None:
+        if not self.player.current:
+            raise NotPlaying
+
+        if len(self.Queue) < (offset - 1):
+            raise ValueError("`offset` is bigger than `Queue` size.")
+
+        if offset > 1:
+            del self.Queue[0 : (offset - 1)]
+
+        self.player.current.stop()
+
+    def pause(self) -> bool:
+        self.paused = True
+        return True
+
+    def resume(self) -> bool:
+        self.paused = False
+        return False
+
+    def shuffle(self) -> dict:
+        if not self.Queue:
+            raise ValueError("`Queue` is empty now.")
+
+        random.shuffle(self.Queue)
+
+        return self.Queue

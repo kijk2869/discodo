@@ -16,3 +16,7 @@ class NoSearchResults(DiscodoException):
 
 class NotSeekable(DiscodoException):
     pass
+
+
+class NotPlaying(DiscodoException):
+    pass

@@ -1,8 +1,9 @@
 import asyncio
 import audioop
+from .errors import NotPlaying
 import threading
 from typing import Callable, Union
-from .natives import AudioSource, AudioData
+from .source import AudioSource, AudioData
 from .config import Config
 import time
 import traceback
@@ -24,7 +25,6 @@ class Player(threading.Thread):
         self._current = self._next = None
 
         self._crossfadeLoop = 0
-        self.haveToLoadNext = False
 
     def __del__(self) -> None:
         for Source in self.client.Queue:
@@ -59,6 +59,12 @@ class Player(threading.Thread):
     @gapless.setter()
     def gapless(self, value: bool) -> None:
         self._gapless = value
+
+    def seek(self, offset: int) -> None:
+        if not self.current:
+            raise NotPlaying
+
+        return self.current.seek(offset)
 
     @property
     def current(self) -> AudioSource:
