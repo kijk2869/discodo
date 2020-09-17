@@ -108,7 +108,7 @@ class Player(threading.Thread):
 
         if not self._next.BufferLoader:
             if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
-                self.event.dispatch("SONG_START", self._next)
+                self.event.dispatch("SOURCE_START", self._next)
                 self._next.start()
 
         return self._next
