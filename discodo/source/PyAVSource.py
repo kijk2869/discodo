@@ -3,6 +3,7 @@ import audioop
 import functools
 import threading
 import traceback
+from typing import Coroutine
 
 import av
 
@@ -103,8 +104,8 @@ class PyAVSource:
             self.Container.seek(round(max(offset, 1) * 1000000), *args, **kwargs)
             self.reload()
 
-    async def seek(self, offset: float, *args, **kwargs) -> None:
-        return await self.loop.run_in_executor(
+    def seek(self, offset: float, *args, **kwargs) -> Coroutine:
+        return self.loop.run_in_executor(
             None, functools.partial(self._seek, offset, *args, **kwargs)
         )
 

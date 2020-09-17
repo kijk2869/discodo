@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import re
+from typing import Coroutine
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
@@ -68,17 +69,17 @@ def _clear_cache() -> None:
     YoutubeDL.cache.remove()
 
 
-async def extract(
-    query: str, video: bool = False, loop: asyncio.AbstractEventLoop = None
+def extract(
+    query: str, video: bool = False, loop: asyncio.AbstractEventLoop = Coroutine
 ) -> dict:
     if not loop:
         loop = asyncio.get_event_loop()
 
-    return await loop.run_in_executor(None, _extract, query, video)
+    return loop.run_in_executor(None, _extract, query, video)
 
 
-async def clear_cache(loop: asyncio.AbstractEventLoop = None) -> None:
+def clear_cache(loop: asyncio.AbstractEventLoop = None) -> Coroutine:
     if not loop:
         loop = asyncio.get_event_loop()
 
-    return await loop.run_in_executor(None, _clear_cache)
+    return loop.run_in_executor(None, _clear_cache)

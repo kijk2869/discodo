@@ -27,7 +27,7 @@ class Player(threading.Thread):
         self.haveToLoadNext = False
 
     def __del__(self) -> None:
-        for Source in self.client._Queue:
+        for Source in self.client.Queue:
             if isinstance(Source, AudioSource):
                 self.client.loop.run_coroutine_threadsafe(Source.cleanup)
 
@@ -86,22 +86,25 @@ class Player(threading.Thread):
     @property
     def next(self) -> AudioSource:
         if not self._next:
-            if not self.client._Queue:
+            if not self.client.Queue:
                 # Event: Need Song
 
                 return None
 
-            self._next = self.client._Queue[0]
+            self._next = self.client.Queue[0]
 
         if isinstance(self._next, AudioData):
 
             def setSource(Source: AudioSource) -> None:
-                if Source.AudioData == self.client._Queue[0]:
-                    self.client._Queue[0] = Source
+                if Source.AudioData == self.client.Queue[0]:
+                    self.client.Queue[0] = Source
 
             self.getSource(self._next, setSource)
 
             return None
+
+        if self._next != self.client.Queue[0]:
+            self._next = None
 
         if not self._next.BufferLoader:
             if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
@@ -114,20 +117,21 @@ class Player(threading.Thread):
     def next(self, value: None) -> None:
         if not self._next:
             return
-        if self.client._Queue:
+
+        if self.client.Queue:
             _nextItem = (
                 self._next.AudioData
                 if isinstance(self._next, AudioSource)
                 else self._next
             )
             _queueItem = (
-                self.client._Queue[0].AudioData
-                if isinstance(self.client._Queue[0], AudioSource)
-                else self.client._Queue[0]
+                self.client.Queue[0].AudioData
+                if isinstance(self.client.Queue[0], AudioSource)
+                else self.client.Queue[0]
             )
 
             if _nextItem == _queueItem:
-                self.client._Queue.pop()
+                self.client.Queue.pop()
 
         self._next = None
 

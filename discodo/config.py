@@ -9,6 +9,12 @@ class Config:
     ]
 
     def __init__(self) -> None:
+        # PLAYER
+        self.DEFAULT_AUTOPLAY = True
+        self.DEFAULT_VOLUME = 1.0
+        self.DEFAULT_CROSSFADE = 10.0
+        self.DEFAULT_GAPLESS = False
+
         # Audio
         self.SAMPLING_RATE = 48000
         self.CHANNELS = 2
