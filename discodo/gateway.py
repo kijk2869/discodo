@@ -163,6 +163,8 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         await self.sendJson(payload)
 
     async def speak(self, state: bool = True) -> None:
+        self.client.speakState = state
+
         payload = {"op": self.SPEAKING, "d": {"speaking": int(state), "delay": 0}}
         await self.sendJson(payload)
 

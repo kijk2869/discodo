@@ -19,6 +19,7 @@ class Config:
 
         # BUFFER
         self.BUFFERLIMIT = 5
+        self.PRELOAD_TIME = 10
 
     @property
     def SAMPLES_PER_FRAME(self) -> int:
@@ -27,6 +28,10 @@ class Config:
     @property
     def FRAME_SIZE(self) -> int:
         return self.SAMPLES_PER_FRAME ** 2
+
+    @property
+    def DELAY(self) -> float:
+        return self.FRAME_LENGTH / 1000.0
 
 
 Config = Config()
