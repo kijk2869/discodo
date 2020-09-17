@@ -1,7 +1,7 @@
 import asyncio
 import audioop
 import threading
-from typing import Union
+from typing import Callable, Union
 from .natives import AudioSource, AudioData
 from .config import Config
 import time
@@ -27,10 +27,9 @@ class Player(threading.Thread):
         self.haveToLoadNext = False
 
     def __del__(self) -> None:
-        if self._current:
-            self.client.loop.call_soon_threadsafe(self._current.cleanup)
-        if self._next:
-            self.client.loop.call_soon_threadsafe(self._next.cleanup)
+        for Source in self.client._Queue:
+            if isinstance(Source, AudioSource):
+                self.client.loop.run_coroutine_threadsafe(Source.cleanup)
 
     @property
     def crossfade(self) -> Union[float, None]:
@@ -67,7 +66,7 @@ class Player(threading.Thread):
             return self._current
 
         if self.next:
-            self._current, self._next = self._next, None
+            self._current, self.next = self._next, None
 
             if not self._current.BufferLoader:
                 # Event: Song Start
@@ -87,15 +86,20 @@ class Player(threading.Thread):
     @property
     def next(self) -> AudioSource:
         if not self._next:
-            if self.client._Queue.empty():
+            if not self.client._Queue:
                 # Event: Need Song
 
                 return None
 
-            self._next = self.client._Queue.get_nowait()
+            self._next = self.client._Queue[0]
 
         if isinstance(self._next, AudioData):
-            self.getSource(self, "_next", self._next)
+
+            def setSource(Source: AudioSource) -> None:
+                if Source.AudioData == self.client._Queue[0]:
+                    self.client._Queue[0] = Source
+
+            self.getSource(self._next, setSource)
 
             return None
 
@@ -106,19 +110,40 @@ class Player(threading.Thread):
 
         return self._next
 
+    @next.setter
+    def next(self, value: None) -> None:
+        if not self._next:
+            return
+        if self.client._Queue:
+            _nextItem = (
+                self._next.AudioData
+                if isinstance(self._next, AudioSource)
+                else self._next
+            )
+            _queueItem = (
+                self.client._Queue[0].AudioData
+                if isinstance(self.client._Queue[0], AudioSource)
+                else self.client._Queue[0]
+            )
+
+            if _nextItem == _queueItem:
+                self.client._Queue.pop()
+
+        self._next = None
+
     def getSource(self, *args, **kwargs) -> None:
         if self._getSourceTask and not self._getSourceTask.done():
             self._getSourceTask = self.client.loop.create_task(
                 self._getSource(*args, **kwargs)
             )
 
-    async def _getSource(self, object, attribute: str, Data: AudioData) -> None:
+    async def _getSource(self, Data: AudioData, callback: Callable) -> None:
         Source = await Data.source()
 
         Source.volume = 1.0
         # TODO: set filter
 
-        setattr(object, attribute, Source)
+        callback(Source)
 
     def read(self) -> bytes:
         if not self.current:
