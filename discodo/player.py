@@ -217,9 +217,9 @@ class Player(threading.Thread):
             except:
                 traceback.print_exc()
 
-    def run(self):
+    def run(self) -> None:
         try:
-            self._do_run()
+            self.__do_run()
         except:
             pass
         finally:
