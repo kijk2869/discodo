@@ -185,6 +185,10 @@ class Player(threading.Thread):
                         Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
                     self.client.send(Data)
+
+                self.loops += 1
+                nextTime = _start + self.DELAY * self.loops
+                time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
 

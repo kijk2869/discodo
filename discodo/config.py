@@ -21,6 +21,9 @@ class Config:
         self.BUFFERLIMIT = 5
         self.PRELOAD_TIME = 10
 
+        # CONNECTION
+        self.VCTIMEOUT = 300.0
+
     @property
     def SAMPLES_PER_FRAME(self) -> int:
         return int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)

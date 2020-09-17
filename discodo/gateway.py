@@ -185,14 +185,14 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def createConnection(self, data: dict) -> None:
         self.client.ssrc = data["ssrc"]
-        self.client.endpointPort = data["port"]
-        self.client.endpointIp = data["ip"]
+        self.client.endpointPORT = data["port"]
+        self.client.endpointIP = data["ip"]
 
         packet = bytearray(70)
         struct.pack_into(">I", packet, 0, data["ssrc"])
 
         self.client.socket.sendto(
-            packet, (self.client.endpointIp, self.client.endpointPort)
+            packet, (self.client.endpointIP, self.client.endpointPORT)
         )
         _recieved = await self.loop.sock_recv(self.client.socket, 70)
 
