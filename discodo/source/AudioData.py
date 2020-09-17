@@ -29,6 +29,7 @@ class AudioData:
 
     def __dict__(self) -> dict:
         return {
+            "_type": "AudioData",
             "id": self.id,
             "title": self.title,
             "webpage_url": self.webpage_url,

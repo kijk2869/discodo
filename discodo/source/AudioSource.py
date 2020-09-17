@@ -10,6 +10,16 @@ class AudioSource(PyAVSource):
 
         self.AudioData = AudioData
 
+    def __dict__(self) -> dict:
+        Value = dict(self.AudioData) if self.AudioData else None
+
+        Value["_type"] = "AudioSource"
+        Value["seekable"] = self.seekable
+        Value["duration"] = self.duration
+        Value["position"] = self.position
+
+        return Value
+
     @property
     def seekable(self) -> bool:
         return not self.AudioData.is_live if self.AudioData else True
