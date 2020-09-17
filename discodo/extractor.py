@@ -70,8 +70,8 @@ def _clear_cache() -> None:
 
 
 def extract(
-    query: str, video: bool = False, loop: asyncio.AbstractEventLoop = Coroutine
-) -> dict:
+    query: str, video: bool = False, loop: asyncio.AbstractEventLoop = None
+) -> Coroutine:
     if not loop:
         loop = asyncio.get_event_loop()
 

@@ -69,7 +69,7 @@ class Player(threading.Thread):
             self._current, self.next = self._next, None
 
             if not self._current.BufferLoader:
-                # Event: Song Start
+                self.event.dispatch("SOURCE_START", song=self._current)
                 self._current.start()
 
             return self._current
@@ -78,7 +78,7 @@ class Player(threading.Thread):
 
     @current.setter
     def current(self, value: None) -> None:
-        # Event: Song End
+        self.event.dispatch("SOURCE_END", song=self._current)
 
         self.client.loop.call_soon_threadsafe(self._current.cleanup)
         self._current = None
@@ -87,7 +87,7 @@ class Player(threading.Thread):
     def next(self) -> AudioSource:
         if not self._next:
             if not self.client.Queue:
-                # Event: Need Song
+                self.event.dispatch("REQUIRE_NEXT_SOURCE", current=self._current)
 
                 return None
 
@@ -108,7 +108,7 @@ class Player(threading.Thread):
 
         if not self._next.BufferLoader:
             if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
-                # Event: Song Start
+                self.event.dispatch("SONG_START", self._next)
                 self._next.start()
 
         return self._next
@@ -145,7 +145,7 @@ class Player(threading.Thread):
         Source = await Data.source()
 
         Source.volume = 1.0
-        # TODO: set filter
+        Source.filter = self.client.filter
 
         callback(Source)
 
@@ -219,7 +219,9 @@ class Player(threading.Thread):
                 nextTime = _start + self.DELAY * self.loops
                 time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
             except:
-                traceback.print_exc()
+                self.event.dispatch(
+                    "PLAYER_TRACEBACK", traceback=traceback.format_exc()
+                )
 
     def run(self) -> None:
         try:

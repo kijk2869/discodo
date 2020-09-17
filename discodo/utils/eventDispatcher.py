@@ -5,7 +5,7 @@ import traceback
 from typing import Callable, Coroutine
 
 
-class EventEmitter:
+class EventDispatcher:
     def __init__(self, loop: asyncio.AbstractEventLoop = None) -> None:
         self._Events = collections.defaultdict(list)
         self._listeners = collections.defaultdict(list)
