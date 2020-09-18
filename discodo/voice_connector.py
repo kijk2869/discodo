@@ -22,6 +22,7 @@ class VoiceConnector:
 
         self.data = data
         self.guild_id = data.get("guild_id")
+        self.channel_id = None
 
         self._connected = asyncio.Event()
 

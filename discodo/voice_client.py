@@ -16,6 +16,7 @@ class VoiceClient(VoiceConnector):
         super().__init__(*args, **kwargs)
 
         self.event = EventDispatcher()
+        self.event.onAny(self.__dispatchToManager)
 
         self.Queue = []
         self.player = None
@@ -45,6 +46,9 @@ class VoiceClient(VoiceConnector):
         for Item in self.Queue:
             if isinstance(Item, AudioSource):
                 self.loop.call_soon_threadsafe(Item.cleanup)
+
+    def __dispatchToManager(self, event, *args, **kwargs) -> None:
+        self.event.dispatch(self.guild_id, *args, event=event, **kwargs)
 
     def __spawnPlayer(self) -> None:
         if self.player and self.player.is_alive():
