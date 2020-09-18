@@ -29,20 +29,20 @@ class EventDispatcher:
         self._Any.remove(func)
         return self
 
-    def dispatch(self, event: str, *args, **kwargs) -> None:
+    def dispatch(self, event_: str, *args, **kwargs) -> None:
         if self._Any:
             for func in self._Any:
                 try:
                     if asyncio.iscoroutinefunction(func):
-                        self.loop.create_task(func(event, *args, **kwargs))
+                        self.loop.create_task(func(event_, *args, **kwargs))
                     else:
                         self.loop.call_soon_threadsafe(
-                            functools.partial(func, event, *args, **kwargs)
+                            functools.partial(func, event_, *args, **kwargs)
                         )
                 except:
                     traceback.print_exc()
 
-        listeners = self._listeners.get(event)
+        listeners = self._listeners.get(event_)
         if listeners:
             for Future in listeners:
                 if not (Future.done() or Future.cancelled()):
@@ -53,12 +53,12 @@ class EventDispatcher:
                 listeners.remove(Future)
 
             if not listeners:
-                self._listeners.pop(event)
+                self._listeners.pop(event_)
 
-        if not event in self._Events:
+        if not event_ in self._Events:
             return
 
-        for func in self._Events[event]:
+        for func in self._Events[event_]:
             try:
                 if asyncio.iscoroutinefunction(func):
                     self.loop.create_task(func(*args, **kwargs))

@@ -49,7 +49,7 @@ class VoiceClient(VoiceConnector):
                 self.loop.call_soon_threadsafe(Item.cleanup)
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
-        self.event.dispatch(self.guild_id, *args, event=event, **kwargs)
+        self.manager.event.dispatch(self.guild_id, *args, event=event, **kwargs)
 
     def __spawnPlayer(self) -> None:
         if self.player and self.player.is_alive():
@@ -147,7 +147,7 @@ class VoiceClient(VoiceConnector):
         return await AudioData.create(Query)
 
     async def loadSource(self, Query: str) -> AudioData:
-        Data = self.getSource(Query)
+        Data = await self.getSource(Query)
 
         self.event.dispatch(
             "loadSource", source=(Data if isinstance(Data, list) else Data)

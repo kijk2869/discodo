@@ -26,6 +26,7 @@ class Player(threading.Thread):
         self._current = self._next = None
 
         self._crossfadeLoop = 0
+        self._request_dispatched = False
 
     def __del__(self) -> None:
         for Source in self.client.Queue:
@@ -79,14 +80,14 @@ class Player(threading.Thread):
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
-            self.event.dispatch("SOURCE_START", song=self._current)
+            self.client.event.dispatch("SOURCE_START", song=self._current)
             self._current.start()
 
         return self._current
 
     @current.setter
     def current(self, value: None) -> None:
-        self.event.dispatch("SOURCE_END", song=self._current)
+        self.client.event.dispatch("SOURCE_END", song=self._current)
 
         self.client.loop.call_soon_threadsafe(self._current.cleanup)
         self._current = None
@@ -95,11 +96,16 @@ class Player(threading.Thread):
     def next(self) -> AudioSource:
         if not self._next:
             if not self.client.Queue:
-                self.event.dispatch("REQUIRE_NEXT_SOURCE", current=self._current)
+                if not self._request_dispatched:
+                    self.client.event.dispatch(
+                        "REQUIRE_NEXT_SOURCE", current=self._current
+                    )
+                    self._request_dispatched = True
 
                 return None
 
             self._next = self.client.Queue[0]
+            self._request_dispatched = False
 
         if isinstance(self._next, AudioData):
 
@@ -118,7 +124,7 @@ class Player(threading.Thread):
 
         if not self._next.BufferLoader:
             if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
-                self.event.dispatch("SOURCE_START", self._next)
+                self.client.event.dispatch("SOURCE_START", self._next)
                 self._next.start()
 
         return self._next
@@ -200,12 +206,14 @@ class Player(threading.Thread):
 
     def __do_run(self) -> None:
         self.loops = 0
-        _start = time.perf_counter
+        _start = time.perf_counter()
 
         while not self._end.is_set():
             try:
-                if not self.client._connectedThread.is_set():
-                    self.client._connectedThread.wait()
+                if not self.client._connected.is_set():
+                    asyncio.run_coroutine_threadsafe(
+                        self.client._connected.wait(), self.client.loop
+                    )
                     self.loops = 0
                     _start = time.perf_counter()
 
@@ -226,8 +234,8 @@ class Player(threading.Thread):
                     self.client.send(Data)
 
                 self.loops += 1
-                nextTime = _start + self.DELAY * self.loops
-                time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
+                nextTime = _start + Config.DELAY * self.loops
+                time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
                 self.event.dispatch(
                     "PLAYER_TRACEBACK", traceback=traceback.format_exc()
