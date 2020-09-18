@@ -23,6 +23,9 @@ class VoiceClient(VoiceConnector):
         self._filter = {}
         self.paused = self._repeat = False
 
+        self._crossfade = Config.DEFAULT_CROSSFADE
+        self._gapless = Config.DEFAULT_GAPLESS
+
         self._volume = Config.DEFAULT_VOLUME
 
     def __del__(self) -> None:
@@ -48,8 +51,8 @@ class VoiceClient(VoiceConnector):
             return
 
         self.player = Player(self)
-        self.player.crossfade = Config.DEFAULT_CROSSFADE
-        self.player.gapless = Config.DEFAULT_GAPLESS
+        self.player.crossfade = self._crossfade
+        self.player.gapless = self._gapless
 
         self.player.start()
 
@@ -84,7 +87,18 @@ class VoiceClient(VoiceConnector):
         if not isinstance(value, float):
             return TypeError("`filter` property must be `float`.")
 
-        self._crossfade = round(max(value, 0.0), 1)
+        self.player.crossfade = self._crossfade = round(max(value, 0.0), 1)
+
+    @property
+    def gapless(self) -> bool:
+        return self._gapless
+
+    @gapless.setter
+    def gapless(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            return TypeError("`gapless` property must be `bool`.")
+
+        self.player.gapless = self._gapless = self._gapless
 
     @property
     def filter(self) -> dict:

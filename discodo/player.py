@@ -68,19 +68,20 @@ class Player(threading.Thread):
 
     @property
     def current(self) -> AudioSource:
-        if self._current:
-            return self._current
+        if not self._current:
+            if self.next:
+                self._current, self.next = self._next, None
+            else:
+                return None
+        
+        if self._current.filter != self.client.filter:
+            self._current.filter = self.client.filter
 
-        if self.next:
-            self._current, self.next = self._next, None
-
-            if not self._current.BufferLoader:
-                self.event.dispatch("SOURCE_START", song=self._current)
-                self._current.start()
-
-            return self._current
-
-        return None
+        if not self._current.BufferLoader:
+            self.event.dispatch("SOURCE_START", song=self._current)
+            self._current.start()
+        
+        return self._current
 
     @current.setter
     def current(self, value: None) -> None:
@@ -111,6 +112,8 @@ class Player(threading.Thread):
 
         if self._next != self.client.Queue[0]:
             self._next = None
+        if self._next.filter != self.client.filter:
+            self._next.filter = self.client.filter
 
         if not self._next.BufferLoader:
             if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
