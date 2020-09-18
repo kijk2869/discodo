@@ -1,4 +1,4 @@
-from .PyAVSource import PyAVSource
+from .abc import *
 from .AudioData import AudioData
 from .AudioSource import AudioSource
-from .abc import *
+from .PyAVSource import PyAVSource

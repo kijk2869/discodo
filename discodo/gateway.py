@@ -1,11 +1,12 @@
 import asyncio
 import concurrent.futures
 import json
+import logging
 import struct
 import threading
 import time
 from collections import deque
-import logging
+
 import websockets
 
 from .natives import Encrypter

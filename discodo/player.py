@@ -1,12 +1,13 @@
 import asyncio
 import audioop
-from .errors import NotPlaying
 import threading
-from typing import Callable, Union
-from .source import AudioSource, AudioData
-from .config import Config
 import time
 import traceback
+from typing import Callable, Union
+
+from .config import Config
+from .errors import NotPlaying
+from .source import AudioData, AudioSource
 
 
 class Player(threading.Thread):
@@ -73,14 +74,14 @@ class Player(threading.Thread):
                 self._current, self.next = self._next, None
             else:
                 return None
-        
+
         if self._current.filter != self.client.filter:
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
             self.event.dispatch("SOURCE_START", song=self._current)
             self._current.start()
-        
+
         return self._current
 
     @current.setter

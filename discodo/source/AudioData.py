@@ -1,9 +1,8 @@
 import aiohttp
 
-from .AudioSource import AudioSource
-
-from ..extractor import extract, clear_cache
 from ..errors import Forbidden, TooManyRequests
+from ..extractor import clear_cache, extract
+from .AudioSource import AudioSource
 
 
 class AudioData:

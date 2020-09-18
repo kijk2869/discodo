@@ -1,7 +1,7 @@
 from typing import Coroutine
-from .PyAVSource import PyAVSource
 
 from ..errors import NotSeekable
+from .PyAVSource import PyAVSource
 
 
 class AudioSource(PyAVSource):

@@ -1,7 +1,8 @@
-import re
 import asyncio
-from markdownify import markdownify
+import re
 from xml.etree import ElementTree
+
+from markdownify import markdownify
 
 from .abc import SubtitleFormat
 

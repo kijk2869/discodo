@@ -1,12 +1,13 @@
-from .errors import NotPlaying
+import logging
+import random
 from typing import Union
+
+from .config import Config
+from .errors import NotPlaying
+from .player import Player
+from .source import AudioData, AudioSource
 from .utils import EventDispatcher
 from .voice_connector import VoiceConnector
-from .player import Player
-from .config import Config
-import logging
-from .source import AudioSource, AudioData
-import random
 
 log = logging.getLogger("discodo.VoiceClient")
 

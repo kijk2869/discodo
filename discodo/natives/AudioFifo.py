@@ -1,6 +1,7 @@
 import threading
 
 import av
+
 from ..config import Config
 
 

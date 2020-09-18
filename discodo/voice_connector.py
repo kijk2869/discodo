@@ -1,13 +1,14 @@
+import asyncio
+import logging
+import re
+import socket
 import struct
+
+from websockets.exceptions import ConnectionClosed
+
 from .config import Config
 from .gateway import VoiceSocket
-import re
-import asyncio
-import socket
-from .natives import opus
-import logging
-from websockets.exceptions import ConnectionClosed
-from .natives import Encrypter
+from .natives import Encrypter, opus
 
 log = logging.getLogger("discodo.VoiceConnector")
 

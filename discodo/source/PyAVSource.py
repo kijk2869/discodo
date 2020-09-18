@@ -7,8 +7,7 @@ from typing import Coroutine
 
 import av
 
-from ..natives import AudioFifo
-from ..natives import AudioFilter
+from ..natives import AudioFifo, AudioFilter
 from ..utils.threadLock import withLock
 
 AVOption = {
