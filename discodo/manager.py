@@ -17,7 +17,7 @@ class ClientManager:
         self.voiceClients = {}
 
         self.event = EventDispatcher()
-        self.discordEvent = DiscordEvent()
+        self.discordEvent = DiscordEvent(self)
 
     def __del__(self) -> None:
         for voiceClient in self.voiceClients.values():
@@ -26,10 +26,10 @@ class ClientManager:
     def discordDispatch(self, data: dict) -> None:
         Event, Data = data["t"], data["d"]
 
-        return self.discordDispatch.dispatch(Event, Data)
+        return self.discordEvent.dispatch(Event, data=Data)
 
-    def getVC(self, guildID: int) -> VoiceClient:
-        if not int(guildID) in self.voiceClients:
+    def getVC(self, guildID: int, safe: bool = False) -> VoiceClient:
+        if not int(guildID) in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
         return self.voiceClients.get(int(guildID))

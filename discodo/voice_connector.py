@@ -14,7 +14,7 @@ log = logging.getLogger("discodo.VoiceConnector")
 
 
 class VoiceConnector:
-    def __init__(self, manager, data: dict) -> None:
+    def __init__(self, manager, data: dict = {}) -> None:
         self.loop = manager.loop
 
         self.ws = self.socket = None
@@ -31,7 +31,8 @@ class VoiceConnector:
         self._sequence = self._timestamp = 0
         self.encoder = opus.Encoder()
 
-        self.loop.create_task(self.createSocket())
+        if data:
+            self.loop.create_task(self.createSocket())
 
     def __del__(self) -> None:
         if self.socket:
@@ -85,7 +86,7 @@ class VoiceConnector:
         self.guild_id = self.data.get("guild_id")
 
         self.token = self.data.get("token")
-        self.endpoint = re.sub(r"(:[0-9])", "", self.data.get("endpoint"))
+        self.endpoint = re.sub(r"(:[0-9]+)", "", self.data.get("endpoint"))
         log.info(f"voice endpoint {self.endpoint} detected.")
 
         if self.socket:

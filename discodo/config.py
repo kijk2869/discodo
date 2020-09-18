@@ -1,11 +1,18 @@
-class Config:
+class _Config:
     __slots__ = [
+        "DEFAULT_AUTOPLAY",
+        "DEFAULT_VOLUME",
+        "DEFAULT_CROSSFADE",
+        "DEFAULT_GAPLESS",
         "SAMPLING_RATE",
         "CHANNELS",
         "FRAME_LENGTH",
         "SAMPLE_SIZE",
         "EXPECTED_PACKETLOSS",
         "BITRATE",
+        "BUFFERLIMIT",
+        "PRELOAD_TIME",
+        "VCTIMEOUT",
     ]
 
     def __init__(self) -> None:
@@ -20,7 +27,7 @@ class Config:
         self.CHANNELS = 2
         self.FRAME_LENGTH = 20
         self.SAMPLE_SIZE = 4
-        self.EXPECTED_PACKETLOSS = 0.0
+        self.EXPECTED_PACKETLOSS = 0
         self.BITRATE = 128
 
         # BUFFER
@@ -43,4 +50,4 @@ class Config:
         return self.FRAME_LENGTH / 1000.0
 
 
-Config = Config()
+Config = _Config()

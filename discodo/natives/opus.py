@@ -139,12 +139,11 @@ class Encoder:
     def __init__(self, application: int = ENCODER_CTL["APPLICATION_AUDIO"]) -> None:
         self.application = application
 
-        self.SAMPLING_RATE = Config.SAMPLES_PER_FRAME
+        self.SAMPLING_RATE = Config.SAMPLING_RATE
         self.CHANNELS = Config.CHANNELS
         self.FRAME_LENGTH = Config.FRAME_LENGTH
-        self.SAMPLE_SIZE = Config.SAMPLES_SIZE
+        self.SAMPLE_SIZE = Config.SAMPLE_SIZE
         self.SAMPLES_PER_FRAME = Config.SAMPLES_PER_FRAME
-        self.FRAME_SIZE = Config.FRAME_SIZE
         self.EXPECTED_PACKETLOSS = Config.EXPECTED_PACKETLOSS
         self.BITRATE = Config.BITRATE
 

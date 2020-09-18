@@ -57,7 +57,7 @@ class Player(threading.Thread):
     def gapless(self) -> bool:
         return self._gapless
 
-    @gapless.setter()
+    @gapless.setter
     def gapless(self, value: bool) -> None:
         self._gapless = value
 
