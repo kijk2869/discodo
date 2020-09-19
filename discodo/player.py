@@ -97,7 +97,7 @@ class Player(threading.Thread):
         is_load_condition = (
             not self._current
             or self._current.stopped
-            or self._current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0))
+            or self._current.remain <= (Config.PRELOAD_TIME + (self.crossfade or 0))
         )
 
         if not self._next:
