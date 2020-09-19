@@ -1,3 +1,5 @@
+__version__ = "1.0.0b"
+
 from .config import Config
 from .errors import *
 from .event import DiscordEvent

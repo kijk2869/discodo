@@ -3,7 +3,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import logging
 import json
 import asyncio
-from ..manager import AudioManager
+from ..manager import ClientManager
 from ..config import Config
 from .events import WebsocketEvents
 
@@ -12,7 +12,7 @@ log = logging.getLogger("discodo.server")
 app = APIRouter()
 
 
-@app.websocket("/")
+@app.websocket("/ws")
 async def socket_feed(ws: WebSocket) -> None:
     await ws.accept()
     handler = WebsocketHandler(ws)
@@ -24,7 +24,7 @@ class Encoder(json.JSONEncoder):
         return o.__dict__
 
 
-class ModifyAudioManager(AudioManager):
+class ModifyClientManager(ClientManager):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -38,29 +38,29 @@ class WebsocketHandler:
         self.ws = ws
         self.app = ws.app
 
-        if not hasattr(self.app, "AudioManagers"):
-            self.app.AudioManagers = {}
+        if not hasattr(self.app, "ClientManagers"):
+            self.app.ClientManagers = {}
 
-        self.AudioManager = None
+        self.ClientManager = None
 
         self._running = asyncio.Event()
         self.loop.create_task(self.handle())
 
     def __del__(self) -> None:
-        if self.AudioManager:
+        if self.ClientManager:
             self.loop.create_task(self.wait_for_bind())
 
     async def wait_for_bind(self) -> None:
-        self.AudioManager._binded.clear()
+        self.ClientManager._binded.clear()
 
         try:
             await asyncio.wait_for(
-                self.AudioManager._binded.wait(), timeout=Config.VCTIMEOUT
+                self.ClientManager._binded.wait(), timeout=Config.VCTIMEOUT
             )
         except asyncio.TimeoutError:
-            self.AudioManager.__del__()
-            del self.app.AudioManagers[int(self.AudioManager.id)]
-            self.AudioManager = None
+            self.ClientManager.__del__()
+            del self.app.ClientManagers[int(self.ClientManager.id)]
+            self.ClientManager = None
 
     def join(self) -> Coroutine:
         return self._running.wait()
@@ -114,19 +114,19 @@ class WebsocketHandler:
         await self.ws.send_text(json.dumps(Data, cls=Encoder))
 
     async def initialize_manager(self, user_id: int) -> None:
-        if int(user_id) in self.ws.app.AudioManagers:
-            self.AudioManager = self.ws.app.AudioManagers[int(user_id)]
-            self.AudioManager._binded.set()
+        if int(user_id) in self.ws.app.ClientManagers:
+            self.ClientManager = self.ws.app.ClientManagers[int(user_id)]
+            self.ClientManager._binded.set()
 
             self.loop.create_task(self.resumed())
-            log.debug(f"AudioManager of {user_id} resumed.")
+            log.debug(f"ClientManager of {user_id} resumed.")
         else:
-            self.AudioManager = ModifyAudioManager(user_id=user_id)
-            self.ws.app.AudioManagers[int(user_id)] = self.AudioManager
+            self.ClientManager = ModifyClientManager(user_id=user_id)
+            self.ws.app.ClientManagers[int(user_id)] = self.ClientManager
 
-            log.debug(f"AudioManager of {user_id} intalized.")
+            log.debug(f"ClientManager of {user_id} intalized.")
 
-        self.AudioManager.event.onAny(self.manager_event)
+        self.ClientManager.event.onAny(self.manager_event)
 
     async def manager_event(self, guild_id: int, Event: str, **kwargs) -> None:
         kwargs = {key: value for key, value in kwargs}
@@ -152,7 +152,7 @@ class WebsocketHandler:
             "d": {
                 "channels": {
                     guild_id: voiceClient.channel_id
-                    for guild_id, voiceClient in self.AudioManager.voiceClients.items()
+                    for guild_id, voiceClient in self.ClientManager.voiceClients.items()
                 }
             },
         }

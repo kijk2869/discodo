@@ -3,7 +3,7 @@ from ..status import getStatus
 
 def need_manager(func):
     def wrapper(self, *args, **kwargs):
-        if not self.AudioManager:
+        if not self.ClientManager:
             payload = {
                 "op": func.__name__,
                 "d": {"traceback": {"NOT_IDENTIFIED": "Identify first."}},
@@ -27,7 +27,7 @@ class WebsocketEvents:
         await self.sendJson(payload)
 
     async def IDENTIFY(self, Data: dict) -> None:
-        if self.AudioManager:
+        if self.ClientManager:
             payload = {
                 "op": "IDENTIFY",
                 "d": {
@@ -38,10 +38,10 @@ class WebsocketEvents:
             }
         else:
             await self.initialize_manager(Data["user_id"])
-            payload = {"op": "IDENTIFIED", "d": "AudioManager initialized."}
+            payload = {"op": "IDENTIFIED", "d": "ClientManager initialized."}
 
         await self.sendJson(payload)
 
     @need_manager
     async def DISCORD_EVENT(self, Data: dict) -> None:
-        self.AudioManager.discordDispatch(Data)
+        self.ClientManager.discordDispatch(Data)

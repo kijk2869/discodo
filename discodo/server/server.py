@@ -1,11 +1,15 @@
 import asyncio
 import aiohttp
-from fastapi import FastAPI, Header, HTTPException, Request, StreamingResponse
+from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.responses import StreamingResponse, HTMLResponse
 from ..status import getStatus
 from ..source import AudioData
 from ..config import Config
+from .. import __version__
+from .websocket import app as WebsocketBlueprint
 
 app = FastAPI()
+app.include_router(WebsocketBlueprint)
 
 
 def authorized(Authorization: str = Header(None)) -> str:
@@ -13,6 +17,11 @@ def authorized(Authorization: str = Header(None)) -> str:
         raise HTTPException(403, "Password mismatch.")
 
     return Authorization
+
+
+@app.route("/")
+async def index(request: Request):
+    return HTMLResponse(f"<h1>Discodo</h1> <h3>{__version__}")
 
 
 class StreamSender:
