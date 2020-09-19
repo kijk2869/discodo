@@ -58,9 +58,7 @@ class DiscordEvent:
 
     async def VOICE_SERVER_UPDATE(self, data: dict) -> None:
         if self.manager.getVC(data["guild_id"], safe=True):
-            log.info(
-                f'Voice Client of {data["guild_id"]} found. connect to new endpoint'
-            )
+            log.info(f"Voice server update recieved. connect to new endpoint")
 
             await self.manager.getVC(data["guild_id"]).createSocket(data)
         else:
