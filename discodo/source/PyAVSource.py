@@ -35,10 +35,10 @@ class PyAVSource:
         self.BufferLoader = None
 
         self.AudioFifo = AudioFifo()
-        self.duration = None
+        self._duration = None
         self._position = 0.0
         self._volume = 1.0
-        self.filter = {}
+        self._filter = {}
 
     def __del__(self):
         self.cleanup()
@@ -50,6 +50,18 @@ class PyAVSource:
     @volume.setter
     def volume(self, value: float) -> None:
         self._volume = max(value, 0.0)
+
+    @property
+    def filter(self) -> dict:
+        return self._filter
+
+    @filter.setter
+    def filter(self, value: dict) -> None:
+        self._filter = value
+
+    @property
+    def duration(self) -> float:
+        return self._duration
 
     @property
     def position(self) -> float:
@@ -150,7 +162,7 @@ class Loader(threading.Thread):
                 self.Source.Container = av.open(
                     self.Source.Source, options=self.Source.AVOption
                 )
-            self.Source.duration = round(self.Source.Container.duration / 1000000, 2)
+            self.Source._duration = round(self.Source.Container.duration / 1000000, 2)
 
             self.Source.selectAudioStream = self.Source.Container.streams.audio[0]
             self.Source.FrameGenerator = self.Source.Container.decode(

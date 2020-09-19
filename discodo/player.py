@@ -72,7 +72,7 @@ class Player(threading.Thread):
     def current(self) -> AudioSource:
         if not self._current:
             if self.next:
-                self._current, self.next = self._next, None
+                self._current, self.next = self.next, None
             else:
                 return None
 
@@ -111,7 +111,7 @@ class Player(threading.Thread):
 
             def setSource(Source: AudioSource) -> None:
                 if Source.AudioData == self.client.Queue[0]:
-                    self.client.Queue[0] = Source
+                    self._next = self.client.Queue[0] = Source
 
             self.getSource(self._next, setSource)
 
@@ -119,11 +119,13 @@ class Player(threading.Thread):
 
         if self._next != self.client.Queue[0]:
             self._next = None
+            return None
+
         if self._next.filter != self.client.filter:
             self._next.filter = self.client.filter
 
-        if not self._next.BufferLoader:
-            if self.current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
+        if self._current and not self._next.BufferLoader:
+            if self._current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
                 self.client.event.dispatch("SOURCE_START", self._next)
                 self._next.start()
 
@@ -152,7 +154,7 @@ class Player(threading.Thread):
         self._next = None
 
     def getSource(self, *args, **kwargs) -> None:
-        if self._getSourceTask and not self._getSourceTask.done():
+        if not self._getSourceTask or self._getSourceTask.done():
             self._getSourceTask = self.client.loop.create_task(
                 self._getSource(*args, **kwargs)
             )
@@ -178,7 +180,7 @@ class Player(threading.Thread):
         if not self._gapless and not (
             self.current.AudioData and self.current.AudioData.is_live
         ):
-            if self.current.remain <= self.crossfade:
+            if self.current.remain <= self.crossfade and self.next:
                 NextData = self.next.read()
                 if NextData:
                     self._crossfadeLoop += 1
@@ -192,9 +194,6 @@ class Player(threading.Thread):
             self.next.volume = 1.0
             if self.current.volume != 1.0:
                 self.current.volume = round(self.current.volume + 0.01, 3)
-
-        if self.volume != 1.0:
-            Data = audioop.mul(Data, 2, min(self.volume, 2.0))
 
         return Data
 
@@ -237,6 +236,7 @@ class Player(threading.Thread):
                 nextTime = _start + Config.DELAY * self.loops
                 time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
+                traceback.print_exc()
                 self.event.dispatch(
                     "PLAYER_TRACEBACK", traceback=traceback.format_exc()
                 )

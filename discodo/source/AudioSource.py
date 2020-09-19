@@ -32,7 +32,7 @@ class AudioSource(PyAVSource):
 
     @property
     def duration(self) -> float:
-        return super().duration if super().duration else self.AudioData.duration
+        return self._duration if self._duration else self.AudioData.duration
 
     @property
     def remain(self) -> float:
@@ -40,11 +40,11 @@ class AudioSource(PyAVSource):
 
     @property
     def filter(self) -> dict:
-        return super().filter
+        return self._filter
 
     @filter.setter
     def filter(self, value: dict) -> dict:
         if self.AudioData and self.AudioData.is_live and "atempo" in value:
             raise ValueError("Cannot use `atempo` filter in live streaming.")
 
-        super().filter = value
+        self._filter = value

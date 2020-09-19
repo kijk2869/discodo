@@ -9,9 +9,10 @@ class AudioFifo(av.AudioFifo):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.AUDIOBUFFERLIMITMS = Config.BufferLimit * 50 * 960
+        self.AUDIOBUFFERLIMITMS = Config.BUFFERLIMIT * 50 * 960
 
         self.haveToFillBuffer = threading.Event()
+        self.haveToFillBuffer.set()
 
     def check_buffer(self) -> None:
         if self.samples < self.AUDIOBUFFERLIMITMS:
