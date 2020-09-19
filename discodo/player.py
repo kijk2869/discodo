@@ -94,9 +94,15 @@ class Player(threading.Thread):
 
     @property
     def next(self) -> AudioSource:
+        is_load_condition = (
+            not self._current
+            or self._current.stopped
+            or self._current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0))
+        )
+
         if not self._next:
             if not self.client.Queue:
-                if not self._request_dispatched:
+                if self._current and is_load_condition and not self._request_dispatched:
                     self.client.event.dispatch(
                         "REQUIRE_NEXT_SOURCE", current=self._current
                     )
@@ -125,9 +131,7 @@ class Player(threading.Thread):
             self._next.filter = self.client.filter
 
         if self._current and not self._next.BufferLoader:
-            if self._current.stopped or self._current.remain <= (
-                Config.PRELOAD_TIME - (self.crossfade or 0)
-            ):
+            if is_load_condition:
                 self.client.event.dispatch("SOURCE_START", source=self._next)
                 self._next.start()
 
