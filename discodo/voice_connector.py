@@ -79,6 +79,7 @@ class VoiceConnector:
 
     async def createSocket(self, data: dict = None) -> None:
         self._connected.clear()
+        self._connectedThread.clear()
 
         if data:
             self.data = data
@@ -112,6 +113,7 @@ class VoiceConnector:
             self._polling = self.loop.create_task(self.pollingWS())
 
         self._connected.set()
+        self._connectedThread.set()
 
     async def pollingWS(self) -> None:
         while True:

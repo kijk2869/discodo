@@ -215,6 +215,12 @@ class Player(threading.Thread):
             elif self.current.volume > 1.0:
                 self.current.volume = 1.0
 
+        # Data = audioop.mul(Data, 2, 2)
+        # Data = audioop.mul(Data, 2, 2)
+        # Data = audioop.mul(Data, 2, 2)
+        # Data = audioop.mul(Data, 2, 2)
+        # Data = audioop.mul(Data, 2, 2)
+
         return Data
 
     def speak(self, state: bool) -> None:
@@ -229,10 +235,8 @@ class Player(threading.Thread):
 
         while not self._end.is_set():
             try:
-                if not self.client._connected.is_set():
-                    asyncio.run_coroutine_threadsafe(
-                        self.client._connected.wait(), self.client.loop
-                    )
+                if not self.client._connectedThread.is_set():
+                    self.client._connectedThread.wait()
                     self.loops = 0
                     _start = time.perf_counter()
 
