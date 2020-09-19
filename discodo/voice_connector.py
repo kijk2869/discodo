@@ -3,6 +3,7 @@ import logging
 import re
 import socket
 import struct
+import threading
 
 from websockets.exceptions import ConnectionClosed
 
@@ -26,6 +27,7 @@ class VoiceConnector:
         self.channel_id = None
 
         self._connected = asyncio.Event()
+        self._connectedThread = threading.Event()
 
         self._polling = None
         self._sequence = self._timestamp = 0
