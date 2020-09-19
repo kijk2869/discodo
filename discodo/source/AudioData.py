@@ -14,9 +14,9 @@ class AudioData:
             self.thumbnail = f"https://i.ytimg.com/vi/{self.id}/hqdefault.jpg"
             self.stream_url = None
         else:
-            self.webpage_url = data["webpage_url"]
-            self.thumbnail = data["thumbnail"]
-            self.stream_url = data["url"]
+            self.webpage_url = data.get("webpage_url")
+            self.thumbnail = data.get("thumbnail")
+            self.stream_url = data.get("url")
 
         self.duration = data.get("duration")
         self.is_live = data.get("is_live", False)

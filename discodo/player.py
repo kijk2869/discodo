@@ -215,12 +215,6 @@ class Player(threading.Thread):
             elif self.current.volume > 1.0:
                 self.current.volume = 1.0
 
-        # Data = audioop.mul(Data, 2, 2)
-        # Data = audioop.mul(Data, 2, 2)
-        # Data = audioop.mul(Data, 2, 2)
-        # Data = audioop.mul(Data, 2, 2)
-        # Data = audioop.mul(Data, 2, 2)
-
         return Data
 
     def speak(self, state: bool) -> None:

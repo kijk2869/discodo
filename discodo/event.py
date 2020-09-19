@@ -36,9 +36,7 @@ class DiscordEvent:
 
     async def VOICE_STATE_UPDATE(self, data: dict) -> None:
         if not self.manager.id or data["user_id"] != str(self.manager.id):
-            return log.warning(
-                f"recieve self voice update, but user id mismatch, ignored."
-            )
+            return
 
         log.info(f'recieve self voice update. set session id {data["session_id"]}')
         self.manager.session_id = data["session_id"]
