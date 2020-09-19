@@ -4,6 +4,8 @@ import uuid
 class _Config:
     __slots__ = [
         "PASSWORD",
+        "HANDSHAKE_INTERVAL",
+        "HANDSHAKE_TIMEOUT",
         "DEFAULT_AUTOPLAY",
         "DEFAULT_VOLUME",
         "DEFAULT_CROSSFADE",
@@ -23,6 +25,8 @@ class _Config:
     def __init__(self) -> None:
         # SERVER
         self.PASSWORD = "hellodiscodo"
+        self.HANDSHAKE_INTERVAL = 15
+        self.HANDSHAKE_TIMEOUT = 60.0
 
         # PLAYER
         self.DEFAULT_AUTOPLAY = True
@@ -30,7 +34,7 @@ class _Config:
         self.DEFAULT_CROSSFADE = 10.0
         self.DEFAULT_GAPLESS = False
 
-        # Audio
+        # AUDIO
         self.SAMPLING_RATE = 48000
         self.CHANNELS = 2
         self.FRAME_LENGTH = 20
