@@ -39,6 +39,7 @@ class PyAVSource:
         self._position = 0.0
         self._volume = 1.0
         self._filter = {}
+        self.stopped = False
 
     def __del__(self):
         self.cleanup()
@@ -132,16 +133,17 @@ class PyAVSource:
         self.BufferLoader = Loader(self)
         self.BufferLoader.start()
 
-    def stop(self) -> None:
-        self._end.set()
+    def stop(self) -> bool:
+        self.stopped = True
+        return self.stopped
 
     def is_opus(self) -> bool:
         return False
 
     def cleanup(self) -> None:
-        self.stop()
+        self._end.set()
         if self.AudioFifo and not self.AudioFifo.haveToFillBuffer.is_set():
-            self.AudioFifo.haveToFillBuffer.set()
+            self.AudioFifo.haveToFillBuffer.clear()
         self.AudioFifo = None
 
 
@@ -219,10 +221,12 @@ class Loader(threading.Thread):
                     self.Source._haveToReloadResampler.set()
                     continue
 
-                if not self.Source.AudioFifo.haveToFillBuffer.is_set():
-                    self.Source.AudioFifo.haveToFillBuffer.wait()
+                if self.Source.AudioFifo:
+                    if not self.Source.AudioFifo.haveToFillBuffer.is_set():
+                        self.Source.AudioFifo.haveToFillBuffer.wait()
 
-                self.Source.AudioFifo.write(Frame)
+                    self.Source.AudioFifo.write(Frame)
+
                 self.Source._position = _current_position
 
                 if self.Source._waitforread.locked():

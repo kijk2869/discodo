@@ -80,14 +80,14 @@ class Player(threading.Thread):
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
-            self.client.event.dispatch("SOURCE_START", song=self._current)
+            self.client.event.dispatch("SOURCE_START", source=self._current)
             self._current.start()
 
         return self._current
 
     @current.setter
     def current(self, value: None) -> None:
-        self.client.event.dispatch("SOURCE_END", song=self._current)
+        self.client.event.dispatch("SOURCE_END", source=self._current)
 
         self.client.loop.call_soon_threadsafe(self._current.cleanup)
         self._current = None
@@ -125,8 +125,10 @@ class Player(threading.Thread):
             self._next.filter = self.client.filter
 
         if self._current and not self._next.BufferLoader:
-            if self._current.remain <= (Config.PRELOAD_TIME - (self.crossfade or 0)):
-                self.client.event.dispatch("SOURCE_START", self._next)
+            if self._current.stopped or self._current.remain <= (
+                Config.PRELOAD_TIME - (self.crossfade or 0)
+            ):
+                self.client.event.dispatch("SOURCE_START", source=self._next)
                 self._next.start()
 
         return self._next
@@ -173,25 +175,37 @@ class Player(threading.Thread):
 
         Data = self.current.read()
 
-        if not Data:
+        if (
+            not Data
+            or self.current.volume == 0.0
+            or (self.gapless and self.current.stopped and self.next)
+        ):
             self._crossfadeLoop = 0
             self.current = None
 
-        if not self._gapless and not (
-            self.current.AudioData and self.current.AudioData.is_live
-        ):
-            if self.current.remain <= self.crossfade and self.next:
-                NextData = self.next.read()
-                if NextData:
-                    self._crossfadeLoop += 1
-                    crossfadeVolume = self.crossfadeVolume * self._crossfadeLoop
+            return self.read()
 
-                    self.current.volume = 1.0 - crossfadeVolume
-                    self.next.volume = 1.0 + crossfadeVolume
+        is_live = self.current.AudioData and self.current.AudioData.is_live
+        is_crossfade_timing = (
+            not self.gapless
+            and self.next
+            and (self.current.remain <= self.crossfade or self.current.stopped)
+        )
 
-                    Data = audioop.add(Data, NextData, 2)
-        else:
+        if not self.gapless and not is_live and is_crossfade_timing:
+            NextData = self.next.read()
+            if NextData:
+                self._crossfadeLoop += 1
+                crossfadeVolume = self.crossfadeVolume * self._crossfadeLoop
+
+                self.current.volume = 1.0 - crossfadeVolume
+                self.next.volume = crossfadeVolume
+
+                Data = audioop.add(Data, NextData, 2)
+        elif self.next:
             self.next.volume = 1.0
+
+        if not is_crossfade_timing:
             if self.current.volume != 1.0:
                 self.current.volume = round(self.current.volume + 0.01, 3)
 
