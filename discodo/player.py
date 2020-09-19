@@ -181,7 +181,7 @@ class Player(threading.Thread):
 
         if (
             not Data
-            or self.current.volume == 0.0
+            or self.current.volume <= 0.0
             or (self.gapless and self.current.stopped and self.next)
         ):
             self._crossfadeLoop = 0
@@ -209,7 +209,10 @@ class Player(threading.Thread):
         elif self.next:
             self.next.volume = 1.0
 
-        if not is_crossfade_timing:
+        if self.current.stopped:
+            if self.current.volume > 0.0:
+                self.current.volume = round(self.current.volume - 0.01, 3)
+        elif not is_crossfade_timing:
             if self.current.volume < 1.0:
                 self.current.volume = round(self.current.volume + 0.01, 3)
             elif self.current.volume > 1.0:
