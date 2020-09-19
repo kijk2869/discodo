@@ -8,3 +8,4 @@ from .player import Player
 from .source import *
 from .utils import *
 from .voice_client import VoiceClient
+from .status import getStatus
