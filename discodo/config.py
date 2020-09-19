@@ -1,5 +1,9 @@
+import uuid
+
+
 class _Config:
     __slots__ = [
+        "PASSWORD",
         "DEFAULT_AUTOPLAY",
         "DEFAULT_VOLUME",
         "DEFAULT_CROSSFADE",
@@ -13,9 +17,13 @@ class _Config:
         "BUFFERLIMIT",
         "PRELOAD_TIME",
         "VCTIMEOUT",
+        "RANDOM_STATE",
     ]
 
     def __init__(self) -> None:
+        # SERVER
+        self.PASSWORD = "hellodiscodo"
+
         # PLAYER
         self.DEFAULT_AUTOPLAY = True
         self.DEFAULT_VOLUME = 1.0
@@ -37,6 +45,9 @@ class _Config:
         # CONNECTION
         self.VCTIMEOUT = 300.0
 
+        # ETC
+        self.RANDOM_STATE = uuid.uuid4
+
     @property
     def SAMPLES_PER_FRAME(self) -> int:
         return int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
@@ -48,6 +59,10 @@ class _Config:
     @property
     def DELAY(self) -> float:
         return self.FRAME_LENGTH / 1000.0
+
+    def from_dict(self, data: dict) -> None:
+        for Key, Value in data.items():
+            setattr(self, Key, Value)
 
 
 Config = _Config()
