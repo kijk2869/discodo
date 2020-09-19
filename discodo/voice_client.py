@@ -1,5 +1,6 @@
 import logging
 import random
+import re
 from typing import Union
 
 from .config import Config
@@ -8,16 +9,24 @@ from .player import Player
 from .source import AudioData, AudioSource
 from .utils import EventDispatcher
 from .voice_connector import VoiceConnector
+from youtube_related import preventDuplication as relatedClient
 
 log = logging.getLogger("discodo.VoiceClient")
 
 
 class VoiceClient(VoiceConnector):
+    YOUTUBE_VIDEO_REGEX = re.compile(
+        r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
+    )
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        self.relatedClient = relatedClient()
+
         self.event = EventDispatcher()
         self.event.onAny(self.__dispatchToManager)
+        self.event.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
 
         self.Queue = []
         self.player = None
@@ -25,10 +34,13 @@ class VoiceClient(VoiceConnector):
         self._filter = {}
         self.paused = self._repeat = False
 
+        self._autoplay = Config.DEFAULT_AUTOPLAY
         self._crossfade = Config.DEFAULT_CROSSFADE
         self._gapless = Config.DEFAULT_GAPLESS
 
         self._volume = Config.DEFAULT_VOLUME
+
+        self.event.dispatch("VC_CREATED")
 
     def __del__(self) -> None:
         guild_id = int(self.guild_id) if self.guild_id else None
@@ -50,6 +62,15 @@ class VoiceClient(VoiceConnector):
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
         self.manager.event.dispatch(self.guild_id, *args, event=event, **kwargs)
+
+    async def __fetchAutoPlay(self, **kwargs):
+        current = list(kwargs.values()).pop()
+
+        if self.autoplay and not self.Queue:
+            if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
+                Related = await self.relatedClient.async_get(current.webpage_url)
+
+                await self.loadSource(Related["id"], related=True)
 
     def __spawnPlayer(self) -> None:
         if self.player and self.player.is_alive():
@@ -106,6 +127,17 @@ class VoiceClient(VoiceConnector):
         self.player.gapless = self._gapless = self._gapless
 
     @property
+    def autoplay(self) -> bool:
+        return self._autoplay
+
+    @autoplay.setter
+    def autoplay(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            return TypeError("`autoplay` property must be `bool`.")
+
+        self._autoplay = value
+
+    @property
     def filter(self) -> dict:
         return self._filter
 
@@ -127,6 +159,14 @@ class VoiceClient(VoiceConnector):
 
         self._repeat = value
 
+    @property
+    def current(self) -> Union[AudioSource, AudioData]:
+        return self.player.current
+
+    @property
+    def next(self) -> Union[AudioSource, AudioData]:
+        return self.player.next
+
     def putSource(self, Source: Union[list, AudioData, AudioSource]) -> int:
         if not isinstance(Source, (list, AudioData, AudioSource)):
             raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
@@ -146,11 +186,11 @@ class VoiceClient(VoiceConnector):
     async def getSource(self, Query: str) -> AudioData:
         return await AudioData.create(Query)
 
-    async def loadSource(self, Query: str) -> AudioData:
+    async def loadSource(self, Query: str, **kwargs) -> AudioData:
         Data = await self.getSource(Query)
 
         self.event.dispatch(
-            "loadSource", source=(Data if isinstance(Data, list) else Data)
+            "loadSource", source=(Data if isinstance(Data, list) else Data), **kwargs
         )
 
         self.putSource(Data)

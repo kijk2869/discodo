@@ -1,4 +1,4 @@
-from typing import Coroutine
+from typing import Any, Coroutine
 
 from ..errors import NotSeekable
 from .PyAVSource import PyAVSource
@@ -19,6 +19,9 @@ class AudioSource(PyAVSource):
         Value["position"] = self.position
 
         return Value
+
+    def __getattr__(self, key: str) -> Any:
+        return getattr(self.AudioData, key)
 
     @property
     def seekable(self) -> bool:
