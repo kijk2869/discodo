@@ -18,6 +18,10 @@ class VoiceClientNotFound(DiscodoException):
     pass
 
 
+class NotConnected(DiscodoException):
+    pass
+
+
 class NotSeekable(DiscodoException):
     pass
 
