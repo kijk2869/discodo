@@ -3,13 +3,14 @@ import random
 import re
 from typing import Union
 
+from youtube_related import preventDuplication as relatedClient
+
 from .config import Config
 from .errors import NotPlaying
 from .player import Player
 from .source import AudioData, AudioSource
 from .utils import EventDispatcher
 from .voice_connector import VoiceConnector
-from youtube_related import preventDuplication as relatedClient
 
 log = logging.getLogger("discodo.VoiceClient")
 

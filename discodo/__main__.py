@@ -1,15 +1,16 @@
+import argparse
+import asyncio
+import json
+import logging
 import os
 import sys
-import argparse
-import colorlog
-import logging
-import json
-import asyncio
 
-from websockets import auth
-from .config import Config
+import colorlog
 from hypercorn.asyncio import serve as hypercornServe
 from hypercorn.config import Config as hypercornConfig
+from websockets import auth
+
+from .config import Config
 
 log = logging.getLogger("discodo")
 

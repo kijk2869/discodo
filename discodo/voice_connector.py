@@ -4,6 +4,7 @@ import re
 import socket
 import struct
 import threading
+import uuid
 
 from websockets.exceptions import ConnectionClosed
 
@@ -20,6 +21,7 @@ class VoiceConnector:
 
         self.ws = self.socket = None
 
+        self.id = uuid.uuid4()
         self.manager = manager
 
         self.data = data

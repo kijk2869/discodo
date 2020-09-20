@@ -1,10 +1,12 @@
-from typing import Coroutine
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-import logging
-import json
 import asyncio
-from ..manager import ClientManager
+import json
+import logging
+from typing import Coroutine
+
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
 from ..config import Config
+from ..manager import ClientManager
 from .events import WebsocketEvents
 
 log = logging.getLogger("discodo.server")

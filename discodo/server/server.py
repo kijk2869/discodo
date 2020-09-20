@@ -1,11 +1,13 @@
 import asyncio
+
 import aiohttp
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import StreamingResponse, HTMLResponse
-from ..status import getStatus
-from ..source import AudioData
-from ..config import Config
+from fastapi.responses import HTMLResponse, StreamingResponse
+
 from .. import __version__
+from ..config import Config
+from ..source import AudioData
+from ..status import getStatus
 from .websocket import app as WebsocketBlueprint
 
 app = FastAPI()
