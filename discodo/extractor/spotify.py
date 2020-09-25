@@ -18,7 +18,9 @@ async def create_client():
 
     import warnings
 
-    warnings.warn("Sporty features are not suitable for large bots.", UserWarning)
+    warnings.warn(
+        "Sporty features are experimental, do not use on production.", UserWarning
+    )
 
     auth = ClientCredentialsFlow(
         client_id=Config.SPOTIFY_ID,

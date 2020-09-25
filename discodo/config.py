@@ -56,7 +56,7 @@ class _Config:
         self.SPOTIFY_SECRET = None
 
         # ETC
-        self.RANDOM_STATE = uuid.uuid4
+        self.RANDOM_STATE = uuid.uuid4()
 
     @property
     def SAMPLES_PER_FRAME(self) -> int:
