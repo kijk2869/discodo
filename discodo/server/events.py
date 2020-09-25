@@ -1,6 +1,6 @@
-from ..status import getStatus
-from ..source import AudioData
 from ..errors import NotConnected
+from ..source import AudioData
+from ..status import getStatus
 
 
 def need_manager(func):

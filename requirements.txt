@@ -9,3 +9,5 @@ PyNaCl==1.4.0
 fastapi==0.61.1
 websockets==8.1
 hypercorn==0.9.5
+bs4==0.0.1
+lxml==4.4.2

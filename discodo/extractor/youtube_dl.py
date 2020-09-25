@@ -1,15 +1,13 @@
 import asyncio
 import copy
 import re
+import logging
 from typing import Coroutine
-
 from youtube_dl import YoutubeDL as YoutubeDLClient
+from ..errors import NoSearchResults
 
-from .errors import NoSearchResults
+log = logging.getLogger("discodo.extractor")
 
-YOUTUBE_PLAYLIST_ID_REGEX = re.compile(
-    r"(?:http|https|)(?::\/\/|)(?:www.|)(?:music.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{12,})[a-z0-9;:@#?&%=+\/\$_.-]*(?:&index=|)([0-9]*)?"
-)
 
 YTDLOption = {
     "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
@@ -20,7 +18,12 @@ YTDLOption = {
     "source_address": "0.0.0.0",
     "skip_download": True,
     "writesubtitles": True,
+    "logger": log,
 }
+
+YOUTUBE_PLAYLIST_ID_REGEX = re.compile(
+    r"(?:http|https|)(?::\/\/|)(?:www.|)(?:music.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{12,})[a-z0-9;:@#?&%=+\/\$_.-]*(?:&index=|)([0-9]*)?"
+)
 
 
 def _extract(query: str, video: bool = False) -> dict:
@@ -63,7 +66,11 @@ def _extract(query: str, video: bool = False) -> dict:
 
 
 def _clear_cache() -> None:
-    option = {"ignoreerrors": True, "no_warnings": True}
+    option = {
+        "ignoreerrors": True,
+        "no_warnings": True,
+        "logger": log,
+    }
 
     YoutubeDL = YoutubeDLClient(option)
     YoutubeDL.cache.remove()

@@ -1,13 +1,15 @@
 import aiohttp
 
 from ..errors import Forbidden, TooManyRequests
-from ..extractor import clear_cache, extract
+from ..extractor import extract
+from ..extractor.youtube_dl import clear_cache
 from .AudioSource import AudioSource
 
 
 class AudioData:
     def __init__(self, data: dict) -> None:
-        self.id, self.title = data["id"], data.get("title")
+        self.id = data["id"]
+        self.title = data.get("title")
 
         if data.get("_type") == "url" and data.get("ie_key") == "Youtube":
             self.webpage_url = f"https://www.youtube.com/watch?v={self.id}"
