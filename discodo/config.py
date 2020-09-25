@@ -19,6 +19,8 @@ class _Config:
         "BUFFERLIMIT",
         "PRELOAD_TIME",
         "VCTIMEOUT",
+        "SPOTIFY_ID",
+        "SPOTIFY_SECRET",
         "RANDOM_STATE",
     ]
 
@@ -48,6 +50,10 @@ class _Config:
 
         # CONNECTION
         self.VCTIMEOUT = 300.0
+
+        # SPOTIFY
+        self.SPOTIFY_ID = None
+        self.SPOTIFY_SECRET = None
 
         # ETC
         self.RANDOM_STATE = uuid.uuid4

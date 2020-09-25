@@ -66,7 +66,6 @@ def _clear_cache() -> None:
     option = {
         "ignoreerrors": True,
         "no_warnings": True,
-        "logger": log,
     }
 
     YoutubeDL = YoutubeDLClient(option)
