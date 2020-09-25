@@ -1,6 +1,7 @@
-from typing import Union
-import aiohttp
 import re
+from typing import Union
+
+import aiohttp
 from bs4 import BeautifulSoup
 
 MELON_REGEX = re.compile(

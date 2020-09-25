@@ -1,13 +1,11 @@
 import asyncio
 import copy
 import re
-import logging
 from typing import Coroutine
+
 from youtube_dl import YoutubeDL as YoutubeDLClient
+
 from ..errors import NoSearchResults
-
-log = logging.getLogger("discodo.extractor")
-
 
 YTDLOption = {
     "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
@@ -18,7 +16,6 @@ YTDLOption = {
     "source_address": "0.0.0.0",
     "skip_download": True,
     "writesubtitles": True,
-    "logger": log,
 }
 
 YOUTUBE_PLAYLIST_ID_REGEX = re.compile(

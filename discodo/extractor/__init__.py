@@ -1,11 +1,8 @@
-from typing import Union
-from .youtube_dl import extract as youtube_dl_extract
-from .melon import get_query as melon_get_query
-import logging
 import asyncio
+from typing import Union
 
-
-log = logging.getLogger("discodo.extractor")
+from .melon import get_query as melon_get_query
+from .youtube_dl import extract as youtube_dl_extract
 
 
 async def extract(query: Union[str, list], *args, **kwargs) -> dict:
