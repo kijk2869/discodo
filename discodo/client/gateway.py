@@ -4,11 +4,11 @@ import json
 import threading
 import time
 from collections import deque
-from logging import getLogger
+import logging
 
 import websockets
 
-log = getLogger("discodo.client")
+log = logging.getLogger("discodo.client")
 
 
 class keepAlive(threading.Thread):
@@ -74,18 +74,18 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    async def connect(cls, client, loop=asyncio.get_event_loop(), timeout=10.0):
+    async def connect(cls, node, loop=asyncio.get_event_loop(), timeout=10.0):
         ws = await asyncio.wait_for(
             websockets.connect(
-                client.URL,
+                node.URL,
                 loop=loop,
                 klass=cls,
-                extra_headers={"Authorization": client.password},
+                extra_headers={"Authorization": node.password},
             ),
             timeout=timeout,
         )
 
-        ws.client = client
+        ws.node = node
         ws.heartbeatTimeout = 60.0
         ws.threadId = threading.get_ident()
 
