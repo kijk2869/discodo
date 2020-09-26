@@ -21,7 +21,11 @@ class AudioSource(PyAVSource):
         return Value
 
     def __repr__(self) -> str:
-        return f"<AudioSource id={self.id} title='{self.title}' duration={self.duration} position={self.position} seekable={self.seekable}>"
+        return (
+            f"<AudioSource id={self.id} title='{self.title}' duration={self.duration}"
+            + (f" position={self.position}" if hasattr(self, "position") else "")
+            + f" seekable={self.seekable}>"
+        )
 
     def __getattr__(self, key: str) -> Any:
         return getattr(self.AudioData, key)
