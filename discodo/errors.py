@@ -28,3 +28,7 @@ class NotSeekable(DiscodoException):
 
 class NotPlaying(DiscodoException):
     pass
+
+
+class NodeNotConnected(DiscodoException):
+    pass

@@ -44,13 +44,20 @@ class EventDispatcher:
 
         listeners = self._listeners.get(event_)
         if listeners:
-            for Future in listeners:
+            for (Future, condition) in listeners:
                 if not (Future.done() or Future.cancelled()):
-                    Future.set_result(
-                        args if len(args) > 1 else (args[0] if args else None)
-                    )
+                    try:
+                        result = condition(*args, **kwargs)
+                    except Exception as exception:
+                        Future.set_exception(exception)
+                    else:
+                        if result:
+                            Future.set_result(
+                                args if len(args) > 1 else (args[0] if args else None)
+                            )
 
-                listeners.remove(Future)
+                if Future.done() or Future.cancelled():
+                    listeners.remove(Future)
 
             if not listeners:
                 self._listeners.pop(event_)
@@ -82,9 +89,14 @@ class EventDispatcher:
 
         return self.on(event, wrapper)
 
-    def wait_for(self, event: str, timeout: float = None) -> Coroutine:
+    def wait_for(
+        self, event: str, condition: Callable = None, timeout: float = None
+    ) -> Coroutine:
         Future = self.loop.create_future()
 
-        self._listeners[event].append(Future)
+        if not condition:
+            condition = lambda *_: True
+
+        self._listeners[event].append((Future, condition))
 
         return asyncio.wait_for(Future, timeout)
