@@ -23,6 +23,8 @@ class Node:
     ) -> None:
         self.ws = None
         self.event = EventDispatcher()
+        self.event.onAny(self.onAnyEvent)
+
         self.loop = asyncio.get_event_loop()
 
         self.host = host
@@ -96,6 +98,28 @@ class Node:
 
         return self.ws.send(*args, **kwargs)
 
+    async def onAnyEvent(self, Operation, Data):
+        if Operation == "RESUMED":
+            for voice_client in self.voiceClients:
+                voice_client.__del__()
+
+            for guild_id, _ in Data["voice_clients"]:
+                self.voiceClients[guild_id] = VoiceClient(self, guild_id)
+
+        if Operation == "VC_CREATED":
+            guild_id = int(Data["guild_id"])
+            self.voiceClients[guild_id] = VoiceClient(self, guild_id)
+
+        if Data and isinstance(Data, dict) and "guild_id" in Data:
+            vc = self.getVC(Data["guild_id"])
+            if vc:
+                vc.event.dispatch(Operation, Data)
+
+        if Operation == "VC_DESTROYED":
+            guild_id = int(Data["guild_id"])
+            if guild_id in self.voiceClients:
+                self.voiceClients[guild_id].__del__()
+
     def getVC(self, guildID: int, safe: bool = False) -> VoiceClient:
         if not int(guildID) in self.voiceClients and not safe:
             raise VoiceClientNotFound
@@ -116,4 +140,4 @@ class Node:
     async def getStat(self) -> dict:
         await self.send("GET_STAT")
 
-        return await self.emitter.wait_for("STAT", timeout=10.0)
+        return await self.event.wait_for("STAT", timeout=10.0)

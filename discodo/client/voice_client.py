@@ -81,3 +81,6 @@ class VoiceClient:
 
     async def remove(self, index: int) -> dict:
         return await self.query("remove", {"index": index})
+
+    async def destroy(self) -> dict:
+        return await self.query("VC_DESTROY", Event="VC_DESTROYED")
