@@ -155,8 +155,7 @@ class Player(threading.Thread):
             )
 
             if _nextItem == _queueItem:
-                self.client.Queue.pop()
-
+                self.client.Queue.pop(0)
         self._next = None
 
     def getSource(self, *args, **kwargs) -> None:

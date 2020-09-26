@@ -51,6 +51,9 @@ class VoiceConnector:
         if self._polling:
             self._polling.cancel()
 
+    def __repr__(self) -> str:
+        return f"<VoiceConnector guild_id={self.guild_id} connected={self._connected.is_set()} sequence={self.sequence} timestamp={self.timestamp}>"
+
     @property
     def user_id(self) -> int:
         return self.manager.id

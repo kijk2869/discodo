@@ -23,6 +23,9 @@ class ClientManager:
         for voiceClient in self.voiceClients.values():
             self.loop.call_soon_threadsafe(voiceClient.__del__)
 
+    def __repr__(self) -> str:
+        return f"<ClientManager id={self.id} session_id={self.session_id} voiceClients={len(self.voiceClients)}>"
+
     def discordDispatch(self, data: dict) -> None:
         Event, Data = data["t"], data["d"]
 

@@ -61,6 +61,9 @@ class VoiceClient(VoiceConnector):
             if isinstance(Item, AudioSource):
                 self.loop.call_soon_threadsafe(Item.cleanup)
 
+    def __repr__(self) -> str:
+        return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay} gapless={self.gapless}>"
+
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
         self.manager.event.dispatch(self.guild_id, *args, event=event, **kwargs)
 

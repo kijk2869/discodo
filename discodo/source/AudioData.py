@@ -42,6 +42,9 @@ class AudioData:
             "description": self.description,
         }
 
+    def __repr__(self) -> str:
+        return f"<AudioData id={self.id} title='{self.title}' duration={self.duration}>"
+
     @classmethod
     async def create(cls, query: str):
         Data = await extract(query)
