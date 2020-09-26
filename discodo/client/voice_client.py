@@ -7,7 +7,7 @@ class VoiceClient:
         self.loop = Node.loop
         self.guild_id = guild_id
 
-        self.event = EventDispatcher()
+        self.dispatcher = EventDispatcher()
 
     def __del__(self):
         vc = self.Node.voiceClients.get(self.guild_id)
@@ -26,7 +26,7 @@ class VoiceClient:
             Event = Operation
 
         Future = self.loop.create_task(
-            self.emitter.wait_for(
+            self.dispatcher.wait_for(
                 Event,
                 condition=lambda Data: Data["guild_id"] == self.guild_id,
                 timeout=timeout,

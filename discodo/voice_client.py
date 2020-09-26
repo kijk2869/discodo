@@ -25,9 +25,9 @@ class VoiceClient(VoiceConnector):
 
         self.relatedClient = relatedClient()
 
-        self.event = EventDispatcher()
-        self.event.onAny(self.__dispatchToManager)
-        self.event.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
+        self.dispatcher = EventDispatcher()
+        self.dispatcher.onAny(self.__dispatchToManager)
+        self.dispatcher.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
 
         self.Queue = []
         self.player = None
@@ -41,7 +41,7 @@ class VoiceClient(VoiceConnector):
 
         self._volume = Config.DEFAULT_VOLUME
 
-        self.event.dispatch("VC_CREATED")
+        self.dispatcher.dispatch("VC_CREATED")
 
     def __del__(self) -> None:
         guild_id = int(self.guild_id) if self.guild_id else None
@@ -49,7 +49,7 @@ class VoiceClient(VoiceConnector):
         log.info(f"destroying voice client of {guild_id}.")
 
         if self.manager.voiceClients.get(guild_id) == self:
-            self.event.dispatch("VC_DESTROYED")
+            self.dispatcher.dispatch("VC_DESTROYED")
             del self.manager.voiceClients[guild_id]
 
         super().__del__()
@@ -65,7 +65,7 @@ class VoiceClient(VoiceConnector):
         return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay} gapless={self.gapless}>"
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
-        self.manager.event.dispatch(self.guild_id, *args, event=event, **kwargs)
+        self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
 
     async def __fetchAutoPlay(self, **kwargs):
         current = list(kwargs.values()).pop()
@@ -177,7 +177,7 @@ class VoiceClient(VoiceConnector):
 
         self.Queue += Source if isinstance(Source, list) else [Source]
 
-        self.event.dispatch(
+        self.dispatcher.dispatch(
             "putSource", sources=(Source if isinstance(Source, list) else [Source])
         )
 
@@ -193,7 +193,7 @@ class VoiceClient(VoiceConnector):
     async def loadSource(self, Query: str, **kwargs) -> AudioData:
         Data = await self.getSource(Query)
 
-        self.event.dispatch(
+        self.dispatcher.dispatch(
             "loadSource", source=(Data if isinstance(Data, list) else Data), **kwargs
         )
 

@@ -80,14 +80,14 @@ class Player(threading.Thread):
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
-            self.client.event.dispatch("SOURCE_START", source=self._current)
+            self.client.dispatcher.dispatch("SOURCE_START", source=self._current)
             self._current.start()
 
         return self._current
 
     @current.setter
     def current(self, value: None) -> None:
-        self.client.event.dispatch("SOURCE_END", source=self._current)
+        self.client.dispatcher.dispatch("SOURCE_END", source=self._current)
 
         self.client.loop.call_soon_threadsafe(self._current.cleanup)
         self._current = None
@@ -103,7 +103,7 @@ class Player(threading.Thread):
         if not self._next:
             if not self.client.Queue:
                 if self._current and is_load_condition and not self._request_dispatched:
-                    self.client.event.dispatch(
+                    self.client.dispatcher.dispatch(
                         "REQUIRE_NEXT_SOURCE", current=self._current
                     )
                     self._request_dispatched = True
@@ -132,7 +132,7 @@ class Player(threading.Thread):
 
         if self._current and not self._next.BufferLoader:
             if is_load_condition:
-                self.client.event.dispatch("SOURCE_START", source=self._next)
+                self.client.dispatcher.dispatch("SOURCE_START", source=self._next)
                 self._next.start()
 
         return self._next
@@ -257,7 +257,7 @@ class Player(threading.Thread):
                 time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
-                self.event.dispatch(
+                self.dispatcher.dispatch(
                     "PLAYER_TRACEBACK", traceback=traceback.format_exc()
                 )
 

@@ -22,8 +22,8 @@ class Node:
         region: str = None,
     ) -> None:
         self.ws = None
-        self.event = EventDispatcher()
-        self.event.onAny(self.onAnyEvent)
+        self.dispatcher = EventDispatcher()
+        self.dispatcher.onAny(self.onAnyEvent)
 
         self.loop = asyncio.get_event_loop()
 
@@ -90,7 +90,7 @@ class Node:
 
             log.debug(f"event {Operation} dispatched from websocket with {Data}")
 
-            self.event.dispatch(Operation, Data)
+            self.dispatcher.dispatch(Operation, Data)
 
     def send(self, *args, **kwargs) -> Coroutine:
         if not self.ws:
@@ -113,7 +113,7 @@ class Node:
         if Data and isinstance(Data, dict) and "guild_id" in Data:
             vc = self.getVC(Data["guild_id"])
             if vc:
-                vc.event.dispatch(Operation, Data)
+                vc.dispatcher.dispatch(Operation, Data)
 
         if Operation == "VC_DESTROYED":
             guild_id = int(Data["guild_id"])
@@ -140,4 +140,4 @@ class Node:
     async def getStat(self) -> dict:
         await self.send("GET_STAT")
 
-        return await self.event.wait_for("STAT", timeout=10.0)
+        return await self.dispatcher.wait_for("STAT", timeout=10.0)
