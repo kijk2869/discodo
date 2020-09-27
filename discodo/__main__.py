@@ -121,7 +121,7 @@ webGroup.add_argument(
     help="seconds to close connection there is no respond from client (default: 60)",
 )
 
-networkGroup = parser.add_argument_group("Webserver Option")
+networkGroup = parser.add_argument_group("Network Option")
 networkGroup.add_argument(
     "--ip",
     type=str,
