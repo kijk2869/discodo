@@ -60,7 +60,7 @@ class StreamSender:
 @app.route("/stream")
 async def streamSource(request: Request) -> StreamingResponse:
     if not request.query_params["state"] != Config.RANDOM_STATE:
-        raise HTTPException(403, "Password mismatch.")
+        raise HTTPException(403, "State mismatch.")
 
     url = request.query_params["url"]
     if not url:

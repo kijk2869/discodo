@@ -1,7 +1,8 @@
 import asyncio
 import copy
+import ipaddress
 import re
-from typing import Coroutine
+from typing import Coroutine, Union
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
@@ -10,7 +11,6 @@ from ..errors import NoSearchResults
 YTDLOption = {
     "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
     "nocheckcertificate": True,
-    "ignoreerrors": True,
     "no_warnings": True,
     "default_search": "auto",
     "source_address": "0.0.0.0",
@@ -23,11 +23,18 @@ YOUTUBE_PLAYLIST_ID_REGEX = re.compile(
 )
 
 
-def _extract(query: str, video: bool = False) -> dict:
+def _extract(
+    query: str,
+    address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
+    video: bool = False,
+) -> dict:
     option = copy.copy(YTDLOption)
 
     if video:
         option["format"] = "(best)[protocol!=http_dash_segments]"
+
+    if address:
+        option["source_address"] = str(address)
 
     YoutubePlaylistMatch = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if YoutubePlaylistMatch and not YoutubePlaylistMatch.group(1).startswith(
@@ -73,12 +80,15 @@ def _clear_cache() -> None:
 
 
 def extract(
-    query: str, video: bool = False, loop: asyncio.AbstractEventLoop = None
+    query: str,
+    address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
+    video: bool = False,
+    loop: asyncio.AbstractEventLoop = None,
 ) -> Coroutine:
     if not loop:
         loop = asyncio.get_event_loop()
 
-    return loop.run_in_executor(None, _extract, query, video)
+    return loop.run_in_executor(None, _extract, query, address, video)
 
 
 def clear_cache(loop: asyncio.AbstractEventLoop = None) -> Coroutine:

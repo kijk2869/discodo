@@ -1,12 +1,15 @@
 import asyncio
 import audioop
 import functools
+import ipaddress
 import threading
 import traceback
-from typing import Coroutine
+import urllib.parse
+from typing import Coroutine, Union
 
 import av
 
+from ..config import Config
 from ..natives import AudioFifo, AudioFilter
 from ..utils.threadLock import withLock
 
@@ -19,10 +22,29 @@ AVOption = {
 
 
 class PyAVSource:
-    def __init__(self, Source: str) -> None:
+    def __init__(
+        self,
+        Source: str,
+        address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
+    ) -> None:
         self.loop = asyncio.get_event_loop()
 
         self.Source = Source
+        self.address = address
+        if address:
+            self.Source = (
+                f"http://"
+                + (Config.HOST if Config.Host != "0.0.0.0" else "localhost")
+                + ":"
+                + Config.PORT
+                + "/stream?url="
+                + urllib.parse.quote(self.Source)
+                + "&state="
+                + Config.RANDOM_STATE
+                + "&localaddr="
+                + urllib.parse.quote(address)
+            )
+
         self.AVOption = AVOption
         self.Container = None  # av.StreamContainer
         self.selectAudioStream = self.FrameGenerator = None

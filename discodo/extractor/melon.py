@@ -9,13 +9,13 @@ MELON_REGEX = re.compile(
 )
 
 
-async def get_album(url: str) -> list:
+async def get_album(url: str, connector: aiohttp.TCPConnector = None) -> list:
     async with aiohttp.ClientSession(
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
         }
     ) as session:
-        async with session.get(url) as resp:
+        async with session.get(url, connector=connector) as resp:
             Body = await resp.text()
 
     soup = BeautifulSoup(Body, "html.parser")
@@ -35,11 +35,13 @@ async def get_album(url: str) -> list:
     ]
 
 
-async def get_query(query: str) -> Union[str, list]:
+async def get_query(
+    query: str, connector: aiohttp.TCPConnector = None
+) -> Union[str, list]:
     is_album = MELON_REGEX.match(query)
 
     if is_album:
-        Album = await get_album(query)
+        Album = await get_album(query, connector)
 
         if len(Album) == 1:
             return Album[0]

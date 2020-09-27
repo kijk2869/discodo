@@ -1,5 +1,6 @@
 __version__ = "1.0.0b"
 
+from .client import *
 from .config import Config
 from .errors import *
 from .event import DiscordEvent
@@ -11,4 +12,3 @@ from .source import *
 from .status import getStatus
 from .utils import *
 from .voice_client import VoiceClient
-from .client import *

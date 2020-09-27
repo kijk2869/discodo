@@ -185,8 +185,8 @@ args = parser.parse_args()
 if not args.config:
     verbose = args.verbose
 
-    Host, Port = args.host, args.port
-
+    Config.Host = args.host
+    Config.Port = args.port
     Config.PASSWORD = args.auth
     Config.HANDSHAKE_INTERVAL = args.ws_interval
     Config.HANDSHAKE_TIMEOUT = args.ws_timeout
@@ -198,8 +198,6 @@ if not args.config:
     Config.VCTIMEOUT = args.timeout
 else:
     verbose = args.config.pop("verbose", False)
-
-    Host, Port = args.config.pop("HOST", "0.0.0.0"), args.config.pop("PORT", 8000)
 
     Config.from_dict(args.config)
 
@@ -215,7 +213,7 @@ if __name__ == "__main__":
 
     config = hypercornConfig()
 
-    config.bind = f"{Host}:{Port}"
+    config.bind = f"{Config.HOST}:{Config.Port}"
     config.loglevel = "debug" if args.verbose else "info"
 
     loop.create_task(hypercornServe(server, config))

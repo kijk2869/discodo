@@ -1,5 +1,7 @@
 import aiohttp
+import youtube_dl
 
+from ..config import Config
 from ..errors import Forbidden, TooManyRequests
 from ..extractor import extract
 from ..extractor.youtube_dl import clear_cache
@@ -43,11 +45,21 @@ class AudioData:
         }
 
     def __repr__(self) -> str:
-        return f"<AudioData id={self.id} title='{self.title}' duration={self.duration}>"
+        return f"<AudioData id={self.id} title='{self.title}' duration={self.duration} address='{self.address}'>"
 
     @classmethod
     async def create(cls, query: str):
-        Data = await extract(query)
+        cls.address = Config.RoutePlanner.get() if Config.RoutePlanner else None
+
+        try:
+            Data = await extract(query, address=cls.address)
+        except youtube_dl.utils.DownloadError as exc:
+            if Config.RoutePlanner and exc.exc_info[1].status == 429:
+                Config.RoutePlanner.mark_failed_address(cls.address)
+
+                return await cls.create(query)
+
+            raise exc
 
         if isinstance(Data, list):
             return [cls(Item) for Item in Data]
@@ -55,7 +67,17 @@ class AudioData:
         return cls(Data)
 
     async def gather(self):
-        Data = await extract(self.webpage_url)
+        try:
+            Data = await extract(self.webpage_url, address=self.address)
+        except youtube_dl.utils.DownloadError as exc:
+            if Config.RoutePlanner and exc.exc_info[1].status == 429:
+                Config.RoutePlanner.mark_failed_address(self.address)
+                self.address = Config.RoutePlanner.get()
+
+                return await self.gather()
+
+            raise exc
+
         self.__init__(Data)
 
         return self
@@ -73,15 +95,27 @@ class AudioData:
 
             if Status == 403:
                 if _retry == 0:
-                    return await self.source(*args, _retry=_retry + 1, **kwargs)
+                    return await self.source(
+                        *args, _retry=_retry + 1, _limited=True, **kwargs
+                    )
                 elif _retry == 1:
                     await clear_cache()
-                    return await self.source(*args, _retry=_retry + 1, **kwargs)
+                    return await self.source(
+                        *args, _retry=_retry + 1, _limited=True, **kwargs
+                    )
 
                 raise Forbidden
             if Status == 429:
+                if Config.RoutePlanner:
+                    Config.RoutePlanner.mark_failed_address(self.address)
+                    self.address = Config.RoutePlanner.get()
+
+                    return await self.source(*args, _limited=True, **kwargs)
+
                 raise TooManyRequests
 
-            self._source = AudioSource(self.stream_url, *args, AudioData=self, **kwargs)
+            self._source = AudioSource(
+                self.stream_url, address=self.address, AudioData=self, **kwargs
+            )
 
         return self._source

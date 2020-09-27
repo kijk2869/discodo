@@ -1,4 +1,5 @@
 import uuid
+
 from .planner import RoutePlanner
 
 
@@ -23,6 +24,7 @@ class _Config:
         "BUFFERLIMIT",
         "PRELOAD_TIME",
         "VCTIMEOUT",
+        "ENABLE_EXT_EXTRACTOR",
         "SPOTIFY_ID",
         "SPOTIFY_SECRET",
         "RANDOM_STATE",
@@ -30,6 +32,8 @@ class _Config:
 
     def __init__(self) -> None:
         # SERVER
+        self.HOST = "0.0.0.0"
+        self.PORT = 8000
         self.PASSWORD = "hellodiscodo"
         self.HANDSHAKE_INTERVAL = 15
         self.HANDSHAKE_TIMEOUT = 60.0
@@ -59,7 +63,9 @@ class _Config:
         # CONNECTION
         self.VCTIMEOUT = 300.0
 
-        # SPOTIFY
+        # EXTRA EXTRACTOR
+        self.ENABLE_EXT_EXTRACTOR = ["melon", "spotify"]
+
         self.SPOTIFY_ID = None
         self.SPOTIFY_SECRET = None
 
@@ -80,6 +86,9 @@ class _Config:
 
     @property
     def RoutePlanner(self) -> RoutePlanner:
+        if not self.IPBLOCKS:
+            return None
+
         if not hasattr(self, "_RoutePlanner"):
             self._RoutePlanner = RoutePlanner(self.IPBLOCKS, self.EXCLUDEIPS)
 

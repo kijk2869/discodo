@@ -9,6 +9,7 @@ class AudioSource(PyAVSource):
         super().__init__(*args, **kwargs)
 
         self.AudioData = AudioData
+        self.address = self.AudioData.address if self.AudioData else None
 
     def __dict__(self) -> dict:
         Value = self.AudioData.__dict__() if self.AudioData else {}
@@ -25,7 +26,7 @@ class AudioSource(PyAVSource):
         return (
             f"<AudioSource id={self.id} title='{self.title}' duration={self.duration}"
             + (f" position={self.position}" if hasattr(self, "position") else "")
-            + f" seekable={self.seekable}>"
+            + f" seekable={self.seekable} address='{self.address}'>"
         )
 
     def __getattr__(self, key: str) -> Any:
