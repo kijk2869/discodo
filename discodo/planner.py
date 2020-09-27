@@ -1,99 +1,59 @@
+"""
+Thx for Sannoob
+"""
+
 import ipaddress
-import os
-from logging import getLogger
-
-log = getLogger("discodo.VoiceClient")
-
-
-class IPAddress:
-    def __init__(self, IP):
-        self.IP = IP
-        self.penalty = 0
-
-        self.MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
-
-    def __str__(self):
-        return self.IP
-
-    def givePenalty(self):
-        log.debug(f"penalty is given to {self}")
-        self.penalty += 1
-
-    @property
-    def blocked(self):
-        return self.penalty >= self.MAX_PENALTY
+import random
+import time
+from typing import Union
 
 
-class IterableIPAddress:
-    def __init__(self, iterator):
-        self.iterator = iterator
-        self.penalty = 0
+class RoutePlanner:
+    def __init__(self, ipBlocks: list, excludeIps: list = []) -> None:
+        self.usedCount = {}
+        self.failedAddress = {}
+        self.sortedIpBlocks = {}
 
-        self.IP = None
+        self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
+        self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
 
-        self.MAX_PENALTY = int(os.getenv("MAX_PENALTY", "5"))
+    def mark_failed_address(
+        self,
+        address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
+        status: int = 429,
+    ) -> None:
+        self.failedAddress[address] = {"status": status, "failed_at": time.time()}
 
-    def __str__(self):
-        if not self.IP or self.penalty >= self.MAX_PENALTY:
-            IP = next(self.iterator, None)
+    def unmark_failed_address(
+        self, address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
+    ) -> None:
+        del self.failedAddress[address]
 
-            if IP:
-                self.IP = str(IP)
-                self.penalty = 0
+    def __get_random(
+        self, ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
+    ) -> str:
+        cidr = ipBlock.prefixlen
 
-        return self.IP
+        host_bits = (128 if ipBlock.version == 6 else 32) - cidr
 
-    def givePenalty(self):
-        log.debug(f"penalty is given to {self}")
-        self.penalty += 1
+        start = (int(ipBlock.broadcast_address) >> host_bits) << host_bits
+        end = start | ((1 << host_bits) - 1)
 
-    @property
-    def blocked(self):
-        self.__str__()
-        return self.penalty >= self.MAX_PENALTY
+        return ipaddress.ip_address(random.randrange(start, end))
 
+    def get(self) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address]:
+        sortedIpBlocks = sorted(
+            self.ipBlocks, key=lambda ipBlock: self.usedCount.get(ipBlock, 0)
+        )
+        randomResult = self.__get_random(sortedIpBlocks[0])
+        self.usedCount[sortedIpBlocks[0]] += 1
 
-class IPRotator:
-    def __init__(self):
-        self.Mode = os.getenv("ROTATE_MODE", "ROTATE")
-        self.IPAddresses = []
+        if len(self.failedAddress) >= sum(
+            [ipBlock.num_addresses for ipBlock in self.ipBlocks]
+        ):
+            raise ValueError("No Ips available")
 
-    def add(self, IP: str):
-        if IP in [_IP.__str__() for _IP in self.IPAddresses]:
-            raise ValueError("already exists")
+        if randomResult in self.excludeIps or randomResult in self.failedAddress:
+            return self.get()
 
-        log.debug(f"add {IP} to address list")
-        if "/" in IP:
-            network = ipaddress.ip_network(IP)
-            _IP = IterableIPAddress(network.hosts())
-        else:
-            _IP = IPAddress(IP)
-        self.IPAddresses.append(_IP)
-
-        return _IP
-
-    @property
-    def usableAddresses(self):
-        return [Address for Address in self.IPAddresses if not Address.blocked]
-
-    def get(self):
-        IP = self._get()
-
-        log.debug(f"IP {IP} selected.")
-
-        return IP
-
-    def _get(self):
-        if self.Mode == "ROTATE":
-            SelectedIP = self.usableAddresses[0]
-            SelectedIndex = self.IPAddresses.index(SelectedIP)
-
-            self.IPAddresses = (
-                self.IPAddresses[SelectedIndex:] + self.IPAddresses[:SelectedIndex]
-            )
-
-            return SelectedIP
-        elif self.Mode == "SEQUENCE":
-            return self.usableAddresses[0]
-        else:
-            raise ValueError("Mode does not found")
+        return randomResult

@@ -1,228 +1,351 @@
-import os
+import logging
 import random
-from logging import getLogger
+import re
+from typing import Union
 
 from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
 
-from .AudioSource import AudioData, AudioSource
+from .config import Config
+from .errors import NotPlaying
 from .player import Player
-from .utils import EventEmitter
+from .source import AudioData, AudioSource
+from .utils import EventDispatcher
 from .voice_connector import VoiceConnector
 
-log = getLogger("discodo.VoiceClient")
+log = logging.getLogger("discodo.VoiceClient")
 
 
 class VoiceClient(VoiceConnector):
-    def __init__(self, *args, **kwargs):
+    YOUTUBE_VIDEO_REGEX = re.compile(
+        r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.relatedClient = relatedClient()
 
-        self.event = EventEmitter()
-        self.event.onAny(self.onAnyEvent)
-        self.event.on("NeedNextSong", self.getNext)
-        self.event.on("SongEnd", self.getNext)
+        self.dispatcher = EventDispatcher()
+        self.dispatcher.onAny(self.__dispatchToManager)
+        self.dispatcher.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
 
-        self.InternalQueue = []
-        self._filter = {}
-
+        self.Queue = []
         self.player = None
+
+        self._filter = {}
         self.paused = False
-        self._repeat = False
 
-        self.autoplay = True if os.getenv("DEFAULAUTOPLAY", "1") == "1" else False
-        self._volume = float(os.getenv("DEFAULTVOLUME", "1.0"))
-        self._crossfade = float(os.getenv("DEFAULTCROSSFADE", "10.0"))
+        self._autoplay = Config.DEFAULT_AUTOPLAY
+        self._crossfade = Config.DEFAULT_CROSSFADE
+        self._gapless = Config.DEFAULT_GAPLESS
 
-        self.event.dispatch("VC_CREATED")
+        self._volume = Config.DEFAULT_VOLUME
 
-    @property
-    def Queue(self):
-        """Read only, if you want to edit queue use InternalQueue."""
-        return (
-            self.InternalQueue[1:]
-            if self.InternalQueue and len(self.InternalQueue) > 1
-            else []
-        )
+        self.dispatcher.dispatch("VC_CREATED")
 
-    def onAnyEvent(self, event, *args, **kwargs):
-        self.client.emitter.dispatch(self.guild_id, event, *args, **kwargs)
-
-    async def getNext(self, **kwargs):
-        current = list(kwargs.values()).pop()
-
-        if self.repeat:
-            self.InternalQueue.append(await self.getSong(current["webpage_url"]))
-
-        if self.autoplay and (
-            not self.InternalQueue
-            or (
-                self.InternalQueue[0].toDict() == current
-                and len(self.InternalQueue) <= 1
-            )
-        ):
-            IPAddress = self.client.planner.get() if self.client.planner else None
-            try:
-                Related = await self.relatedClient.async_get(
-                    current["webpage_url"], IPAddress.__str__() if IPAddress else None
-                )
-            except RateLimited as e:
-                if not IPAddress:
-                    raise e
-
-                IPAddress.givePenalty()
-                return await self.getNext(**kwargs)
-
-            await self.loadSong(Related["id"])
-
-    def __del__(self):
+    def __del__(self) -> None:
         guild_id = int(self.guild_id) if self.guild_id else None
 
         log.info(f"destroying voice client of {guild_id}.")
 
-        if self.client.voiceClients.get(guild_id) == self:
-            self.event.dispatch("VC_DESTROYED")
-            del self.client.voiceClients[guild_id]
+        if self.manager.voiceClients.get(guild_id) == self:
+            self.dispatcher.dispatch("VC_DESTROYED")
+            del self.manager.voiceClients[guild_id]
 
         super().__del__()
 
         if self.player and self.player.is_alive():
             self.player.stop()
 
-        for Item in self.InternalQueue:
+        for Item in self.Queue:
             if isinstance(Item, AudioSource):
                 self.loop.call_soon_threadsafe(Item.cleanup)
 
-    async def createSocket(self, data: dict = None):
+    def __repr__(self) -> str:
+        return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay} gapless={self.gapless}>"
+
+    def __dispatchToManager(self, event, *args, **kwargs) -> None:
+        self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
+
+    async def __fetchAutoPlay(self, **kwargs):
+        current = list(kwargs.values()).pop()
+
+        for _ in range(5):
+            if self.autoplay and not self.Queue:
+                if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
+                    address = Config.RoutePlanner.get() if Config.RoutePlanner else None
+                    try:
+                        Related = await self.relatedClient.async_get(
+                            current.webpage_url, local_addr=address
+                        )
+                    except RateLimited:
+                        Config.RoutePlanner.mark_failed_address(address)
+                    else:
+                        return await self.loadSource(Related["id"], related=True)
+
+    def __spawnPlayer(self) -> None:
+        if self.player and self.player.is_alive():
+            return
+
+        self.player = Player(self)
+        self.player.crossfade = self._crossfade
+        self.player.gapless = self._gapless
+
+        self.player.start()
+
+    async def createSocket(self, data: dict = None) -> None:
+        """
+        Create UDP socket with discord to send voice packet.
+
+        :param dict data: A VOICE_SERVER_UPDATE payload, defaults to None
+        :rtype: None
+        """
+
         await super().createSocket(data)
 
-        if not self.player:
-            self.player = Player(self)
-            self.player.start()
+        self.__spawnPlayer()
+
+    @property
+    def state(self) -> str:
+        """
+        The current state of playback of the voice client
+
+        :getter: Returns VoiceClient state
+        :rtype: str
+        """
+
+        if not self.Queue and not self.player.current:
+            return "stopped"
+        elif self.paused:
+            return "paused"
         else:
-            await self.ws.speak(True)
-
-    def putSong(self, Data: AudioData) -> int:
-        if not isinstance(Data, (list, AudioData, AudioSource)):
-            raise ValueError
-
-        if not isinstance(Data, list):
-            Data = [Data]
-
-        for Item in Data:
-            self.InternalQueue.append(Item)
-
-        self.event.dispatch(
-            "putSong",
-            songs=[
-                dict(Item.toDict(), index=self.InternalQueue.index(Item))
-                for Item in Data
-            ],
-        )
-
-        return (
-            self.InternalQueue.index(Data[0])
-            if len(Data) == 1
-            else [self.InternalQueue.index(Item) for Item in Data]
-        )
-
-    async def loadSong(self, Query: str) -> AudioData:
-        Data = (
-            await AudioData.create(Query, self.client.planner)
-            if isinstance(Query, str)
-            else Query
-        )
-
-        self.event.dispatch(
-            "loadSong",
-            song=(
-                [Item.toDict() for Item in Data]
-                if isinstance(Data, list)
-                else Data.toDict()
-            ),
-        )
-
-        self.putSong(Data)
-
-        return Data
-
-    async def seek(self, offset: int):
-        if not self.player.current:
-            raise ValueError
-
-        await self.loop.run_in_executor(None, self.player.current.seek, offset)
-
-    def skip(self, offset: int = 1):
-        if not self.player.current:
-            raise ValueError
-
-        if len(self.InternalQueue) < offset:
-            raise ValueError
-
-        del self.InternalQueue[1 : (offset - 1)]
-
-        self.player.current.stop()
-
-    def pause(self) -> bool:
-        self.paused = True
-        return self.paused
-
-    def resume(self) -> bool:
-        self.paused = False
-        return self.paused
-
-    def changePause(self) -> bool:
-        if self.paused:
-            return self.resume()
-        else:
-            return self.pause()
-
-    def shuffle(self):
-        if not self.InternalQueue:
-            raise ValueError
-
-        self.InternalQueue = self.InternalQueue[:1] + random.sample(
-            self.Queue, k=len(self.Queue)
-        )
-        return self.Queue
+            return "playing"
 
     @property
     def volume(self) -> float:
+        """
+        Current volume of the voice client (0.0~2.0)
+
+        :getter: Returns VoiceClient volume
+        :setter: Set VoiceClient volume
+        :rtype: float
+        """
+
         return self._volume
 
     @volume.setter
-    def volume(self, value: float):
+    def volume(self, value: float) -> None:
         self._volume = round(max(value, 0.0), 2)
 
     @property
     def crossfade(self) -> float:
+        """
+        Current crossfade value of the voice client
+
+        :getter: Returns VoiceClient crossfade
+        :setter: Set VoiceClient crossfade
+        :rtype: float
+        """
+
         return self._crossfade
 
     @crossfade.setter
-    def crossfade(self, value: float):
-        self._crossfade = round(max(value, 0.0), 1)
+    def crossfade(self, value: float) -> None:
+        if not isinstance(value, float):
+            return TypeError("`filter` property must be `float`.")
+
+        self.player.crossfade = self._crossfade = round(max(value, 0.0), 1)
+
+    @property
+    def gapless(self) -> bool:
+        """
+        Current gapless value of the voice client
+
+        :getter: Returns VoiceClient gapless
+        :setter: Set VoiceClient gapless
+        :rtype: bool
+        """
+
+        return self._gapless
+
+    @gapless.setter
+    def gapless(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            return TypeError("`gapless` property must be `bool`.")
+
+        self.player.gapless = self._gapless = self._gapless
+
+    @property
+    def autoplay(self) -> bool:
+        """
+        Current autoplay value of the voice client
+
+        :getter: Returns VoiceClient autoplay
+        :setter: Set VoiceClient autoplay
+        :rtype: bool
+        """
+
+        return self._autoplay
+
+    @autoplay.setter
+    def autoplay(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            return TypeError("`autoplay` property must be `bool`.")
+
+        self._autoplay = value
 
     @property
     def filter(self) -> dict:
+        """
+        Current filter value of the voice client
+
+        :getter: Returns VoiceClient filter
+        :setter: Set VoiceClient filter
+        :rtype: dict
+        """
+
         return self._filter
 
     @filter.setter
-    def filter(self, value: dict):
+    def filter(self, value: dict) -> None:
+        if not isinstance(value, dict):
+            return TypeError("`filter` property must be `dict`.")
+
         self._filter = value
 
     @property
-    def state(self) -> str:
-        if not self.InternalQueue:
-            return "stopped"
-        if self.paused:
-            return "paused"
-        return "playing"
+    def current(self) -> Union[AudioSource, AudioData]:
+        """
+        Current source of the voice client
+
+        :getter: Returns current source
+        :rtype: :class:`AudioSource` or :class:`AudioData`
+        """
+
+        return self.player.current
 
     @property
-    def repeat(self) -> bool:
-        return self._repeat
+    def next(self) -> Union[AudioSource, AudioData]:
+        """
+        Next source of the voice client
 
-    @repeat.setter
-    def repeat(self, value: bool):
-        self._repeat = value
+        :getter: Returns next source
+        :rtype: :class:`AudioSource` or :class:`AudioData`
+        """
+
+        return self.player.next
+
+    def putSource(self, Source: Union[list, AudioData, AudioSource]) -> int:
+        """
+        Put source to Queue.
+
+        :param Source: list or :class:`AudioSource` or :class:`AudioData` to put on Queue
+        :rtype: int
+        """
+
+        if not isinstance(Source, (list, AudioData, AudioSource)):
+            raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
+
+        self.Queue += Source if isinstance(Source, list) else [Source]
+
+        self.dispatcher.dispatch(
+            "putSource", sources=(Source if isinstance(Source, list) else [Source])
+        )
+
+        return (
+            self.Queue.index(Source)
+            if not isinstance(Source, list)
+            else [self.Queue.index(Item) for Item in Source]
+        )
+
+    async def getSource(self, Query: str) -> AudioData:
+        """
+        Get source from Query
+
+        :param str Query: Query to search
+        :rtype: :class:`AudioData`
+        """
+
+        return await AudioData.create(Query)
+
+    async def loadSource(self, Query: str, **kwargs) -> AudioData:
+        """
+        Get source from Query and put it on Queue.
+
+        :param str Query: Query to search
+        :rtype: :class:`AudioData`
+        """
+
+        Data = await self.getSource(Query)
+
+        self.dispatcher.dispatch(
+            "loadSource", source=(Data if isinstance(Data, list) else Data), **kwargs
+        )
+
+        self.putSource(Data)
+
+        return Data
+
+    async def seek(self, offset: int) -> None:
+        """
+        Seek current playing source.
+
+        :param float offset: offset to seek
+        :rtype: None
+        """
+
+        return await self.player.seek(offset)
+
+    def skip(self, offset: int = 1) -> None:
+        """
+        skip current playing source.
+
+        :param float offset: offset to skip
+        :rtype: None
+        """
+
+        if not self.player.current:
+            raise NotPlaying
+
+        if len(self.Queue) < (offset - 1):
+            raise ValueError("`offset` is bigger than `Queue` size.")
+
+        if offset > 1:
+            del self.Queue[0 : (offset - 1)]
+
+        self.player.current.stop()
+
+    def pause(self) -> bool:
+        """
+        Pause playing
+
+        :rtype: True
+        """
+
+        self.paused = True
+        return True
+
+    def resume(self) -> bool:
+        """
+        Resume playing
+
+        :rtype: True
+        """
+
+        self.paused = False
+        return False
+
+    def shuffle(self) -> dict:
+        """
+        Shuffle Queue.
+
+        :rtype: dict
+        """
+
+        if not self.Queue:
+            raise ValueError("`Queue` is empty now.")
+
+        random.shuffle(self.Queue)
+
+        return self.Queue

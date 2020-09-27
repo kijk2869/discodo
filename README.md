@@ -15,12 +15,16 @@ Discodo is an enhanced audio player for discord.
 * Crossfade and Audio effects
 * Synced Youtube Video Subtitle
 
+## Documentation
+
+**More information can be found [here](./docs).**
+
 ## Installation
 
 **Discodo requires Python 3.7 or higher**
 
 ```sh
-python -m pip install discodo
+python -m pip install --upgrade discodo
 ```
 
 

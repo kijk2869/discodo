@@ -20,7 +20,7 @@ import discodo
 logging.basicConfig(level=logging.INFO)
 
 app = discord.Client()
-Audio = discodo.AudioManager()
+Audio = discodo.ClientManager()
 
 
 @app.event
@@ -75,14 +75,14 @@ async def on_message(message):
         if not hasattr(vc, "channel"):
             vc.channel = message.channel
 
-        Song = await vc.loadSong(message.content[5:].strip())
+        Source = await vc.loadSource(message.content[5:].strip())
 
-        if isinstance(Song, list):
+        if isinstance(Source, list):
             return await message.channel.send(
-                f"{len(Song) - 1} songs except {Song[0].title} added."
+                f"{len(Source) - 1} songs except {Source[0].title} added."
             )
         else:
-            return await message.channel.send(f"{Song.title} added.")
+            return await message.channel.send(f"{Source.title} added.")
 
     if message.content.startswith("!skip"):
         vc = Audio.getVC(message.guild.id)
@@ -106,7 +106,7 @@ async def on_message(message):
             int(message.content[7:].strip()) if message.content[7:].strip() else 100
         )
 
-        Volume = vc.setVolume(offset / 100)
+        vc.volume = Volume = offset / 100
 
         return await message.channel.send(f"Set volume to {Volume * 100}%.")
 
@@ -120,7 +120,7 @@ async def on_message(message):
             int(message.content[10:].strip()) if message.content[10:].strip() else 10
         )
 
-        Crossfade = vc.setCrossfade(offset)
+        vc.crossfade = Crossfade = offset
 
         return await message.channel.send(
             f"Set crossfade seconds to {Crossfade} seconds."
@@ -137,27 +137,10 @@ async def on_message(message):
         )
         offset = {"on": True, "off": False}.get(offset, True)
 
-        autoplay = vc.setAutoplay(offset)
+        vc.autoplay = autoplay = offset
 
         return await message.channel.send(
             f'Auto related play {"enabled" if autoplay else "disabled"}.'
-        )
-
-    if message.content.startswith("!repeat"):
-        vc = Audio.getVC(message.guild.id)
-
-        if not vc:
-            return await message.channel.send("Please type `!join` first.")
-
-        offset = (
-            int(message.content[7:].strip()) if message.content[7:].strip() else "on"
-        )
-        offset = {"on": True, "off": False}.get(offset, True)
-
-        repeat = vc.setRepeat(offset)
-
-        return await message.channel.send(
-            f'Repeat {"enabled" if repeat else "disabled"}.'
         )
 
     if message.content.startswith("!np"):
@@ -192,52 +175,21 @@ async def on_message(message):
 
         return await message.channel.send(
             f"""
-Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.AudioData.duration}`
+Now playing: {vc.current.title} `{vc.current.position}:{vc.current.duration}`
 
 {QueueText}
 """
         )
 
-    if message.content.startswith("!bassboost"):
-        vc = Audio.getVC(message.guild)
-
-        if not vc:
-            return await message.channel.send("Please type `!join` first.")
-
-        offset = (
-            int(message.content[10:].strip()) if message.content[10:].strip() else 0
-        )
-        filter = (
-            {"anequalizer": discodo.equalizer.bassboost(offset)} if offset != 0 else {}
-        )
-
-        vc.setFilter(filter)
-
-        return await message.channel.send(f"Set bassboost level {offset}%.")
-
-    if message.content.startswith("!tempo"):
-        vc = Audio.getVC(message.guild)
-
-        if not vc:
-            return await message.channel.send("Please type `!join` first.")
-
-        offset = (
-            float(message.content[6:].strip()) if message.content[6:].strip() else 1.0
-        )
-
-        vc.setFilter({"atempo": str(offset)})
-
-        return await message.channel.send(f"Set tempo to {offset}.")
-
     if message.content.startswith("!seek"):
-        vc = Audio.getVC(message.guild)
+        vc = Audio.getVC(message.guild.id)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
         offset = int(message.content[5:].strip()) if message.content[5:].strip() else 1
 
-        vc.seek(offset)
+        await vc.seek(offset)
 
         return await message.channel.send(f"Seek to {offset}.")
 

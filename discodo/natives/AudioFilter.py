@@ -3,14 +3,14 @@ import av.filter
 
 
 class AudioFilter:
-    def __init__(self):
+    def __init__(self) -> None:
         self.selectAudioStream = None
         self._Filters = {}
         self._FilterChains = []
         self.Graph = None
         self.configured = False
 
-    def setFilters(self, filters: dict):
+    def setFilters(self, filters: dict) -> None:
         self._Filters = {}
         for filter, value in filters.items():
             self._Filters[filter] = value
@@ -18,7 +18,7 @@ class AudioFilter:
 
         self.configure()
 
-    def configure(self):
+    def configure(self) -> None:
         if not self.selectAudioStream:
             return
 
@@ -32,7 +32,7 @@ class AudioFilter:
 
         self.configured = True
 
-    def push(self, Frame: av.AudioFrame):
+    def push(self, Frame: av.AudioFrame) -> None:
         if not self.Graph:
             return
 

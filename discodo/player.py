@@ -1,181 +1,231 @@
 import asyncio
 import audioop
-import os
 import threading
 import time
 import traceback
+from typing import Callable, Union
 
-from .AudioSource import AudioData, AudioSource
+from .config import Config
+from .errors import NotPlaying
+from .source import AudioData, AudioSource
 
 
 class Player(threading.Thread):
-    def __init__(self, voice_client, volume=1.0, loop=None):
+    def __init__(self, client) -> None:
         threading.Thread.__init__(self)
         self.daemon = True
+
+        self.client = client
+
+        self._volume = 1.0
+        self._crossfade = 5.0
+        self._gapless = False
         self._end = threading.Event()
-        self.loop = loop or asyncio.get_event_loop()
 
-        self.PRELOAD_TIME = int(os.getenv("PRELOAD_TIME", "10"))
-        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-        self.SAMPLES_PER_FRAME = int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
-        self.DELAY = self.FRAME_LENGTH / 1000.0
+        self._getSourceTask = None
+        self._current = self._next = None
 
-        self.client = voice_client
-        self.speakState = False
-        self.__next_called = False
-        self.__current_future = None
+        self._crossfadeLoop = 0
+        self._request_dispatched = False
 
-        self._volume = volume
+    def __del__(self) -> None:
+        for Source in self.client.Queue:
+            if isinstance(Source, AudioSource):
+                self.client.loop.run_coroutine_threadsafe(Source.cleanup)
+
+    @property
+    def crossfade(self) -> Union[float, None]:
+        if self._gapless:
+            return None
+
+        return self._crossfade
+
+    @crossfade.setter
+    def crossfade(self, value: float) -> None:
+        if self._gapless:
+            raise ValueError("Cannot use crossfade when gapless mode is enabled.")
+
+        self._crossfade = value
+
+    @property
+    def crossfadeVolume(self) -> Union[float, None]:
+        if self._gapless:
+            return None
+
+        return 1.0 / (self.client.crossfade / Config.DELAY)
+
+    @property
+    def gapless(self) -> bool:
+        return self._gapless
+
+    @gapless.setter
+    def gapless(self, value: bool) -> None:
+        self._gapless = value
+
+    def seek(self, offset: int) -> None:
+        if not self.current:
+            raise NotPlaying
+
+        return self.current.seek(offset)
 
     @property
     def current(self) -> AudioSource:
-        Source = self.client.InternalQueue[0] if self.client.InternalQueue else None
-        if Source:
-            if isinstance(Source, AudioData):
-                if not self.__current_future:
-                    self.__current_future = asyncio.run_coroutine_threadsafe(
-                        Source.source(), self.loop
-                    )
-                    Source = None
-                elif self.__current_future.done():
-                    if self.client.InternalQueue[0] == Source:
-                        Source = self.client.InternalQueue[
-                            0
-                        ] = self.__current_future.result()
+        if not self._current:
+            if self.next:
+                self._current, self.next = self.next, None
+            else:
+                return None
 
-                    self.__current_future = None
+        if self._current.filter != self.client.filter:
+            self._current.filter = self.client.filter
 
-                    if Source.volume != 1.0:
-                        Source.volume = 1.0
+        if not self._current.BufferLoader:
+            self.client.dispatcher.dispatch("SOURCE_START", source=self._current)
+            self._current.start()
 
-                    if not hasattr(Source, "_dispatched"):
-                        Source._dispatched = True
-                        self.client.event.dispatch(
-                            "SongStart", song=Source.AudioData.toDict()
-                        )
-                else:
-                    Source = None
-            elif (
-                isinstance(Source, AudioSource)
-                and Source.filter != self.client.filter
-                and hasattr(Source.Loader, "selectAudioStream")
-            ):
-                Source.filter = self.client.filter
+        return self._current
 
-        return Source
+    @current.setter
+    def current(self, value: None) -> None:
+        self.client.dispatcher.dispatch("SOURCE_END", source=self._current)
+
+        self.client.loop.call_soon_threadsafe(self._current.cleanup)
+        self._current = None
 
     @property
     def next(self) -> AudioSource:
-        Source = (
-            self.client.InternalQueue[1]
-            if self.client.InternalQueue and len(self.client.InternalQueue) > 1
-            else None
+        is_load_condition = (
+            not self._current
+            or self._current.stopped
+            or self._current.remain <= (Config.PRELOAD_TIME + (self.crossfade or 0))
         )
 
-        if Source and isinstance(Source, AudioSource):
-            if not hasattr(Source, "_dispatched"):
-                Source._dispatched = True
-                self.client.event.dispatch("SongStart", song=Source.AudioData.toDict())
-            if Source.filter != self.client.filter and hasattr(
-                Source.Loader, "selectAudioStream"
-            ):
-                Source.filter = self.client.filter
+        if not self._next:
+            if not self.client.Queue:
+                if self._current and is_load_condition and not self._request_dispatched:
+                    self.client.dispatcher.dispatch(
+                        "REQUIRE_NEXT_SOURCE", current=self._current
+                    )
+                    self._request_dispatched = True
 
-        return Source
+                return None
 
-    def nextReady(self):
-        self.loop.create_task(self._nextReady())
+            self._next = self.client.Queue[0]
+            self._request_dispatched = False
 
-    async def _nextReady(self):
-        Source = (
-            self.client.InternalQueue[1]
-            if self.client.InternalQueue and len(self.client.InternalQueue) > 1
-            else None
-        )
-        if Source:
-            if isinstance(Source, AudioData):
-                Data = await Source.source()
+        if isinstance(self._next, AudioData):
 
-                if self.client.InternalQueue[1] == Source:
-                    Source = self.client.InternalQueue[1] = Data
+            def setSource(Source: AudioSource) -> None:
+                if Source.AudioData == self.client.Queue[0]:
+                    self._next = self.client.Queue[0] = Source
 
-                if Data.volume != 0.0:
-                    Data.volume = 0.0
-            elif (
-                isinstance(Source, AudioSource)
-                and Source.filter != self.client.filter
-                and hasattr(Source.Loader, "selectAudioStream")
-            ):
-                Source.filter = self.client.filter
+            self.getSource(self._next, setSource)
 
-    def makeFrame(self) -> bytes:
+            return None
+
+        if self._next != self.client.Queue[0]:
+            self._next = None
+            return None
+
+        if self._next.filter != self.client.filter:
+            self._next.filter = self.client.filter
+
+        if self._current and not self._next.BufferLoader:
+            if is_load_condition:
+                self.client.dispatcher.dispatch("SOURCE_START", source=self._next)
+                self._next.start()
+
+        return self._next
+
+    @next.setter
+    def next(self, value: None) -> None:
+        if not self._next:
+            return
+
+        if self.client.Queue:
+            _nextItem = (
+                self._next.AudioData
+                if isinstance(self._next, AudioSource)
+                else self._next
+            )
+            _queueItem = (
+                self.client.Queue[0].AudioData
+                if isinstance(self.client.Queue[0], AudioSource)
+                else self.client.Queue[0]
+            )
+
+            if _nextItem == _queueItem:
+                self.client.Queue.pop(0)
+        self._next = None
+
+    def getSource(self, *args, **kwargs) -> None:
+        if not self._getSourceTask or self._getSourceTask.done():
+            self._getSourceTask = self.client.loop.create_task(
+                self._getSource(*args, **kwargs)
+            )
+
+    async def _getSource(self, Data: AudioData, callback: Callable) -> None:
+        Source = await Data.source()
+
+        Source.volume = 1.0
+        Source.filter = self.client.filter
+
+        callback(Source)
+
+    def read(self) -> bytes:
         if not self.current:
             return
 
         Data = self.current.read()
 
-        if not Data or self.current.volume == 0.0:
-            self.loop.call_soon_threadsafe(self.current.cleanup)
-            self.client.event.dispatch("SongEnd", song=self.current.AudioData.toDict())
-            del self.client.InternalQueue[0]
+        if (
+            not Data
+            or self.current.volume <= 0.0
+            or (self.gapless and self.current.stopped and self.next)
+        ):
+            self._crossfadeLoop = 0
+            self.current = None
 
-        _crossfadeState = (
-            self.current.remain <= (self.PRELOAD_TIME + self.client.crossfade)
-            and not self.current.AudioData.is_live
+            return self.read()
+
+        is_live = self.current.AudioData and self.current.AudioData.is_live
+        is_crossfade_timing = (
+            not self.gapless
+            and self.next
+            and (self.current.remain <= self.crossfade or self.current.stopped)
         )
 
-        if (
-            self.__next_called
-            and self.current
-            and not (_crossfadeState or self.current.stopped)
-        ):
-            self.__next_called = False
+        if not self.gapless and not is_live and is_crossfade_timing:
+            NextData = self.next.read()
+            if NextData:
+                self._crossfadeLoop += 1
+                crossfadeVolume = self.crossfadeVolume * self._crossfadeLoop
 
-        if self.next and (_crossfadeState or self.current.stopped):
-            if self.__next_called:
-                self.__next_called = False
-            if isinstance(self.next, AudioData) and not hasattr(self.next, "_called"):
-                self.next._called = True
-                self.nextReady()
-            elif (
-                self.client.crossfade
-                and isinstance(self.next, AudioSource)
-                and (self.next.AudioFifo.samples > self.SAMPLES_PER_FRAME)
-                and (
-                    self.current.remain <= self.client.crossfade or self.current.stopped
-                )
-            ):
-                NextData = self.next.read()
+                self.current.volume = 1.0 - crossfadeVolume
+                self.next.volume = crossfadeVolume
 
-                if NextData:
-                    CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
-                    if self.next.volume < 1.0:
-                        self.next.volume = round(self.next.volume + CrossFadeVolume, 10)
-                    if self.current.volume > 0.0:
-                        self.current.volume = round(
-                            self.current.volume - CrossFadeVolume, 10
-                        )
+                Data = audioop.add(Data, NextData, 2)
+        elif self.next:
+            self.next.volume = 1.0
 
-                    Data = audioop.add(Data, NextData, 2)
-        elif not self.__next_called and (_crossfadeState or self.current.stopped):
-            self.client.event.dispatch(
-                "NeedNextSong", current=self.current.AudioData.toDict()
-            )
-            self.__next_called = True
-        elif self.current and self.current.stopped:
-            if isinstance(self.current, AudioSource) and self.current.volume > 0.0:
-                CrossFadeVolume = 1.0 / (self.client.crossfade / self.DELAY)
-                self.current.volume = round(self.current.volume - CrossFadeVolume, 10)
-        else:
-            if isinstance(self.current, AudioSource) and self.current.volume < 1.0:
+        if self.current.stopped:
+            if self.current.volume > 0.0:
+                self.current.volume = round(self.current.volume - 0.01, 3)
+        elif not is_crossfade_timing:
+            if self.current.volume < 1.0:
                 self.current.volume = round(self.current.volume + 0.01, 3)
-            if isinstance(self.next, AudioSource) and self.next.volume != 0.0:
-                self.next.volume = 0.0
+            elif self.current.volume > 1.0:
+                self.current.volume = 1.0
 
         return Data
 
-    def _do_run(self):
+    def speak(self, state: bool) -> None:
+        if self.client.speakState == state:
+            return
+
+        asyncio.run_coroutine_threadsafe(self.client.ws.speak(state), self.client.loop)
+
+    def __do_run(self) -> None:
         self.loops = 0
         _start = time.perf_counter()
 
@@ -186,10 +236,7 @@ class Player(threading.Thread):
                     self.loops = 0
                     _start = time.perf_counter()
 
-                if not self.client.paused:
-                    Data = self.makeFrame()
-                else:
-                    Data = None
+                Data = self.read() if not self.client.paused else None
 
                 if self._volume != self.client.volume:
                     if self._volume < self.client.volume:
@@ -197,35 +244,31 @@ class Player(threading.Thread):
                     if self._volume > self.client.volume:
                         self._volume = round(self._volume - 0.01, 3)
 
-                if Data:
-                    if not self.speakState:
-                        self.speak(True)
+                self.speak(bool(Data))
 
+                if Data:
                     if self._volume != 1.0:
                         Data = audioop.mul(Data, 2, min(self._volume, 2.0))
 
                     self.client.send(Data)
-                elif self.speakState:
-                    self.speak(False)
 
                 self.loops += 1
-                nextTime = _start + self.DELAY * self.loops
-                time.sleep(max(0, self.DELAY + (nextTime - time.perf_counter())))
+                nextTime = _start + Config.DELAY * self.loops
+                time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
+                self.dispatcher.dispatch(
+                    "PLAYER_TRACEBACK", traceback=traceback.format_exc()
+                )
 
-    def run(self):
+    def run(self) -> None:
         try:
-            self._do_run()
+            self.__do_run()
         except:
             pass
         finally:
             self.stop()
 
-    def stop(self):
+    def stop(self) -> None:
         self._end.set()
         self.speak(False)
-
-    def speak(self, value):
-        self.speakState = value
-        asyncio.run_coroutine_threadsafe(self.client.ws.speak(value), self.client.loop)

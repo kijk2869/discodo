@@ -4,6 +4,8 @@ import ctypes.util
 import os
 import sys
 
+from ..config import Config
+
 _library = None
 
 c_int_pointer = ctypes.POINTER(ctypes.c_int)
@@ -55,14 +57,14 @@ exported_functions = {
 }
 
 
-def loadOpus(name):
+def loadOpus(name) -> bool:
     global _library
     _library = loadLibopus(name)
 
     return _library is not None
 
 
-def loadDefaultOpus():
+def loadDefaultOpus() -> bool:
     global _library
     try:
         if sys.platform == "win32":
@@ -79,7 +81,7 @@ def loadDefaultOpus():
     return _library is not None
 
 
-def loadLibopus(name):
+def loadLibopus(name: str) -> ctypes.cdll:
     library = ctypes.cdll.LoadLibrary(name)
 
     for FuncName, Options in exported_functions.items():
@@ -101,7 +103,7 @@ def loadLibopus(name):
     return library
 
 
-def isLoaded():
+def isLoaded() -> bool:
     global _library
     return _library is not None
 
@@ -134,20 +136,21 @@ SIGNAL_CTL = {
 
 
 class Encoder:
-    def __init__(self, application=ENCODER_CTL["APPLICATION_AUDIO"]):
+    def __init__(self, application: int = ENCODER_CTL["APPLICATION_AUDIO"]) -> None:
         self.application = application
 
-        self.SAMPLING_RATE = int(os.getenv("SAMPLING_RATE", "48000"))
-        self.CHANNELS = int(os.getenv("CHANNELS", "2"))
-        self.FRAME_LENGTH = int(os.getenv("FRAME_LENGTH", "20"))
-        self.SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "4"))
-        self.SAMPLES_PER_FRAME = int(self.SAMPLING_RATE / 1000 * self.FRAME_LENGTH)
-        self.FRAME_SIZE = self.SAMPLES_PER_FRAME * self.SAMPLES_PER_FRAME
-        self.EXPECTED_PACKETLOSS = int(os.getenv("EXPECTED_PACKETLOSS", "0"))
-        self.BITRATE = int(os.getenv("BITRATE", "128"))
+        self.SAMPLING_RATE = Config.SAMPLING_RATE
+        self.CHANNELS = Config.CHANNELS
+        self.FRAME_LENGTH = Config.FRAME_LENGTH
+        self.SAMPLE_SIZE = Config.SAMPLE_SIZE
+        self.SAMPLES_PER_FRAME = Config.SAMPLES_PER_FRAME
+        self.EXPECTED_PACKETLOSS = Config.EXPECTED_PACKETLOSS
+        self.BITRATE = Config.BITRATE
 
         if not isLoaded() and not loadDefaultOpus():
-            raise ValueError
+            raise ValueError(
+                "Cannot load libopus, please install `libopus-dev` if you are using linux."
+            )
 
         self.state = self.createState()
         self.setBitrate(self.BITRATE)
@@ -156,25 +159,25 @@ class Encoder:
         self.setBandwidth("full")
         self.setSignalType("auto")
 
-    def createState(self):
+    def createState(self) -> int:
         ret = ctypes.c_int()
         return _library.opus_encoder_create(
             self.SAMPLING_RATE, self.CHANNELS, self.application, ctypes.byref(ret)
         )
 
-    def __del__(self):
+    def __del__(self) -> None:
         if hasattr(self, "state"):
             _library.opus_encoder_destroy(self.state)
             self.state = None
 
-    def setBitrate(self, kbps):
+    def setBitrate(self, kbps: int) -> None:
         kbps = min(512, max(16, int(kbps)))
 
         _library.opus_encoder_ctl(
             self.state, ENCODER_CTL["CTL_SET_BITRATE"], kbps * 1024
         )
 
-    def setBandwidth(self, req):
+    def setBandwidth(self, req: str) -> None:
         if not req in BAND_CTL:
             raise KeyError
 
@@ -182,7 +185,7 @@ class Encoder:
             self.state, ENCODER_CTL["CTL_SET_BANDWIDTH"], BAND_CTL[req]
         )
 
-    def setSignalType(self, req):
+    def setSignalType(self, req: str) -> None:
         if not req in SIGNAL_CTL:
             raise KeyError
 
@@ -190,15 +193,15 @@ class Encoder:
             self.state, ENCODER_CTL["CTL_SET_SIGNAL"], SIGNAL_CTL[req]
         )
 
-    def setFec(self, enabled=True):
+    def setFec(self, enabled: bool = True) -> None:
         _library.opus_encoder_ctl(
             self.state, ENCODER_CTL["CTL_SET_FEC"], 1 if enabled else 0
         )
 
-    def setExpectedPacketLoss(self, percentage):
+    def setExpectedPacketLoss(self, percentage: float) -> None:
         _library.opus_encoder_ctl(self.state, ENCODER_CTL["CTL_SET_PLP"], percentage)
 
-    def encode(self, Pcm, FrameSize=None):
+    def encode(self, Pcm: bytes, FrameSize: int = None) -> bytes:
         if not FrameSize:
             FrameSize = self.SAMPLES_PER_FRAME
 

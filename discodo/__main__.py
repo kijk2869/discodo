@@ -6,17 +6,21 @@ import os
 import sys
 
 import colorlog
-from hypercorn.asyncio import serve
-from hypercorn.config import Config
+from hypercorn.asyncio import serve as hypercornServe
+from hypercorn.config import Config as hypercornConfig
+from websockets import auth
+
+from .config import Config
+from . import __version__
 
 log = logging.getLogger("discodo")
 
 
 class loggingFilter(logging.Filter):
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         self.level = level
 
-    def filter(self, record):
+    def filter(self, record) -> bool:
         return record.levelno < self.level
 
 
@@ -25,7 +29,7 @@ stderrHandler = logging.StreamHandler(sys.stderr)
 stdoutHandler.addFilter(loggingFilter(logging.WARNING))
 
 
-def setLoggingLevel(level):
+def setLoggingLevel(level) -> None:
     for logger in [log, logging.getLogger("libav")]:
         addLoggingHandler(logger)
         logger.setLevel(logging.DEBUG)
@@ -51,12 +55,35 @@ stdoutHandler.setFormatter(ColoredFormatter)
 stderrHandler.setFormatter(ColoredFormatter)
 
 
-def addLoggingHandler(logger):
+def addLoggingHandler(logger) -> None:
     logger.addHandler(stdoutHandler)
     logger.addHandler(stderrHandler)
 
 
 parser = argparse.ArgumentParser("discodo")
+
+
+def is_valid_file(parser, args):
+    if not os.path.exists(args):
+        parser.error(f"The file {args} does not exist!")
+
+    with open(args, "r") as fp:
+        return json.load(fp)
+
+
+parser.add_argument(
+    "--version",
+    action="version",
+    version=f"%(prog)s {__version__}",
+    help="Config json file path (default: None)",
+)
+
+parser.add_argument(
+    "--config",
+    type=lambda args: is_valid_file(parser, args),
+    default={},
+    help="Config json file path (default: None)",
+)
 
 webGroup = parser.add_argument_group("Webserver Option")
 
@@ -94,6 +121,22 @@ webGroup.add_argument(
     help="seconds to close connection there is no respond from client (default: 60)",
 )
 
+networkGroup = parser.add_argument_group("Network Option")
+networkGroup.add_argument(
+    "--ip",
+    type=str,
+    action="append",
+    default=[],
+    help="Client-side IP addresses to use",
+)
+networkGroup.add_argument(
+    "--exclude-ip",
+    type=str,
+    action="append",
+    default=[],
+    help="Client-side IP addresses not to use",
+)
+
 playerGroup = parser.add_argument_group("Player Option")
 
 playerGroup.add_argument(
@@ -107,6 +150,12 @@ playerGroup.add_argument(
     type=float,
     default=10.0,
     help="player's default crossfade seconds (default: 10.0)",
+)
+playerGroup.add_argument(
+    "--default-gapless",
+    type=bool,
+    default=False,
+    help="player's default gapless state (default: False)",
 )
 playerGroup.add_argument(
     "--default-autoplay",
@@ -133,28 +182,6 @@ playerGroup.add_argument(
     help="seconds to cleanup player when connection of discord terminated (default: 300)",
 )
 
-plannerGroup = parser.add_argument_group("IP Planner Option")
-plannerGroup.add_argument(
-    "--ip",
-    "-I",
-    type=str,
-    action="append",
-    default=[],
-    help="Client-side IP addresses to use",
-)
-plannerGroup.add_argument(
-    "--rotate-mode",
-    type=str,
-    default="ROTATE",
-    help="IP planner rotate mode [ROTATE, SEQUENCE] (default: ROTATE)",
-)
-plannerGroup.add_argument(
-    "--max-penalty",
-    type=int,
-    default=5,
-    help="max penalty to block ip address (default: 5)",
-)
-
 logParser = parser.add_argument_group("Logging Option")
 
 logParser.add_argument(
@@ -163,43 +190,39 @@ logParser.add_argument(
 
 args = parser.parse_args()
 
-if args.verbose:
+if not args.config:
+    verbose = args.verbose
+
+    Config.HOST = args.host
+    Config.PORT = args.port
+    Config.PASSWORD = args.auth
+    Config.HANDSHAKE_INTERVAL = args.ws_interval
+    Config.HANDSHAKE_TIMEOUT = args.ws_timeout
+    Config.DEFAULT_AUTOPLAY = args.default_autoplay
+    Config.DEFAULT_VOLUME = round(args.default_volume / 100, 3)
+    Config.DEFAULT_CROSSFADE = args.default_crossfade
+    Config.DEFAULT_GAPLESS = args.default_gapless
+    Config.BUFFERLIMIT = args.bufferlimit
+    Config.VCTIMEOUT = args.timeout
+else:
+    verbose = args.config.pop("verbose", False)
+
+    Config.from_dict(args.config)
+
+if verbose:
     setLoggingLevel(logging.DEBUG)
 else:
     setLoggingLevel(logging.INFO)
 
-os.environ["HOST"] = args.host
-os.environ["PORT"] = str(args.port)
-os.environ["VCTIMEOUT"] = str(args.timeout)
-os.environ["DEFAULTVOLUME"] = str(round(args.default_volume / 100, 3))
-os.environ["DEFAULTCROSSFADE"] = str(args.default_crossfade)
-os.environ["DEFAULAUTOPLAY"] = "1" if args.default_autoplay else "0"
-os.environ["PRELOAD_TIME"] = str(args.preload)
-os.environ["WSINTERVAL"] = str(args.ws_interval)
-os.environ["WSTIMEOUT"] = str(args.ws_timeout)
-os.environ["AUDIOBUFFERLIMIT"] = str(args.bufferlimit)
-os.environ["PASSWORD"] = str(args.auth)
-os.environ["MAX_PENALTY"] = str(args.max_penalty)
-os.environ["ROTATE_MODE"] = str(args.rotate_mode)
-os.environ["USABLE_IP"] = json.dumps(args.ip)
-
 if __name__ == "__main__":
-    try:
-        import uvloop
-    except ModuleNotFoundError:
-        pass
-    else:
-        asyncio.set_event_loop(uvloop.new_event_loop())
-
     loop = asyncio.get_event_loop()
 
-    from .node import server
-    from .updater import check_version
+    from .server import server
 
-    config = Config()
-    config.bind = f"{args.host}:{args.port}"
+    config = hypercornConfig()
+
+    config.bind = f"{Config.HOST}:{Config.PORT}"
     config.loglevel = "debug" if args.verbose else "info"
 
-    loop.run_until_complete(check_version())
-    loop.create_task(serve(server, config))
+    loop.create_task(hypercornServe(server, config))
     loop.run_forever()

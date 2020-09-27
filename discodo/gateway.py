@@ -1,21 +1,21 @@
 import asyncio
 import concurrent.futures
 import json
+import logging
 import struct
 import threading
 import time
 from collections import deque
-from logging import getLogger
 
 import websockets
 
-from .encrypt import getEncryptModes
+from .natives import Encrypter
 
-log = getLogger("discodo.gateway")
+log = logging.getLogger("discodo.gateway")
 
 
 class keepAlive(threading.Thread):
-    def __init__(self, ws, interval: int, *args, **kwargs):
+    def __init__(self, ws, interval: int, *args, **kwargs) -> None:
         threading.Thread.__init__(self, *args, **kwargs)
         self.daemon = True
 
@@ -29,7 +29,7 @@ class keepAlive(threading.Thread):
         self.timeout = ws.heartbeatTimeout
         self.threadId = ws.threadId
 
-    def run(self):
+    def run(self) -> None:
         while not self.Stopped.wait(self.interval):
             if (self._lastAck + self.timeout) < time.perf_counter():
                 Runner = asyncio.run_coroutine_threadsafe(
@@ -63,12 +63,12 @@ class keepAlive(threading.Thread):
             else:
                 self._lastSend = time.perf_counter()
 
-    def ack(self):
+    def ack(self) -> None:
         self._lastAck = time.perf_counter()
         self.latency = self._lastAck - self._lastSend
         self.recent_latencies.append(self.latency)
 
-    def stop(self):
+    def stop(self) -> None:
         self.Stopped.set()
 
 
@@ -85,7 +85,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     RESUMED = 9
     CLIENT_DISCONNECT = 13
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
     @classmethod
@@ -110,11 +110,11 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         return ws
 
     @property
-    def latency(self):
+    def latency(self) -> float:
         return self._keepAliver.latency if self._keepAliver else None
 
     @property
-    def averageLatency(self):
+    def averageLatency(self) -> float:
         if not self._keepAliver:
             return None
 
@@ -122,11 +122,11 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             self._keepAliver.recent_latencies
         )
 
-    async def sendJson(self, data):
+    async def sendJson(self, data: dict) -> None:
         log.debug(f"send to websocket {data}")
         await self.send(json.dumps(data))
 
-    async def identify(self):
+    async def identify(self) -> None:
         payload = {
             "op": self.IDENTIFY,
             "d": {
@@ -138,7 +138,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         }
         await self.sendJson(payload)
 
-    async def resume(self):
+    async def resume(self) -> None:
         payload = {
             "op": self.RESUME,
             "d": {
@@ -150,7 +150,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         }
         await self.sendJson(payload)
 
-    async def select_protocol(self, ip, port, mode):
+    async def select_protocol(self, ip: str, port: str, mode: str) -> None:
         payload = {
             "op": self.SELECT_PROTOCOL,
             "d": {
@@ -160,11 +160,13 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         }
         await self.sendJson(payload)
 
-    async def speak(self, state: bool = True):
+    async def speak(self, state: bool = True) -> None:
+        self.client.speakState = state
+
         payload = {"op": self.SPEAKING, "d": {"speaking": int(state), "delay": 0}}
         await self.sendJson(payload)
 
-    async def receive(self, message):
+    async def receive(self, message: dict) -> None:
         Operation, Data = message["op"], message.get("d")
         log.debug(f"websocket recieved {Operation}: {Data}")
 
@@ -179,16 +181,16 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
             self._keepAliver = keepAlive(self, min(interval, 5.0))
             self._keepAliver.start()
 
-    async def createConnection(self, data):
+    async def createConnection(self, data: dict) -> None:
         self.client.ssrc = data["ssrc"]
-        self.client.endpointPort = data["port"]
-        self.client.endpointIp = data["ip"]
+        self.client.endpointPORT = data["port"]
+        self.client.endpointIP = data["ip"]
 
         packet = bytearray(70)
         struct.pack_into(">I", packet, 0, data["ssrc"])
 
         self.client.socket.sendto(
-            packet, (self.client.endpointIp, self.client.endpointPort)
+            packet, (self.client.endpointIP, self.client.endpointPORT)
         )
         _recieved = await self.loop.sock_recv(self.client.socket, 70)
 
@@ -196,9 +198,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         self.client.ip = _recieved[_start:_end].decode("ascii")
         self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
 
-        encryptModes = [
-            Mode for Mode in data["modes"] if Mode in getEncryptModes().keys()
-        ]
+        encryptModes = [Mode for Mode in data["modes"] if Mode in Encrypter.available]
         log.debug(f'recieved encrypt modes {data["modes"]}')
 
         encryptMode = encryptModes[0]
@@ -206,7 +206,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
         await self.select_protocol(self.client.ip, self.client.port, encryptMode)
 
-    async def loadKey(self, data):
+    async def loadKey(self, data: dict) -> None:
         log.info("recieved voice secret key.")
 
         await self.speak(True)
@@ -215,14 +215,11 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         self.client.encryptMode = data["mode"]
         self.client.secretKey = data.get("secret_key")
 
-    async def poll(self):
-        try:
-            Message = await asyncio.wait_for(self.recv(), timeout=30.0)
-            await self.receive(json.loads(Message))
-        except websockets.exceptions.ConnectionClosed as exc:
-            raise exc
+    async def poll(self) -> None:
+        Message = await asyncio.wait_for(self.recv(), timeout=30.0)
+        await self.receive(json.loads(Message))
 
-    async def close(self, *args, **kwargs):
+    async def close(self, *args, **kwargs) -> None:
         if self._keepAliver:
             self._keepAliver.stop()
 

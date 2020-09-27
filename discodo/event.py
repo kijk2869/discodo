@@ -1,66 +1,67 @@
-from logging import getLogger
+import logging
 
-from .utils import EventEmitter
+from .utils import EventDispatcher
 from .voice_client import VoiceClient
 
-log = getLogger("discodo.event")
+log = logging.getLogger("discodo.event")
 
 
 class DiscordEvent:
-    def __init__(self, client):
-        self.client = client
+    dispatcher = EventDispatcher()
 
-        self.EventEmitter = EventEmitter()
+    def __init__(self, manager) -> None:
+        self.manager = manager
 
-        self.EventEmitter.on("READY", self.parseReady)
-        self.EventEmitter.on("RESUME", self.parseResume)
-        self.EventEmitter.on("VOICE_STATE_UPDATE", self.parseVoiceStateUpdate)
-        self.EventEmitter.on("VOICE_SERVER_UPDATE", self.parseVoiceServerUpdate)
+        self.dispatcher.on("READY", self.READY)
+        self.dispatcher.on("RESUME", self.RESUME)
+        self.dispatcher.on("VOICE_STATE_UPDATE", self.VOICE_STATE_UPDATE)
+        self.dispatcher.on("VOICE_SERVER_UPDATE", self.VOICE_SERVER_UPDATE)
 
-    async def emit(self, event, *args, **kwargs):
-        return await self.EventEmitter.emit(event, *args, **kwargs)
+    def dispatch(self, event: str, *args, **kwargs) -> None:
+        return self.dispatcher.dispatch(event, *args, **kwargs)
 
-    def dispatch(self, event, *args, **kwargs):
-        return self.EventEmitter.dispatch(event, *args, **kwargs)
-
-    async def parseReady(self, data):
+    async def READY(self, data: dict) -> None:
         log.info(
             f'ready event dispatched. set session id {data["session_id"]} and user id {data["user"]["id"]}'
         )
-        self.client.session_id = data["session_id"]
-        self.client.user_id = int(data["user"]["id"])
+        self.manager.session_id = data["session_id"]
+        self.manager.id = int(data["user"]["id"])
 
-    async def parseResume(self, data):
+    async def RESUME(self, data: dict) -> None:
         log.info(
             f'resume event dispatched. set session id {data["session_id"]} and user id {data["user"]["id"]}'
         )
-        self.client.session_id = data["session_id"]
-        self.client.user_id = int(data["user"]["id"])
+        self.manager.session_id = data["session_id"]
+        self.manager.id = int(data["user"]["id"])
 
-    async def parseVoiceStateUpdate(self, data):
-        if not self.client.user_id or data["user_id"] != str(self.client.user_id):
+    async def VOICE_STATE_UPDATE(self, data: dict) -> None:
+        if not self.manager.id or data["user_id"] != str(self.manager.id):
             return
+
         log.info(f'recieve self voice update. set session id {data["session_id"]}')
-        self.client.session_id = data["session_id"]
+        self.manager.session_id = data["session_id"]
 
-        if data["channel_id"]:
-            self.client.connectedChannels[int(data["guild_id"])] = int(
-                data["channel_id"]
+        if self.manager.getVC(data["guild_id"], safe=True):
+            self.manager.getVC(data["guild_id"]).channel_id = (
+                int(data["channel_id"]) if data.get("channel_id") else None
             )
-        elif int(data["guild_id"]) in self.client.connectedChannels:
-            del self.client.connectedChannels[int(data["guild_id"])]
+        elif data.get("channel_id"):
+            log.info(f'Voice Client of {data["guild_id"]} not found. create new one.')
 
-    async def parseVoiceServerUpdate(self, data):
-        if int(data["guild_id"]) in self.client.voiceClients:
-            log.info(
-                f'Voice Client of {data["guild_id"]} found. reconnect to new endpoint'
+            vc = self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
+                self.manager
             )
+            vc.guild_id = int(data["guild_id"])
+            vc.channel_id = int(data["channel_id"])
 
-            vc = self.client.voiceClients[int(data["guild_id"])]
-            await vc.createSocket(data)
+    async def VOICE_SERVER_UPDATE(self, data: dict) -> None:
+        if self.manager.getVC(data["guild_id"], safe=True):
+            log.info(f"Voice server update recieved. connect to new endpoint")
+
+            await self.manager.getVC(data["guild_id"]).createSocket(data)
         else:
             log.info(f'Voice Client of {data["guild_id"]} not found. create new one.')
-            vc = VoiceClient(self.client, data)
-            self.client.voiceClients[int(data["guild_id"])] = vc
 
-        return vc
+            self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
+                self.manager, data
+            )

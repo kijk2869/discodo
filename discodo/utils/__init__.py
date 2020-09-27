@@ -1,3 +1,2 @@
-from .equalizer import *
-from .eventEmitter import *
-from .threadLock import *
+from . import threadLock
+from .eventDispatcher import EventDispatcher

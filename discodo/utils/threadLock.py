@@ -9,5 +9,5 @@ class withLock:
         self.Lock.acquire()
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, *_):
         self.Lock.release()

@@ -58,14 +58,14 @@ class MusicBot(commands.Cog):
         if not vc:
             return await ctx.send("Please type `!join` first.")
 
-        Song = await vc.loadSong(music)
+        Source = await vc.loadSource(music)
 
-        if isinstance(Song, list):
+        if isinstance(Source, list):
             return await ctx.send(
-                f"{len(Song) - 1} songs except {Song[0].title} added."
+                f"{len(Source) - 1} songs except {Source[0].title} added."
             )
         else:
-            return await ctx.send(f"{Song.title} added.")
+            return await ctx.send(f"{Source.title} added.")
 
     @commands.command(name="skip")
     async def _skip(self, ctx, offset: int = 1):
@@ -85,7 +85,7 @@ class MusicBot(commands.Cog):
         if not vc:
             return await ctx.send("Please type `!join` first.")
 
-        Volume = vc.setVolume(offset / 100)
+        vc.volume = Volume = offset / 100
 
         return await ctx.send(f"Set volume to {Volume * 100}%.")
 
@@ -96,7 +96,7 @@ class MusicBot(commands.Cog):
         if not vc:
             return await ctx.send("Please type `!join` first.")
 
-        Crossfade = vc.setCrossfade(offset)
+        vc.crossfade = Crossfade = offset
 
         return await ctx.send(f"Set crossfade seconds to {Crossfade} seconds.")
 
@@ -109,24 +109,11 @@ class MusicBot(commands.Cog):
 
         offset = {"on": True, "off": False}.get(offset, True)
 
-        autoplay = vc.setAutoplay(offset)
+        vc.autoplay = autoplay = offset
 
         return await ctx.send(
             f'Auto related play {"enabled" if autoplay else "disabled"}.'
         )
-
-    @commands.command(name="repeat")
-    async def _repeat(self, ctx, offset: str = "on"):
-        vc = self.Audio.getVC(ctx.guild.id)
-
-        if not vc:
-            return await ctx.send("Please type `!join` first.")
-
-        offset = {"on": True, "off": False}.get(offset, True)
-
-        repeat = vc.setRepeat(offset)
-
-        return await ctx.send(f'Repeat {"enabled" if repeat else "disabled"}.')
 
     @commands.command(name="np")
     async def _np(self, ctx):
@@ -136,7 +123,7 @@ class MusicBot(commands.Cog):
             return await ctx.send("Please type `!join` first.")
 
         return await ctx.send(
-            f"Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.self.AudioData.duration}`"
+            f"Now playing: {vc.current.title} `{vc.current.position}:{vc.current.duration}`"
         )
 
     @commands.command(name="shuffle")
@@ -163,37 +150,11 @@ class MusicBot(commands.Cog):
 
         return await ctx.send(
             f"""
-Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.current.self.AudioData.duration}`
+Now playing: {vc.current.title} `{vc.current.position}:{vc.player.current.duration}`
 
 {QueueText}
 """
         )
-
-    @commands.command(name="bassboost")
-    async def _bassboost(self, ctx, offset: int = 0):
-        vc = self.Audio.getVC(ctx.guild)
-
-        if not vc:
-            return await ctx.send("Please type `!join` first.")
-
-        filter = (
-            {"anequalizer": discodo.equalizer.bassboost(offset)} if offset != 0 else {}
-        )
-
-        vc.setFilter(filter)
-
-        return await ctx.send(f"Set bassboost level {offset}%.")
-
-    @commands.command(name="tempo")
-    async def _tempo(self, ctx, offset: float = 1.0):
-        vc = self.Audio.getVC(ctx.guild)
-
-        if not vc:
-            return await ctx.send("Please type `!join` first.")
-
-        vc.setFilter({"atempo": str(offset)})
-
-        return await ctx.send(f"Set tempo to {offset}.")
 
     @commands.command(name="seek")
     async def _seek(self, ctx, offset: int = 1):
@@ -202,7 +163,7 @@ Now playing: {vc.player.current.title} `{vc.player.current.duration}:{vc.player.
         if not vc:
             return await ctx.send("Please type `!join` first.")
 
-        vc.seek(offset)
+        await vc.seek(offset)
 
         return await ctx.send(f"Seek to {offset}.")
 
