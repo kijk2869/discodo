@@ -17,6 +17,7 @@ class ClientManager:
         self.voiceClients = {}
 
         self.dispatcher = EventDispatcher()
+        self.event = self.dispatcher.event
         self.discordEvent = DiscordEvent(self)
 
     def __del__(self) -> None:

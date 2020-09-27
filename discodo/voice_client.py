@@ -74,7 +74,7 @@ class VoiceClient(VoiceConnector):
         for _ in range(5):
             if self.autoplay and not self.Queue:
                 if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
-                    address = Config.RoutePlanner.get()
+                    address = Config.RoutePlanner.get() if Config.RoutePlanner else None
                     try:
                         Related = await self.relatedClient.async_get(
                             current.webpage_url, local_addr=address
