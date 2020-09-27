@@ -17,9 +17,9 @@ async def extract(
 ) -> dict:
     connector = aiohttp.TCPConnector(local_addr=(str(address), 0)) if address else None
 
-    if "melon" in Config.ENABLE_EXT_EXTRACTOR:
+    if "melon" in Config.ENABLED_EXT_EXTRACTOR:
         query = await melon_get_query(query, connector)
-    if "spotify" in Config.ENABLE_EXT_EXTRACTOR:
+    if "spotify" in Config.ENABLED_EXT_EXTRACTOR:
         query = await spotify_get_query(query)
 
     if isinstance(query, list):

@@ -340,7 +340,7 @@ class WebsocketEvents:
             "d": {
                 "guild_id": Data["guild_id"],
                 "identify": _identify_token,
-                "lang": Data["lang"],
+                "url": url,
             },
         }
         await self.sendJson(payload)

@@ -26,7 +26,7 @@ class _Config:
         "BUFFERLIMIT",
         "PRELOAD_TIME",
         "VCTIMEOUT",
-        "ENABLE_EXT_EXTRACTOR",
+        "ENABLED_EXT_EXTRACTOR",
         "SPOTIFY_ID",
         "SPOTIFY_SECRET",
         "RANDOM_STATE",
@@ -66,7 +66,7 @@ class _Config:
         self.VCTIMEOUT = 300.0
 
         # EXTRA EXTRACTOR
-        self.ENABLE_EXT_EXTRACTOR = ["melon", "spotify"]
+        self.ENABLED_EXT_EXTRACTOR = ["melon", "spotify"]
 
         self.SPOTIFY_ID = None
         self.SPOTIFY_SECRET = None

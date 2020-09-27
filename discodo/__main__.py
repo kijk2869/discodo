@@ -11,6 +11,7 @@ from hypercorn.config import Config as hypercornConfig
 from websockets import auth
 
 from .config import Config
+from . import __version__
 
 log = logging.getLogger("discodo")
 
@@ -69,6 +70,13 @@ def is_valid_file(parser, args):
     with open(args, "r") as fp:
         return json.load(fp)
 
+
+parser.add_argument(
+    "--version",
+    action="version",
+    version=f"%(prog)s {__version__}",
+    help="Config json file path (default: None)",
+)
 
 parser.add_argument(
     "--config",
