@@ -3,6 +3,7 @@ import random
 import re
 from typing import Union
 
+from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
 
 from .config import Config
@@ -70,11 +71,18 @@ class VoiceClient(VoiceConnector):
     async def __fetchAutoPlay(self, **kwargs):
         current = list(kwargs.values()).pop()
 
-        if self.autoplay and not self.Queue:
-            if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
-                Related = await self.relatedClient.async_get(current.webpage_url)
-
-                await self.loadSource(Related["id"], related=True)
+        for _ in range(5):
+            if self.autoplay and not self.Queue:
+                if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
+                    address = Config.RoutePlanner.get()
+                    try:
+                        Related = await self.relatedClient.async_get(
+                            current.webpage_url, local_addr=address
+                        )
+                    except RateLimited:
+                        Config.RoutePlanner.mark_failed_address(address)
+                    else:
+                        return await self.loadSource(Related["id"], related=True)
 
     def __spawnPlayer(self) -> None:
         if self.player and self.player.is_alive():
