@@ -10,8 +10,8 @@ from hypercorn.asyncio import serve as hypercornServe
 from hypercorn.config import Config as hypercornConfig
 from websockets import auth
 
-from .config import Config
 from . import __version__
+from .config import Config
 
 log = logging.getLogger("discodo")
 
@@ -182,6 +182,27 @@ playerGroup.add_argument(
     help="seconds to cleanup player when connection of discord terminated (default: 300)",
 )
 
+extExtractorParser = parser.add_argument_group("Extra Extractor Option")
+
+extExtractorParser.add_argument(
+    "--enabled-extractor",
+    action="append",
+    default=[],
+    help="Extra extractors to enable (Support melon and spotify)",
+)
+extExtractorParser.add_argument(
+    "--spotify-id",
+    type=str,
+    default=None,
+    help="Spotify API id (default: None)",
+)
+extExtractorParser.add_argument(
+    "--spotify-secret",
+    type=str,
+    default=None,
+    help="Spotify API secret (default: None)",
+)
+
 logParser = parser.add_argument_group("Logging Option")
 
 logParser.add_argument(
@@ -204,6 +225,9 @@ if not args.config:
     Config.DEFAULT_GAPLESS = args.default_gapless
     Config.BUFFERLIMIT = args.bufferlimit
     Config.VCTIMEOUT = args.timeout
+    Config.ENABLED_EXT_EXTRACTOR = args.enabled_extractor
+    Config.SPOTIFY_ID = args.spotify_id
+    Config.SPOTIFY_SECRET = args.spotify_secret
 else:
     verbose = args.config.pop("verbose", False)
 

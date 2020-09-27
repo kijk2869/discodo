@@ -1,6 +1,8 @@
 import asyncio
 import uuid
+
 from discodo.source import SubtitleSource
+
 from ..errors import NotConnected, NotPlaying
 from ..source import AudioData
 from ..status import getStatus
