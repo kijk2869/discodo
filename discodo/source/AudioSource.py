@@ -16,7 +16,8 @@ class AudioSource(PyAVSource):
         Value["_type"] = "AudioSource"
         Value["seekable"] = self.seekable
         Value["duration"] = self.duration
-        Value["position"] = self.position
+        if hasattr(self, "position"):
+            Value["position"] = self.position
 
         return Value
 
