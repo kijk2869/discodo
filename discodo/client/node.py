@@ -4,10 +4,10 @@ from typing import Coroutine
 
 import websockets
 
+from ..errors import NodeNotConnected, VoiceClientNotFound
+from ..utils import EventDispatcher
 from .gateway import NodeConnection
 from .voice_client import VoiceClient
-from ..utils import EventDispatcher
-from ..errors import NodeNotConnected, VoiceClientNotFound
 
 log = logging.getLogger("discodo.client")
 

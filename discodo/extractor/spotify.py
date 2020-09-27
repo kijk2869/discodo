@@ -1,6 +1,8 @@
 import re
 from typing import Union
+
 from asyncspotify import Client, ClientCredentialsFlow
+
 from ..config import Config
 
 URL_REGEX = re.compile(

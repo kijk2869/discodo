@@ -1,10 +1,10 @@
 import asyncio
 import concurrent.futures
 import json
+import logging
 import threading
 import time
 from collections import deque
-import logging
 from typing import Any
 
 import websockets
