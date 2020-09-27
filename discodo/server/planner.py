@@ -1,5 +1,7 @@
 import ipaddress
-from fastapi import APIRouter, Depends, HTTPException, Header
+
+from fastapi import APIRouter, Depends, Header, HTTPException
+
 from ..config import Config
 
 app = APIRouter()
