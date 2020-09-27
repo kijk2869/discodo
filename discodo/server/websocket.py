@@ -23,7 +23,7 @@ async def socket_feed(ws: WebSocket) -> None:
 
 class Encoder(json.JSONEncoder):
     def default(self, o):
-        return o.__dict__
+        return o.__dict__()
 
 
 class ModifyClientManager(ClientManager):
@@ -46,7 +46,7 @@ class WebsocketHandler:
         self.ClientManager = None
 
         self._running = asyncio.Event()
-        self.loop.create_task(self.handle())
+        self.loop.create_task(self._handle())
 
     def __del__(self) -> None:
         if self.ClientManager:
@@ -79,7 +79,7 @@ class WebsocketHandler:
         while True:
             try:
                 RAWDATA = await asyncio.wait_for(
-                    self.ws.receive_text(), timeout=Config.WSTIMEOUT
+                    self.ws.receive_text(), timeout=Config.HANDSHAKE_TIMEOUT
                 )
             except (asyncio.TimeoutError, WebSocketDisconnect) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
@@ -101,13 +101,19 @@ class WebsocketHandler:
                 log.debug(f"{Operation} dispatched with {Data}")
 
                 Func = getattr(WebsocketEvents, Operation)
-                self.loop.create_task(self.__run_event(Func, Data))
+                self.loop.create_task(self.__run_event(Func, Operation, Data))
 
-    async def __run_event(self, Func: Coroutine, *args, **kwargs) -> None:
+    async def __run_event(self, Func: Coroutine, Operation: str, Data) -> None:
         try:
-            await Func(self, *args, **kwargs)
+            await Func(self, Data)
         except Exception as e:
-            payload = {"op": Func.__name__, "d": {"traceback": {type(e): str(e)}}}
+            payload = {
+                "op": Operation,
+                "d": {"traceback": {type(e).__name__: str(e)}},
+            }
+
+            if "guild_id" in Data:
+                payload["d"]["guild_id"] = Data["guild_id"]
 
             await self.sendJson(payload)
 
@@ -128,10 +134,11 @@ class WebsocketHandler:
 
             log.debug(f"ClientManager of {user_id} intalized.")
 
-        self.ClientManager.event.onAny(self.manager_event)
+        self.ClientManager.dispatcher.onAny(self.manager_event)
 
-    async def manager_event(self, guild_id: int, Event: str, **kwargs) -> None:
-        kwargs = {key: value for key, value in kwargs}
+    async def manager_event(self, guild_id: int, **kwargs) -> None:
+        kwargs = {key: value for key, value in kwargs.items()}
+        Event = kwargs.pop("event")
 
         payload = {"op": Event, "d": {"guild_id": guild_id}}
         payload["d"] = dict(payload["d"], **kwargs)
@@ -139,7 +146,10 @@ class WebsocketHandler:
         await self.sendJson(payload)
 
     async def hello(self) -> None:
-        payload = {"op": "HELLO", "d": {"heartbeat_interval": Config.WSINTERVAL}}
+        payload = {
+            "op": "HELLO",
+            "d": {"heartbeat_interval": Config.HANDSHAKE_INTERVAL},
+        }
 
         await self.sendJson(payload)
 

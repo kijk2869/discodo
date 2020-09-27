@@ -11,3 +11,4 @@ from .source import *
 from .status import getStatus
 from .utils import *
 from .voice_client import VoiceClient
+from .client import *

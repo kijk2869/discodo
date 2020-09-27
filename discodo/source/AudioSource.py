@@ -11,7 +11,7 @@ class AudioSource(PyAVSource):
         self.AudioData = AudioData
 
     def __dict__(self) -> dict:
-        Value = dict(self.AudioData) if self.AudioData else None
+        Value = self.AudioData.__dict__() if self.AudioData else {}
 
         Value["_type"] = "AudioSource"
         Value["seekable"] = self.seekable

@@ -40,7 +40,7 @@ class Node:
 
     @property
     def URL(self) -> str:
-        return f"ws://{self.host}:{self.port}"
+        return f"ws://{self.host}:{self.port}/ws"
 
     async def connect(self) -> None:
         if self.connected.is_set():
@@ -54,14 +54,14 @@ class Node:
         self.connected.set()
 
         if not self._polling or self._polling.done():
-            self._polling = self.loop.create_task
+            self._polling = self.loop.create_task(self.pollingWS())
 
         if self.user_id:
             await self.ws.send("IDENTIFY", {"user_id": self.user_id})
 
     @property
     def is_connected(self) -> bool:
-        return self.connected.is_set() and self.ws and self.ws.is_conncted
+        return self.connected.is_set() and self.ws and self.ws.is_connected
 
     async def destroy(self) -> None:
         if self._polling and not self._polling.done():
@@ -103,8 +103,8 @@ class Node:
             for voice_client in self.voiceClients:
                 voice_client.__del__()
 
-            for guild_id, _ in Data["voice_clients"]:
-                self.voiceClients[guild_id] = VoiceClient(self, guild_id)
+            for guild_id, _ in Data["channels"].items():
+                self.voiceClients[int(guild_id)] = VoiceClient(self, guild_id)
 
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])

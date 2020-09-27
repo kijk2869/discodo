@@ -53,7 +53,7 @@ class WebsocketEvents:
         payload = {
             "op": "getSource",
             "d": {
-                "index": await AudioData.create(Data["query"]),
+                "source": await AudioData.create(Data["query"]),
             },
         }
 
@@ -81,15 +81,7 @@ class WebsocketEvents:
         if not VoiceClient:
             raise NotConnected
 
-        payload = {
-            "op": "loadSource",
-            "d": {
-                "guild_id": Data["guild_id"],
-                "source": await VoiceClient.loadSource(Data["query"]),
-            },
-        }
-
-        await self.sendJson(payload)
+        await VoiceClient.loadSource(Data["query"])
 
     @need_manager
     async def setVolume(self, Data: dict) -> None:
@@ -191,7 +183,7 @@ class WebsocketEvents:
 
         payload = {
             "op": "skip",
-            "d": {"guild_id": Data["guild_id"], "remain": len(Data.Queue)},
+            "d": {"guild_id": Data["guild_id"], "remain": len(VoiceClient.Queue)},
         }
 
         await self.sendJson(payload)

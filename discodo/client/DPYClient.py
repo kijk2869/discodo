@@ -52,7 +52,7 @@ class DPYClient:
 
     async def discord_socket_response(self, payload: dict) -> None:
         if payload["t"] == "VOICE_SERVER_UPDATE":
-            VC = self.getVC(payload["d"]["guild_id"])
+            VC = self.getVC(payload["d"]["guild_id"], safe=True)
             SelectNodes = [VC.Node] if VC else [self.getBestNode()]
         else:
             SelectNodes = self.Nodes
@@ -67,14 +67,15 @@ class DPYClient:
         return self.loop.create_task(self._register_event(*args, **kwargs))
 
     async def _register_event(self, *args, **kwargs) -> None:
+        await self.client.wait_until_ready()
         kwargs["user_id"] = self.client.user.id
+
         Node = NodeClient(self, *args, **kwargs)
-        log.info(f"registering Node {Node.URL}")
+        await Node.connect()
+
+        log.info(f"registering Node {Node.host}:{Node.port}")
 
         self.Nodes.append(Node)
-
-        await self.client.wait_until_ready()
-        await Node.connect()
 
         Node.dispatcher.on("RESUMED", self._resumed)
         Node.dispatcher.on("VC_DESTROYED", self._vc_destroyed)
@@ -83,8 +84,8 @@ class DPYClient:
         return self
 
     async def _resumed(self, Data: dict) -> None:
-        for guild_id, channel_id in Data["channels"]:
-            guild = self.client.get_guild(guild_id)
+        for guild_id, channel_id in Data["channels"].items():
+            guild = self.client.get_guild(int(guild_id))
             if channel_id:
                 channel = guild.get_channel(channel_id)
                 self.loop.create_task(self.connect(channel))
