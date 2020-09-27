@@ -50,13 +50,15 @@ class EventDispatcher:
                         result = condition(*args, **kwargs)
                     except Exception as exception:
                         Future.set_exception(exception)
-                        listeners.remove(Future)
+                        result = True
                     else:
                         if result:
                             Future.set_result(
                                 args if len(args) > 1 else (args[0] if args else None)
                             )
-                            listeners.remove(Future)
+
+                    if result:
+                        listeners.remove((Future, condition))
 
             if not listeners:
                 self._listeners.pop(event_)
