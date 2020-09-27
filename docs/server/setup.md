@@ -56,7 +56,7 @@ Webserver Option:
   --ws-timeout WS_TIMEOUT
                         seconds to close connection there is no respond from client (default: 60)
 
-Webserver Option:
+Network Option:
   --ip IP               Client-side IP addresses to use
   --exclude-ip EXCLUDE_IP
                         Client-side IP addresses not to use
