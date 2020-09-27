@@ -219,6 +219,8 @@ if not args.config:
     Config.PASSWORD = args.auth
     Config.HANDSHAKE_INTERVAL = args.ws_interval
     Config.HANDSHAKE_TIMEOUT = args.ws_timeout
+    Config.IPBLOCKS = args.ip
+    Config.EXCLUDEIPS = args.exclude_ip
     Config.DEFAULT_AUTOPLAY = args.default_autoplay
     Config.DEFAULT_VOLUME = round(args.default_volume / 100, 3)
     Config.DEFAULT_CROSSFADE = args.default_crossfade

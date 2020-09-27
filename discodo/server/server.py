@@ -1,7 +1,7 @@
 import asyncio
 
 import aiohttp
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request, Depends
 from fastapi.responses import HTMLResponse, StreamingResponse
 
 from .. import __version__
@@ -9,9 +9,11 @@ from ..config import Config
 from ..source import AudioData
 from ..status import getStatus
 from .websocket import app as WebsocketBlueprint
+from .planner import app as PlannerBlueprint
 
 app = FastAPI()
 app.include_router(WebsocketBlueprint)
+app.include_router(PlannerBlueprint)
 
 
 def authorized(Authorization: str = Header(None)) -> str:
@@ -89,7 +91,7 @@ async def status() -> dict:
     return getStatus()
 
 
-@app.get("/getSource")
+@app.get("/getSource", dependencies=[Depends(authorized)])
 async def getSource(Query: str = None) -> dict:
     if not Query:
         raise HTTPException(400, "Missing parameter query.")

@@ -12,7 +12,6 @@ class RoutePlanner:
     def __init__(self, ipBlocks: list, excludeIps: list = []) -> None:
         self.usedCount = {}
         self.failedAddress = {}
-        self.sortedIpBlocks = {}
 
         self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
         self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
