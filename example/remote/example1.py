@@ -25,12 +25,12 @@ async def on_ready():
     print("bot is now ready.")
 
 
-@Audio.event("SongStart")
+@Audio.event("SOURCE_START")
 async def sendPlaying(VC, Data):
     await VC.channel.send(f'playing {Data["source"]["title"]}')
 
 
-@Audio.event("SongEnd")
+@Audio.event("SOURCE_END")
 async def sendStopped(VC, Data):
     await VC.channel.send(f'{Data["source"]["title"]} Done')
 

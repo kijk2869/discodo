@@ -33,12 +33,12 @@ async def on_socket_response(payload):
     Audio.discordDispatch(payload)
 
 
-@Audio.event("SongStart")
+@Audio.event("SOURCE_START")
 async def sendPlaying(VC, song):
     await VC.channel.send(f'playing {song["title"]}')
 
 
-@Audio.event("SongEnd")
+@Audio.event("SOURCE_END")
 async def sendStopped(VC, song):
     await VC.channel.send(f'{song["title"]} Done')
 
