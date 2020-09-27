@@ -87,7 +87,7 @@ Get the information of the Route Planner
 }
 ```
 
-### GET /planner/unmark
+### POST /planner/unmark
 
 Unmark an address on planner's failed list.
 
@@ -109,7 +109,7 @@ Unmark an address on planner's failed list.
 {"status": 200}
 ```
 
-### GET /planner/unmark/all
+### POST /planner/unmark/all
 
 Unmark all address on planner's failed list.
 
