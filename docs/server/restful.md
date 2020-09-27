@@ -55,3 +55,72 @@ Get the information of the video searched on Youtube
     "description": "...",
 }
 ```
+
+### GET /planner
+
+Get the information of the Route Planner
+
+#### Headers
+
+|Key|Type|Description|
+|---|----|-----------|
+|Authorization|string|Password for discodo server|
+
+#### Response
+
+```json
+{
+    "ipBlocks": [
+        {
+            "version": 4,
+            "broadcast_address": "0.0.0.0",
+            "size": 1
+        }
+    ],
+    "failedAddresses": [
+        {
+            "address": "0.0.0.0",
+            "status": 429,
+            "failed_at": 0
+        }
+    ]
+}
+```
+
+### GET /planner/unmark
+
+Unmark an address on planner's failed list.
+
+#### Headers
+
+|Key|Type|Description|
+|---|----|-----------|
+|Authorization|string|Password for discodo server|
+
+#### Parameters
+
+|Key|Type|Description|
+|---|----|-----------|
+|address|string|address to unmark|
+
+#### Response
+
+```json
+{"status": 200}
+```
+
+### GET /planner/unmark/all
+
+Unmark all address on planner's failed list.
+
+#### Headers
+
+|Key|Type|Description|
+|---|----|-----------|
+|Authorization|string|Password for discodo server|
+
+#### Response
+
+```json
+{"status": 200}
+```
