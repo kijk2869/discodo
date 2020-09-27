@@ -10,5 +10,5 @@ fastapi==0.61.1
 websockets==8.1
 hypercorn==0.9.5
 bs4==0.0.1
-lxml==4.4.2
+lxml==4.5.2
 asyncspotify==0.12.1
