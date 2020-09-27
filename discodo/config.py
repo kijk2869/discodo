@@ -1,4 +1,5 @@
 import uuid
+from .planner import RoutePlanner
 
 
 class _Config:
@@ -6,6 +7,9 @@ class _Config:
         "PASSWORD",
         "HANDSHAKE_INTERVAL",
         "HANDSHAKE_TIMEOUT",
+        "IPBLOCKS",
+        "EXCLUDEIPS",
+        "_RoutePlanner",
         "DEFAULT_AUTOPLAY",
         "DEFAULT_VOLUME",
         "DEFAULT_CROSSFADE",
@@ -29,6 +33,10 @@ class _Config:
         self.PASSWORD = "hellodiscodo"
         self.HANDSHAKE_INTERVAL = 15
         self.HANDSHAKE_TIMEOUT = 60.0
+
+        # NETWORK
+        self.IPBLOCKS = []
+        self.EXCLUDEIPS = []
 
         # PLAYER
         self.DEFAULT_AUTOPLAY = True
@@ -69,6 +77,13 @@ class _Config:
     @property
     def DELAY(self) -> float:
         return self.FRAME_LENGTH / 1000.0
+
+    @property
+    def RoutePlanner(self) -> RoutePlanner:
+        if not hasattr(self, "_RoutePlanner"):
+            self._RoutePlanner = RoutePlanner(self.IPBLOCKS, self.EXCLUDEIPS)
+
+        return self._RoutePlanner
 
     def from_dict(self, data: dict) -> None:
         for Key, Value in data.items():

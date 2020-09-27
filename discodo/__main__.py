@@ -113,6 +113,22 @@ webGroup.add_argument(
     help="seconds to close connection there is no respond from client (default: 60)",
 )
 
+networkGroup = parser.add_argument_group("Webserver Option")
+networkGroup.add_argument(
+    "--ip",
+    type=str,
+    action="append",
+    default=[],
+    help="Client-side IP addresses to use",
+)
+networkGroup.add_argument(
+    "--exclude-ip",
+    type=str,
+    action="append",
+    default=[],
+    help="Client-side IP addresses not to use",
+)
+
 playerGroup = parser.add_argument_group("Player Option")
 
 playerGroup.add_argument(
