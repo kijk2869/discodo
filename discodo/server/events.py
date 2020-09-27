@@ -260,7 +260,7 @@ class WebsocketEvents:
             raise NotConnected
 
         payload = {
-            "op": "State",
+            "op": "getState",
             "d": {
                 "id": VoiceClient.id,
                 "guild_id": VoiceClient.guild_id,
@@ -289,7 +289,7 @@ class WebsocketEvents:
             raise NotConnected
 
         payload = {
-            "op": "Queue",
+            "op": "getQueue",
             "d": {
                 "guild_id": Data["guild_id"],
                 "entries": VoiceClient.Queue,

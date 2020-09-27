@@ -33,7 +33,7 @@ class VoiceClient(VoiceConnector):
         self.player = None
 
         self._filter = {}
-        self.paused = self._repeat = False
+        self.paused = False
 
         self._autoplay = Config.DEFAULT_AUTOPLAY
         self._crossfade = Config.DEFAULT_CROSSFADE
@@ -87,12 +87,26 @@ class VoiceClient(VoiceConnector):
         self.player.start()
 
     async def createSocket(self, data: dict = None) -> None:
+        """
+        Create UDP socket with discord to send voice packet.
+
+        :param dict data: A VOICE_SERVER_UPDATE payload, defaults to None
+        :rtype: None
+        """
+
         await super().createSocket(data)
 
         self.__spawnPlayer()
 
     @property
     def state(self) -> str:
+        """
+        The current state of playback of the voice client
+
+        :getter: Returns VoiceClient state
+        :rtype: str
+        """
+
         if not self.Queue and not self.player.current:
             return "stopped"
         elif self.paused:
@@ -102,6 +116,14 @@ class VoiceClient(VoiceConnector):
 
     @property
     def volume(self) -> float:
+        """
+        Current volume of the voice client (0.0~2.0)
+
+        :getter: Returns VoiceClient volume
+        :setter: Set VoiceClient volume
+        :rtype: float
+        """
+
         return self._volume
 
     @volume.setter
@@ -110,6 +132,14 @@ class VoiceClient(VoiceConnector):
 
     @property
     def crossfade(self) -> float:
+        """
+        Current crossfade value of the voice client
+
+        :getter: Returns VoiceClient crossfade
+        :setter: Set VoiceClient crossfade
+        :rtype: float
+        """
+
         return self._crossfade
 
     @crossfade.setter
@@ -121,6 +151,14 @@ class VoiceClient(VoiceConnector):
 
     @property
     def gapless(self) -> bool:
+        """
+        Current gapless value of the voice client
+
+        :getter: Returns VoiceClient gapless
+        :setter: Set VoiceClient gapless
+        :rtype: bool
+        """
+
         return self._gapless
 
     @gapless.setter
@@ -132,6 +170,14 @@ class VoiceClient(VoiceConnector):
 
     @property
     def autoplay(self) -> bool:
+        """
+        Current autoplay value of the voice client
+
+        :getter: Returns VoiceClient autoplay
+        :setter: Set VoiceClient autoplay
+        :rtype: bool
+        """
+
         return self._autoplay
 
     @autoplay.setter
@@ -143,6 +189,14 @@ class VoiceClient(VoiceConnector):
 
     @property
     def filter(self) -> dict:
+        """
+        Current filter value of the voice client
+
+        :getter: Returns VoiceClient filter
+        :setter: Set VoiceClient filter
+        :rtype: dict
+        """
+
         return self._filter
 
     @filter.setter
@@ -153,25 +207,35 @@ class VoiceClient(VoiceConnector):
         self._filter = value
 
     @property
-    def repeat(self) -> bool:
-        return self._repeat
-
-    @repeat.setter
-    def repeat(self, value: bool) -> None:
-        if not isinstance(value, bool):
-            return TypeError("`repeat` property must be `bool`.")
-
-        self._repeat = value
-
-    @property
     def current(self) -> Union[AudioSource, AudioData]:
+        """
+        Current source of the voice client
+
+        :getter: Returns current source
+        :rtype: :class:`AudioSource` or :class:`AudioData`
+        """
+
         return self.player.current
 
     @property
     def next(self) -> Union[AudioSource, AudioData]:
+        """
+        Next source of the voice client
+
+        :getter: Returns next source
+        :rtype: :class:`AudioSource` or :class:`AudioData`
+        """
+
         return self.player.next
 
     def putSource(self, Source: Union[list, AudioData, AudioSource]) -> int:
+        """
+        Put source to Queue.
+
+        :param Source: list or :class:`AudioSource` or :class:`AudioData` to put on Queue
+        :rtype: int
+        """
+
         if not isinstance(Source, (list, AudioData, AudioSource)):
             raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
 
@@ -188,9 +252,23 @@ class VoiceClient(VoiceConnector):
         )
 
     async def getSource(self, Query: str) -> AudioData:
+        """
+        Get source from Query
+
+        :param str Query: Query to search
+        :rtype: :class:`AudioData`
+        """
+
         return await AudioData.create(Query)
 
     async def loadSource(self, Query: str, **kwargs) -> AudioData:
+        """
+        Get source from Query and put it on Queue.
+
+        :param str Query: Query to search
+        :rtype: :class:`AudioData`
+        """
+
         Data = await self.getSource(Query)
 
         self.dispatcher.dispatch(
@@ -202,9 +280,23 @@ class VoiceClient(VoiceConnector):
         return Data
 
     async def seek(self, offset: int) -> None:
+        """
+        Seek current playing source.
+
+        :param float offset: offset to seek
+        :rtype: None
+        """
+
         return await self.player.seek(offset)
 
     def skip(self, offset: int = 1) -> None:
+        """
+        skip current playing source.
+
+        :param float offset: offset to skip
+        :rtype: None
+        """
+
         if not self.player.current:
             raise NotPlaying
 
@@ -217,14 +309,32 @@ class VoiceClient(VoiceConnector):
         self.player.current.stop()
 
     def pause(self) -> bool:
+        """
+        Pause playing
+
+        :rtype: True
+        """
+
         self.paused = True
         return True
 
     def resume(self) -> bool:
+        """
+        Resume playing
+
+        :rtype: True
+        """
+
         self.paused = False
         return False
 
     def shuffle(self) -> dict:
+        """
+        Shuffle Queue.
+
+        :rtype: dict
+        """
+
         if not self.Queue:
             raise ValueError("`Queue` is empty now.")
 

@@ -71,10 +71,10 @@ class VoiceClient:
         return await self.query("resume")
 
     async def getQueue(self) -> list:
-        return (await self.query("getQueue", Event="Queue"))["entries"]
+        return (await self.query("getQueue"))["entries"]
 
     async def getState(self) -> dict:
-        return await self.query("getState", Event="State")
+        return await self.query("getState")
 
     async def shuffle(self) -> dict:
         return await self.query("shuffle")

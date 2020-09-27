@@ -21,7 +21,7 @@ class VoiceConnector:
 
         self.ws = self.socket = None
 
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())
         self.manager = manager
 
         self.data = data
@@ -56,14 +56,36 @@ class VoiceConnector:
 
     @property
     def user_id(self) -> int:
+        """
+        User id which is connected.
+
+        :getter: Returns User id
+        :rtype: int
+        """
+
         return self.manager.id
 
     @property
     def session_id(self) -> str:
+        """
+        Session id which is connected.
+
+        :getter: Returns Session id
+        :rtype: str
+        """
+
         return self.manager.session_id
 
     @property
     def sequence(self) -> int:
+        """
+        Sequence value which is used to send voice packet.
+
+        :getter: Returns sequence
+        :setter: Sets sequence value (max 65535)
+        :rtype: int
+        """
+
         return self._sequence
 
     @sequence.setter
@@ -75,6 +97,14 @@ class VoiceConnector:
 
     @property
     def timestamp(self) -> int:
+        """
+        Timestamp value which is used to send voice packet.
+
+        :getter: Returns timestamp
+        :setter: Sets timestamp value (max 4294967295)
+        :rtype: int
+        """
+
         return self._timestamp
 
     @timestamp.setter
@@ -85,6 +115,13 @@ class VoiceConnector:
             self._timestamp = value
 
     async def createSocket(self, data: dict = None) -> None:
+        """
+        Create UDP socket with discord to send voice packet.
+
+        :param dict data: A VOICE_SERVER_UPDATE payload, defaults to None
+        :rtype: None
+        """
+
         self._connected.clear()
         self._connectedThread.clear()
 
@@ -148,6 +185,13 @@ class VoiceConnector:
                     return self.__del__()
 
     def makePacket(self, data: bytes) -> bytes:
+        """
+        Converts and encrypts data to format.
+
+        :param bytes data: A packet to be converted
+        :rtype: bytes
+        """
+
         header = bytearray(12)
         header[0], header[1] = 0x80, 0x78
 
@@ -158,6 +202,14 @@ class VoiceConnector:
         return getattr(Encrypter, self.encryptMode)(self.secretKey, header, data)
 
     def send(self, data: bytes, encode: bool = True) -> None:
+        """
+        Send packet to discord.
+
+        :param bytes data: A packet to be sent
+        :param bool encode: Whether data is encoded
+        :rtype: None
+        """
+
         self.sequence += 1
         if encode:
             data = self.encoder.encode(data)
