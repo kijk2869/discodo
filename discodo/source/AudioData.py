@@ -28,6 +28,19 @@ class AudioData:
         self.uploader = data.get("uploader")
         self.description = data.get("description")
 
+        self.subtitles = (
+            {
+                lang: [
+                    SubtitleData["url"]
+                    for SubtitleData in subtitle
+                    if SubtitleData["ext"] == "srv1"
+                ][0]
+                for lang, subtitle in data["subtitles"].items()
+            }
+            if "subtitles" in data
+            else {}
+        )
+
         self._source = None
 
     def __dict__(self) -> dict:

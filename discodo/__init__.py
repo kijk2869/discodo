@@ -1,4 +1,4 @@
-__version__ = "1.0.0b"
+__version__ = "1.1.0b"
 
 from .client import *
 from .config import Config

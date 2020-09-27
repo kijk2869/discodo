@@ -1,4 +1,7 @@
-from ..errors import NotConnected
+import asyncio
+import uuid
+from discodo.source import SubtitleSource
+from ..errors import NotConnected, NotPlaying
 from ..source import AudioData
 from ..status import getStatus
 
@@ -296,4 +299,89 @@ class WebsocketEvents:
             },
         }
 
+        return await self.sendJson(payload)
+
+    @need_manager
+    async def VC_DESTROY(self, Data: dict) -> None:
+        self.ClientManager.delVC(Data["guild_id"])
+
+    @need_manager
+    async def requestSubtitle(self, Data: dict) -> None:
+        vc = self.AudioManager.getVC(Data["guild_id"])
+
+        if not vc.current:
+            raise NotPlaying
+
+        if "url" in Data:
+            url = Data["url"]
+        else:
+            if not Data["lang"] in vc.current.subtitles:
+                payload = {
+                    "op": "requestSubtitle",
+                    "d": {
+                        "guild_id": Data["guild_id"],
+                        "NoSubtitle": f"There is no subtitle in {Data['lang']}",
+                    },
+                }
+                return await self.sendJson(payload)
+
+            url = vc.current.subtitles[Data["lang"]]
+
+        current = vc.current
+        _identify_token = str(uuid.uuid4())
+
+        if url.endswith(".smi"):
+            Subtitle = await SubtitleSource.smi.load(url)
+        else:
+            Subtitle = await SubtitleSource.srv1.load(url)
+
+        payload = {
+            "op": "requestSubtitle",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "identify": _identify_token,
+                "lang": Data["lang"],
+            },
+        }
+        await self.sendJson(payload)
+
+        Previous = Now = Next = ""
+        Elements = list(Subtitle.TextElements.values())
+        while not Subtitle.is_done and not current.stopped:
+            Element = Subtitle.seek(current.position)
+
+            if Element and Element["markdown"] and Element["markdown"] != Now:
+                Previous = Now
+                Now = Element["markdown"]
+
+                NextElements = [
+                    NextElement["markdown"]
+                    for NextElement in Elements[Elements.index(Element) + 1 :]
+                    if NextElement["markdown"] != Now
+                ]
+
+                Next = NextElements[0] if NextElements else None
+
+                payload = {
+                    "op": "Subtitle",
+                    "d": {
+                        "guild_id": Data["guild_id"],
+                        "identify": _identify_token,
+                        "previous": Previous,
+                        "current": Now,
+                        "next": Next,
+                    },
+                }
+                await self.sendJson(payload)
+
+            await asyncio.sleep(0.1)
+
+        payload = {
+            "op": "subtitleDone",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "identify": _identify_token,
+                "language": Data["language"],
+            },
+        }
         return await self.sendJson(payload)
