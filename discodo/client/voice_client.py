@@ -1,3 +1,4 @@
+import asyncio
 from ..utils import EventDispatcher
 
 
@@ -81,6 +82,53 @@ class VoiceClient:
 
     async def remove(self, index: int) -> dict:
         return await self.query("remove", {"index": index})
+
+    async def requestSubtitle(self, lang: str = None, url: str = None) -> dict:
+        if not any([lang, url]):
+            raise ValueError("Either `lang` or `url` is needed.")
+
+        Data = {}
+        if url:
+            Data["url"] = url
+        elif lang:
+            Data["lang"] = lang
+
+        return await self.query("requestSubtitle", Data)
+
+    async def getSubtitle(self, *args, callback: callable, **kwargs):
+        if not asyncio.iscoroutinefunction(callback):
+            raise ValueError("Callback function must be coroutine function.")
+
+        Data = await self.requestSubtitle(*args, **kwargs)
+
+        identify_token = Data.get("identify")
+        if not identify_token:
+            raise ValueError(f"Subtitle not found.")
+
+        _lyricsLock = asyncio.Lock()
+
+        async def lyricsRecieve(lyrics):
+            if lyrics["identify"] != identify_token or _lyricsLock.locked():
+                return
+
+            await _lyricsLock.acquire()
+
+            try:
+                await callback(lyrics)
+            finally:
+                _lyricsLock.release()
+
+        async def lyricsDone(Data):
+            if Data["identify"] != identify_token:
+                return
+
+            self.emitter.off("Subtitle", lyricsRecieve)
+            self.emitter.off("subtitleDone", lyricsDone)
+
+        self.emitter.on("Subtitle", lyricsRecieve)
+        self.emitter.on("subtitleDone", lyricsDone)
+
+        return Data
 
     async def destroy(self) -> dict:
         return await self.query("VC_DESTROY", Event="VC_DESTROYED")
