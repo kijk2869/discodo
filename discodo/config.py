@@ -5,6 +5,8 @@ from .planner import RoutePlanner
 
 class _Config:
     __slots__ = [
+        "HOST",
+        "PORT",
         "PASSWORD",
         "HANDSHAKE_INTERVAL",
         "HANDSHAKE_TIMEOUT",
