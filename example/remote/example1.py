@@ -201,5 +201,29 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
 
         return await message.channel.send(f"seek to {offset}.")
 
+    if message.content.startswith("!subtitle"):
+        vc = Audio.getVC(message.guild)
+
+        if not vc:
+            return await message.channel.send("Please type `!join` first.")
+
+        language = message.content[9:].strip() if message.content[9:].strip() else None
+        if not language:
+            return await message.channel.send("Please type language.")
+
+        class SubtitleCallback:
+            def __init__(self):
+                self._msg = None
+
+            async def callback(self, subtitle):
+                if not self._msg or message.channel.last_message.id != self._msg.id:
+                    if self._msg:
+                        await self._msg.delete()
+                    self._msg = await message.channel.send(subtitle["current"])
+                else:
+                    await self._msg.edit(content=subtitle["current"])
+
+        Data = await vc.getSubtitle(language, callback=SubtitleCallback().callback)
+
 
 app.run("SUPERRRSECRETTOKENNNNNN")
