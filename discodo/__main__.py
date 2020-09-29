@@ -8,7 +8,6 @@ import sys
 import colorlog
 from hypercorn.asyncio import serve as hypercornServe
 from hypercorn.config import Config as hypercornConfig
-from websockets import auth
 
 from . import __version__
 from .config import Config

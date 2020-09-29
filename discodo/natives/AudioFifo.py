@@ -3,6 +3,9 @@ import threading
 import av
 
 from ..config import Config
+import logging
+
+log = logging.getLogger("discodo.natives.AudioFifo")
 
 
 class AudioFifo(av.AudioFifo):
@@ -30,7 +33,10 @@ class AudioFifo(av.AudioFifo):
         return AudioFrame.planes[0].to_bytes()
 
     def write(self, *args, **kwargs) -> None:
-        super().write(*args, **kwargs)
+        try:
+            super().write(*args, **kwargs)
+        except:
+            log.warning("while writing on fifo, an error occured, ignored.")
 
         self.check_buffer()
 
