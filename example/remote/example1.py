@@ -12,12 +12,17 @@ import logging
 import discord
 
 import discodo
+import re
 
 logging.basicConfig(level=logging.INFO)
 
 app = discord.Client()
 Audio = discodo.DPYClient(app)
 Audio.register_node("yourwonderfulnode", 8000, password="hellodiscodo")
+
+URL_REGEX = re.compile(
+    r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+)
 
 
 @app.event
@@ -211,6 +216,11 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
         if not language:
             return await message.channel.send("Please type language.")
 
+        if URL_REGEX.match(language):
+            url, language = language, None
+        else:
+            url = None
+
         class SubtitleCallback:
             def __init__(self):
                 self._msg = None
@@ -223,7 +233,9 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
                 else:
                     await self._msg.edit(content=subtitle["current"])
 
-        Data = await vc.getSubtitle(language, callback=SubtitleCallback().callback)
+        Data = await vc.getSubtitle(
+            lang=language, url=url, callback=SubtitleCallback().callback
+        )
 
 
 app.run("SUPERRRSECRETTOKENNNNNN")
