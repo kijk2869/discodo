@@ -309,7 +309,7 @@ class WebsocketEvents:
 
     @need_manager
     async def requestSubtitle(self, Data: dict) -> None:
-        vc = self.AudioManager.getVC(Data["guild_id"])
+        vc = self.ClientManager.getVC(Data["guild_id"])
 
         if not vc.current:
             raise NotPlaying

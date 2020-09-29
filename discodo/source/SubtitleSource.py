@@ -1,4 +1,4 @@
-import asyncio
+import aiohttp
 import re
 from xml.etree import ElementTree
 
@@ -53,7 +53,7 @@ class smi(SubtitleFormat):
 
     @classmethod
     async def load(cls, URL: str):
-        async with asyncio.ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             async with session.get(URL) as session:
                 Data = await session.text()
 
@@ -88,7 +88,7 @@ class srv1(SubtitleFormat):
 
     @classmethod
     async def load(cls, URL: str):
-        async with asyncio.ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             async with session.get(URL) as session:
                 Data = await session.text()
 

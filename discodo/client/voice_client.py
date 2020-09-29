@@ -123,11 +123,11 @@ class VoiceClient:
             if Data["identify"] != identify_token:
                 return
 
-            self.emitter.off("Subtitle", lyricsRecieve)
-            self.emitter.off("subtitleDone", lyricsDone)
+            self.dispatcher.off("Subtitle", lyricsRecieve)
+            self.dispatcher.off("subtitleDone", lyricsDone)
 
-        self.emitter.on("Subtitle", lyricsRecieve)
-        self.emitter.on("subtitleDone", lyricsDone)
+        self.dispatcher.on("Subtitle", lyricsRecieve)
+        self.dispatcher.on("subtitleDone", lyricsDone)
 
         return Data
 
