@@ -1,9 +1,9 @@
+import logging
 import threading
 
 import av
 
 from ..config import Config
-import logging
 
 log = logging.getLogger("discodo.natives.AudioFifo")
 

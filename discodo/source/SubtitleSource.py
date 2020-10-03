@@ -1,7 +1,7 @@
-import aiohttp
 import re
 from xml.etree import ElementTree
 
+import aiohttp
 from markdownify import markdownify
 
 from .abc import SubtitleFormat

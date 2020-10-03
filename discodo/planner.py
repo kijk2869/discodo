@@ -2,6 +2,7 @@
 Thx for Sannoob
 """
 
+import collections
 import ipaddress
 import random
 import time
@@ -10,8 +11,8 @@ from typing import Union
 
 class RoutePlanner:
     def __init__(self, ipBlocks: list, excludeIps: list = []) -> None:
-        self.usedCount = {}
         self.failedAddress = {}
+        self.usedCount = collections.defaultdict(int)
 
         self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
         self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
