@@ -11,8 +11,15 @@ from hypercorn.config import Config as hypercornConfig
 
 from . import __version__
 from .config import Config
+from .natives import opus
 
 log = logging.getLogger("discodo")
+
+
+if not opus.isLoaded() and not opus.loadDefaultOpus():
+    raise ValueError(
+        "Cannot load libopus, please install `libopus-dev` if you are using linux."
+    )
 
 
 class loggingFilter(logging.Filter):
