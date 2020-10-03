@@ -160,8 +160,8 @@ class Player(threading.Thread):
 
     def getSource(self, *args, **kwargs) -> None:
         if not self._getSourceTask or self._getSourceTask.done():
-            self._getSourceTask = self.client.loop.create_task(
-                self._getSource(*args, **kwargs)
+            self._getSourceTask = asyncio.run_coroutine_threadsafe(
+                self._getSource(*args, **kwargs), self.client.loop
             )
 
     async def _getSource(self, Data: AudioData, callback: Callable) -> None:

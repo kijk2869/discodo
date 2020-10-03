@@ -69,7 +69,7 @@ class EventDispatcher:
         for func in self._Events[event_]:
             try:
                 if asyncio.iscoroutinefunction(func):
-                    self.loop.create_task(func(*args, **kwargs))
+                    asyncio.run_coroutine_threadsafe(func(*args, **kwargs), self.loop)
                 else:
                     self.loop.call_soon_threadsafe(
                         functools.partial(func, *args, **kwargs)
