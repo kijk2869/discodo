@@ -133,7 +133,7 @@ networkGroup.add_argument(
     type=str,
     action="append",
     default=[],
-    help="Client-side IP addresses to use",
+    help="Client-side IP blocks to use",
 )
 networkGroup.add_argument(
     "--exclude-ip",
