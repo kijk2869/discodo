@@ -244,8 +244,8 @@ class WebsocketEvents:
         if not VoiceClient:
             raise NotConnected
 
-        removed = VoiceClient.Queue[Data["index"]]
-        del VoiceClient.Queue[Data["index"]]
+        removed = VoiceClient.Queue[Data["index"] - 1]
+        del VoiceClient.Queue[Data["index"] - 1]
 
         payload = {
             "op": "shuffle",
