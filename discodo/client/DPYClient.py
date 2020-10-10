@@ -5,7 +5,7 @@ from typing import Union
 
 import discord
 
-from ..errors import VoiceClientNotFound
+from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher
 from .node import Node as OriginNode
 from .voice_client import VoiceClient
@@ -113,7 +113,7 @@ class DPYClient:
             key=lambda Node: len(Node.voiceClients),
         )
 
-        return SortedWithPerformance[0]
+        return SortedWithPerformance[0] if SortedWithPerformance else None
 
     @property
     def voiceClients(self):
@@ -151,6 +151,9 @@ class DPYClient:
         log.info(f"connecting to {channel.id} of {channel.guild.id}")
         if not hasattr(channel, "guild"):
             raise ValueError
+
+        if not self.getBestNode():
+            raise NodeNotConnected
 
         ws = self.__get_websocket(channel.guild.shard_id)
 
