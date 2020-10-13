@@ -1,3 +1,4 @@
+import yarl
 import aiohttp
 import youtube_dl
 
@@ -103,7 +104,8 @@ class AudioData:
 
         if not self._source:
             async with aiohttp.ClientSession() as session:
-                async with session.get(self.stream_url) as resp:
+                URL = yarl.URL(self.stream_url, encoded=True)
+                async with session.get(URL) as resp:
                     Status = resp.status
 
             if Status == 403:
