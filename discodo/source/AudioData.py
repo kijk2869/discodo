@@ -1,5 +1,5 @@
-import yarl
 import aiohttp
+import yarl
 import youtube_dl
 
 from ..config import Config

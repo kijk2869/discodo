@@ -1,4 +1,5 @@
 from typing import Coroutine
+
 from sanic import Sanic, response
 from sanic.exceptions import abort
 
@@ -10,8 +11,9 @@ from .planner import app as PlannerBlueprint
 from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
-# app.include_router(WebsocketBlueprint)
-# app.include_router(PlannerBlueprint)
+
+app.register_blueprint(WebsocketBlueprint)
+app.register_blueprint(PlannerBlueprint)
 
 
 def authorized(func: Coroutine) -> Coroutine:

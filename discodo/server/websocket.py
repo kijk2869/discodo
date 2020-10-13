@@ -12,7 +12,7 @@ from .events import WebsocketEvents
 
 log = logging.getLogger("discodo.server")
 
-app = Blueprint()
+app = Blueprint(__name__)
 
 
 @app.websocket("/ws")
@@ -72,7 +72,9 @@ class WebsocketHandler:
         log.info(f"new websocket connection created from {self.request.ip}.")
 
         if self.request.headers.get("Authorization") != Config.PASSWORD:
-            log.warning(f"websocket connection forbidden: password mismatch.")
+            log.warning(
+                f"websocket connection from {self.request.ip} forbidden: password mismatch."
+            )
             return await self.forbidden("Password mismatch.")
 
         await self.hello()
@@ -119,7 +121,7 @@ class WebsocketHandler:
             await self.sendJson(payload)
 
     async def sendJson(self, Data: dict) -> None:
-        log.debug(f"send {Data} to websocket connection.")
+        log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
         await self.ws.send(json.dumps(Data, cls=Encoder))
 
     async def initialize_manager(self, user_id: int) -> None:
