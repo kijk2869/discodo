@@ -5,15 +5,16 @@ from sanic.exceptions import abort
 
 from .. import __version__
 from ..config import Config
-from ..source import AudioData
 from ..status import getStatus
 from .planner import app as PlannerBlueprint
+from .restful import app as RestfulBlueprint
 from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
 
 app.register_blueprint(WebsocketBlueprint)
 app.register_blueprint(PlannerBlueprint)
+app.register_blueprint(RestfulBlueprint)
 
 
 def authorized(func: Coroutine) -> Coroutine:
@@ -34,13 +35,3 @@ async def index(request) -> response:
 @app.get("/status")
 async def status(request) -> response:
     return response.json(getStatus())
-
-
-@app.get("/getSource")
-@authorized
-async def getSource(request) -> response:
-    Query = "".join(request.args.get("query", [])).strip()
-    if not Query:
-        abort(400, "Missing parameter query.")
-
-    return response.json(await AudioData.create(Query))
