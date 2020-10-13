@@ -8,7 +8,7 @@
 
 |Key|Type|Description|
 |---|----|-----------|
-|Authorization|string|Password for discoo server|
+|Authorization|string|Password for discodo server|
 
 If you missed headers or mismatched, the client recieves FORBIDDEN payload.
 
