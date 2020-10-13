@@ -8,7 +8,7 @@ from sanic.websocket import ConnectionClosed
 
 from ..config import Config
 from ..manager import ClientManager
-from .events import WebsocketPayloads
+from .payloads import WebsocketPayloads
 
 log = logging.getLogger("discodo.server")
 
