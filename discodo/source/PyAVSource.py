@@ -27,7 +27,7 @@ class PyAVSource:
 
         self.Source = Source
         self.AVOption = AVOption
-        self.Container = None  # av.StreamContainer
+        self.Container: av.StreamContainer = None
         self.selectAudioStream = self.FrameGenerator = None
 
         self._end = threading.Event()
