@@ -246,7 +246,7 @@ else:
 
 if __name__ == "__main__":
     try:
-        import uvloop
+        import uvloop  # type: ignore
     except ModuleNotFoundError:
         pass
     else:
