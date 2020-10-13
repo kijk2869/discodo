@@ -99,7 +99,7 @@ async def setVolume(request, VoiceClient) -> response.empty:
 @need_voiceclient
 async def setCrossfade(request, VoiceClient) -> response.empty:
     if "crossfade" not in request.json or not isinstance(
-        request.json["crossfade"], bool
+        request.json["crossfade"], float
     ):
         abort(400, "Bad data `crossfade`")
 
