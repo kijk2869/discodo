@@ -66,7 +66,7 @@ class _Config:
         self.VCTIMEOUT = 300.0
 
         # EXTRA EXTRACTOR
-        self.ENABLED_EXT_EXTRACTOR = ["melon", "spotify"]
+        self.ENABLED_EXT_EXTRACTOR = []  # melon, spotify
 
         self.SPOTIFY_ID = None
         self.SPOTIFY_SECRET = None
