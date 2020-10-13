@@ -22,7 +22,7 @@ def need_manager(func):
     return wrapper
 
 
-class WebsocketEvents:
+class WebsocketPayloads:
     async def GET_STATUS(self, Data: None) -> None:
         payload = {"op": "STATUS", "d": getStatus()}
 

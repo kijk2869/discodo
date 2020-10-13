@@ -8,7 +8,7 @@ from sanic.websocket import ConnectionClosed
 
 from ..config import Config
 from ..manager import ClientManager
-from .events import WebsocketEvents
+from .events import WebsocketPayloads
 
 log = logging.getLogger("discodo.server")
 
@@ -100,10 +100,10 @@ class WebsocketHandler:
             except:
                 continue
 
-            if Operation and hasattr(WebsocketEvents, Operation):
+            if Operation and hasattr(WebsocketPayloads, Operation):
                 log.debug(f"{Operation} dispatched with {Data}")
 
-                Func = getattr(WebsocketEvents, Operation)
+                Func = getattr(WebsocketPayloads, Operation)
                 self.loop.create_task(self.__run_event(Func, Operation, Data))
 
     async def __run_event(self, Func: Coroutine, Operation: str, Data) -> None:
