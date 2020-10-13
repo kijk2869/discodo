@@ -30,21 +30,6 @@ class PyAVSource:
         self.loop = asyncio.get_event_loop()
 
         self.Source = Source
-        self.address = address
-        if address:
-            self.Source = (
-                f"http://"
-                + (Config.HOST if Config.Host != "0.0.0.0" else "localhost")
-                + ":"
-                + Config.PORT
-                + "/stream?url="
-                + urllib.parse.quote(self.Source)
-                + "&state="
-                + Config.RANDOM_STATE
-                + "&localaddr="
-                + urllib.parse.quote(address)
-            )
-
         self.AVOption = AVOption
         self.Container = None  # av.StreamContainer
         self.selectAudioStream = self.FrameGenerator = None
