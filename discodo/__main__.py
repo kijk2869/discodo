@@ -245,6 +245,13 @@ else:
     setLoggingLevel(logging.INFO)
 
 if __name__ == "__main__":
+    try:
+        import uvloop
+    except ModuleNotFoundError:
+        pass
+    else:
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     loop = asyncio.get_event_loop()
 
     if log.level == logging.DEBUG:
