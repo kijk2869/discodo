@@ -129,8 +129,6 @@ class AudioData:
 
                 raise TooManyRequests
 
-            self._source = AudioSource(
-                self.stream_url, address=self.address, AudioData=self, **kwargs
-            )
+            self._source = AudioSource(self.stream_url, AudioData=self, **kwargs)
 
         return self._source

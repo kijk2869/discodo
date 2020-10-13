@@ -22,11 +22,7 @@ AVOption = {
 
 
 class PyAVSource:
-    def __init__(
-        self,
-        Source: str,
-        address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
-    ) -> None:
+    def __init__(self, Source: str) -> None:
         self.loop = asyncio.get_event_loop()
 
         self.Source = Source
