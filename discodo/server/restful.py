@@ -177,7 +177,7 @@ async def seek(request, VoiceClient) -> response.empty:
     return response.empty()
 
 
-@app.post("/pause")
+@app.post("/resume")
 @authorized
 @need_voiceclient
 async def resume(request, VoiceClient) -> response.empty:
