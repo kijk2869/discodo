@@ -55,7 +55,7 @@ async def getSource(request) -> response.json:
     if not Query:
         abort(400, "Missing parameter query.")
 
-    return response.json(await AudioData.create(Query))
+    return response.json({"source": await AudioData.create(Query)})
 
 
 @app.post("/putSource")
