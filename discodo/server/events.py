@@ -139,7 +139,7 @@ class WebsocketPayloads:
         if not VoiceClient:
             raise NotConnected
 
-        VoiceClient.gapless = Data["autoplay"]
+        VoiceClient.autoplay = Data["autoplay"]
 
         payload = {
             "op": "setAutoplay",
