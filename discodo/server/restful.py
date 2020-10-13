@@ -74,10 +74,10 @@ async def putSource(request, VoiceClient) -> response.json:
 @authorized
 @need_voiceclient
 async def loadSource(request, VoiceClient) -> response.json:
-    if "source" not in request.json:
-        abort(400, "Bad data `source`")
+    if "query" not in request.json:
+        abort(400, "Bad data `query`")
 
-    Source = await VoiceClient.loadSource(request.json["source"])
+    Source = await VoiceClient.loadSource(request.json["query"])
 
     return response.json({"source": Source})
 
