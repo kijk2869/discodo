@@ -1,8 +1,7 @@
-import asyncio
+from typing import Coroutine
 
-import aiohttp
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.responses import HTMLResponse, StreamingResponse
+from sanic import Sanic, response
+from sanic.exceptions import abort
 
 from .. import __version__
 from ..config import Config
@@ -11,31 +10,37 @@ from ..status import getStatus
 from .planner import app as PlannerBlueprint
 from .websocket import app as WebsocketBlueprint
 
-app = FastAPI()
-app.include_router(WebsocketBlueprint)
-app.include_router(PlannerBlueprint)
+app = Sanic(__name__)
+
+app.register_blueprint(WebsocketBlueprint)
+app.register_blueprint(PlannerBlueprint)
 
 
-def authorized(Authorization: str = Header(None)) -> str:
-    if Authorization != Config.PASSWORD:
-        raise HTTPException(403, "Password mismatch.")
+def authorized(func: Coroutine) -> Coroutine:
+    def wrapper(request, *args, **kwargs) -> Coroutine:
+        if request.headers.get("Authorization") != Config.PASSWORD:
+            abort(403, "Password mismatch.")
 
-    return Authorization
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 @app.route("/")
-async def index(request: Request):
-    return HTMLResponse(f"<h1>Discodo</h1> <h3>{__version__}")
+async def index(request) -> response:
+    return response.html(f"<h1>Discodo</h1> <h3>{__version__}")
 
 
 @app.get("/status")
-async def status() -> dict:
-    return getStatus()
+async def status(request) -> response:
+    return response.json(getStatus())
 
 
-@app.get("/getSource", dependencies=[Depends(authorized)])
-async def getSource(Query: str = None) -> dict:
+@app.get("/getSource")
+@authorized
+async def getSource(request) -> response:
+    Query = "".join(request.args.get("query", [])).strip()
     if not Query:
-        raise HTTPException(400, "Missing parameter query.")
+        abort(400, "Missing parameter query.")
 
-    return await AudioData.create(Query)
+    return response.json(await AudioData.create(Query))

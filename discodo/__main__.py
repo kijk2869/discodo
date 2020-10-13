@@ -6,8 +6,6 @@ import os
 import sys
 
 import colorlog
-from hypercorn.asyncio import serve as hypercornServe
-from hypercorn.config import Config as hypercornConfig
 
 from . import __version__
 from .config import Config
@@ -247,6 +245,13 @@ else:
     setLoggingLevel(logging.INFO)
 
 if __name__ == "__main__":
+    try:
+        import uvloop
+    except ModuleNotFoundError:
+        pass
+    else:
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     loop = asyncio.get_event_loop()
 
     if log.level == logging.DEBUG:
@@ -254,10 +259,9 @@ if __name__ == "__main__":
 
     from .server import server
 
-    config = hypercornConfig()
-
-    config.bind = f"{Config.HOST}:{Config.PORT}"
-    config.loglevel = "debug" if args.verbose else "info"
-
-    loop.create_task(hypercornServe(server, config))
+    loop.create_task(
+        server.create_server(
+            host=Config.HOST, port=Config.PORT, return_asyncio_server=True
+        )
+    )
     loop.run_forever()

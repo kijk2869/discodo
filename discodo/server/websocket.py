@@ -3,7 +3,8 @@ import json
 import logging
 from typing import Coroutine
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from sanic import Blueprint
+from sanic.websocket import ConnectionClosed
 
 from ..config import Config
 from ..manager import ClientManager
@@ -11,13 +12,12 @@ from .events import WebsocketEvents
 
 log = logging.getLogger("discodo.server")
 
-app = APIRouter()
+app = Blueprint(__name__)
 
 
 @app.websocket("/ws")
-async def socket_feed(ws: WebSocket) -> None:
-    await ws.accept()
-    handler = WebsocketHandler(ws)
+async def socket_feed(request, ws) -> None:
+    handler = WebsocketHandler(request, ws)
     await handler.join()
 
 
@@ -34,11 +34,12 @@ class ModifyClientManager(ClientManager):
 
 
 class WebsocketHandler:
-    def __init__(self, ws: WebSocket) -> None:
+    def __init__(self, request, ws) -> None:
         self.loop = asyncio.get_event_loop()
 
+        self.request = request
         self.ws = ws
-        self.app = ws.app
+        self.app = request.app
 
         if not hasattr(self.app, "ClientManagers"):
             self.app.ClientManagers = {}
@@ -68,10 +69,12 @@ class WebsocketHandler:
         return self._running.wait()
 
     async def _handle(self) -> None:
-        log.info(f"new websocket connection created..")
+        log.info(f"new websocket connection created from {self.request.ip}.")
 
-        if self.ws.headers.get("Authorization") != Config.PASSWORD:
-            log.warning(f"websocket connection forbidden: password mismatch.")
+        if self.request.headers.get("Authorization") != Config.PASSWORD:
+            log.warning(
+                f"websocket connection from {self.request.ip} forbidden: password mismatch."
+            )
             return await self.forbidden("Password mismatch.")
 
         await self.hello()
@@ -79,12 +82,12 @@ class WebsocketHandler:
         while True:
             try:
                 RAWDATA = await asyncio.wait_for(
-                    self.ws.receive_text(), timeout=Config.HANDSHAKE_TIMEOUT
+                    self.ws.recv(), timeout=Config.HANDSHAKE_TIMEOUT
                 )
-            except (asyncio.TimeoutError, WebSocketDisconnect) as exception:
+            except (asyncio.TimeoutError, ConnectionClosed) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
                     log.info("websocket connection closing because of timeout.")
-                elif isinstance(exception, WebSocketDisconnect):
+                elif isinstance(exception, ConnectionClosed):
                     log.info(
                         f"websocket connection disconnected. code {exception.code}"
                     )
@@ -118,19 +121,19 @@ class WebsocketHandler:
             await self.sendJson(payload)
 
     async def sendJson(self, Data: dict) -> None:
-        log.debug(f"send {Data} to websocket connection.")
-        await self.ws.send_text(json.dumps(Data, cls=Encoder))
+        log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
+        await self.ws.send(json.dumps(Data, cls=Encoder))
 
     async def initialize_manager(self, user_id: int) -> None:
-        if int(user_id) in self.ws.app.ClientManagers:
-            self.ClientManager = self.ws.app.ClientManagers[int(user_id)]
+        if int(user_id) in self.app.ClientManagers:
+            self.ClientManager = self.app.ClientManagers[int(user_id)]
             self.ClientManager._binded.set()
 
             self.loop.create_task(self.resumed())
             log.debug(f"ClientManager of {user_id} resumed.")
         else:
             self.ClientManager = ModifyClientManager(user_id=user_id)
-            self.ws.app.ClientManagers[int(user_id)] = self.ClientManager
+            self.app.ClientManagers[int(user_id)] = self.ClientManager
 
             log.debug(f"ClientManager of {user_id} intalized.")
 

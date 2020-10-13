@@ -1,55 +1,69 @@
 import ipaddress
+from typing import Coroutine
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from sanic import Blueprint, response
+from sanic.exceptions import abort
 
 from ..config import Config
 
-app = APIRouter()
+app = Blueprint(__name__)
 
 
-def authorized(Authorization: str = Header(None)) -> str:
-    if Authorization != Config.PASSWORD:
-        raise HTTPException(403, "Password mismatch.")
+def authorized(func: Coroutine) -> Coroutine:
+    def wrapper(request, *args, **kwargs) -> Coroutine:
+        if request.headers.get("Authorization") != Config.PASSWORD:
+            abort(403, "Password mismatch.")
 
-    return Authorization
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
-@app.get("/planner", dependencies=[Depends(authorized)])
-async def plannerStatus() -> dict:
+@app.get("/planner")
+@authorized
+async def plannerStatus(request) -> response.json:
     if not Config.RoutePlanner:
-        raise HTTPException(status_code=404, detail="RoutePlanner is not enabled.")
+        abort(404, "RoutePlanner is not enabled.")
 
-    return {
-        "ipBlocks": [
-            {
-                "version": ipBlock.version,
-                "broadcast_address": ipBlock.broadcast_address,
-                "size": ipBlock.num_addresses,
-            }
-            for ipBlock in Config.RoutePlanner.ipBlocks
-        ],
-        "failedAddresses": [
-            dict(data, address=address)
-            for address, data in Config.RoutePlanner.failedAddress.items()
-        ],
-    }
+    return response.json(
+        {
+            "ipBlocks": [
+                {
+                    "version": ipBlock.version,
+                    "broadcast_address": ipBlock.broadcast_address,
+                    "size": ipBlock.num_addresses,
+                }
+                for ipBlock in Config.RoutePlanner.ipBlocks
+            ],
+            "failedAddresses": [
+                dict(data, address=address)
+                for address, data in Config.RoutePlanner.failedAddress.items()
+            ],
+        }
+    )
 
 
-@app.post("/planner/unmark", dependencies=[Depends(authorized)])
-async def plannerUnmark(address: str) -> dict:
+@app.post("/planner/unmark")
+@authorized
+async def plannerUnmark(request) -> response.json:
     if not Config.RoutePlanner:
-        raise HTTPException(status_code=404, detail="RoutePlanner is not enabled.")
+        abort(404, "RoutePlanner is not enabled.")
+
+    address = "".join(request.args.get("address", [])).strip()
+    if not address:
+        abort(400, "Missing parameter address.")
 
     Config.RoutePlanner.unmark_failed_address(ipaddress.ip_address(address))
 
-    return {"status": 200}
+    return response.json({"status": 200})
 
 
-@app.post("/planner/unmark/all", dependencies=[Depends(authorized)])
-async def plannerUnmark() -> dict:
+@app.post("/planner/unmark/all")
+@authorized
+async def plannerUnmark(request) -> response.json:
     if not Config.RoutePlanner:
-        raise HTTPException(status_code=404, detail="RoutePlanner is not enabled.")
+        abort(404, "RoutePlanner is not enabled.")
 
     Config.RoutePlanner.failedAddress.clear()
 
-    return {"status": 200}
+    return response.json({"status": 200})
