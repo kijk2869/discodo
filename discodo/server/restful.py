@@ -171,7 +171,7 @@ async def seek(request, VoiceClient) -> response.json:
 @app.post("/pause")
 @authorized
 @need_voiceclient
-async def seek(request, VoiceClient) -> response.empty:
+async def pause(request, VoiceClient) -> response.empty:
     VoiceClient.pause()
 
     return response.empty()
@@ -189,7 +189,7 @@ async def resume(request, VoiceClient) -> response.empty:
 @app.post("/shuffle")
 @authorized
 @need_voiceclient
-async def resume(request, VoiceClient) -> response.json:
+async def shuffle(request, VoiceClient) -> response.json:
     VoiceClient.shuffle()
 
     return response.json({"entries": VoiceClient.Queue})
