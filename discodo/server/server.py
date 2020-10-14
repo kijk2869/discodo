@@ -22,7 +22,7 @@ def authorized(func: Coroutine) -> Coroutine:
         if request.headers.get("Authorization") != Config.PASSWORD:
             abort(403, "Password mismatch.")
 
-        return func(*args, **kwargs)
+        return func(request, *args, **kwargs)
 
     return wrapper
 
