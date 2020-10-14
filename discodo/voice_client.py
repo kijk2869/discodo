@@ -42,7 +42,7 @@ class VoiceClient(VoiceConnector):
 
         self._volume = Config.DEFAULT_VOLUME
 
-        self.dispatcher.dispatch("VC_CREATED")
+        self.dispatcher.dispatch("VC_CREATED", id=self.id)
 
     def __del__(self) -> None:
         guild_id = int(self.guild_id) if self.guild_id else None
