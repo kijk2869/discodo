@@ -38,6 +38,12 @@ class Node:
         self.voiceClients = {}
         self.connected = asyncio.Event()
 
+    def __repr__(self) -> str:
+        return (
+            f"<Node connected={self.is_connected} host={self.host} port={self.port}"
+            + f" region={self.region} voiceClients={len(self.voiceClients)}>"
+        )
+
     @property
     def URL(self) -> str:
         return f"ws://{self.host}:{self.port}/ws"
@@ -103,12 +109,14 @@ class Node:
             for voice_client in self.voiceClients:
                 voice_client.__del__()
 
-            for guild_id, _ in Data["channels"].items():
-                self.voiceClients[int(guild_id)] = VoiceClient(self, guild_id)
+            for guild_id, vc_data in Data["voice_clients"].items():
+                self.voiceClients[int(guild_id)] = VoiceClient(
+                    self, vc_data["id"], guild_id
+                )
 
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
-            self.voiceClients[guild_id] = VoiceClient(self, guild_id)
+            self.voiceClients[guild_id] = VoiceClient(self, Data["id"], guild_id)
 
         if Data and isinstance(Data, dict) and "guild_id" in Data:
             vc = self.getVC(Data["guild_id"])

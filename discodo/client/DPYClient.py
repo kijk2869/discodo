@@ -37,6 +37,9 @@ class DPYClient:
         self.Nodes = []
         self.__register_event()
 
+    def __repr__(self) -> str:
+        return f"<DPYClient Nodes={self.Nodes} voiceClients={len(self.voiceClients)}>"
+
     def __register_event(self):
         if hasattr(self.client, "on_socket_response"):
             originFunc = self.client.on_socket_response
@@ -84,10 +87,10 @@ class DPYClient:
         return self
 
     async def _resumed(self, Data: dict) -> None:
-        for guild_id, channel_id in Data["channels"].items():
+        for guild_id, vc_data in Data["voice_clients"].items():
             guild = self.client.get_guild(int(guild_id))
-            if channel_id:
-                channel = guild.get_channel(channel_id)
+            if "channel" in vc_data:
+                channel = guild.get_channel(vc_data["channel"])
                 self.loop.create_task(self.connect(channel))
             else:
                 self.loop.create_task(self.disconnect(guild))

@@ -165,8 +165,8 @@ class WebsocketHandler:
         payload = {
             "op": "RESUMED",
             "d": {
-                "channels": {
-                    guild_id: voiceClient.channel_id
+                "voice_clients": {
+                    guild_id: {"id": voiceClient.id, "channel": voiceClient.channel_id}
                     for guild_id, voiceClient in self.ClientManager.voiceClients.items()
                 }
             },

@@ -4,12 +4,17 @@ from ..utils import EventDispatcher
 
 
 class VoiceClient:
-    def __init__(self, Node, guild_id: int) -> None:
+    def __init__(self, Node, id: str, guild_id: int) -> None:
         self.Node = Node
         self.loop = Node.loop
+
+        self.id = id
         self.guild_id = guild_id
 
         self.dispatcher = EventDispatcher()
+
+    def __repr__(self) -> str:
+        return f"<VoiceClient id={self.id} guild_id={self.guild_id} Node={self.Node}>"
 
     def __del__(self):
         vc = self.Node.voiceClients.get(self.guild_id)
