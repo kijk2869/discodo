@@ -109,7 +109,7 @@ Unmark all address on planner's failed list.
 {"status": 200}
 ```
 
-### GET /getSong
+### GET /getSource
 
 Get the information of the video searched on Youtube
 
@@ -135,7 +135,7 @@ Get the information of the video searched on Youtube
 }
 ```
 
-### POST /putSong
+### POST /putSource
 
 Put source object to queue
 
