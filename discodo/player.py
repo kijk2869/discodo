@@ -223,6 +223,7 @@ class Player(threading.Thread):
         if self.client.speakState == state:
             return
 
+        self.client.speakState = state
         asyncio.run_coroutine_threadsafe(self.client.ws.speak(state), self.client.loop)
 
     def __do_run(self) -> None:
