@@ -72,7 +72,9 @@ class HTTPClient:
         return await self.fetch("POST", "/seek", json={"offset": float(offset)})
 
     async def skip(self, offset: int) -> None:
-        return await self.fetch("POST", "/skip", json={"offset": int(offset)})
+        return (await self.fetch("POST", "/skip", json={"offset": int(offset)}))[
+            "remain"
+        ]
 
     async def pause(self) -> None:
         return await self.fetch("POST", "/pause")
