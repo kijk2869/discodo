@@ -46,37 +46,37 @@ class VoiceClient:
 
         return await Future
 
-    async def loadSource(self, Query: str, ws: bool = False) -> dict:
+    async def loadSource(self, Query: str, ws: bool = True) -> dict:
         if ws:
             return (await self.query("loadSource", {"query": Query}))["source"]
 
         return await self.http.loadSource(Query)
 
-    async def putSource(self, Source: dict, ws: bool = False) -> int:
+    async def putSource(self, Source: dict, ws: bool = True) -> int:
         if ws:
             return (await self.query("putSource", {"song": Source}))["index"]
 
-        return await self.http.putSource(Source)  # 님 뭐하세요
+        return await self.http.putSource(Source)
 
-    async def skip(self, offset: int = 1, ws: bool = False) -> int:
+    async def skip(self, offset: int = 1, ws: bool = True) -> int:
         if ws:
             return (await self.query("skip", {"offset": offset}))["remain"]
 
         return await self.http.skip(offset)
 
-    async def seek(self, offset: float, ws: bool = False) -> dict:
+    async def seek(self, offset: float, ws: bool = True) -> dict:
         if ws:
             return await self.query("seek", {"offset": offset})
 
         return await self.http.seek(offset)
 
-    async def setVolume(self, volume: int, ws: bool = False) -> float:
+    async def setVolume(self, volume: int, ws: bool = True) -> float:
         if ws:
             return (await self.query("setVolume", {"volume": volume}))["volume"]
 
         return await self.http.setVolume(volume)
 
-    async def setCrossfade(self, crossfade: float, ws: bool = False) -> float:
+    async def setCrossfade(self, crossfade: float, ws: bool = True) -> float:
         if ws:
             return (await self.query("setCrossfade", {"crossfade": crossfade}))[
                 "crossfade"
@@ -84,55 +84,55 @@ class VoiceClient:
 
         return await self.http.setCrossfade(crossfade)
 
-    async def setAutoplay(self, autoplay: bool, ws: bool = False) -> bool:
+    async def setAutoplay(self, autoplay: bool, ws: bool = True) -> bool:
         if ws:
             return (await self.query("setAutoplay", {"autoplay": autoplay}))["autoplay"]
 
         return await self.http.setAutoplay(autoplay)
 
-    async def setGapless(self, gapless: bool, ws: bool = False) -> bool:
+    async def setGapless(self, gapless: bool, ws: bool = True) -> bool:
         if ws:
             return (await self.query("setGapless", {"gapless": gapless}))["gapless"]
 
         return await self.http.setGapless(gapless)
 
-    async def setFilter(self, filter: dict, ws: bool = False) -> dict:
+    async def setFilter(self, filter: dict, ws: bool = True) -> dict:
         if ws:
             return await self.query("setFilter", {"filter": filter})
 
         return await self.http.setFilter(filter)
 
-    async def pause(self, ws: bool = False) -> dict:
+    async def pause(self, ws: bool = True) -> dict:
         if ws:
             return await self.query("pause")
 
         return await self.http.pause()
 
-    async def resume(self, ws: bool = False) -> dict:
+    async def resume(self, ws: bool = True) -> dict:
         if ws:
             return await self.query("resume")
 
         return await self.http.resume()
 
-    async def getQueue(self, ws: bool = False) -> list:
+    async def getQueue(self, ws: bool = True) -> list:
         if ws:
             return (await self.query("getQueue"))["entries"]
 
         return await self.http.getQueue()
 
-    async def getState(self, ws: bool = False) -> dict:
+    async def getState(self, ws: bool = True) -> dict:
         if ws:
             return await self.query("getState")
 
         return await self.http.getState()
 
-    async def shuffle(self, ws: bool = False) -> dict:
+    async def shuffle(self, ws: bool = True) -> dict:
         if ws:
             return await self.query("shuffle")
 
         return await self.http.shuffle()
 
-    async def remove(self, index: int, ws: bool = False) -> dict:
+    async def remove(self, index: int, ws: bool = True) -> dict:
         if ws:
             return await self.query("remove", {"index": index})
 
