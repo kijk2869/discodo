@@ -46,6 +46,10 @@ class Node:
 
     @property
     def URL(self) -> str:
+        return f"http://{self.host}:{self.port}"
+
+    @property
+    def WS_URL(self) -> str:
         return f"ws://{self.host}:{self.port}/ws"
 
     async def connect(self) -> None:
