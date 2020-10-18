@@ -21,9 +21,9 @@ class HTTPClient:
     def headers(self) -> dict:
         return {
             "Authorization": self.Node.password,
-            "User-ID": self.Node.user_id,
-            "Guild-ID": self.VoiceClient.guild_id,
-            "VoiceClient-ID": self.VoiceClient.id,
+            "User-ID": str(self.Node.user_id),
+            "Guild-ID": str(self.VoiceClient.guild_id),
+            "VoiceClient-ID": str(self.VoiceClient.id),
         }
 
     async def fetch(self, method: str, endpoint: str, **kwargs) -> dict:
