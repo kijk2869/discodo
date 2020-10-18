@@ -92,4 +92,4 @@ class HTTPClient:
         return await self.fetch("GET", "/state")
 
     async def getQueue(self) -> dict:
-        return await self.fetch("GET", "/queue")["entries"]
+        return (await self.fetch("GET", "/queue"))["entries"]
