@@ -2,7 +2,7 @@
 
 ## Routes
 
-### GET /stat
+### GET /status
 
 Check the resource status of the server.
 
