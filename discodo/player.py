@@ -115,8 +115,14 @@ class Player(threading.Thread):
 
         if isinstance(self._next, AudioData):
 
-            def setSource(Source: AudioSource) -> None:
-                if Source.AudioData == self.client.Queue[0]:
+            def setSource(Source: Union[AudioData, AudioSource]) -> None:
+                if isinstance(Source, AudioData) and Source == self.client.Queue[0]:
+                    self._next = None
+                    del self.client.Queue[0]
+                if (
+                    isinstance(Source, AudioSource)
+                    and Source.AudioData == self.client.Queue[0]
+                ):
                     self._next = self.client.Queue[0] = Source
 
             self.getSource(self._next, setSource)
@@ -165,10 +171,18 @@ class Player(threading.Thread):
             )
 
     async def _getSource(self, Data: AudioData, callback: Callable) -> None:
-        Source = await Data.source()
+        try:
+            Source = await Data.source()
 
-        Source.volume = 1.0
-        Source.filter = self.client.filter
+            Source.volume = 1.0
+            Source.filter = self.client.filter
+        except:
+            traceback.print_exc()
+            self.dispatcher.dispatch(
+                "SOURCE_TRACEBACK", source=Data, traceback=traceback.format_exc()
+            )
+
+            Source = Data
 
         callback(Source)
 
