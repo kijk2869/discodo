@@ -1,5 +1,17 @@
 # Discodo Server Documentation
 
+## BaseUrls
+`--port PORT, -P PORT the port of the server (default: 8000)`
+
+Restful
+```
+ http://<host>:<port>/
+```
+Websocket
+```
+ ws://<host>:<port>/ws
+```
+
 ## Contents
 
 ### Introduction
