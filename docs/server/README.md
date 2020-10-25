@@ -5,7 +5,7 @@
 
 Restful
 ```
- http://<host>:<port>
+ http://<host>:<port>/
 ```
 Websocket
 ```
