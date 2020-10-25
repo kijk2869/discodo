@@ -1,7 +1,6 @@
 import uuid
-
+from typing import Union
 from .planner import RoutePlanner
-
 
 class _Config:
     __slots__ = [
@@ -87,14 +86,14 @@ class _Config:
         return self.FRAME_LENGTH / 1000.0
 
     @property
-    def RoutePlanner(self) -> RoutePlanner:
+    def RoutePlanner(self) -> Union[None, RoutePlanner]:
         if not self.IPBLOCKS:
             return None
 
         if not hasattr(self, "_RoutePlanner"):
             self._RoutePlanner = RoutePlanner(self.IPBLOCKS, self.EXCLUDEIPS)
 
-        return self._RoutePlanner
+        return self.5_RoutePlanner
 
     def from_dict(self, data: dict) -> None:
         for Key, Value in data.items():
