@@ -1,5 +1,16 @@
 # Discodo Server Documentation
 
+## Urls
+
+Restful
+```
+ http://localhost
+```
+Websocket
+```
+ ws://localhost/ws
+```
+
 ## Contents
 
 ### Introduction
