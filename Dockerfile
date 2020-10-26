@@ -2,7 +2,11 @@
 # First, build docker image using `docker build` command
 # If an error occurs while building this image, please create an issue on Github or create a pull request
 # The working directory is /opt/discodo, which is where you would mount & edit your config.json file
+# Python 3.8
 FROM python:3.8
+
+# You can override this arg using --build-arg
+ARG discodoRepoURL=https://github.com/sannoob/discodo
 
 WORKDIR /opt/discodo
 
@@ -14,7 +18,7 @@ RUN pip install --force-reinstall discodo --no-binary av
 RUN pip uninstall uvloop -y
 RUN python -m discodo --version
 
-RUN git clone https://github.com/sannoob/discodo
+RUN git clone ${discodoRepoURL}
 RUN cp discodo/example/remote/config.inc.json config.json
 
 CMD [ "python", "-m", "discodo", "--config", "/opt/discodo/config.json" ]
