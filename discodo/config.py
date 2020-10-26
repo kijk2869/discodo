@@ -1,7 +1,6 @@
 import uuid
-
+from typing import Union
 from .planner import RoutePlanner
-
 
 class _Config:
     __slots__ = [
@@ -87,7 +86,7 @@ class _Config:
         return self.FRAME_LENGTH / 1000.0
 
     @property
-    def RoutePlanner(self) -> RoutePlanner:
+    def RoutePlanner(self) -> Union[None, RoutePlanner]:
         if not self.IPBLOCKS:
             return None
 
