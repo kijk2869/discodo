@@ -17,15 +17,8 @@ python3 -m pip install --upgrade discodo
 On Linux environments, more dependencies are required:
 
 - python3-dev
+- libopus-dev
 - libnacl-dev
-
-and can use `uvloop` to improve loop speed.	
-
-If `uvloop` is found, it is applied automatically.	
-
-```sh	
-python3 -m pip install --upgrade uvloop	
-```	
 
 ## Execution
 
