@@ -93,7 +93,7 @@ class _Config:
         if not hasattr(self, "_RoutePlanner"):
             self._RoutePlanner = RoutePlanner(self.IPBLOCKS, self.EXCLUDEIPS)
 
-        return self.5_RoutePlanner
+        return self._RoutePlanner
 
     def from_dict(self, data: dict) -> None:
         for Key, Value in data.items():
