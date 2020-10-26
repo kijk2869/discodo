@@ -22,8 +22,20 @@ RUN pip install --no-cache-dir --force-reinstall discodo --no-binary av && \
     pip uninstall uvloop -y && \
     echo "Discodo version: "$(python -m discodo --version)
 
+# Set workdir to /temp/discodo
+WORKDIR /temp/discodo
 
+# Clone discodo repository
 RUN git clone ${discodoRepoURL}
-RUN cp discodo/example/remote/config.inc.json config.json
 
+# Move example config.inc.json to /opt/discodo/config.json
+RUN mv discodo/example/remote/config.inc.json /opt/discodo/config.json
+
+# Set workdir to /opt/discodo
+WORKDIR /opt/discodo
+
+# Remove Cloned repository
+RUN rm -rf /temp/discodo
+
+# Run discodo with --config /opt/discodo/config.json option
 CMD [ "python", "-m", "discodo", "--config", "/opt/discodo/config.json" ]
