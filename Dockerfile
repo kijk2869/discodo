@@ -14,7 +14,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev && \
     apt-get install --no-install-recommends -y pkg-config ffmpeg libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN pip install --force-reinstall discodo --no-binary av
+RUN pip install --no-cache-dir --force-reinstall discodo --no-binary av
 RUN pip uninstall uvloop -y
 RUN python -m discodo --version
 
