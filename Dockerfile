@@ -4,8 +4,6 @@
 # The working directory is /opt/discodo, which is where you would mount & edit your config.json file
 FROM python:3.8
 
-RUN python --version
-
 WORKDIR /opt/discodo
 
 RUN apt-get update && \
