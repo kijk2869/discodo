@@ -189,10 +189,10 @@ playerGroup.add_argument(
 extExtractorParser = parser.add_argument_group("Extra Extractor Option")
 
 extExtractorParser.add_argument(
-    "--enabled-extractor",
+    "--enabled-resolver",
     action="append",
     default=[],
-    help="Extra extractors to enable (Support melon and spotify)",
+    help="Extra resolvers to enable (Support melon and spotify)",
 )
 extExtractorParser.add_argument(
     "--spotify-id",
@@ -231,7 +231,7 @@ if not args.config:
     Config.DEFAULT_GAPLESS = args.default_gapless
     Config.BUFFERLIMIT = args.bufferlimit
     Config.VCTIMEOUT = args.timeout
-    Config.ENABLED_EXT_EXTRACTOR = args.enabled_extractor
+    Config.ENABLED_EXT_RESOLVER = args.enabled_resolver
     Config.SPOTIFY_ID = args.spotify_id
     Config.SPOTIFY_SECRET = args.spotify_secret
 else:
