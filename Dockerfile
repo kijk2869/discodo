@@ -19,7 +19,6 @@ RUN apt-get update && \
 
 # install discodo from pypi
 RUN pip install --no-cache-dir --force-reinstall discodo --no-binary av && \
-    pip uninstall uvloop -y && \
     echo "Discodo version: "$(python -m discodo --version)
 
 # Set workdir to /temp/discodo
