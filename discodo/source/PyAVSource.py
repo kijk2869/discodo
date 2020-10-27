@@ -1,15 +1,12 @@
 import asyncio
 import audioop
 import functools
-import ipaddress
 import threading
 import traceback
-import urllib.parse
-from typing import Coroutine, Union
+from typing import Coroutine
 
 import av
 
-from ..config import Config
 from ..natives import AudioFifo, AudioFilter
 from ..utils.threadLock import withLock
 
@@ -25,8 +22,8 @@ class PyAVSource:
     def __init__(self, Source: str) -> None:
         self.loop = asyncio.get_event_loop()
 
-        self.Source = Source
-        self.AVOption = AVOption
+        self.Source: str = Source
+        self.AVOption: dict = AVOption
         self.Container: av.StreamContainer = None
         self.selectAudioStream = self.FrameGenerator = None
 
@@ -35,14 +32,14 @@ class PyAVSource:
         self._waitforread = threading.Lock()
         self._loading = threading.Lock()
         self._seeking = threading.Lock()
-        self.BufferLoader = None
+        self.BufferLoader: Loader = None
 
         self.AudioFifo = AudioFifo()
-        self._duration = None
-        self._position = 0.0
-        self._volume = 1.0
-        self._filter = {}
-        self.stopped = False
+        self._duration: float = None
+        self._position: float = 0.0
+        self._volume: float = 1.0
+        self._filter: dict = {}
+        self.stopped: bool = False
 
     def __del__(self):
         self.cleanup()
@@ -75,7 +72,7 @@ class PyAVSource:
                 self.AudioFifo.samples
                 / 960
                 / 50
-                * (self.filter["atempo"] if "atempo" in self.filter else 1.0)
+                * (float(self.filter["atempo"]) if "atempo" in self.filter else 1.0)
             ),
             2,
         )
