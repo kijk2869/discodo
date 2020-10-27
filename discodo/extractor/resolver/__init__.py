@@ -1,10 +1,10 @@
 from typing import Union
 
 import aiohttp
-from .melon import resolve as melon_resolve
-from .spotify import resolve as spotify_resolve
 
 from ...config import Config
+from .melon import resolve as melon_resolve
+from .spotify import resolve as spotify_resolve
 
 
 async def resolve(
