@@ -14,8 +14,7 @@
     "PRELOAD_TIME": 10,
     "VCTIMEOUT": 300,
     "ENABLED_EXT_EXTRACTOR": [
-        "melon",
-        "spotify"
+        "melon"
     ],
     "SPOTIFY_ID": null,
     "SPOTIFY_SECRET": null
