@@ -92,7 +92,7 @@ Must pass `json` file to `--config` flag.
     "BUFFERLIMIT": 5,
     "PRELOAD_TIME": 10,
     "VCTIMEOUT": 300,
-    "ENABLED_EXT_EXTRACTOR": [
+    "ENABLED_EXT_RESOLVER": [
         "melon",
         "spotify"
     ],

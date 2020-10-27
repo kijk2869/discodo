@@ -35,7 +35,7 @@ async def get_album(url: str, connector: aiohttp.TCPConnector = None) -> list:
     ]
 
 
-async def get_query(
+async def resolve(
     query: str, connector: aiohttp.TCPConnector = None
 ) -> Union[str, list]:
     is_album = MELON_REGEX.match(query)

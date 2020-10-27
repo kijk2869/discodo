@@ -2,6 +2,7 @@ import uuid
 from typing import Union
 from .planner import RoutePlanner
 
+
 class _Config:
     __slots__ = [
         "HOST",
@@ -25,7 +26,7 @@ class _Config:
         "BUFFERLIMIT",
         "PRELOAD_TIME",
         "VCTIMEOUT",
-        "ENABLED_EXT_EXTRACTOR",
+        "ENABLED_EXT_RESOLVER",
         "SPOTIFY_ID",
         "SPOTIFY_SECRET",
         "RANDOM_STATE",
@@ -64,8 +65,8 @@ class _Config:
         # CONNECTION
         self.VCTIMEOUT = 300.0
 
-        # EXTRA EXTRACTOR
-        self.ENABLED_EXT_EXTRACTOR = []  # melon, spotify
+        # EXTRA RESOLVER
+        self.ENABLED_EXT_RESOLVER = []  # melon, spotify
 
         self.SPOTIFY_ID = None
         self.SPOTIFY_SECRET = None

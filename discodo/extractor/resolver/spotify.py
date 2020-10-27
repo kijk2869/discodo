@@ -3,7 +3,7 @@ from typing import Union
 
 from asyncspotify import Client, ClientCredentialsFlow
 
-from ..config import Config
+from ...config import Config
 
 URL_REGEX = re.compile(
     r"(?:http(?:s):\/\/open\.spotify\.com\/|spotify:)(playlist|track|album)(?:\/|:)([a-z|A-Z|0-9]+)"
@@ -52,7 +52,7 @@ async def get_playlist(id: str) -> list:
     return [f"{Track.artists.pop().name} - {Track.name}" for Track in Tracks]
 
 
-async def get_query(query: str) -> Union[str, list]:
+async def resolve(query: str) -> Union[str, list]:
     if not Config.SPOTIFY_ID or not Config.SPOTIFY_SECRET:
         return query
 
