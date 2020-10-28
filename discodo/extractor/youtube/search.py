@@ -63,4 +63,4 @@ if __name__ == "__main__":
 
     import asyncio
 
-    print(asyncio.run(search("dazbee")))
+    print(asyncio.run(search("")))
