@@ -1,4 +1,4 @@
-aiohttp==3.7.1
+aiohttp==3.7.2
 av==8.0.2
 colorlog==4.4.0
 git+https://git.sannoob.cf/OpenSourceMirrors/youtube-dl.git
