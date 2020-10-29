@@ -2,7 +2,7 @@
 
 ## ``class discodo.ClientManager(**kwargs)``
 
-This class manage voice client
+A manager of voice client
 
 ### parameters
 
