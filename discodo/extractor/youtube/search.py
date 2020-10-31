@@ -1,12 +1,20 @@
 import json
+import re
 
 import aiohttp
 
-from . import DATA_JSON
+DATA_JSON = re.compile(
+    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
+)
+
+YOUTUBE_HEADERS = {
+    "x-youtube-client-name": "1",
+    "x-youtube-client-version": "2.20201030.01.00",
+}
 
 
 async def search(Query: str) -> None:
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
         async with session.get(
             "https://www.youtube.com/results", params={"search_query": Query}
         ) as resp:

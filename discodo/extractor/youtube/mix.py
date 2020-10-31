@@ -1,17 +1,25 @@
 import json
+import re
 
 import aiohttp
 
-from . import DATA_JSON
+DATA_JSON = re.compile(
+    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
+)
+
+YOUTUBE_HEADERS = {
+    "x-youtube-client-name": "1",
+    "x-youtube-client-version": "2.20201030.01.00",
+}
 
 
 async def extract_mix(vId: str, playlistId: str) -> dict:
     if not playlistId.startswith(("RD", "UL", "PU")):
         raise TypeError("playlistId is not Youtube Mix id")
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
         async with session.get(
-            f"https://www.youtube.com/watch?v={vId}&list={playlistId}"
+            f"https://www.youtube.com/watch", params={"v": vId, "list": playlistId}
         ) as resp:
             Body: str = await resp.text()
 
@@ -32,6 +40,7 @@ async def extract_mix(vId: str, playlistId: str) -> dict:
             "id": Renderer["videoId"],
             "title": Renderer["title"]["simpleText"],
             "url": "https://youtube.com/watch?v=" + Renderer["videoId"],
+            "uploader": Renderer["longBylineText"]["runs"][0]["text"],
             "duration": sum(
                 [
                     int(value) * ((index * 60) if index else 1)
