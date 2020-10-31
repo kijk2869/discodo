@@ -79,8 +79,6 @@ async def extract(url: str) -> dict:
         Status: str = checkPlayabilityStatus(InitialData)
         playerResponse: dict = InitialData["playerResponse"]
 
-        print(playerResponse.keys())
-
         if Status == "LOGIN_REQUIRED":
             async with session.get("https://www.youtube.com/embed/" + videoId) as resp:
                 Body: str = await resp.text()
@@ -94,12 +92,29 @@ async def extract(url: str) -> dict:
             for config in Search:
                 embedConfig.update(json.loads(config.replace("'", '"')))
 
-            playerResponse: dict = json.loads(
+            embedPlayerResponse: dict = json.loads(
                 InitialData.get("player_response")
                 or embedConfig["PLAYER_CONFIG"]
                 .get("args", {})
                 .get("embedded_player_response")
             )
+
+            async with session.get(
+                "https://www.youtube.com/get_video_info",
+                params={
+                    "video_id": videoId,
+                    "eurl": "https://youtube.googleapis.com/v/" + videoId,
+                    "sts": embedPlayerResponse.get("sts", ""),
+                    "hl": "en_GB",
+                },
+            ) as resp:
+                videoInfoBody: str = await resp.text()
+
+            videoInfo: dict = urllib.parse.parse_qs(videoInfoBody)
+            if videoInfo.get("player_response"):
+                playerResponse: dict = json.loads(
+                    videoInfo.get("player_response", [None])[0]
+                )
 
         return playerResponse.keys()
 
