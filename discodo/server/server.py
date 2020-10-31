@@ -12,9 +12,9 @@ from .websocket import app as WebsocketBlueprint
 
 app = Sanic(__name__)
 
-app.register_blueprint(WebsocketBlueprint)
-app.register_blueprint(PlannerBlueprint)
-app.register_blueprint(RestfulBlueprint)
+app.blueprint(WebsocketBlueprint)
+app.blueprint(PlannerBlueprint)
+app.blueprint(RestfulBlueprint)
 
 
 def authorized(func: Coroutine) -> Coroutine:
