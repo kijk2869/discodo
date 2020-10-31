@@ -249,6 +249,8 @@ if __name__ == "__main__":
 
     if log.level == logging.DEBUG:
         loop.set_debug(True)
+    else:
+        loop.set_debug(False)
 
     from .server import server
 
