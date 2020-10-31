@@ -1,48 +1,62 @@
 import json
 import re
-import urllib.parse
 from typing import Union
+import urllib.parse
 
 import aiohttp
+
+YOUTUBE_HEADERS = {
+    "x-youtube-client-name": "1",
+    "x-youtube-client-version": "2.20201030.01.00",
+}
+
+YOUTUBE_REDIRECT_REGEX = re.compile(r"[\?&]next_url=([^&]+)")
 
 YOUTUBE_VIDEO_REGEX = re.compile(
     r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
 )
 
-YOUTUBE_VIDEO_NOTAVAILABLE_REGEX = list(
-    map(
-        re.compile,
-        [
-            r'(?s)<h1[^>]+id=["\']unavailable-message["\'][^>]*>(.+?)</h1>',
-            r'(?s)<div[^>]+id=["\']unavailable-submessage["\'][^>]*>(.+?)</div>',
-        ],
-    )
+EMBED_CONFIG_REGEX = re.compile(
+    r"yt\.setConfig\((.*?)\);(?=yt\.setConfig|writeEmbed\(\);)"
 )
 
-YOUTUBE_PLAYER_CONFIG_REGEX = re.compile(
-    r";ytplayer\.config\s*=\s*({.+?});(?:ytplayer)?"
-)
 
-YOUTUBE_REDIRECT_REGEX = re.compile(r"[\?&]next_url=([^&]+)")
+def checkPlayabilityStatus(Data: dict) -> str:
+    playabilityStatus: dict = Data["playerResponse"].get("playabilityStatus", {})
+    Status: Union[str, None] = playabilityStatus.get("status")
 
-YOUTUBE_AGE_RESTRICTED_REGEXS = list(
-    map(
-        re.compile,
-        [
-            r"og:restrictions:age",
-            r'player-age-gate-content">',
-        ],
-    )
-)
+    if not Status:
+        raise ValueError("There is no playability status.")
+    elif Status == "OK":
+        return "OK"
+    elif Status == "ERROR":
+        reason: str = playabilityStatus["reason"]
 
-YOUTUBE_EMBED_STS_REGEX = re.compile(r'"sts"\s*:\s*(\d+)')
+        raise ValueError(reason)
+    elif Status == "UNPLAYABLE":
+        Renderer: dict = playabilityStatus["errorScreen"]["playerErrorMessageRenderer"]
+        reason: str = playabilityStatus["reason"]
 
+        if Renderer.get("subreason"):
+            if Renderer["subreason"].get("simpleText"):
+                reason: str = Renderer["subreason"]["simpleText"]
+            elif isinstance(Renderer["subreason"].get("runs"), list):
+                reason: str = "\n".join(
+                    map(lambda Data: Data["text"], Renderer["subreason"]["runs"])
+                )
 
-def json_or_none(Body: str) -> Union[dict, None]:
-    if not Body:
-        return
+        raise ValueError(reason)
+    elif Status == "LOGIN_REQUIRED":
+        reason: str = playabilityStatus["errorScreen"]["playerErrorMessageRenderer"][
+            "reason"
+        ]["simpleText"]
 
-    return json.loads(Body)
+        if reason == "Private video":
+            raise ValueError("This is a private video.")
+
+        return "LOGIN_REQUIRED"
+    else:
+        raise ValueError(f"Not handled playability status. {Status}")
 
 
 async def extract(url: str) -> dict:
@@ -54,121 +68,41 @@ async def extract(url: str) -> dict:
 
     videoId: str = YOUTUBE_VIDEO_REGEX.match(url).group(5)
 
-    video_info: dict = {}
-    player_response: dict = {}
-
-    is_live: bool = None
-    view_count: int = None
-
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
         async with session.get(
-            f"https://www.youtube.com/watch?v={videoId}",
-            params={"gl": "US", "hl": "en", "has_verified": "1", "bpctr": "9999999999"},
+            "https://www.youtube.com/watch",
+            params={"v": videoId, "hl": "en", "pbj": "1"},
         ) as resp:
-            Body: str = await resp.text()
-            videoId: str = resp.url.query.get("v", videoId)
+            Data: dict = await resp.json()
+        InitialData: dict = Data[2]
 
-        if any([regex.search(Body) for regex in YOUTUBE_AGE_RESTRICTED_REGEXS]):
-            async with session.get(f"https://www.youtube.com/embed/{videoId}") as resp:
-                EmbedBody: str = await resp.text()
+        Status: str = checkPlayabilityStatus(InitialData)
+        playerResponse: dict = InitialData["playerResponse"]
 
-            sts_match = YOUTUBE_EMBED_STS_REGEX.search(EmbedBody)
-            sts: str = sts_match.group(1) if sts_match else ""
+        print(playerResponse.keys())
 
-            async with session.get(
-                "https://www.youtube.com/get_video_info",
-                params={
-                    "video_id": videoId,
-                    "eurl": f"https://youtube.googleapis.com/v/{videoId}",
-                    "sts": sts,
-                },
-            ) as resp:
-                InfoBody: str = await resp.text()
+        if Status == "LOGIN_REQUIRED":
+            async with session.get("https://www.youtube.com/embed/" + videoId) as resp:
+                Body: str = await resp.text()
 
-            video_info: dict = urllib.parse.parse_qs(InfoBody)
+            Search = EMBED_CONFIG_REGEX.findall(Body)
 
-            player_response: dict = json_or_none(video_info.get("player_response"))
-        else:
-            player_config_match = YOUTUBE_PLAYER_CONFIG_REGEX.search(Body)
+            if not Search:
+                raise ValueError("Could not extract embed player config.")
 
-            if player_config_match:
-                player_config: dict = json.loads(player_config_match.group(1))
+            embedConfig: dict = {}
+            for config in Search:
+                embedConfig.update(json.loads(config.replace("'", '"')))
 
-                video_info: dict = player_config["args"]
-
-                is_live: bool = (
-                    video_info.get("livestream") == "1"
-                    or video_info.get("live_playback") == 1
-                )
-                player_response: dict = json_or_none(video_info.get("player_response"))
-
-        if not (video_info or player_response):
-            message = "\n".join(
-                [
-                    match.group(1)
-                    for match in filter(
-                        map(
-                            lambda regex: regex.search(Body),
-                            YOUTUBE_VIDEO_NOTAVAILABLE_REGEX,
-                        )
-                    )
-                    if match
-                ]
+            playerResponse: dict = json.loads(
+                InitialData.get("player_response")
+                or embedConfig["PLAYER_CONFIG"]
+                .get("args", {})
+                .get("embedded_player_response")
             )
 
-            raise ValueError(f"Unable to extract video: {message}")
-
-        if not isinstance(video_info, dict):
-            video_info: dict = {}
-
-        video_details: dict = player_response.get("videoDetails", {})
-        microformat: dict = player_response.get("microformat", {}).get(
-            "playerMicroformatRenderer", {}
-        )
-
-        Title: str = video_info.get("title") or video_details.get("title")
-
-        if view_count is None and video_info.get("view_count", []):
-            view_count: int = video_info["view_count"][0]
-        if view_count is None:
-            for Data in [video_details, microformat]:
-                if not Data:
-                    continue
-
-                if video_details.get("viewCount", "").isdigit():
-                    view_count: int = int(video_details["viewCount"])
-                    break
-
-        if is_live is None:
-            is_live = bool(video_details.get("isLive", False))
-
-        if "ypc_video_rental_bar_text" in video_info and "author" not in video_info:
-            raise ValueError("this is rental video")
-
-        streaming_formats: list = player_response.get("streamingData", {}).get(
-            "formats", []
-        )
-        streaming_formats += player_response.get("streamingData", {}).get(
-            "adaptiveFormats", []
-        )
-
-        if "conn" in video_info and video_info["conn"][0].startswith("rtmp"):
-            formats: list = [{"protocol": "rtmp", "url": video_info["conn"][0]}]
-        elif not is_live and (
-            streaming_formats
-            or len(video_info.get("url_encoded_fmt_stream_map", "")) >= 1
-            or len(video_info.get("adaptive_fmts", "")) >= 1
-        ):
-            encoded_url_map: str = (
-                video_info.get("url_encoded_fmt_stream_map", "")
-                + ","
-                + video_info.get("adaptive_fmts", "")
-            )
-
-            if "rtmpe%3Dyes" in encoded_url_map:
-                raise ValueError("rtmpe using encrypt")
+        return playerResponse.keys()
 
 
 import asyncio
 
-print(asyncio.run(extract("https://www.youtube.com/watch?v=TnWPeBgN0q0")))
