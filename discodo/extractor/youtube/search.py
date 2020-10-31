@@ -1,11 +1,8 @@
 import json
-import re
 
 import aiohttp
 
-DATA_JSON = re.compile(
-    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
-)
+from . import DATA_JSON
 
 
 async def search(Query: str) -> None:

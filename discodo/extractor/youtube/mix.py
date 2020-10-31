@@ -1,11 +1,8 @@
-import re
 import json
+
 import aiohttp
 
-
-DATA_JSON = re.compile(
-    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
-)
+from . import DATA_JSON
 
 
 async def extract_mix(vId: str, playlistId: str) -> dict:

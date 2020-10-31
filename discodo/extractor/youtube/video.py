@@ -1,8 +1,9 @@
 import json
 import re
-from typing import Union
-import aiohttp
 import urllib.parse
+from typing import Union
+
+import aiohttp
 
 YOUTUBE_VIDEO_REGEX = re.compile(
     r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
