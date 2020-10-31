@@ -56,11 +56,3 @@ async def search(Query: str) -> None:
     )
 
     return Videos
-
-
-if __name__ == "__main__":
-    # testing code
-
-    import asyncio
-
-    print(asyncio.run(search("")))

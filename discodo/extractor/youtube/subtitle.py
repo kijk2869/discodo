@@ -35,11 +35,3 @@ async def get_subtitle(videoId: str) -> list:
         }
 
     return Subtitles
-
-
-if __name__ == "__main__":
-    # testing code
-
-    import asyncio
-
-    print(asyncio.run(get_subtitle("")))
