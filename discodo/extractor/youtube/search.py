@@ -5,6 +5,7 @@ import re
 import aiohttp
 
 log = logging.getLogger("discodo.extractor.youtube")
+
 DATA_JSON = re.compile(
     r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
 )
