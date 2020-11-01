@@ -72,6 +72,12 @@ FUNCTION_TO_PYTHON_MAP: dict = {
     ): swap,
 }
 
+AUDIO_QUALITY_PRIORITY: dict = {
+    "AUDIO_QUALITY_LOW": 1,
+    "AUDIO_QUALITY_MEDIUM": 2,
+    "AUDIO_QUALITY_HIGH": 3,
+}
+
 
 async def checkPlayabilityStatus(Data: dict) -> str:
     playabilityStatus: dict = Data["playerResponse"].get("playabilityStatus", {})
@@ -296,6 +302,8 @@ async def extract(url: str) -> dict:
             formats.append(
                 {
                     "itag": formatId,
+                    "mimeType": formatData.get("mimeType"),
+                    "audioQuality": formatData.get("audioQuality"),
                     "url": url,
                     "expires_in": time.time()
                     + int(
@@ -304,7 +312,17 @@ async def extract(url: str) -> dict:
                 }
             )
 
-    print(formats)
+    formatHaveAudio: list = list(
+        filter(lambda format: bool(format["audioQuality"]), formats)
+    )
+
+    sortedWithPriority: list = sorted(
+        formatHaveAudio,
+        key=lambda format: AUDIO_QUALITY_PRIORITY.get(format["audioQuality"], 0),
+        reverse=True
+    )
+
+    if AUDIO_QUALITY_PRIORITY.get(format["audioQuality"], 0)
 
 
 import asyncio
