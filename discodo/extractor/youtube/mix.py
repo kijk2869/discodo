@@ -35,14 +35,11 @@ async def extract_mix(
 
     def extract(Track: dict) -> dict:
         Renderer: dict = Track["playlistPanelVideoRenderer"]
-
-        log.debug(
-            f"Extracting video {Renderer['videoId']} from playlist page of {playlistId}"
-        )
+        
         return {
             "id": Renderer["videoId"],
             "title": Renderer["title"]["simpleText"],
-            "url": "https://youtube.com/watch?v=" + Renderer["videoId"],
+            "webpage_url": "https://youtube.com/watch?v=" + Renderer["videoId"],
             "uploader": Renderer["longBylineText"]["runs"][0]["text"],
             "duration": sum(
                 [

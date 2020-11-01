@@ -31,11 +31,10 @@ async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
         if not Renderer or not Renderer.get("lengthText"):
             return
 
-        log.debug(f"Extracting video {Renderer['videoId']} from search page of {Query}")
         return {
             "id": Renderer["videoId"],
             "title": Renderer["title"]["runs"][0]["text"],
-            "url": "https://www.youtube.com/watch?v=" + Renderer["videoId"],
+            "webpage_url": "https://www.youtube.com/watch?v=" + Renderer["videoId"],
             "uploader": Renderer["ownerText"]["runs"][0]["text"],
             "duration": sum(
                 [

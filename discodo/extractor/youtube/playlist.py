@@ -4,6 +4,7 @@ import logging
 import aiohttp
 
 from . import DATA_JSON, YOUTUBE_HEADERS
+from ...config import Config
 
 log = logging.getLogger("discodo.extractor.youtube")
 
@@ -59,14 +60,11 @@ async def extract_playlist(
                 if not Renderer.get("isPlayable") or not shortBylineText:
                     return
 
-                log.debug(
-                    f"Extracting video {Renderer['videoId']} from playlist page of {playlistId}"
-                )
                 return {
                     "id": Renderer["videoId"],
                     "title": Renderer["title"].get("simpleText")
                     or Renderer["title"]["runs"][0]["text"],
-                    "url": "https://youtube.com/watch?v=" + Renderer["videoId"],
+                    "webpage_url": "https://youtube.com/watch?v=" + Renderer["videoId"],
                     "uploader": shortBylineText["runs"][0]["text"],
                     "duration": Renderer["lengthSeconds"],
                 }
@@ -88,7 +86,7 @@ async def extract_playlist(
             )
 
         continuations_url: str = extract_playlist(firstPlaylistData)
-        while True:
+        for _ in range(Config.PLAYLIST_PAGE_LIMIT):
             if not continuations_url:
                 break
 
@@ -103,8 +101,3 @@ async def extract_playlist(
             continuations_url: str = extract_playlist(nextPlaylistData)
 
         return Sources
-
-
-import asyncio
-
-print(asyncio.run(extract_playlist("PLBPpXidFYT4b6sPA5T4mKeZkWQzSOWGi7"), debug=True))

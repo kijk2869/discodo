@@ -13,3 +13,10 @@ from .mix import extract_mix
 from .playlist import extract_playlist
 from .search import search
 from .subtitle import get_subtitle
+
+
+class Youtube:
+    extract_mix = extract_mix
+    extract_playlist = extract_playlist
+    search = search
+    get_subtitle = get_subtitle
