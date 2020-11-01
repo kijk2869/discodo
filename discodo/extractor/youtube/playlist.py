@@ -1,7 +1,10 @@
 import json
+import logging
 import re
 
 import aiohttp
+
+log = logging.getLogger("discodo.extractor.youtube")
 
 DATA_JSON = re.compile(
     r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
@@ -17,6 +20,7 @@ async def extract_playlist(playlistId: str) -> dict:
     if playlistId.startswith(("RD", "UL", "PU")):
         raise TypeError("playlistId is Youtube Mix id")
 
+    log.info(f"Downloading playlist page of {playlistId}")
     async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
         async with session.get(
             f"https://www.youtube.com/playlist", params={"list": playlistId, "hl": "en"}
@@ -59,6 +63,9 @@ async def extract_playlist(playlistId: str) -> dict:
                 if not Renderer.get("isPlayable") or not shortBylineText:
                     return
 
+                log.debug(
+                    f"Extracting video {Renderer['videoId']} from playlist page of {playlistId}"
+                )
                 return {
                     "id": Renderer["videoId"],
                     "title": Renderer["title"].get("simpleText")
@@ -89,6 +96,7 @@ async def extract_playlist(playlistId: str) -> dict:
             if not continuations_url:
                 break
 
+            log.info(f"Downloading playlist continuation page of {playlistId}")
             async with session.get(continuations_url) as resp:
                 Body: dict = await resp.json()
 

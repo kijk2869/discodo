@@ -1,12 +1,15 @@
 import collections
 import json
+import logging
 import re
+import time
+import urllib.parse
 from itertools import chain
 from typing import Generator, Union
-import urllib.parse
-import time
 
 import aiohttp
+
+log = logging.getLogger("discodo.extractor.youtube")
 
 YOUTUBE_HEADERS = {
     "x-youtube-client-name": "1",
@@ -118,6 +121,7 @@ async def extract(url: str) -> dict:
     videoId: str = YOUTUBE_VIDEO_REGEX.match(url).group(5)
 
     async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
+        log.info(f"Downloading polymer page of {videoId}")
         async with session.get(
             "https://www.youtube.com/watch",
             params={"v": videoId, "hl": "en", "pbj": "1"},
@@ -131,6 +135,7 @@ async def extract(url: str) -> dict:
         embedConfig: dict = {}
 
         async def extract_embed_config() -> None:
+            log.info(f"Age restricted, downloading embed page of {videoId}")
             async with session.get("https://www.youtube.com/embed/" + videoId) as resp:
                 Body: str = await resp.text()
 
@@ -152,6 +157,7 @@ async def extract(url: str) -> dict:
                 .get("embedded_player_response")
             )
 
+            log.info(f"Downloading video info of {videoId}")
             async with session.get(
                 "https://www.youtube.com/get_video_info",
                 params={
@@ -218,6 +224,7 @@ async def extract(url: str) -> dict:
                         ]["jsUrl"],
                     )
 
+                    log.info(f"Downloading player script of {videoId}")
                     async with session.get(playerScriptUrl) as resp:
                         Code: str = await resp.text()
 
@@ -247,6 +254,8 @@ async def extract(url: str) -> dict:
                     DummySignature: list = []
 
                     for FuncCode in FuncCodes:
+                        log.debug(f"Parsing javascript code: {FuncCode}")
+
                         if FuncCode == 'a=a.split("")':
                             DummySignature: list = list(encryptedSignature)
                         elif FuncCode == 'return a.join("")':

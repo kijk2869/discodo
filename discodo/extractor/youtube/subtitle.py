@@ -1,10 +1,14 @@
+import logging
 import urllib.parse
 from xml.etree import ElementTree
 
 import aiohttp
 
+log = logging.getLogger("discodo.extractor.youtube")
+
 
 async def get_subtitle(videoId: str) -> list:
+    log.info(f"Downloading subtitle page of {videoId}")
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://video.google.com/timedtext",
