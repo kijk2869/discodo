@@ -1,7 +1,10 @@
+import collections
 import json
 import re
-from typing import Union
+from itertools import chain
+from typing import Generator, Union
 import urllib.parse
+import time
 
 import aiohttp
 
@@ -20,8 +23,54 @@ EMBED_CONFIG_REGEX = re.compile(
     r"yt\.setConfig\((.*?)\);(?=yt\.setConfig|writeEmbed\(\);)"
 )
 
+SIGNATURE_FUNCTION_REGEXS = list(
+    map(
+        re.compile,
+        [
+            r"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?P<sig>[a-zA-Z0-9$]+)\(",
+            r"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?P<sig>[a-zA-Z0-9$]+)\(",
+            r'(?:\b|[^a-zA-Z0-9$])(?P<sig>[a-zA-Z0-9$]{2})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)',
+            r'(?P<sig>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""\s*\)',
+        ],
+    )
+)
 
-def checkPlayabilityStatus(Data: dict) -> str:
+EXTRACT_JAVASCRIPT_FUNCTION_REGEX = lambda funcname: (
+    r"(?x)"
+    + r"(?:function\s+{funcname}|[".format(funcname=funcname)
+    + r"{;,]\s"
+    + r"*{funcname}\s*=\s*function|var\s+{funcname}\s*=\s*function)\s*".format(
+        funcname=funcname
+    )
+    + r"\((?P<args>[^)]*)\)\s*"
+    + r"\{(?P<code>[^}]+)\}"
+)
+
+FUNCTION_CALL_REGEX = re.compile(
+    r"(?P<var>[a-zA-Z0-9]+)\.(?P<key>[a-zA-Z0-9]+)\(\w\s*,\s*(?P<value>[0-9]+)\)"
+)
+
+FUNCTION_TRANSFORM_REGEX = re.compile(r"var Zu={(.*?)};", flags=re.DOTALL)
+
+
+def swap(Array: list, b: int) -> list:
+    r = b % len(Array)
+    return list(chain([Array[r]], Array[1:r], [Array[0]], Array[r + 1 :]))
+
+
+FUNCTION_TO_PYTHON_MAP: dict = {
+    re.compile(r".reverse"): lambda Array, *_: Array[::-1],
+    re.compile(r".splice\((?P<start>.*?),(?P<end>.*?)\)"): lambda Array, end: Array[
+        :end
+    ]
+    + Array[end * 2 :],
+    re.compile(
+        r"{var\s\w=\w\[0\];\w\[0\]=\w\[\w\%\w.length\];\w\[\w\%\w(?:\.length)*\]=\w}"
+    ): swap,
+}
+
+
+async def checkPlayabilityStatus(Data: dict) -> str:
     playabilityStatus: dict = Data["playerResponse"].get("playabilityStatus", {})
     Status: Union[str, None] = playabilityStatus.get("status")
 
@@ -76,10 +125,12 @@ async def extract(url: str) -> dict:
             Data: dict = await resp.json()
         InitialData: dict = Data[2]
 
-        Status: str = checkPlayabilityStatus(InitialData)
+        Status: str = await checkPlayabilityStatus(InitialData)
         playerResponse: dict = InitialData["playerResponse"]
 
-        if Status == "LOGIN_REQUIRED":
+        embedConfig: dict = {}
+
+        async def extract_embed_config() -> None:
             async with session.get("https://www.youtube.com/embed/" + videoId) as resp:
                 Body: str = await resp.text()
 
@@ -88,9 +139,11 @@ async def extract(url: str) -> dict:
             if not Search:
                 raise ValueError("Could not extract embed player config.")
 
-            embedConfig: dict = {}
             for config in Search:
                 embedConfig.update(json.loads(config.replace("'", '"')))
+
+        if Status == "LOGIN_REQUIRED":
+            await extract_embed_config()
 
             embedPlayerResponse: dict = json.loads(
                 InitialData.get("player_response")
@@ -116,7 +169,133 @@ async def extract(url: str) -> dict:
                     videoInfo.get("player_response", [None])[0]
                 )
 
-        return playerResponse.keys()
+        videoDetails: dict = playerResponse["videoDetails"]
+
+        def formatGenerator() -> Generator:
+            streamingData: dict = playerResponse.get("streamingData", {})
+
+            for formatData in streamingData.get("formats", []):
+                yield formatData
+            for formatData in streamingData.get("adaptiveFormats", []):
+                yield formatData
+
+        formats: list = []
+        for formatData in formatGenerator():
+            if formatData.get("drmFamilies") or formatData.get("drm_families"):
+                return
+
+            if formatData.get("type") == "FORMAT_STREAM_TYPE_OTF":
+                return
+
+            url: str = formatData.get("url")
+            if url:
+                urlData: dict = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+            else:
+                urlData: dict = urllib.parse.parse_qs(formatData["signatureCipher"])
+                url: str = urlData.get("url", [None])[0]
+
+            formatId: int = formatData.get("itag") or urlData["itag", [None]][0]
+            if not formatId:
+                continue
+
+            formatId: str = str(formatId)
+
+            if videoDetails.get("useCipher", False):
+                if not url:
+                    continue
+
+                if "sig" in urlData:
+                    url += "&signature=" + urlData["sig"][0]
+                elif "s" in urlData:
+                    if not embedConfig:
+                        await extract_embed_config()
+
+                    encryptedSignature: str = urlData["s"][0]
+                    playerScriptUrl: str = urllib.parse.urljoin(
+                        "https://www.youtube.com/",
+                        embedConfig["WEB_PLAYER_CONTEXT_CONFIGS"][
+                            "WEB_PLAYER_CONTEXT_CONFIG_ID_EMBEDDED_PLAYER"
+                        ]["jsUrl"],
+                    )
+
+                    async with session.get(playerScriptUrl) as resp:
+                        Code: str = await resp.text()
+
+                    Search = None
+                    for regex in SIGNATURE_FUNCTION_REGEXS:
+                        Search = regex.search(Code)
+
+                        if Search:
+                            break
+
+                    if not Search:
+                        raise ValueError(
+                            "Could not extract signiture decrypt function name."
+                        )
+
+                    funcMatch = re.search(
+                        EXTRACT_JAVASCRIPT_FUNCTION_REGEX(
+                            re.escape(Search.group("sig"))
+                        ),
+                        Code,
+                    )
+
+                    FuncCodes: list = funcMatch.group("code").split(";")
+                    Transforms: dict = collections.defaultdict(dict)
+
+                    Signature: str = ""
+                    DummySignature: list = []
+
+                    for FuncCode in FuncCodes:
+                        if FuncCode == 'a=a.split("")':
+                            DummySignature: list = list(encryptedSignature)
+                        elif FuncCode == 'return a.join("")':
+                            Signature: str = "".join(DummySignature)
+                        else:
+                            Match = FUNCTION_CALL_REGEX.search(FuncCode)
+
+                            if not Match:
+                                raise ValueError("could not parse function")
+
+                            if not Match.group("var") in Transforms:
+                                Search = FUNCTION_TRANSFORM_REGEX.search(Code)
+
+                                if not Search:
+                                    raise ValueError(
+                                        "Could not extract function transform."
+                                    )
+
+                                TransformValues: list = (
+                                    Search.group(1).replace("\n", " ").split(", ")
+                                )
+
+                                for TransformValue in TransformValues:
+                                    name, function = TransformValue.split(":", 1)
+                                    for regex, func in FUNCTION_TO_PYTHON_MAP.items():
+                                        if regex.search(function):
+                                            Transforms[Match.group("var")][name] = func
+
+                            DummySignature: list = Transforms[Match.group("var")][
+                                Match.group("key")
+                            ](DummySignature, int(Match.group("value")))
+
+                    url += "&" + urlData.get("sp", ["sig"])[0] + "=" + Signature
+
+            if "ratebypass" not in url:
+                url += "&ratebypass=yes"
+
+            formats.append(
+                {
+                    "itag": formatId,
+                    "url": url,
+                    "expires_in": time.time()
+                    + int(
+                        playerResponse.get("streamingData", {}).get("expiresInSeconds")
+                    ),
+                }
+            )
+
+    print(formats)
 
 
 import asyncio
