@@ -1,24 +1,18 @@
 import json
 import logging
-import re
 
 import aiohttp
 
+from . import DATA_JSON, YOUTUBE_HEADERS
+
 log = logging.getLogger("discodo.extractor.youtube")
 
-DATA_JSON = re.compile(
-    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
-)
 
-YOUTUBE_HEADERS = {
-    "x-youtube-client-name": "1",
-    "x-youtube-client-version": "2.20201030.01.00",
-}
-
-
-async def search(Query: str) -> None:
+async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
     log.info(f"Downloading search page of {Query}")
-    async with aiohttp.ClientSession(headers=YOUTUBE_HEADERS) as session:
+    async with aiohttp.ClientSession(
+        headers=YOUTUBE_HEADERS, connector=connector
+    ) as session:
         async with session.get(
             "https://www.youtube.com/results", params={"search_query": Query}
         ) as resp:
