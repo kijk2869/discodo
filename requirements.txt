@@ -1,7 +1,7 @@
 aiohttp==3.7.2
 av==8.0.2
 colorlog==4.4.0
-git+https://github.com/l1ving/youtube-dl.git
+youtube-dl==2020.11.1.1
 youtube-related==0.0.4
 markdownify==0.5.3
 psutil==5.7.3
