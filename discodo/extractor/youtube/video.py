@@ -319,11 +319,5 @@ async def extract(url: str) -> dict:
     sortedWithPriority: list = sorted(
         formatHaveAudio,
         key=lambda format: AUDIO_QUALITY_PRIORITY.get(format["audioQuality"], 0),
-        reverse=True
+        reverse=True,
     )
-
-    if AUDIO_QUALITY_PRIORITY.get(format["audioQuality"], 0)
-
-
-import asyncio
-
