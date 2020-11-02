@@ -28,6 +28,7 @@ class _Config:
         "PRELOAD_TIME",
         "VCTIMEOUT",
         "ENABLED_EXT_RESOLVER",
+        "PLAYLIST_PAGE_LIMIT",
         "SPOTIFY_ID",
         "SPOTIFY_SECRET",
         "RANDOM_STATE",
@@ -35,45 +36,47 @@ class _Config:
 
     def __init__(self) -> None:
         # SERVER
-        self.HOST = "0.0.0.0"
-        self.PORT = 8000
-        self.PASSWORD = "hellodiscodo"
-        self.HANDSHAKE_INTERVAL = 15
-        self.HANDSHAKE_TIMEOUT = 60.0
+        self.HOST: str = "0.0.0.0"
+        self.PORT: int = 8000
+        self.PASSWORD: str = "hellodiscodo"
+        self.HANDSHAKE_INTERVAL: str = 15
+        self.HANDSHAKE_TIMEOUT: str = 60.0
 
         # NETWORK
-        self.IPBLOCKS = []
-        self.EXCLUDEIPS = []
+        self.IPBLOCKS: list = []
+        self.EXCLUDEIPS: list = []
 
         # PLAYER
-        self.DEFAULT_AUTOPLAY = True
-        self.DEFAULT_VOLUME = 1.0
-        self.DEFAULT_CROSSFADE = 10.0
-        self.DEFAULT_GAPLESS = False
+        self.DEFAULT_AUTOPLAY: bool = True
+        self.DEFAULT_VOLUME: float = 1.0
+        self.DEFAULT_CROSSFADE: float = 10.0
+        self.DEFAULT_GAPLESS: bool = False
 
         # AUDIO
-        self.SAMPLING_RATE = 48000
-        self.CHANNELS = 2
-        self.FRAME_LENGTH = 20
-        self.SAMPLE_SIZE = 4
-        self.EXPECTED_PACKETLOSS = 0
-        self.BITRATE = 128
+        self.SAMPLING_RATE: int = 48000
+        self.CHANNELS: int = 2
+        self.FRAME_LENGTH: int = 20
+        self.SAMPLE_SIZE: int = 4
+        self.EXPECTED_PACKETLOSS: int = 0
+        self.BITRATE: int = 128
 
         # BUFFER
-        self.BUFFERLIMIT = 5
-        self.PRELOAD_TIME = 10
+        self.BUFFERLIMIT: int = 5
+        self.PRELOAD_TIME: int = 10
 
         # CONNECTION
-        self.VCTIMEOUT = 300.0
+        self.VCTIMEOUT: float = 300.0
 
         # EXTRA RESOLVER
-        self.ENABLED_EXT_RESOLVER = []  # melon, spotify
+        self.ENABLED_EXT_RESOLVER: list = []  # melon, spotify
 
-        self.SPOTIFY_ID = None
-        self.SPOTIFY_SECRET = None
+        self.PLAYLIST_PAGE_LIMIT: int = 6
+
+        self.SPOTIFY_ID: str = None
+        self.SPOTIFY_SECRET: str = None
 
         # ETC
-        self.RANDOM_STATE = str(uuid.uuid4())
+        self.RANDOM_STATE: str = str(uuid.uuid4())
 
     @property
     def SAMPLES_PER_FRAME(self) -> int:
