@@ -48,7 +48,12 @@ async def extract(
         return Results
 
     if not URL_REGEX.match(query):
-        return await Youtube.search(query, connector)
+        searchResult: list = await Youtube.search(query, connector)
+
+        if not searchResult:
+            raise NoSearchResults
+
+        return searchResult[0]
 
     Match = YOUTUBE_MIX_PLAYLIST_REGEX.match(query)
     if Match and Match.group(2).startswith(("RD", "UL", "PU")):
@@ -56,12 +61,7 @@ async def extract(
 
     Match = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if Match and not Match.group(1).startswith(("RD", "UL", "PU")):
-        searchResult: list = await Youtube.extract_playlist(Match.group(1), connector)
-
-        if not searchResult:
-            raise NoSearchResults
-
-        return searchResult[0]
+        return await Youtube.extract_playlist(Match.group(1), connector)
 
     return await youtube_dl_extract(query, address=address, **kwargs)
 
