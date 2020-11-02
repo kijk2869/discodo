@@ -8,6 +8,7 @@ import discord
 from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher
 from .node import Node as OriginNode
+from .node import Nodes
 from .voice_client import VoiceClient
 
 log = logging.getLogger("discodo.client")
@@ -34,7 +35,7 @@ class DPYClient:
         self.dispatcher = EventDispatcher()
         self.event = self.dispatcher.event
 
-        self.Nodes = []
+        self.Nodes = Nodes()
         self.__register_event()
 
     def __repr__(self) -> str:

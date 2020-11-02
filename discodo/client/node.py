@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Coroutine
+from typing import Any, Coroutine
 
 import websockets
 
@@ -153,3 +153,8 @@ class Node:
         await self.send("GET_STAT")
 
         return await self.dispatcher.wait_for("STAT", timeout=10.0)
+
+
+class Nodes(list):
+    def connect(self) -> Coroutine:
+        return asyncio.wait(map(lambda x: x.connect(), self))
