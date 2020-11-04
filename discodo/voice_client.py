@@ -82,7 +82,10 @@ class VoiceClient(VoiceConnector):
                     except RateLimited:
                         Config.RoutePlanner.mark_failed_address(address)
                     else:
-                        return await self.loadSource(Related["id"], related=True)
+                        return await self.loadSource(
+                            "https://www.youtube.com/watch?v=" + Related["id"],
+                            related=True,
+                        )
 
     def __spawnPlayer(self) -> None:
         if self.player and self.player.is_alive():
