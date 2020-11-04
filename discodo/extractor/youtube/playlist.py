@@ -3,8 +3,8 @@ import logging
 
 import aiohttp
 
-from . import DATA_JSON, YOUTUBE_HEADERS
 from ...config import Config
+from . import DATA_JSON, YOUTUBE_HEADERS
 
 log = logging.getLogger("discodo.extractor.youtube")
 

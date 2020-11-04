@@ -46,6 +46,18 @@ class VoiceClient:
 
         return await Future
 
+    async def getSource(self, Query: str, ws: bool = True) -> dict:
+        if ws:
+            return (await self.query("getSource", {"query": Query}))["source"]
+
+        return await self.http.getSource(Query)
+
+    async def searchSources(self, Query: str, ws: bool = True) -> list:
+        if ws:
+            return (await self.query("searchSources", {"query": Query}))["sources"]
+
+        return await self.http.searchSources(Query)
+
     async def loadSource(self, Query: str, ws: bool = True) -> dict:
         if ws:
             return (await self.query("loadSource", {"query": Query}))["source"]

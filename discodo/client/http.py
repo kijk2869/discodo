@@ -39,6 +39,9 @@ class HTTPClient:
     async def getSource(self) -> dict:
         return (await self.fetch("GET", "/getSource"))["source"]
 
+    async def searchSource(self) -> list:
+        return (await self.fetch("GET", "/searchSource"))["sources"]
+
     async def putSource(self, source: dict) -> Union[int, list]:
         return (await self.fetch("POST", "/putSource", json={"source": dict(source)}))[
             "index"

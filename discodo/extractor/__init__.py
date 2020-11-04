@@ -5,11 +5,10 @@ from typing import Union
 
 import aiohttp
 
+from ..errors import NoSearchResults
 from .resolver import resolve
 from .youtube import Youtube
 from .youtube_dl import extract as youtube_dl_extract
-
-from ..errors import NoSearchResults
 
 URL_REGEX = re.compile(
     r"(?:https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"

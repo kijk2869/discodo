@@ -4,6 +4,7 @@ import uuid
 from discodo.source import SubtitleSource
 
 from ..errors import NotConnected, NotPlaying
+from ..extractor import search
 from ..source import AudioData
 from ..status import getStatus
 
@@ -59,6 +60,19 @@ class WebsocketPayloads:
             "op": "getSource",
             "d": {
                 "source": await AudioData.create(Data["query"]),
+            },
+        }
+
+        await self.sendJson(payload)
+
+    @need_manager
+    async def searchSources(self, Data: dict) -> None:
+        payload = {
+            "op": "searchSources",
+            "d": {
+                "sources": filter(
+                    lambda Source: AudioData(Source), await search(Data["query"])
+                ),
             },
         }
 
