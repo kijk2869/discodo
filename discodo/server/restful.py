@@ -5,6 +5,7 @@ from sanic import Blueprint, response
 from sanic.exceptions import abort
 
 from ..config import Config
+from ..extractor import search
 from ..source import AudioData
 
 app = Blueprint(__name__)
@@ -77,6 +78,18 @@ async def getSource(request) -> JSONResponse:
         abort(400, "Missing parameter query.")
 
     return JSONResponse({"source": await AudioData.create(Query)})
+
+
+@app.get("/searchSources")
+@authorized
+async def searchSources(request) -> JSONResponse:
+    Query = "".join(request.args.get("query", [])).strip()
+    if not Query:
+        abort(400, "Missing parameter query.")
+
+    return JSONResponse(
+        {"sources": filter(lambda Source: AudioData(Source), await search(Query))}
+    )
 
 
 @app.post("/putSource")

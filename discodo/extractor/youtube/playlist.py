@@ -8,7 +8,6 @@ from . import DATA_JSON, YOUTUBE_HEADERS
 
 log = logging.getLogger("discodo.extractor.youtube")
 
-
 async def extract_playlist(
     playlistId: str, connector: aiohttp.TCPConnector = None
 ) -> dict:
@@ -28,7 +27,7 @@ async def extract_playlist(
 
         if not Search:
             raise ValueError
-
+            
         Data: dict = json.loads(Search.group(1))
 
         if Data.get("alerts"):
@@ -54,7 +53,7 @@ async def extract_playlist(
                 return
 
             def extract(Track: dict) -> dict:
-                Renderer: dict = Track.get("playlistVideoRenderer")
+                Renderer: dict = Track.get("playlistVideoRenderer", {})
                 shortBylineText: dict = Renderer.get("shortBylineText")
 
                 if not Renderer.get("isPlayable") or not shortBylineText:
@@ -69,8 +68,8 @@ async def extract_playlist(
                     "duration": Renderer["lengthSeconds"],
                 }
 
-            Sources.extend(list(map(extract, trackList)))
-
+            Sources.extend(map(extract, trackList))
+            
             if not playlistData.get("continuations"):
                 return
 
@@ -99,5 +98,5 @@ async def extract_playlist(
             ]
 
             continuations_url: str = extract_playlist(nextPlaylistData)
-
-        return Sources
+        
+        return list(filter(None, Sources))
