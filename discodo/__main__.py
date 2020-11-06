@@ -4,9 +4,9 @@ import json
 import logging
 import os
 import sys
-import psutil
 
 import colorlog
+import psutil
 
 from . import __version__
 from .config import Config
