@@ -35,7 +35,7 @@ async def extract_mix(
 
     def extract(Track: dict) -> dict:
         Renderer: dict = Track["playlistPanelVideoRenderer"]
-        
+
         return {
             "id": Renderer["videoId"],
             "title": Renderer["title"]["simpleText"],
