@@ -97,6 +97,16 @@ class VoiceClient(VoiceConnector):
 
         self.player.start()
 
+    @property
+    def channel_id(self) -> int:
+        return self._channel_id
+
+    @channel_id.setter
+    def channel_id(self, value: int) -> None:
+        self._channel_id = int(value)
+
+        self.dispatcher.dispatch("VC_CHANNEL_EDITED", channel_id=self._channel_id)
+
     async def createSocket(self, data: dict = None) -> None:
         """
         Create UDP socket with discord to send voice packet.

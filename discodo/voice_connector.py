@@ -26,7 +26,7 @@ class VoiceConnector:
 
         self.data = data
         self.guild_id = data.get("guild_id")
-        self.channel_id = None
+        self._channel_id = None
 
         self._connected = asyncio.Event()
         self._connectedThread = threading.Event()
@@ -53,6 +53,14 @@ class VoiceConnector:
 
     def __repr__(self) -> str:
         return f"<VoiceConnector guild_id={self.guild_id} connected={self._connected.is_set()} sequence={self.sequence} timestamp={self.timestamp}>"
+
+    @property
+    def channel_id(self) -> int:
+        return self._channel_id
+
+    @channel_id.setter
+    def channel_id(self, value: int) -> int:
+        self._channel_id: int = int(value)
 
     @property
     def user_id(self) -> int:

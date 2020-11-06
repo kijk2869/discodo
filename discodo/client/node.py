@@ -73,6 +73,11 @@ class Node:
     def is_connected(self) -> bool:
         return self.connected.is_set() and self.ws and self.ws.is_connected
 
+    async def close(self) -> None:
+        """ some action to do after disconnected from node """
+
+        return
+
     async def destroy(self) -> None:
         if self._polling and not self._polling.done():
             self._polling.cancel()
@@ -93,6 +98,8 @@ class Node:
 
                 if self.ws:
                     await self.ws.close()
+
+                await self.close()
 
                 self.ws = None
                 self.voiceClients = {}

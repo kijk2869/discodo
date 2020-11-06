@@ -11,17 +11,23 @@ class VoiceClient:
 
         self.id = id
         self.guild_id = guild_id
+        self.channel_id: int = None
 
         self.http = HTTPClient(self)
         self.dispatcher = EventDispatcher()
 
+        self.dispatcher.on("VC_CHANNEL_EDITED", self.__channel_editied)
+
     def __repr__(self) -> str:
-        return f"<VoiceClient id={self.id} guild_id={self.guild_id} Node={self.Node}>"
+        return f"<VoiceClient id={self.id} guild_id={self.guild_id} channel_id={self.channel_id} Node={self.Node}>"
 
     def __del__(self):
         vc = self.Node.voiceClients.get(self.guild_id)
         if vc and vc == self:
             self.Node.voiceClients.pop(self.guild_id)
+
+    def __channel_editied(self, channel_id: int) -> None:
+        self.channel_id: int = channel_id
 
     async def send(self, Operation: str, Data: dict = {}):
         Data["guild_id"] = self.guild_id

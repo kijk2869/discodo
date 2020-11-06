@@ -19,6 +19,12 @@ class NodeClient(OriginNode):
         super().__init__(*args, **kwargs)
         self.DPYClient = DPYClient
 
+    async def close(self) -> None:
+        for guildId in self.voiceClients:
+            self.loop.create_task(
+                self.DPYClient.disconnect(self.DPYClient.client.get_guild(guildId))
+            )
+
     async def destroy(self, *args, **kwargs) -> None:
         log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
