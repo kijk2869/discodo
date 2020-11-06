@@ -1,6 +1,7 @@
 import asyncio
 import ipaddress
 import re
+import urllib.parse
 from typing import Union
 
 import aiohttp
@@ -16,10 +17,6 @@ URL_REGEX = re.compile(
 
 YOUTUBE_PLAYLIST_ID_REGEX = re.compile(
     r"(?:http|https|)(?::\/\/|)(?:www.|)(?:music.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{12,})[a-z0-9;:@#?&%=+\/\$_.-]*(?:&index=|)([0-9]*)?"
-)
-
-YOUTUBE_MIX_PLAYLIST_REGEX = re.compile(
-    r"^(?:http|https|)(?::\/\/|)(?:www.|)(?:music.|)youtube\.com\/watch\?(?:&.*)*(?:(?:v=([a-zA-Z0-9_\-]{11})(?:&.*)*&list=([a-zA-Z0-9_\-]{18}))|(?:list=([a-zA-Z0-9_\-]{18})(?:&.*)*&v=([a-zA-Z0-9_\-]{11})))(?:&.*)*(?:\#.*)*$"
 )
 
 
@@ -54,13 +51,17 @@ async def extract(
 
         return searchResult[0]
 
-    Match = YOUTUBE_MIX_PLAYLIST_REGEX.match(query)
-    if Match and Match.group(2).startswith(("RD", "UL", "PU")):
-        return await Youtube.extract_mix(Match.group(1), Match.group(2), connector)
-
     Match = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
-    if Match and not Match.group(1).startswith(("RD", "UL", "PU")):
-        return await Youtube.extract_playlist(Match.group(1), connector)
+    if Match:
+        if Match.group(1).startswith(("RD", "UL", "PU")):
+            urlInfo = urllib.parse.parse_qs(urllib.parse.urlparse(query).query)
+
+            if urlInfo.get("v") and urlInfo.get("list"):
+                return await Youtube.extract_mix(
+                    urlInfo["v"][0], urlInfo.get("list")[0], connector
+                )
+        else:
+            return await Youtube.extract_playlist(Match.group(1), connector)
 
     return await youtube_dl_extract(query, address=address, **kwargs)
 
