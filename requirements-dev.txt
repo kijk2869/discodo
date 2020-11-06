@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Coding style formatter
+black==20.8b1
+isort==5.6.4
+
+# Git pre commit
+pre-commit==2.8.2

@@ -1,0 +1,19 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v2.3.0
+        hooks:
+        -   id: check-yaml
+        -   id: end-of-file-fixer
+        -   id: trailing-whitespace
+        -   id: check-ast
+        -   id: requirements-txt-fixer
+    -   repo: https://github.com/psf/black
+        rev: 20.8b1
+        hooks:
+        -   id: black
+    -   repo: https://github.com/PyCQA/isort
+        rev: v5.6.4
+        hooks:
+        -   id: isort
