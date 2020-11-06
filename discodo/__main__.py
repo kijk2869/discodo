@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import sys
+import psutil
 
 import colorlog
 
@@ -245,6 +246,8 @@ else:
     setLoggingLevel(logging.INFO)
 
 if __name__ == "__main__":
+    psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
+
     loop = asyncio.get_event_loop()
 
     if log.level == logging.DEBUG:
