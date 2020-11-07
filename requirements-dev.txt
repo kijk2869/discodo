@@ -1,5 +1,8 @@
 -r requirements.txt
 
+# Python PEP8 linter
+flake8==3.8.4
+
 # Coding style formatter
 black==20.8b1
 isort==5.6.4
