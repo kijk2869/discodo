@@ -4,7 +4,7 @@ import logging
 from typing import Coroutine
 
 from sanic import Blueprint
-from sanic.websocket import ConnectionClosed
+from sanic.websocket import ConnectionClosedError
 
 from ..config import Config
 from ..manager import ClientManager
@@ -84,10 +84,10 @@ class WebsocketHandler:
                 RAWDATA = await asyncio.wait_for(
                     self.ws.recv(), timeout=Config.HANDSHAKE_TIMEOUT
                 )
-            except (asyncio.TimeoutError, ConnectionClosed) as exception:
+            except (asyncio.TimeoutError, ConnectionClosedError) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
                     log.info("websocket connection closing because of timeout.")
-                elif isinstance(exception, ConnectionClosed):
+                elif isinstance(exception, ConnectionClosedError):
                     log.info(
                         f"websocket connection disconnected. code {exception.code}"
                     )
@@ -122,7 +122,12 @@ class WebsocketHandler:
 
     async def sendJson(self, Data: dict) -> None:
         log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
-        await self.ws.send(json.dumps(Data, cls=Encoder))
+        try:
+            await self.ws.send(json.dumps(Data, cls=Encoder))
+        except ConnectionClosedError:
+            log.debug(
+                f"while sending data to websocket connection of {self.request.ip}, the connection closed, ignored."
+            )
 
     async def initialize_manager(self, user_id: int) -> None:
         if int(user_id) in self.app.ClientManagers:
