@@ -291,12 +291,20 @@ class VoiceClient(VoiceConnector):
         """
 
         Data = await self.getSource(Query)
+        Index = self.putSource(Data)
 
         self.dispatcher.dispatch(
-            "loadSource", source=(Data if isinstance(Data, list) else Data), **kwargs
+            "loadSource",
+            source=(
+                {"data": Data, "index": Index}
+                if isinstance(Data, list)
+                else map(
+                    lambda zipped: {"data": zipped[0], "index": zipped[1]},
+                    zip(Data, Index),
+                )
+            ),
+            **kwargs,
         )
-
-        self.putSource(Data)
 
         return Data
 

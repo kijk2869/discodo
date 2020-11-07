@@ -38,7 +38,7 @@ async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
             "uploader": Renderer["ownerText"]["runs"][0]["text"],
             "duration": sum(
                 [
-                    int(value) * ((index * 60) if index else 1)
+                    int(value) * (60 ** index)
                     for index, value in enumerate(
                         reversed(Renderer["lengthText"]["simpleText"].split(":"))
                     )
