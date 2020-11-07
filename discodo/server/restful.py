@@ -271,4 +271,8 @@ async def resume(request, VoiceClient) -> JSONResponse:
 @authorized
 @need_voiceclient
 async def queue(request, VoiceClient) -> JSONResponse:
-    return JSONResponse({"entries": VoiceClient.Queue})
+    return JSONResponse(
+        {
+            "entries": VoiceClient.Queue[1:] if len(VoiceClient.Queue) > 1 else [],
+        }
+    )

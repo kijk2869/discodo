@@ -311,7 +311,7 @@ class WebsocketPayloads:
             "op": "getQueue",
             "d": {
                 "guild_id": Data["guild_id"],
-                "entries": VoiceClient.Queue,
+                "entries": VoiceClient.Queue[1:] if len(VoiceClient.Queue) > 1 else [],
             },
         }
 

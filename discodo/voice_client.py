@@ -297,7 +297,7 @@ class VoiceClient(VoiceConnector):
             "loadSource",
             source=(
                 {"data": Data, "index": Index}
-                if isinstance(Data, list)
+                if not isinstance(Data, list)
                 else map(
                     lambda zipped: {"data": zipped[0], "index": zipped[1]},
                     zip(Data, Index),

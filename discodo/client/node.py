@@ -156,12 +156,19 @@ class Node:
 
         return await self.send("DISCORD_EVENT", payload)
 
-    async def getStat(self) -> dict:
-        await self.send("GET_STAT")
+    async def getStatus(self) -> dict:
+        await self.send("GET_STATUS")
 
-        return await self.dispatcher.wait_for("STAT", timeout=10.0)
+        return await self.dispatcher.wait_for("STATUS", timeout=10.0)
 
 
 class Nodes(list):
-    def connect(self) -> Coroutine:
-        return asyncio.wait(map(lambda x: x.connect(), self))
+    async def connect(self) -> Coroutine:
+        Done, _ = await asyncio.wait(map(lambda x: x.connect(), self))
+
+        return list(filter(lambda task: task.result(), Done))
+
+    async def getStatus(self) -> Coroutine:
+        Done, _ = await asyncio.wait(map(lambda x: x.getStatus(), self))
+
+        return list(filter(lambda task: task.result(), Done))
