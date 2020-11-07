@@ -289,6 +289,7 @@ class WebsocketPayloads:
                 "duration": VoiceClient.current.duration,
                 "position": VoiceClient.current.position,
                 "remain": VoiceClient.current.remain,
+                "remainQueue": len(VoiceClient.Queue),
                 "options": {
                     "autoplay": VoiceClient.autoplay,
                     "volume": VoiceClient.volume,
@@ -311,7 +312,7 @@ class WebsocketPayloads:
             "op": "getQueue",
             "d": {
                 "guild_id": Data["guild_id"],
-                "entries": VoiceClient.Queue[1:] if len(VoiceClient.Queue) > 1 else [],
+                "entries": VoiceClient.Queue,
             },
         }
 

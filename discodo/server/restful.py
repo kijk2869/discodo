@@ -256,6 +256,7 @@ async def resume(request, VoiceClient) -> JSONResponse:
             "duration": VoiceClient.current.duration,
             "position": VoiceClient.current.position,
             "remain": VoiceClient.current.remain,
+            "remainQueue": len(VoiceClient.Queue),
             "options": {
                 "autoplay": VoiceClient.autoplay,
                 "volume": VoiceClient.volume,
@@ -273,6 +274,6 @@ async def resume(request, VoiceClient) -> JSONResponse:
 async def queue(request, VoiceClient) -> JSONResponse:
     return JSONResponse(
         {
-            "entries": VoiceClient.Queue[1:] if len(VoiceClient.Queue) > 1 else [],
+            "entries": VoiceClient.Queue,
         }
     )
