@@ -164,11 +164,29 @@ class Node:
 
 class Nodes(list):
     async def connect(self) -> Coroutine:
-        Done, _ = await asyncio.wait(map(lambda x: x.connect(), self))
+        def get_task(Node):
+            if Node.is_connected:
+                return Node.connect()
 
-        return list(filter(lambda task: task.result(), Done))
+        task_list: list = list(filter(None, map(get_task, self)))
+
+        if not task_list:
+            return []
+
+        Done, _ = await asyncio.wait(task_list, return_when="ALL_COMPLETED")
+
+        return list(map(lambda task: task.result(), Done))
 
     async def getStatus(self) -> Coroutine:
-        Done, _ = await asyncio.wait(map(lambda x: x.getStatus(), self))
+        def get_task(Node):
+            if Node.is_connected:
+                return Node.getStatus()
 
-        return list(filter(lambda task: task.result(), Done))
+        task_list: list = list(filter(None, map(get_task, self)))
+
+        if not task_list:
+            return []
+
+        Done, _ = await asyncio.wait(task_list, return_when="ALL_COMPLETED")
+
+        return list(map(lambda task: task.result(), Done))
