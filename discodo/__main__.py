@@ -246,7 +246,7 @@ else:
     setLoggingLevel(logging.INFO)
 
 if __name__ == "__main__":
-    if hasattr("HIGH_PRIORITY_CLASS", psutil):
+    if hasattr(psutil, "HIGH_PRIORITY_CLASS"):
         psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
 
     loop = asyncio.get_event_loop()
