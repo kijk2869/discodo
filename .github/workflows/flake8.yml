@@ -26,11 +26,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        apt-get update && \
-        apt-get install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev && \
-        apt-get install --no-install-recommends -y pkg-config libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev && \
-        apt-get clean && rm -rf /var/lib/apt/lists/*
-        if [ -f requirements.txt ]; then pip install -r requirements-dev.txt; fi
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev
+        sudo apt-get install --no-install-recommends -y pkg-config libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        pip install -r requirements-dev.txt --no-binary av
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
