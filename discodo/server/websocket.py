@@ -139,10 +139,9 @@ class WebsocketHandler:
         else:
             self.ClientManager = ModifyClientManager(user_id=user_id)
             self.app.ClientManagers[int(user_id)] = self.ClientManager
+            self.ClientManager.dispatcher.onAny(self.manager_event)
 
             log.debug(f"ClientManager of {user_id} intalized.")
-
-        self.ClientManager.dispatcher.onAny(self.manager_event)
 
     async def manager_event(self, guild_id: int, **kwargs) -> None:
         kwargs = {key: value for key, value in kwargs.items()}
