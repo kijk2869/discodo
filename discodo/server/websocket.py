@@ -4,7 +4,7 @@ import logging
 from typing import Coroutine
 
 from sanic import Blueprint
-from sanic.websocket import ConnectionClosedError
+from sanic.websocket import ConnectionClosed
 
 from ..config import Config
 from ..manager import ClientManager
@@ -51,6 +51,8 @@ class WebsocketHandler:
 
     def __del__(self) -> None:
         if self.ClientManager:
+            self.ClientManager.dispatcher.offAny(self.manager_event)
+
             self.loop.create_task(self.wait_for_bind())
 
     async def wait_for_bind(self) -> None:
@@ -84,10 +86,10 @@ class WebsocketHandler:
                 RAWDATA = await asyncio.wait_for(
                     self.ws.recv(), timeout=Config.HANDSHAKE_TIMEOUT
                 )
-            except (asyncio.TimeoutError, ConnectionClosedError) as exception:
+            except (asyncio.TimeoutError, ConnectionClosed) as exception:
                 if isinstance(exception, asyncio.TimeoutError):
                     log.info("websocket connection closing because of timeout.")
-                elif isinstance(exception, ConnectionClosedError):
+                elif isinstance(exception, ConnectionClosed):
                     log.info(
                         f"websocket connection disconnected. code {exception.code}"
                     )
@@ -124,7 +126,7 @@ class WebsocketHandler:
         log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
         try:
             await self.ws.send(json.dumps(Data, cls=Encoder))
-        except ConnectionClosedError:
+        except ConnectionClosed:
             log.debug(
                 f"while sending data to websocket connection of {self.request.ip}, the connection closed, ignored."
             )
@@ -139,9 +141,10 @@ class WebsocketHandler:
         else:
             self.ClientManager = ModifyClientManager(user_id=user_id)
             self.app.ClientManagers[int(user_id)] = self.ClientManager
-            self.ClientManager.dispatcher.onAny(self.manager_event)
 
             log.debug(f"ClientManager of {user_id} intalized.")
+
+        self.ClientManager.dispatcher.onAny(self.manager_event)
 
     async def manager_event(self, guild_id: int, **kwargs) -> None:
         kwargs = {key: value for key, value in kwargs.items()}
