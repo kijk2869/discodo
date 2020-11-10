@@ -115,16 +115,18 @@ class Node:
 
         return self.ws.send(*args, **kwargs)
 
+    async def _resumed(self, Data: dict) -> None:
+        for voice_client in self.voiceClients:
+            voice_client.__del__()
+
+        for guild_id, vc_data in Data["voice_clients"].items():
+            self.voiceClients[int(guild_id)] = VoiceClient(
+                self, vc_data["id"], guild_id
+            )
+
     async def onAnyEvent(self, Operation, Data):
         if Operation == "RESUMED":
-            for voice_client in self.voiceClients:
-                voice_client.__del__()
-
-            for guild_id, vc_data in Data["voice_clients"].items():
-                self.voiceClients[int(guild_id)] = VoiceClient(
-                    self, vc_data["id"], guild_id
-                )
-
+            await self._resumed(Data)
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
             self.voiceClients[guild_id] = VoiceClient(self, Data["id"], guild_id)
@@ -164,11 +166,7 @@ class Node:
 
 class Nodes(list):
     async def connect(self) -> Coroutine:
-        def get_task(Node):
-            if Node.is_connected:
-                return Node.connect()
-
-        task_list: list = list(filter(None, map(get_task, self)))
+        task_list: list = list(map(lambda Node: Node.connect(), self))
 
         if not task_list:
             return []

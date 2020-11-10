@@ -19,6 +19,17 @@ class NodeClient(OriginNode):
         super().__init__(*args, **kwargs)
         self.DPYClient = DPYClient
 
+    async def _resumed(self, Data: dict) -> None:
+        await super()._resumed(Data)
+
+        for guild_id, vc_data in Data["voice_clients"].items():
+            guild = self.DPYClient.client.get_guild(int(guild_id))
+            if "channel" in vc_data:
+                channel = guild.get_channel(vc_data["channel"])
+                self.loop.create_task(self.DPYClient.connect(channel))
+            else:
+                self.loop.create_task(self.DPYClient.disconnect(guild))
+
     async def close(self) -> None:
         for guildId in self.voiceClients:
             self.loop.create_task(
@@ -91,20 +102,10 @@ class DPYClient:
 
         self.Nodes.append(Node)
 
-        Node.dispatcher.on("RESUMED", self._resumed)
         Node.dispatcher.on("VC_DESTROYED", self._vc_destroyed)
         Node.dispatcher.onAny(self._node_event)
 
         return self
-
-    async def _resumed(self, Data: dict) -> None:
-        for guild_id, vc_data in Data["voice_clients"].items():
-            guild = self.client.get_guild(int(guild_id))
-            if "channel" in vc_data:
-                channel = guild.get_channel(vc_data["channel"])
-                self.loop.create_task(self.connect(channel))
-            else:
-                self.loop.create_task(self.disconnect(guild))
 
     async def _vc_destroyed(self, Data: dict) -> None:
         guild = self.client.get_guild(int(Data["guild_id"]))
@@ -172,6 +173,14 @@ class DPYClient:
         ws = self.__get_websocket(channel.guild.shard_id)
 
         await ws.voice_state(channel.guild.id, channel.id)
+
+        VC, _ = await self.dispatcher.wait_for(
+            "VC_CREATED",
+            lambda _, Data: int(Data["guild_id"]) == channel.guild.id,
+            timeout=10.0,
+        )
+
+        return VC
 
     async def disconnect(self, guild: discord.Guild) -> None:
         log.info(f"disconnecting voice of {guild.id} without destroying")

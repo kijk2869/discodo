@@ -56,6 +56,7 @@ class AudioData:
             "is_live": self.is_live,
             "uploader": self.uploader,
             "description": self.description,
+            "subtitles": self.subtitles,
         }
 
     def __repr__(self) -> str:
