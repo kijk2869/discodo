@@ -17,7 +17,7 @@ lxml==4.6.1
 markdownify==0.5.3
 
 # Logging
-colorlog==4.4.0
+colorlog==4.6.2
 
 # Node webserver
 sanic==20.9.1
