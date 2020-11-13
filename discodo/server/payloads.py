@@ -262,7 +262,7 @@ class WebsocketPayloads:
         del VoiceClient.Queue[Data["index"] - 1]
 
         payload = {
-            "op": "shuffle",
+            "op": "remove",
             "d": {
                 "guild_id": Data["guild_id"],
                 "removed": removed,
