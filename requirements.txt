@@ -1,5 +1,5 @@
 # For networking
-aiohttp==3.7.2
+aiohttp==3.7.3
 websockets==8.1
 
 # Extra extractor resolver
