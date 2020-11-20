@@ -178,13 +178,13 @@ class Player(threading.Thread):
             Source.filter = self.client.filter
         except:
             traceback.print_exc()
-            self.dispatcher.dispatch(
+            self.client.dispatcher.dispatch(
                 "SOURCE_TRACEBACK", source=Data, traceback=traceback.format_exc()
             )
 
             Source = Data
-
-        callback(Source)
+        finally:
+            callback(Source)
 
     def read(self) -> bytes:
         if not self.current:

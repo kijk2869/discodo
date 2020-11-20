@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import aiohttp
 import yarl
 import youtube_dl
@@ -29,15 +31,24 @@ class AudioData:
         self.uploader = data.get("uploader")
         self.description = data.get("description")
 
+        def getUsableSubtitle(Data: Dict[str, Any]) -> Dict[str, Any]:
+            Usable: List[Any] = list(
+                filter(lambda Subtitle: Subtitle.get("ext") == "srv1", Data)
+            )
+
+            if Usable:
+                return Usable[0]["url"]
+
         self.subtitles = (
-            {
-                lang: [
-                    SubtitleData["url"]
-                    for SubtitleData in subtitle
-                    if SubtitleData["ext"] == "srv1"
-                ][0]
-                for lang, subtitle in data["subtitles"].items()
-            }
+            dict(
+                map(
+                    lambda Data: (
+                        Data[0],
+                        getUsableSubtitle(Data[1]),
+                    ),
+                    data["subtitles"].items(),
+                )
+            )
             if "subtitles" in data
             else {}
         )

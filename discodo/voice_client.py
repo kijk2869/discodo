@@ -298,9 +298,11 @@ class VoiceClient(VoiceConnector):
             source=(
                 {"data": Data, "index": Index}
                 if not isinstance(Data, list)
-                else map(
-                    lambda zipped: {"data": zipped[0], "index": zipped[1]},
-                    zip(Data, Index),
+                else list(
+                    map(
+                        lambda zipped: {"data": zipped[0], "index": zipped[1]},
+                        zip(Data, Index),
+                    )
                 )
             ),
             **kwargs,
