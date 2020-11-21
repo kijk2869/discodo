@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List
 
 import aiohttp
 import yarl
@@ -53,6 +53,8 @@ class AudioData:
             else {}
         )
 
+        self.chapters = data.get("chapters", {})
+
         self._source = None
 
     def __dict__(self) -> dict:
@@ -68,6 +70,7 @@ class AudioData:
             "uploader": self.uploader,
             "description": self.description,
             "subtitles": self.subtitles,
+            "chapters": self.chapters,
         }
 
     def __repr__(self) -> str:
