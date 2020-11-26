@@ -5,9 +5,7 @@ YOUTUBE_HEADERS: dict = {
     "x-youtube-client-version": "2.20201030.01.00",
 }
 
-DATA_JSON = re.compile(
-    r"(?:window\[\"ytInitialData\"\]|var ytInitialData)\s*=\s*(\{.*\})"
-)
+DATA_JSON = re.compile(r'(?:window\["ytInitialData"\]|ytInitialData)\W?=\W?({.*?});')
 
 from .mix import extract_mix
 from .playlist import extract_playlist
