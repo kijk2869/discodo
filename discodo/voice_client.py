@@ -291,6 +291,10 @@ class VoiceClient(VoiceConnector):
         """
 
         Data = await self.getSource(Query)
+
+        if "related" in kwargs and isinstance(kwargs["related"], bool):
+            Data.related = kwargs["related"]
+
         Index = self.putSource(Data)
 
         self.dispatcher.dispatch(

@@ -55,6 +55,8 @@ class AudioData:
 
         self.chapters = data.get("chapters", {})
 
+        self.related: bool = False
+
         self._source = None
 
     def __dict__(self) -> dict:
@@ -71,6 +73,7 @@ class AudioData:
             "description": self.description,
             "subtitles": self.subtitles,
             "chapters": self.chapters,
+            "related": self.related,
         }
 
     def __repr__(self) -> str:
