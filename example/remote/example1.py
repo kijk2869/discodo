@@ -5,14 +5,12 @@ Just use it only to learn the structure.
 This code is not perfect and can be complex.
 
 """
-
-
 import logging
+import re
 
 import discord
 
 import discodo
-import re
 
 logging.basicConfig(level=logging.INFO)
 
@@ -50,8 +48,7 @@ async def on_message(message):
 
         await Audio.connect(message.author.voice.channel)
         return await message.channel.send(
-            f"connected to {message.author.voice.channel.mention}."
-        )
+            f"connected to {message.author.voice.channel.mention}.")
 
     if message.content.startswith("!stop"):
         vc = Audio.getVC(message.guild)
@@ -61,7 +58,8 @@ async def on_message(message):
 
         await vc.destroy()
 
-        return await message.channel.send(f"player stopped and cleaned the queue.")
+        return await message.channel.send(
+            f"player stopped and cleaned the queue.")
 
     if message.content.startswith("!play"):
         vc = Audio.getVC(message.guild)
@@ -76,10 +74,10 @@ async def on_message(message):
 
         if isinstance(Source, list):
             return await message.channel.send(
-                f'{len(Source) - 1} songs except {Source[0]["title"]} added.'
-            )
+                f'{len(Source) - 1} songs except {Source[0]["title"]} added.')
         else:
-            return await message.channel.send(f'{Source["data"]["title"]} added.')
+            return await message.channel.send(
+                f'{Source["data"]["title"]} added.')
 
     if message.content.startswith("!skip"):
         vc = Audio.getVC(message.guild)
@@ -87,11 +85,13 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[5:].strip()) if message.content[5:].strip() else 1
+        offset = int(
+            message.content[5:].strip()) if message.content[5:].strip() else 1
 
         Remain = await vc.skip(offset)
 
-        return await message.channel.send(f"{offset} skipped. {Remain}songs remain")
+        return await message.channel.send(
+            f"{offset} skipped. {Remain}songs remain")
 
     if message.content.startswith("!remove"):
         vc = Audio.getVC(message.guild)
@@ -99,11 +99,13 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[7:].strip()) if message.content[7:].strip() else 1
+        offset = int(
+            message.content[7:].strip()) if message.content[7:].strip() else 1
 
         Data = await vc.remove(offset)
 
-        return await message.channel.send(f'{Data["removed"]["title"]} removed.')
+        return await message.channel.send(
+            f'{Data["removed"]["title"]} removed.')
 
     if message.content.startswith("!volume"):
         vc = Audio.getVC(message.guild)
@@ -111,9 +113,8 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = (
-            int(message.content[7:].strip()) if message.content[7:].strip() else 100
-        )
+        offset = (int(message.content[7:].strip())
+                  if message.content[7:].strip() else 100)
 
         Volume = await vc.setVolume(offset / 100)
 
@@ -125,15 +126,13 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = (
-            int(message.content[10:].strip()) if message.content[10:].strip() else 10
-        )
+        offset = (int(message.content[10:].strip())
+                  if message.content[10:].strip() else 10)
 
         Crossfade = await vc.setCrossfade(offset)
 
         return await message.channel.send(
-            f"set crossfade seconds to {Crossfade} seconds."
-        )
+            f"set crossfade seconds to {Crossfade} seconds.")
 
     if message.content.startswith("!autoplay"):
         vc = Audio.getVC(message.guild)
@@ -141,16 +140,14 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = (
-            int(message.content[9:].strip()) if message.content[9:].strip() else "on"
-        )
+        offset = (int(message.content[9:].strip())
+                  if message.content[9:].strip() else "on")
         offset = {"on": True, "off": False}.get(offset, True)
 
         autoplay = await vc.setAutoplay(offset)
 
         return await message.channel.send(
-            f'auto related play {"enabled" if autoplay else "disabled"}.'
-        )
+            f'auto related play {"enabled" if autoplay else "disabled"}.')
 
     if message.content.startswith("!np"):
         vc = Audio.getVC(message.guild)
@@ -182,17 +179,15 @@ async def on_message(message):
 
         State = await vc.getState()
         Queue = await vc.getQueue()
-        QueueText = "\n".join(
-            [str(Queue.index(Item) + 1) + ". " + Item["title"] for Item in Queue]
-        )
+        QueueText = "\n".join([
+            str(Queue.index(Item) + 1) + ". " + Item["title"] for Item in Queue
+        ])
 
-        return await message.channel.send(
-            f"""
+        return await message.channel.send(f"""
 Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]}`
 
 {QueueText}
-"""
-        )
+""")
 
     if message.content.startswith("!seek"):
         vc = Audio.getVC(message.guild)
@@ -200,7 +195,8 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[5:].strip()) if message.content[5:].strip() else 1
+        offset = int(
+            message.content[5:].strip()) if message.content[5:].strip() else 1
 
         await vc.seek(offset)
 
@@ -212,7 +208,8 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        language = message.content[9:].strip() if message.content[9:].strip() else None
+        language = message.content[9:].strip() if message.content[9:].strip(
+        ) else None
         if not language:
             return await message.channel.send("Please type language.")
 
@@ -233,9 +230,9 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
                 else:
                     await self._msg.edit(content=subtitle["current"])
 
-        Data = await vc.getSubtitle(
-            lang=language, url=url, callback=SubtitleCallback().callback
-        )
+        Data = await vc.getSubtitle(lang=language,
+                                    url=url,
+                                    callback=SubtitleCallback().callback)
 
 
 app.run("SUPERRRSECRETTOKENNNNNN")
