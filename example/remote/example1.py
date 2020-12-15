@@ -79,7 +79,7 @@ async def on_message(message):
                 f'{len(Source) - 1} songs except {Source[0]["title"]} added.'
             )
         else:
-            return await message.channel.send(f'{Source["title"]} added.')
+            return await message.channel.send(f'{Source["data"]["title"]} added.')
 
     if message.content.startswith("!skip"):
         vc = Audio.getVC(message.guild)
