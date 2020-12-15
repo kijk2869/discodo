@@ -87,8 +87,7 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[5:].strip()
-                     ) if message.content[5:].strip() else 1
+        offset = int(message.content[5:].strip()) if message.content[5:].strip() else 1
 
         Remain = await vc.skip(offset)
 
@@ -100,8 +99,7 @@ async def on_message(message):
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[7:].strip()
-                     ) if message.content[7:].strip() else 1
+        offset = int(message.content[7:].strip()) if message.content[7:].strip() else 1
 
         Data = await vc.remove(offset)
 
@@ -114,8 +112,7 @@ async def on_message(message):
             return await message.channel.send("Please type `!join` first.")
 
         offset = (
-            int(message.content[7:].strip()
-                ) if message.content[7:].strip() else 100
+            int(message.content[7:].strip()) if message.content[7:].strip() else 100
         )
 
         Volume = await vc.setVolume(offset / 100)
@@ -129,8 +126,7 @@ async def on_message(message):
             return await message.channel.send("Please type `!join` first.")
 
         offset = (
-            int(message.content[10:].strip()
-                ) if message.content[10:].strip() else 10
+            int(message.content[10:].strip()) if message.content[10:].strip() else 10
         )
 
         Crossfade = await vc.setCrossfade(offset)
@@ -146,8 +142,7 @@ async def on_message(message):
             return await message.channel.send("Please type `!join` first.")
 
         offset = (
-            int(message.content[9:].strip()
-                ) if message.content[9:].strip() else "on"
+            int(message.content[9:].strip()) if message.content[9:].strip() else "on"
         )
         offset = {"on": True, "off": False}.get(offset, True)
 
@@ -188,8 +183,7 @@ async def on_message(message):
         State = await vc.getState()
         Queue = await vc.getQueue()
         QueueText = "\n".join(
-            [str(Queue.index(Item) + 1) + ". " + Item["title"]
-             for Item in Queue]
+            [str(Queue.index(Item) + 1) + ". " + Item["title"] for Item in Queue]
         )
 
         return await message.channel.send(
@@ -206,8 +200,7 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        offset = int(message.content[5:].strip()
-                     ) if message.content[5:].strip() else 1
+        offset = int(message.content[5:].strip()) if message.content[5:].strip() else 1
 
         await vc.seek(offset)
 
@@ -219,8 +212,7 @@ Now playing: {State["current"]["title"]} `{State["position"]}:{State["duration"]
         if not vc:
             return await message.channel.send("Please type `!join` first.")
 
-        language = message.content[9:].strip(
-        ) if message.content[9:].strip() else None
+        language = message.content[9:].strip() if message.content[9:].strip() else None
         if not language:
             return await message.channel.send("Please type language.")
 
