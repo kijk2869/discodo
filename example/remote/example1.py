@@ -5,8 +5,6 @@ Just use it only to learn the structure.
 This code is not perfect and can be complex.
 
 """
-
-
 import logging
 import re
 
