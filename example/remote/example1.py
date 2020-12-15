@@ -8,11 +8,11 @@ This code is not perfect and can be complex.
 
 
 import logging
+import re
 
 import discord
 
 import discodo
-import re
 
 logging.basicConfig(level=logging.INFO)
 
