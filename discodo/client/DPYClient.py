@@ -78,13 +78,12 @@ class DPYClient:
         else:
             SelectNodes = self.Nodes
 
+        NodesTask = [
+            Node.discordDispatch(payload) for Node in SelectNodes if Node.is_connected
+        ]
         if SelectNodes:
             await asyncio.wait(
-                [
-                    Node.discordDispatch(payload)
-                    for Node in SelectNodes
-                    if Node.is_connected
-                ],
+                NodesTask,
                 return_when="ALL_COMPLETED",
             )
 
