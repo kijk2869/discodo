@@ -80,6 +80,7 @@ class srv1(SubtitleFormat):
                 "markdown": markdownify(TextElement.text),
             }
             for TextElement in self.Tree.findall("text")
+            if "dur" in TextElement.attrib
         }
 
         self.duration = sorted(

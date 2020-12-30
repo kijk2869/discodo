@@ -20,13 +20,13 @@ class EncoderStructure(ctypes.Structure):
 EncoderStructurePointer = ctypes.POINTER(EncoderStructure)
 
 
-def _errorLt(result, func, args):
+def errorLt(result, func, args):
     if result < 0:
         raise Exception
     return result
 
 
-def _errorNe(result, func, args):
+def errorNe(result, func, args):
     ret = args[-1]._obj
     if ret.value != 0:
         raise Exception
@@ -39,7 +39,7 @@ exported_functions = {
     "opus_encoder_create": (
         [ctypes.c_int, ctypes.c_int, ctypes.c_int, c_int_pointer],
         EncoderStructurePointer,
-        _errorNe,
+        errorNe,
     ),
     "opus_encode": (
         [
@@ -50,14 +50,14 @@ exported_functions = {
             ctypes.c_int32,
         ],
         ctypes.c_int32,
-        _errorLt,
+        errorLt,
     ),
-    "opus_encoder_ctl": (None, ctypes.c_int32, _errorLt),
+    "opus_encoder_ctl": (None, ctypes.c_int32, errorLt),
     "opus_encoder_destroy": ([EncoderStructurePointer], None, None),
 }
 
 
-def loadOpus(name) -> bool:
+def loadOpus(name: str) -> bool:
     global _library
     _library = loadLibopus(name)
 
@@ -68,8 +68,8 @@ def loadDefaultOpus() -> bool:
     global _library
     try:
         if sys.platform == "win32":
-            architecture = "x64" if sys.maxsize > 32 ** 2 else "x86"
-            directory = os.path.dirname(os.path.abspath(__file__))
+            architecture: str = "x64" if sys.maxsize > 32 ** 2 else "x86"
+            directory: str = os.path.dirname(os.path.abspath(__file__))
             _library = loadLibopus(
                 os.path.join(directory, "bin", f"libopus-0.{architecture}.dll")
             )
@@ -139,13 +139,13 @@ class Encoder:
     def __init__(self, application: int = ENCODER_CTL["APPLICATION_AUDIO"]) -> None:
         self.application = application
 
-        self.SAMPLING_RATE = Config.SAMPLING_RATE
-        self.CHANNELS = Config.CHANNELS
-        self.FRAME_LENGTH = Config.FRAME_LENGTH
-        self.SAMPLE_SIZE = Config.SAMPLE_SIZE
-        self.SAMPLES_PER_FRAME = Config.SAMPLES_PER_FRAME
-        self.EXPECTED_PACKETLOSS = Config.EXPECTED_PACKETLOSS
-        self.BITRATE = Config.BITRATE
+        self.SAMPLING_RATE: int = Config.SAMPLING_RATE
+        self.CHANNELS: int = Config.CHANNELS
+        self.FRAME_LENGTH: int = Config.FRAME_LENGTH
+        self.SAMPLE_SIZE: int = Config.SAMPLE_SIZE
+        self.SAMPLES_PER_FRAME: int = Config.SAMPLES_PER_FRAME
+        self.EXPECTED_PACKETLOSS: float = Config.EXPECTED_PACKETLOSS
+        self.BITRATE: int = Config.BITRATE
 
         if not isLoaded() and not loadDefaultOpus():
             raise ValueError(
@@ -157,7 +157,7 @@ class Encoder:
         self.setFec(True)
         self.setExpectedPacketLoss(self.EXPECTED_PACKETLOSS)
         self.setBandwidth("full")
-        self.setSignalType("auto")
+        self.setSignalType("music")
 
     def createState(self) -> int:
         ret = ctypes.c_int()

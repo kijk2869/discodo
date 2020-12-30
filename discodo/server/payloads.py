@@ -368,13 +368,18 @@ class WebsocketPayloads:
             Element = Subtitle.seek(current.position)
 
             if Element and Element["markdown"] and Element["markdown"] != Now:
-                Previous = Now
+                if not Element["markdown"].startswith(Now) and not Element[
+                    "markdown"
+                ].endswith(Now):
+                    Previous = Now
                 Now = Element["markdown"]
 
                 NextElements = [
                     NextElement["markdown"]
                     for NextElement in Elements[Elements.index(Element) + 1 :]
                     if NextElement["markdown"] != Now
+                    if not NextElement["markdown"].startswith(Now)
+                    and not NextElement["markdown"].endswith(Now)
                 ]
 
                 Next = NextElements[0] if NextElements else None
