@@ -6,11 +6,11 @@ import struct
 import threading
 import uuid
 
-from discodo.errors import WebsocketConnectionClosed
-
 from .config import Config
 from .gateway import VoiceSocket
-from .natives import Cipher, opus
+from .natives import Cipher
+from .natives import opus
+from discodo.errors import WebsocketConnectionClosed
 
 log = logging.getLogger("discodo.VoiceConnector")
 

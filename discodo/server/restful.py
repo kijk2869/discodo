@@ -1,7 +1,8 @@
 import json
 from typing import Coroutine
 
-from sanic import Blueprint, response
+from sanic import Blueprint
+from sanic import response
 from sanic.exceptions import abort
 
 from ..config import Config

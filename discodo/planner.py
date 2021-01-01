@@ -1,12 +1,12 @@
 """
 Thx for @Sannoob
 """
-
 import collections
 import ipaddress
 import random
 import time
-from typing import Dict, Union
+from typing import Dict
+from typing import Union
 
 
 class RoutePlanner:

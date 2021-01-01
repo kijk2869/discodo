@@ -3,11 +3,13 @@ import audioop
 import threading
 import time
 import traceback
-from typing import Callable, Union
+from typing import Callable
+from typing import Union
 
 from .config import Config
 from .errors import NotPlaying
-from .source import AudioData, AudioSource
+from .source import AudioData
+from .source import AudioSource
 
 
 class Player(threading.Thread):

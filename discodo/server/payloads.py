@@ -1,12 +1,12 @@
 import asyncio
 import uuid
 
-from discodo.source import SubtitleSource
-
-from ..errors import NotConnected, NotPlaying
+from ..errors import NotConnected
+from ..errors import NotPlaying
 from ..extractor import search
 from ..source import AudioData
 from ..status import getStatus
+from discodo.source import SubtitleSource
 
 
 def need_manager(func):

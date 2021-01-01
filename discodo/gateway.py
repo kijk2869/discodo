@@ -6,7 +6,8 @@ import struct
 import threading
 import time
 from collections import deque
-from typing import Dict, Optional
+from typing import Dict
+from typing import Optional
 
 import aiohttp
 
