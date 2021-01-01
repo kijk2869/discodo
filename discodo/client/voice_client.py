@@ -43,7 +43,8 @@ class VoiceClient:
         Future = self.loop.create_task(
             self.dispatcher.wait_for(
                 Event,
-                condition=lambda Data: int(Data["guild_id"]) == int(self.guild_id),
+                condition=lambda Data: int(
+                    Data["guild_id"]) == int(self.guild_id),
                 timeout=timeout,
             )
         )

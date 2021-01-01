@@ -8,7 +8,8 @@ from ..errors import DiscodoException
 
 class HTTPException(DiscodoException):
     def __init__(self, status: int) -> None:
-        super().__init__(f"{status} {responses.get(status, 'Unknown Status Code')}")
+        super().__init__(
+            f"{status} {responses.get(status, 'Unknown Status Code')}")
 
 
 class HTTPClient:

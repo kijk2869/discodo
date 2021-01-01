@@ -66,7 +66,8 @@ class Player(threading.Thread):
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
-            self.client.dispatcher.dispatch("SOURCE_START", source=self._current)
+            self.client.dispatcher.dispatch(
+                "SOURCE_START", source=self._current)
             self._current.start()
 
         return self._current
@@ -126,7 +127,8 @@ class Player(threading.Thread):
 
         if self._current and not self._next.BufferLoader:
             if is_load_condition:
-                self.client.dispatcher.dispatch("SOURCE_START", source=self._next)
+                self.client.dispatcher.dispatch(
+                    "SOURCE_START", source=self._next)
                 self._next.start()
 
         return self._next
@@ -220,7 +222,8 @@ class Player(threading.Thread):
             return
 
         self.client.speakState = state
-        asyncio.run_coroutine_threadsafe(self.client.ws.speak(state), self.client.loop)
+        asyncio.run_coroutine_threadsafe(
+            self.client.ws.speak(state), self.client.loop)
 
     def __do_run(self) -> None:
         self.loops = 0
@@ -251,7 +254,8 @@ class Player(threading.Thread):
 
                 self.loops += 1
                 nextTime = _start + Config.DELAY * self.loops
-                time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
+                time.sleep(
+                    max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
                 self.dispatcher.dispatch(

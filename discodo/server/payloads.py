@@ -360,7 +360,7 @@ class WebsocketPayloads:
 
                 NextElements = [
                     NextElement["markdown"]
-                    for NextElement in Elements[Elements.index(Element) + 1 :]
+                    for NextElement in Elements[Elements.index(Element) + 1:]
                     if NextElement["markdown"] != Now
                     if not NextElement["markdown"].startswith(Now)
                     and not NextElement["markdown"].endswith(Now)

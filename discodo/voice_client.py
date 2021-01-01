@@ -65,7 +65,8 @@ class VoiceClient(VoiceConnector):
         return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay}>"
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
-        self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
+        self.manager.dispatcher.dispatch(
+            self.guild_id, *args, event=event, **kwargs)
 
     async def __fetchAutoPlay(self, **kwargs):
         current = list(kwargs.values()).pop()
@@ -103,7 +104,8 @@ class VoiceClient(VoiceConnector):
     def channel_id(self, value: int) -> None:
         self._channel_id = int(value)
 
-        self.dispatcher.dispatch("VC_CHANNEL_EDITED", channel_id=self._channel_id)
+        self.dispatcher.dispatch(
+            "VC_CHANNEL_EDITED", channel_id=self._channel_id)
 
     async def createSocket(self, data: dict = None) -> None:
         """
@@ -237,7 +239,8 @@ class VoiceClient(VoiceConnector):
         """
 
         if not isinstance(Source, (list, AudioData, AudioSource)):
-            raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
+            raise TypeError(
+                "`Source` must be `list` or `AudioData` or `AudioSource`.")
 
         self.Queue += Source if isinstance(Source, list) else [Source]
 
@@ -318,7 +321,7 @@ class VoiceClient(VoiceConnector):
             raise ValueError("`offset` is bigger than `Queue` size.")
 
         if offset > 1:
-            del self.Queue[0 : (offset - 1)]
+            del self.Queue[0: (offset - 1)]
 
         self.player.current.stop()
 
