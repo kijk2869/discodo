@@ -67,9 +67,7 @@ class VoiceClient(VoiceConnector):
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
         self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
 
-    async def __fetchAutoPlay(self, **kwargs):
-        current = list(kwargs.values()).pop()
-
+    async def __fetchAutoPlay(self, current, **_):
         for _ in range(5):
             if self.autoplay and not self.Queue:
                 if YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
