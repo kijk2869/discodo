@@ -6,7 +6,7 @@ import struct
 import threading
 import uuid
 
-from websockets.exceptions import ConnectionClosed
+from discodo.errors import WebsocketConnectionClosed
 
 from .config import Config
 from .gateway import VoiceSocket
@@ -171,13 +171,13 @@ class VoiceConnector:
         while True:
             try:
                 await self.ws.poll()
-            except (asyncio.TimeoutError, ConnectionClosed) as e:
+            except (asyncio.TimeoutError, WebsocketConnectionClosed) as e:
                 self._connected.clear()
                 self._connectedThread.clear()
 
                 reason = (
                     f"with {e.code}"
-                    if isinstance(e, ConnectionClosed)
+                    if isinstance(e, WebsocketConnectionClosed)
                     else "because timed out."
                 )
 
@@ -224,5 +224,5 @@ class VoiceConnector:
 
         Packet = self.makePacket(data)
 
-        self.socket.sendto(Packet, (self.endpointIP, self.endpointPORT))
+        self.socket.sendto(Packet, (self.endpointIp, self.endpointPort))
         self.timestamp += Config.SAMPLES_PER_FRAME

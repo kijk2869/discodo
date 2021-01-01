@@ -6,28 +6,33 @@ import struct
 import threading
 import time
 from collections import deque
+from typing import Dict, Optional
 
-import websockets
+import aiohttp
 
+from .errors import WebsocketConnectionClosed
 from .natives import Encrypter
 
 log = logging.getLogger("discodo.gateway")
 
 
-class keepAlive(threading.Thread):
+class keepAliver(threading.Thread):
     def __init__(self, ws, interval: int, *args, **kwargs) -> None:
         threading.Thread.__init__(self, *args, **kwargs)
         self.daemon = True
 
         self.ws = ws
-        self.interval = interval
+        self.interval: int = interval
         self.Stopped = threading.Event()
-        self.latency = None
+        self.latency: Optional[float] = None
         self.recent_latencies = deque(maxlen=20)
 
         self._lastAck = self._lastSend = time.perf_counter()
-        self.timeout = ws.heartbeatTimeout
-        self.threadId = ws.threadId
+        self.timeout: float = ws.heartbeatTimeout
+        self.threadId: int = ws.threadId
+
+    def __del__(self) -> None:
+        self.stop()
 
     def run(self) -> None:
         while not self.Stopped.wait(self.interval):
@@ -43,12 +48,15 @@ class keepAlive(threading.Thread):
                 finally:
                     return self.stop()
 
-            payload = {"op": self.ws.HEARTBEAT, "d": int(time.time() * 1000)}
+            payload: Dict[str, int] = {
+                "op": VoicePayload.HEARTBEAT,
+                "d": int(time.time() * 1000),
+            }
             Runner = asyncio.run_coroutine_threadsafe(
                 self.ws.sendJson(payload), self.ws.loop
             )
             try:
-                totalBlocked = 0
+                totalBlocked: int = 0
                 while True:
                     try:
                         Runner.result(10)
@@ -56,7 +64,7 @@ class keepAlive(threading.Thread):
                     except concurrent.futures.TimeoutError:
                         totalBlocked += 10
                         log.warning(
-                            f"Heartbeat blocked for more than {totalBlocked} seconds."
+                            f"Thread-{self.threadId}: Heartbeat blocked for more than {totalBlocked} seconds."
                         )
             except:
                 return self.stop()
@@ -64,15 +72,15 @@ class keepAlive(threading.Thread):
                 self._lastSend = time.perf_counter()
 
     def ack(self) -> None:
-        self._lastAck = time.perf_counter()
-        self.latency = self._lastAck - self._lastSend
+        self._lastAck: float = time.perf_counter()
+        self.latency: float = self._lastAck - self._lastSend
         self.recent_latencies.append(self.latency)
 
     def stop(self) -> None:
         self.Stopped.set()
 
 
-class VoiceSocket(websockets.client.WebSocketClientProtocol):
+class VoicePayload:
     IDENTIFY = 0
     SELECT_PROTOCOL = 1
     READY = 2
@@ -85,22 +93,30 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     RESUMED = 9
     CLIENT_DISCONNECT = 13
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+
+class VoiceSocket:
+    def __init__(self, client, session, socket) -> None:
+        self.loop = client.loop
+        self.client = client
+        self.session = session
+        self.socket = socket
+
+        self.keepAliver = None
+        self.heartbeatTimeout = 60.0
+        self.threadId = threading.get_ident()
 
     @classmethod
     async def connect(cls, client, resume=False):
-        ws = await websockets.connect(
+        session = aiohttp.ClientSession()
+        socket = await session.ws_connect(
             f"wss://{client.endpoint}/?v=4",
-            loop=client.loop,
-            klass=cls,
-            compression=None,
+            max_msg_size=0,
+            timeout=30.0,
+            autoclose=False,
+            compress=15,
         )
-        ws.client = client
 
-        ws._keepAliver = None
-        ws.heartbeatTimeout = 60.0
-        ws.threadId = threading.get_ident()
+        ws = cls(client, session, socket)
 
         if not resume:
             await ws.identify()
@@ -111,24 +127,24 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     @property
     def latency(self) -> float:
-        return self._keepAliver.latency if self._keepAliver else None
+        return self.keepAliver.latency if self.keepAliver else None
 
     @property
     def averageLatency(self) -> float:
-        if not self._keepAliver:
+        if not self.keepAliver:
             return None
 
-        return sum(self._keepAliver.recent_latencies) / len(
-            self._keepAliver.recent_latencies
+        return sum(self.keepAliver.recent_latencies) / len(
+            self.keepAliver.recent_latencies
         )
 
     async def sendJson(self, data: dict) -> None:
         log.debug(f"send to websocket {data}")
-        await self.send(json.dumps(data))
+        await self.socket.send_json(data)
 
     async def identify(self) -> None:
         payload = {
-            "op": self.IDENTIFY,
+            "op": VoicePayload.IDENTIFY,
             "d": {
                 "server_id": str(self.client.guild_id),
                 "user_id": str(self.client.user_id),
@@ -140,7 +156,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def resume(self) -> None:
         payload = {
-            "op": self.RESUME,
+            "op": VoicePayload.RESUME,
             "d": {
                 "server_id": str(self.client.guild_id),
                 "user_id": str(self.client.user_id),
@@ -152,7 +168,7 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     async def select_protocol(self, ip: str, port: str, mode: str) -> None:
         payload = {
-            "op": self.SELECT_PROTOCOL,
+            "op": VoicePayload.SELECT_PROTOCOL,
             "d": {
                 "protocol": "udp",
                 "data": {"address": ip, "port": port, "mode": mode},
@@ -163,39 +179,42 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     async def speak(self, state: bool = True) -> None:
         self.client.speakState = state
 
-        payload = {"op": self.SPEAKING, "d": {"speaking": int(state), "delay": 0}}
+        payload = {
+            "op": VoicePayload.SPEAKING,
+            "d": {"speaking": int(state), "delay": 0},
+        }
         await self.sendJson(payload)
 
-    async def receive(self, message: dict) -> None:
+    async def messageRecieved(self, message: dict) -> None:
         Operation, Data = message["op"], message.get("d")
         log.debug(f"websocket recieved {Operation}: {Data}")
 
-        if Operation == self.READY:
+        if Operation == VoicePayload.READY:
             await self.createConnection(Data)
-        elif Operation == self.HEARTBEAT_ACK:
-            self._keepAliver.ack()
-        elif Operation == self.SESSION_DESCRIPTION:
+        elif Operation == VoicePayload.HEARTBEAT_ACK:
+            self.keepAliver.ack()
+        elif Operation == VoicePayload.SESSION_DESCRIPTION:
             await self.loadKey(Data)
-        elif Operation == self.HELLO:
+        elif Operation == VoicePayload.HELLO:
             interval = Data["heartbeat_interval"] / 1000.0
-            self._keepAliver = keepAlive(self, min(interval, 5.0))
-            self._keepAliver.start()
+            self.keepAliver = keepAliver(self, min(interval, 5.0))
+            self.keepAliver.start()
 
     async def createConnection(self, data: dict) -> None:
         self.client.ssrc = data["ssrc"]
-        self.client.endpointPORT = data["port"]
-        self.client.endpointIP = data["ip"]
+        self.client.endpointIp = data["ip"]
+        self.client.endpointPort = data["port"]
 
         packet = bytearray(70)
         struct.pack_into(">I", packet, 0, data["ssrc"])
 
         self.client.socket.sendto(
-            packet, (self.client.endpointIP, self.client.endpointPORT)
+            packet, (self.client.endpointIp, self.client.endpointPort)
         )
         _recieved = await self.loop.sock_recv(self.client.socket, 70)
 
-        _start, _end = 4, _recieved.index(0, 4)
-        self.client.ip = _recieved[_start:_end].decode("ascii")
+        start, end = 4, _recieved.index(0, 4)
+        self.client.ip = _recieved[start:end].decode("ascii")
         self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
 
         encryptModes = [Mode for Mode in data["modes"] if Mode in Encrypter.available]
@@ -216,11 +235,22 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         self.client.secretKey = data.get("secret_key")
 
     async def poll(self) -> None:
-        Message = await asyncio.wait_for(self.recv(), timeout=30.0)
-        await self.receive(json.loads(Message))
+        message = await asyncio.wait_for(self.socket.receive(), timeout=30.0)
 
-    async def close(self, *args, **kwargs) -> None:
-        if self._keepAliver:
-            self._keepAliver.stop()
+        if message.type is aiohttp.WSMsgType.TEXT:
+            await self.messageRecieved(json.loads(message.data))
+        elif message.type is aiohttp.WSMsgType.ERROR:
+            raise WebsocketConnectionClosed(self.socket) from message.data
+        elif message.type in (
+            aiohttp.WSMsgType.CLOSED,
+            aiohttp.WSMsgType.CLOSE,
+            aiohttp.WSMsgType.CLOSING,
+        ):
+            raise WebsocketConnectionClosed(self.socket, code=self._close_code)
 
-        await super().close(*args, **kwargs)
+    async def close(self, code: int = 1000) -> None:
+        if self.keepAliver:
+            self.keepAliver.stop()
+
+        await self.socket.close(code=code)
+        await self.session.close()
