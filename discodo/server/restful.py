@@ -26,10 +26,8 @@ def need_voiceclient(func: Coroutine) -> Coroutine:
     def wrapper(request, *args, **kwargs):
         user_id = int(request.headers.get("User-ID"))
 
-        if (
-            not hasattr(request.app, "ClientManagers")
-            or not user_id in request.app.ClientManagers
-        ):
+        if (not hasattr(request.app, "ClientManagers")
+                or not user_id in request.app.ClientManagers):
             abort(404, "ClientManager not found.")
 
         manager = request.app.ClientManagers[user_id]
@@ -57,11 +55,11 @@ class Encoder(json.JSONEncoder):
 
 
 def JSONResponse(
-    body,
-    status=200,
-    headers=None,
-    content_type="application/json",
-    **kwargs,
+        body,
+        status=200,
+        headers=None,
+        content_type="application/json",
+        **kwargs,
 ):
     return response.HTTPResponse(
         json.dumps(body, **kwargs, cls=Encoder),
@@ -88,9 +86,10 @@ async def searchSources(request) -> JSONResponse:
     if not Query:
         abort(400, "Missing parameter query.")
 
-    return JSONResponse(
-        {"sources": filter(lambda Source: AudioData(Source), await search(Query))}
-    )
+    return JSONResponse({
+        "sources":
+        filter(lambda Source: AudioData(Source), await search(Query))
+    })
 
 
 @app.post("/putSource")
@@ -121,7 +120,8 @@ async def loadSource(request, VoiceClient) -> JSONResponse:
 @authorized
 @need_voiceclient
 async def setVolume(request, VoiceClient) -> response.empty:
-    if "volume" not in request.json or not isinstance(request.json["volume"], float):
+    if "volume" not in request.json or not isinstance(request.json["volume"],
+                                                      float):
         abort(400, "Bad data `volume`")
 
     VoiceClient.volume = request.json["volume"]
@@ -134,8 +134,7 @@ async def setVolume(request, VoiceClient) -> response.empty:
 @need_voiceclient
 async def setCrossfade(request, VoiceClient) -> response.empty:
     if "crossfade" not in request.json or not isinstance(
-        request.json["crossfade"], float
-    ):
+            request.json["crossfade"], float):
         abort(400, "Bad data `crossfade`")
 
     VoiceClient.crossfade = request.json["crossfade"]
@@ -147,7 +146,8 @@ async def setCrossfade(request, VoiceClient) -> response.empty:
 @authorized
 @need_voiceclient
 async def setAutoplay(request, VoiceClient) -> response.empty:
-    if "autoplay" not in request.json or not isinstance(request.json["autoplay"], bool):
+    if "autoplay" not in request.json or not isinstance(
+            request.json["autoplay"], bool):
         abort(400, "Bad data `autoplay`")
 
     VoiceClient.autoplay = request.json["autoplay"]
@@ -159,7 +159,8 @@ async def setAutoplay(request, VoiceClient) -> response.empty:
 @authorized
 @need_voiceclient
 async def setFilter(request, VoiceClient) -> response.empty:
-    if "filter" not in request.json or not isinstance(request.json["filter"], dict):
+    if "filter" not in request.json or not isinstance(request.json["filter"],
+                                                      dict):
         abort(400, "Bad data `filter`")
 
     VoiceClient.filter = request.json["filter"]
@@ -171,7 +172,8 @@ async def setFilter(request, VoiceClient) -> response.empty:
 @authorized
 @need_voiceclient
 async def seek(request, VoiceClient) -> response.empty:
-    if "offset" not in request.json or not isinstance(request.json["offset"], float):
+    if "offset" not in request.json or not isinstance(request.json["offset"],
+                                                      float):
         abort(400, "Bad data `offset`")
 
     await VoiceClient.seek(request.json["offset"])
@@ -183,7 +185,8 @@ async def seek(request, VoiceClient) -> response.empty:
 @authorized
 @need_voiceclient
 async def seek(request, VoiceClient) -> JSONResponse:
-    if "offset" not in request.json or not isinstance(request.json["offset"], int):
+    if "offset" not in request.json or not isinstance(request.json["offset"],
+                                                      int):
         abort(400, "Bad data `offset`")
 
     VoiceClient.skip(request.json["offset"])
@@ -222,7 +225,8 @@ async def shuffle(request, VoiceClient) -> JSONResponse:
 @authorized
 @need_voiceclient
 async def remove(request, VoiceClient) -> JSONResponse:
-    if "index" not in request.json or not isinstance(request.json["index"], int):
+    if "index" not in request.json or not isinstance(request.json["index"],
+                                                     int):
         abort(400, "Bad data `index`")
 
     removed = VoiceClient.Queue[request.json["index"] - 1]
@@ -235,33 +239,29 @@ async def remove(request, VoiceClient) -> JSONResponse:
 @authorized
 @need_voiceclient
 async def resume(request, VoiceClient) -> JSONResponse:
-    return JSONResponse(
-        {
-            "id": VoiceClient.id,
-            "guild_id": VoiceClient.guild_id,
-            "channel_id": VoiceClient.channel_id,
-            "state": VoiceClient.state,
-            "current": VoiceClient.current,
-            "duration": VoiceClient.current.duration,
-            "position": VoiceClient.current.position,
-            "remain": VoiceClient.current.remain,
-            "remainQueue": len(VoiceClient.Queue),
-            "options": {
-                "autoplay": VoiceClient.autoplay,
-                "volume": VoiceClient.volume,
-                "crossfade": VoiceClient.crossfade,
-                "filter": VoiceClient.filter,
-            },
-        }
-    )
+    return JSONResponse({
+        "id": VoiceClient.id,
+        "guild_id": VoiceClient.guild_id,
+        "channel_id": VoiceClient.channel_id,
+        "state": VoiceClient.state,
+        "current": VoiceClient.current,
+        "duration": VoiceClient.current.duration,
+        "position": VoiceClient.current.position,
+        "remain": VoiceClient.current.remain,
+        "remainQueue": len(VoiceClient.Queue),
+        "options": {
+            "autoplay": VoiceClient.autoplay,
+            "volume": VoiceClient.volume,
+            "crossfade": VoiceClient.crossfade,
+            "filter": VoiceClient.filter,
+        },
+    })
 
 
 @app.get("/queue")
 @authorized
 @need_voiceclient
 async def queue(request, VoiceClient) -> JSONResponse:
-    return JSONResponse(
-        {
-            "entries": VoiceClient.Queue,
-        }
-    )
+    return JSONResponse({
+        "entries": VoiceClient.Queue,
+    })

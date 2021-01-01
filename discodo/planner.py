@@ -11,31 +11,35 @@ from typing import Union
 
 class RoutePlanner:
     def __init__(self, ipBlocks: list, excludeIps: list = []) -> None:
-        self.failedAddress: Dict[
-            Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
-            Dict[str, Union[str, float]],
-        ] = {}
-        self.usedCount: Dict[
-            Union[ipaddress.IPv4Address, ipaddress.IPv6Address], int
-        ] = collections.defaultdict(int)
+        self.failedAddress: Dict[Union[ipaddress.IPv4Address, ipaddress.
+                                       IPv6Address],
+                                 Dict[str, Union[str, float]], ] = {}
+        self.usedCount: Dict[Union[ipaddress.IPv4Address, ipaddress.
+                                   IPv6Address],
+                             int] = collections.defaultdict(int)
 
         self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
-        self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
+        self.excludeIps = [
+            ipaddress.ip_address(excludeIp) for excludeIp in excludeIps
+        ]
 
     def mark_failed_address(
-        self,
-        address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
-        status: int = 429,
+            self,
+            address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
+            status: int = 429,
     ) -> None:
-        self.failedAddress[address] = {"status": status, "failed_at": time.time()}
+        self.failedAddress[address] = {
+            "status": status,
+            "failed_at": time.time()
+        }
 
     def unmark_failed_address(
-        self, address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
+            self, address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
     ) -> None:
         del self.failedAddress[address]
 
     def __get_random(
-        self, ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
+            self, ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
     ) -> str:
         cidr: int = ipBlock.prefixlen
 
@@ -48,14 +52,12 @@ class RoutePlanner:
 
     def get(self) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address]:
         sortedIpBlocks = sorted(
-            self.ipBlocks, key=lambda ipBlock: self.usedCount.get(ipBlock, 0)
-        )
+            self.ipBlocks, key=lambda ipBlock: self.usedCount.get(ipBlock, 0))
         randomResult = self.__get_random(sortedIpBlocks[0])
         self.usedCount[sortedIpBlocks[0]] += 1
 
         if len(self.failedAddress) >= sum(
-            [ipBlock.num_addresses for ipBlock in self.ipBlocks]
-        ):
+            [ipBlock.num_addresses for ipBlock in self.ipBlocks]):
             raise ValueError("No Ips available")
 
         if randomResult in self.excludeIps or randomResult in self.failedAddress:

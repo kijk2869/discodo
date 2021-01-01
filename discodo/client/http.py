@@ -8,7 +8,8 @@ from ..errors import DiscodoException
 
 class HTTPException(DiscodoException):
     def __init__(self, status: int) -> None:
-        super().__init__(f"{status} {responses.get(status, 'Unknown Status Code')}")
+        super().__init__(
+            f"{status} {responses.get(status, 'Unknown Status Code')}")
 
 
 class HTTPClient:
@@ -43,38 +44,43 @@ class HTTPClient:
         return (await self.fetch("GET", "/searchSource"))["sources"]
 
     async def putSource(self, source: dict) -> Union[int, list]:
-        return (await self.fetch("POST", "/putSource", json={"source": dict(source)}))[
-            "index"
-        ]
+        return (await self.fetch("POST",
+                                 "/putSource",
+                                 json={"source": dict(source)}))["index"]
 
     async def loadSource(self, query: str) -> dict:
-        return (await self.fetch("POST", "/loadSource", json={"query": str(query)}))[
-            "source"
-        ]
+        return (await self.fetch("POST",
+                                 "/loadSource",
+                                 json={"query": str(query)}))["source"]
 
     async def setVolume(self, volume: float) -> None:
-        return await self.fetch("POST", "/setVolume", json={"volume": float(volume)})
+        return await self.fetch("POST",
+                                "/setVolume",
+                                json={"volume": float(volume)})
 
     async def setCrossfade(self, crossfade: float) -> None:
-        return await self.fetch(
-            "POST", "/setCrossfade", json={"crossfade": float(crossfade)}
-        )
+        return await self.fetch("POST",
+                                "/setCrossfade",
+                                json={"crossfade": float(crossfade)})
 
     async def setAutoplay(self, autoplay: bool) -> None:
-        return await self.fetch(
-            "POST", "/setAutoplay", json={"autoplay": bool(autoplay)}
-        )
+        return await self.fetch("POST",
+                                "/setAutoplay",
+                                json={"autoplay": bool(autoplay)})
 
     async def setFilter(self, filter: dict) -> None:
-        return await self.fetch("POST", "/setFilter", json={"filter": dict(filter)})
+        return await self.fetch("POST",
+                                "/setFilter",
+                                json={"filter": dict(filter)})
 
     async def seek(self, offset: float) -> None:
-        return await self.fetch("POST", "/seek", json={"offset": float(offset)})
+        return await self.fetch("POST",
+                                "/seek",
+                                json={"offset": float(offset)})
 
     async def skip(self, offset: int) -> None:
-        return (await self.fetch("POST", "/skip", json={"offset": int(offset)}))[
-            "remain"
-        ]
+        return (await self.fetch("POST", "/skip",
+                                 json={"offset": int(offset)}))["remain"]
 
     async def pause(self) -> None:
         return await self.fetch("POST", "/pause")

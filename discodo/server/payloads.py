@@ -14,7 +14,11 @@ def need_manager(func):
         if not self.ClientManager:
             payload = {
                 "op": func.__name__,
-                "d": {"traceback": {"NOT_IDENTIFIED": "Identify first."}},
+                "d": {
+                    "traceback": {
+                        "NOT_IDENTIFIED": "Identify first."
+                    }
+                },
             }
 
             return self.sendJson(payload)
@@ -40,7 +44,8 @@ class WebsocketPayloads:
                 "op": "IDENTIFY",
                 "d": {
                     "traceback": {
-                        "ALREADY_IDENTIFIED": "This connection already identified."
+                        "ALREADY_IDENTIFIED":
+                        "This connection already identified."
                     }
                 },
             }
@@ -70,9 +75,9 @@ class WebsocketPayloads:
         payload = {
             "op": "searchSources",
             "d": {
-                "sources": filter(
-                    lambda Source: AudioData(Source), await search(Data["query"])
-                ),
+                "sources":
+                filter(lambda Source: AudioData(Source), await
+                       search(Data["query"])),
             },
         }
 
@@ -112,7 +117,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "setVolume",
-            "d": {"guild_id": Data["guild_id"], "volume": VoiceClient.volume},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "volume": VoiceClient.volume
+            },
         }
 
         await self.sendJson(payload)
@@ -127,7 +135,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "setCrossfade",
-            "d": {"guild_id": Data["guild_id"], "crossfade": VoiceClient.crossfade},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "crossfade": VoiceClient.crossfade
+            },
         }
 
         await self.sendJson(payload)
@@ -142,7 +153,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "setAutoplay",
-            "d": {"guild_id": Data["guild_id"], "autoplay": VoiceClient.autoplay},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "autoplay": VoiceClient.autoplay
+            },
         }
 
         await self.sendJson(payload)
@@ -157,7 +171,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "setFilter",
-            "d": {"guild_id": Data["guild_id"], "filter": VoiceClient.filter},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "filter": VoiceClient.filter
+            },
         }
 
         await self.sendJson(payload)
@@ -172,7 +189,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "seek",
-            "d": {"guild_id": Data["guild_id"], "offset": Data["offset"]},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "offset": Data["offset"]
+            },
         }
 
         await self.sendJson(payload)
@@ -187,7 +207,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "skip",
-            "d": {"guild_id": Data["guild_id"], "remain": len(VoiceClient.Queue)},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "remain": len(VoiceClient.Queue)
+            },
         }
 
         await self.sendJson(payload)
@@ -202,7 +225,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "pause",
-            "d": {"guild_id": Data["guild_id"], "state": VoiceClient.state},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "state": VoiceClient.state
+            },
         }
 
         await self.sendJson(payload)
@@ -217,7 +243,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "resume",
-            "d": {"guild_id": Data["guild_id"], "state": VoiceClient.state},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "state": VoiceClient.state
+            },
         }
 
         await self.sendJson(payload)
@@ -232,7 +261,10 @@ class WebsocketPayloads:
 
         payload = {
             "op": "shuffle",
-            "d": {"guild_id": Data["guild_id"], "entries": VoiceClient.Queue},
+            "d": {
+                "guild_id": Data["guild_id"],
+                "entries": VoiceClient.Queue
+            },
         }
 
         await self.sendJson(payload)
@@ -321,7 +353,8 @@ class WebsocketPayloads:
                     "op": "requestSubtitle",
                     "d": {
                         "guild_id": Data["guild_id"],
-                        "NoSubtitle": f"There is no subtitle in {Data['lang']}",
+                        "NoSubtitle":
+                        f"There is no subtitle in {Data['lang']}",
                     },
                 }
                 return await self.sendJson(payload)
@@ -352,15 +385,14 @@ class WebsocketPayloads:
             Element = Subtitle.seek(current.position)
 
             if Element and Element["markdown"] and Element["markdown"] != Now:
-                if not Element["markdown"].startswith(Now) and not Element[
-                    "markdown"
-                ].endswith(Now):
+                if not Element["markdown"].startswith(
+                        Now) and not Element["markdown"].endswith(Now):
                     Previous = Now
                 Now = Element["markdown"]
 
                 NextElements = [
                     NextElement["markdown"]
-                    for NextElement in Elements[Elements.index(Element) + 1 :]
+                    for NextElement in Elements[Elements.index(Element) + 1:]
                     if NextElement["markdown"] != Now
                     if not NextElement["markdown"].startswith(Now)
                     and not NextElement["markdown"].endswith(Now)

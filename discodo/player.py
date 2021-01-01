@@ -44,11 +44,8 @@ class Player(threading.Thread):
 
     @property
     def crossfadeVolume(self) -> Union[float, None]:
-        return (
-            (1.0 / (self.client.crossfade / Config.DELAY))
-            if self.client.crossfade
-            else 1.0
-        )
+        return ((1.0 / (self.client.crossfade / Config.DELAY))
+                if self.client.crossfade else 1.0)
 
     def seek(self, offset: int) -> None:
         if not self.current:
@@ -68,7 +65,8 @@ class Player(threading.Thread):
             self._current.filter = self.client.filter
 
         if not self._current.BufferLoader:
-            self.client.dispatcher.dispatch("SOURCE_START", source=self._current)
+            self.client.dispatcher.dispatch("SOURCE_START",
+                                            source=self._current)
             self._current.start()
 
         return self._current
@@ -82,11 +80,9 @@ class Player(threading.Thread):
 
     @property
     def next(self) -> AudioSource:
-        is_load_condition = (
-            not self._current
-            or self._current.stopped
-            or self._current.remain <= (Config.PRELOAD_TIME + self.crossfade)
-        )
+        is_load_condition = (not self._current or self._current.stopped
+                             or self._current.remain <=
+                             (Config.PRELOAD_TIME + self.crossfade))
 
         if not self._next:
             if not self.client.Queue:
@@ -111,13 +107,13 @@ class Player(threading.Thread):
             if is_load_condition:
 
                 def setSource(Source: Union[AudioData, AudioSource]) -> None:
-                    if isinstance(Source, AudioData) and Source == self.client.Queue[0]:
+                    if isinstance(
+                            Source,
+                            AudioData) and Source == self.client.Queue[0]:
                         self._next = None
                         del self.client.Queue[0]
-                    if (
-                        isinstance(Source, AudioSource)
-                        and Source.AudioData == self.client.Queue[0]
-                    ):
+                    if (isinstance(Source, AudioSource)
+                            and Source.AudioData == self.client.Queue[0]):
                         self._next = self.client.Queue[0] = Source
 
                 self.getSource(self._next, setSource)
@@ -128,7 +124,8 @@ class Player(threading.Thread):
 
         if self._current and not self._next.BufferLoader:
             if is_load_condition:
-                self.client.dispatcher.dispatch("SOURCE_START", source=self._next)
+                self.client.dispatcher.dispatch("SOURCE_START",
+                                                source=self._next)
                 self._next.start()
 
         return self._next
@@ -139,16 +136,10 @@ class Player(threading.Thread):
             return
 
         if self.client.Queue:
-            _nextItem = (
-                self._next.AudioData
-                if isinstance(self._next, AudioSource)
-                else self._next
-            )
-            _queueItem = (
-                self.client.Queue[0].AudioData
-                if isinstance(self.client.Queue[0], AudioSource)
-                else self.client.Queue[0]
-            )
+            _nextItem = (self._next.AudioData if isinstance(
+                self._next, AudioSource) else self._next)
+            _queueItem = (self.client.Queue[0].AudioData if isinstance(
+                self.client.Queue[0], AudioSource) else self.client.Queue[0])
 
             if _nextItem == _queueItem:
                 self.client.Queue.pop(0)
@@ -157,8 +148,7 @@ class Player(threading.Thread):
     def getSource(self, *args, **kwargs) -> None:
         if not self._getSourceTask or self._getSourceTask.done():
             self._getSourceTask = asyncio.run_coroutine_threadsafe(
-                self._getSource(*args, **kwargs), self.client.loop
-            )
+                self._getSource(*args, **kwargs), self.client.loop)
 
     async def _getSource(self, Data: AudioData, callback: Callable) -> None:
         try:
@@ -168,9 +158,9 @@ class Player(threading.Thread):
             Source.filter = self.client.filter
         except:
             traceback.print_exc()
-            self.client.dispatcher.dispatch(
-                "SOURCE_TRACEBACK", source=Data, traceback=traceback.format_exc()
-            )
+            self.client.dispatcher.dispatch("SOURCE_TRACEBACK",
+                                            source=Data,
+                                            traceback=traceback.format_exc())
 
             Source = Data
         finally:
@@ -190,8 +180,7 @@ class Player(threading.Thread):
 
         is_live = self.current.AudioData and self.current.AudioData.is_live
         is_crossfade_timing = self.next and (
-            self.current.remain <= self.crossfade or self.current.stopped
-        )
+            self.current.remain <= self.crossfade or self.current.stopped)
 
         if is_crossfade_timing and not is_live and self.next.AudioFifo.samples >= 960:
             NextData = self.next.read()
@@ -222,7 +211,8 @@ class Player(threading.Thread):
             return
 
         self.client.speakState = state
-        asyncio.run_coroutine_threadsafe(self.client.ws.speak(state), self.client.loop)
+        asyncio.run_coroutine_threadsafe(self.client.ws.speak(state),
+                                         self.client.loop)
 
     def __do_run(self) -> None:
         self.loops = 0
@@ -253,12 +243,12 @@ class Player(threading.Thread):
 
                 self.loops += 1
                 nextTime = _start + Config.DELAY * self.loops
-                time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
+                time.sleep(
+                    max(0, Config.DELAY + (nextTime - time.perf_counter())))
             except:
                 traceback.print_exc()
-                self.dispatcher.dispatch(
-                    "PLAYER_TRACEBACK", traceback=traceback.format_exc()
-                )
+                self.dispatcher.dispatch("PLAYER_TRACEBACK",
+                                         traceback=traceback.format_exc())
 
     def run(self) -> None:
         try:

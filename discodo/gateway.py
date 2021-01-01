@@ -39,8 +39,7 @@ class keepAliver(threading.Thread):
         while not self.Stopped.wait(self.interval):
             if (self._lastAck + self.timeout) < time.perf_counter():
                 Runner = asyncio.run_coroutine_threadsafe(
-                    self.ws.close(4000), self.ws.loop
-                )
+                    self.ws.close(4000), self.ws.loop)
 
                 try:
                     Runner.result()
@@ -54,8 +53,7 @@ class keepAliver(threading.Thread):
                 "d": int(time.time() * 1000),
             }
             Runner = asyncio.run_coroutine_threadsafe(
-                self.ws.sendJson(payload), self.ws.loop
-            )
+                self.ws.sendJson(payload), self.ws.loop)
             try:
                 totalBlocked: int = 0
                 while True:
@@ -139,8 +137,7 @@ class VoiceSocket:
             return None
 
         return sum(self.keepAliver.recent_latencies) / len(
-            self.keepAliver.recent_latencies
-        )
+            self.keepAliver.recent_latencies)
 
     async def sendJson(self, data: dict) -> None:
         log.debug(f"send to websocket {data}")
@@ -175,7 +172,11 @@ class VoiceSocket:
             "op": VoicePayload.SELECT_PROTOCOL,
             "d": {
                 "protocol": "udp",
-                "data": {"address": ip, "port": port, "mode": mode},
+                "data": {
+                    "address": ip,
+                    "port": port,
+                    "mode": mode
+                },
             },
         }
         await self.sendJson(payload)
@@ -185,7 +186,10 @@ class VoiceSocket:
 
         payload = {
             "op": VoicePayload.SPEAKING,
-            "d": {"speaking": int(state), "delay": 0},
+            "d": {
+                "speaking": int(state),
+                "delay": 0
+            },
         }
         await self.sendJson(payload)
 
@@ -213,21 +217,24 @@ class VoiceSocket:
         struct.pack_into(">I", packet, 0, data["ssrc"])
 
         self.client.socket.sendto(
-            packet, (self.client.endpointIp, self.client.endpointPort)
-        )
+            packet, (self.client.endpointIp, self.client.endpointPort))
         _recieved = await self.loop.sock_recv(self.client.socket, 70)
 
         start, end = 4, _recieved.index(0, 4)
         self.client.ip = _recieved[start:end].decode("ascii")
-        self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
+        self.client.port = struct.unpack_from(">H", _recieved,
+                                              len(_recieved) - 2)[0]
 
-        encryptModes = [Mode for Mode in data["modes"] if Mode in Cipher.available]
+        encryptModes = [
+            Mode for Mode in data["modes"] if Mode in Cipher.available
+        ]
         log.debug(f'recieved encrypt modes {data["modes"]}')
 
         encryptMode = encryptModes[0]
         log.info(f"select encrypt mode {encryptMode}")
 
-        await self.select_protocol(self.client.ip, self.client.port, encryptMode)
+        await self.select_protocol(self.client.ip, self.client.port,
+                                   encryptMode)
 
     async def loadKey(self, data: dict) -> None:
         log.info("recieved voice secret key.")
@@ -246,9 +253,9 @@ class VoiceSocket:
         elif message.type is aiohttp.WSMsgType.ERROR:
             raise WebsocketConnectionClosed(self.socket) from message.data
         elif message.type in (
-            aiohttp.WSMsgType.CLOSED,
-            aiohttp.WSMsgType.CLOSE,
-            aiohttp.WSMsgType.CLOSING,
+                aiohttp.WSMsgType.CLOSED,
+                aiohttp.WSMsgType.CLOSE,
+                aiohttp.WSMsgType.CLOSING,
         ):
             raise WebsocketConnectionClosed(self.socket, code=self._close_code)
 

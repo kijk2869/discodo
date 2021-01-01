@@ -66,7 +66,10 @@ class VoiceClient(VoiceConnector):
         return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay}>"
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
-        self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
+        self.manager.dispatcher.dispatch(self.guild_id,
+                                         *args,
+                                         event=event,
+                                         **kwargs)
 
     async def __fetchAutoPlay(self, **kwargs):
         current = list(kwargs.values()).pop()
@@ -74,11 +77,11 @@ class VoiceClient(VoiceConnector):
         for _ in range(5):
             if self.autoplay and not self.Queue:
                 if YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
-                    address = Config.RoutePlanner.get() if Config.RoutePlanner else None
+                    address = Config.RoutePlanner.get(
+                    ) if Config.RoutePlanner else None
                     try:
                         Related = await self.relatedClient.async_get(
-                            current.webpage_url, local_addr=address
-                        )
+                            current.webpage_url, local_addr=address)
                     except RateLimited:
                         Config.RoutePlanner.mark_failed_address(address)
                     else:
@@ -104,7 +107,8 @@ class VoiceClient(VoiceConnector):
     def channel_id(self, value: int) -> None:
         self._channel_id = int(value)
 
-        self.dispatcher.dispatch("VC_CHANNEL_EDITED", channel_id=self._channel_id)
+        self.dispatcher.dispatch("VC_CHANNEL_EDITED",
+                                 channel_id=self._channel_id)
 
     async def createSocket(self, data: dict = None) -> None:
         """
@@ -238,19 +242,17 @@ class VoiceClient(VoiceConnector):
         """
 
         if not isinstance(Source, (list, AudioData, AudioSource)):
-            raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
+            raise TypeError(
+                "`Source` must be `list` or `AudioData` or `AudioSource`.")
 
         self.Queue += Source if isinstance(Source, list) else [Source]
 
         self.dispatcher.dispatch(
-            "putSource", sources=(Source if isinstance(Source, list) else [Source])
-        )
+            "putSource",
+            sources=(Source if isinstance(Source, list) else [Source]))
 
-        return (
-            self.Queue.index(Source)
-            if not isinstance(Source, list)
-            else [self.Queue.index(Item) for Item in Source]
-        )
+        return (self.Queue.index(Source) if not isinstance(Source, list) else
+                [self.Queue.index(Item) for Item in Source])
 
     async def getSource(self, Query: str) -> AudioData:
         """
@@ -279,16 +281,17 @@ class VoiceClient(VoiceConnector):
 
         self.dispatcher.dispatch(
             "loadSource",
-            source=(
-                {"data": Data, "index": Index}
-                if not isinstance(Data, list)
-                else list(
-                    map(
-                        lambda zipped: {"data": zipped[0], "index": zipped[1]},
-                        zip(Data, Index),
-                    )
-                )
-            ),
+            source=({
+                "data": Data,
+                "index": Index
+            } if not isinstance(Data, list) else list(
+                map(
+                    lambda zipped: {
+                        "data": zipped[0],
+                        "index": zipped[1]
+                    },
+                    zip(Data, Index),
+                ))),
             **kwargs,
         )
 
@@ -319,7 +322,7 @@ class VoiceClient(VoiceConnector):
             raise ValueError("`offset` is bigger than `Queue` size.")
 
         if offset > 1:
-            del self.Queue[0 : (offset - 1)]
+            del self.Queue[0:(offset - 1)]
 
         self.player.current.stop()
 

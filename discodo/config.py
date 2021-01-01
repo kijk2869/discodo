@@ -82,7 +82,7 @@ class _Config:
 
     @property
     def FRAME_SIZE(self) -> int:
-        return self.SAMPLES_PER_FRAME ** 2
+        return self.SAMPLES_PER_FRAME**2
 
     @property
     def DELAY(self) -> float:

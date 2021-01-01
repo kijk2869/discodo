@@ -34,19 +34,21 @@ class VoiceClient:
 
         return await self.Node.send(Operation, Data)
 
-    async def query(
-        self, Operation: str, Data: dict = {}, Event: str = None, timeout: float = 10.0
-    ) -> dict:
+    async def query(self,
+                    Operation: str,
+                    Data: dict = {},
+                    Event: str = None,
+                    timeout: float = 10.0) -> dict:
         if not Event:
             Event = Operation
 
         Future = self.loop.create_task(
             self.dispatcher.wait_for(
                 Event,
-                condition=lambda Data: int(Data["guild_id"]) == int(self.guild_id),
+                condition=lambda Data: int(Data["guild_id"]) == int(self.
+                                                                    guild_id),
                 timeout=timeout,
-            )
-        )
+            ))
 
         await self.send(Operation, Data)
 
@@ -60,7 +62,8 @@ class VoiceClient:
 
     async def searchSources(self, Query: str, ws: bool = True) -> list:
         if ws:
-            return (await self.query("searchSources", {"query": Query}))["sources"]
+            return (await self.query("searchSources",
+                                     {"query": Query}))["sources"]
 
         return await self.http.searchSources(Query)
 
@@ -90,21 +93,22 @@ class VoiceClient:
 
     async def setVolume(self, volume: int, ws: bool = True) -> float:
         if ws:
-            return (await self.query("setVolume", {"volume": volume}))["volume"]
+            return (await self.query("setVolume",
+                                     {"volume": volume}))["volume"]
 
         return await self.http.setVolume(volume)
 
     async def setCrossfade(self, crossfade: float, ws: bool = True) -> float:
         if ws:
-            return (await self.query("setCrossfade", {"crossfade": crossfade}))[
-                "crossfade"
-            ]
+            return (await self.query("setCrossfade",
+                                     {"crossfade": crossfade}))["crossfade"]
 
         return await self.http.setCrossfade(crossfade)
 
     async def setAutoplay(self, autoplay: bool, ws: bool = True) -> bool:
         if ws:
-            return (await self.query("setAutoplay", {"autoplay": autoplay}))["autoplay"]
+            return (await self.query("setAutoplay",
+                                     {"autoplay": autoplay}))["autoplay"]
 
         return await self.http.setAutoplay(autoplay)
 

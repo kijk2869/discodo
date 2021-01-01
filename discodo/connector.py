@@ -175,20 +175,16 @@ class VoiceConnector:
                 self._connected.clear()
                 self._connectedThread.clear()
 
-                reason = (
-                    f"with {e.code}"
-                    if isinstance(e, WebsocketConnectionClosed)
-                    else "because timed out."
-                )
+                reason = (f"with {e.code}" if isinstance(
+                    e, WebsocketConnectionClosed) else "because timed out.")
 
                 log.info(
                     f"voice connection of {self.guild_id} destroyed {reason}. wait for events."
                 )
 
                 try:
-                    await asyncio.wait_for(
-                        self._connected.wait(), timeout=Config.VCTIMEOUT
-                    )
+                    await asyncio.wait_for(self._connected.wait(),
+                                           timeout=Config.VCTIMEOUT)
                 except asyncio.TimeoutError:
                     return self.__del__()
 

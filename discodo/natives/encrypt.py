@@ -11,7 +11,8 @@ class Cipher:
 
         return header + Box.encrypt(bytes(data), bytes(Nonce)).ciphertext
 
-    def xsalsa20_poly1305_suffix(key: list, header: bytearray, data: bytes) -> bytes:
+    def xsalsa20_poly1305_suffix(key: list, header: bytearray,
+                                 data: bytes) -> bytes:
         Box = nacl.secret.SecretBox(bytes(key))
         Nonce = nacl.utils.random(nacl.secret.SecretBox.NONCE_SIZE)
 

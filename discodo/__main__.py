@@ -14,7 +14,6 @@ from .natives import opus
 
 log = logging.getLogger("discodo")
 
-
 if not opus.isLoaded() and not opus.loadDefaultOpus():
     raise ValueError(
         "Cannot load libopus, please install `libopus-dev` if you are using linux."
@@ -123,7 +122,8 @@ webGroup.add_argument(
     "--ws-timeout",
     type=int,
     default=60,
-    help="seconds to close connection there is no respond from client (default: 60)",
+    help=
+    "seconds to close connection there is no respond from client (default: 60)",
 )
 
 networkGroup = parser.add_argument_group("Network Option")
@@ -178,7 +178,8 @@ playerGroup.add_argument(
     "--timeout",
     type=int,
     default=300,
-    help="seconds to cleanup player when connection of discord terminated (default: 300)",
+    help=
+    "seconds to cleanup player when connection of discord terminated (default: 300)",
 )
 
 extExtractorParser = parser.add_argument_group("Extra Extractor Option")
@@ -204,9 +205,10 @@ extExtractorParser.add_argument(
 
 logParser = parser.add_argument_group("Logging Option")
 
-logParser.add_argument(
-    "--verbose", "-v", action="store_true", help="Print various debugging information"
-)
+logParser.add_argument("--verbose",
+                       "-v",
+                       action="store_true",
+                       help="Print various debugging information")
 
 args = parser.parse_args()
 
@@ -252,8 +254,7 @@ if __name__ == "__main__":
     from .server import server
 
     loop.create_task(
-        server.create_server(
-            host=Config.HOST, port=Config.PORT, return_asyncio_server=True
-        )
-    )
+        server.create_server(host=Config.HOST,
+                             port=Config.PORT,
+                             return_asyncio_server=True))
     loop.run_forever()
