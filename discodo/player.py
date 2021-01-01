@@ -19,7 +19,6 @@ class Player(threading.Thread):
 
         self._volume = 1.0
         self._crossfade = 5.0
-        self._gapless = False
         self._end = threading.Event()
 
         self._getSourceTask = None
@@ -35,32 +34,15 @@ class Player(threading.Thread):
 
     @property
     def crossfade(self) -> Union[float, None]:
-        if self._gapless:
-            return None
-
         return self._crossfade
 
     @crossfade.setter
     def crossfade(self, value: float) -> None:
-        if self._gapless:
-            raise ValueError("Cannot use crossfade when gapless mode is enabled.")
-
         self._crossfade = value
 
     @property
     def crossfadeVolume(self) -> Union[float, None]:
-        if self._gapless:
-            return None
-
         return 1.0 / (self.client.crossfade / Config.DELAY)
-
-    @property
-    def gapless(self) -> bool:
-        return self._gapless
-
-    @gapless.setter
-    def gapless(self, value: bool) -> None:
-        self._gapless = value
 
     def seek(self, offset: int) -> None:
         if not self.current:
@@ -195,7 +177,7 @@ class Player(threading.Thread):
         if (
             not Data
             or self.current.volume <= 0.0
-            or (self.gapless and self.current.stopped and self.next)
+            or (self.current.stopped and self.next)
         ):
             self._crossfadeLoop = 0
             self.current = None
@@ -203,13 +185,11 @@ class Player(threading.Thread):
             return self.read()
 
         is_live = self.current.AudioData and self.current.AudioData.is_live
-        is_crossfade_timing = (
-            not self.gapless
-            and self.next
-            and (self.current.remain <= self.crossfade or self.current.stopped)
+        is_crossfade_timing = self.next and (
+            self.current.remain <= self.crossfade or self.current.stopped
         )
 
-        if not self.gapless and not is_live and is_crossfade_timing:
+        if not is_live and is_crossfade_timing:
             NextData = self.next.read()
             if NextData:
                 self._crossfadeLoop += 1

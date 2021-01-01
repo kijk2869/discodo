@@ -15,12 +15,12 @@ from .utils import EventDispatcher
 
 log = logging.getLogger("discodo.VoiceClient")
 
+YOUTUBE_VIDEO_REGEX = re.compile(
+    r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
+)
+
 
 class VoiceClient(VoiceConnector):
-    YOUTUBE_VIDEO_REGEX = re.compile(
-        r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
-    )
-
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -38,7 +38,6 @@ class VoiceClient(VoiceConnector):
 
         self._autoplay = Config.DEFAULT_AUTOPLAY
         self._crossfade = Config.DEFAULT_CROSSFADE
-        self._gapless = Config.DEFAULT_GAPLESS
 
         self._volume = Config.DEFAULT_VOLUME
 
@@ -63,7 +62,7 @@ class VoiceClient(VoiceConnector):
                 self.loop.call_soon_threadsafe(Item.cleanup)
 
     def __repr__(self) -> str:
-        return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay} gapless={self.gapless}>"
+        return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay}>"
 
     def __dispatchToManager(self, event, *args, **kwargs) -> None:
         self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
@@ -73,7 +72,7 @@ class VoiceClient(VoiceConnector):
 
         for _ in range(5):
             if self.autoplay and not self.Queue:
-                if self.YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
+                if YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
                     address = Config.RoutePlanner.get() if Config.RoutePlanner else None
                     try:
                         Related = await self.relatedClient.async_get(
@@ -92,8 +91,7 @@ class VoiceClient(VoiceConnector):
             return
 
         self.player = Player(self)
-        self.player.crossfade = self._crossfade
-        self.player.gapless = self._gapless
+        self.player.crossfade = self.crossfade
 
         self.player.start()
 
@@ -166,28 +164,9 @@ class VoiceClient(VoiceConnector):
     @crossfade.setter
     def crossfade(self, value: float) -> None:
         if not isinstance(value, float):
-            return TypeError("`filter` property must be `float`.")
+            return TypeError("`crossfade` property must be `float`.")
 
         self.player.crossfade = self._crossfade = round(max(value, 0.0), 1)
-
-    @property
-    def gapless(self) -> bool:
-        """
-        Current gapless value of the voice client
-
-        :getter: Returns VoiceClient gapless
-        :setter: Set VoiceClient gapless
-        :rtype: bool
-        """
-
-        return self._gapless
-
-    @gapless.setter
-    def gapless(self, value: bool) -> None:
-        if not isinstance(value, bool):
-            return TypeError("`gapless` property must be `bool`.")
-
-        self.player.gapless = self._gapless = self._gapless
 
     @property
     def autoplay(self) -> bool:

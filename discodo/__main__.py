@@ -157,12 +157,6 @@ playerGroup.add_argument(
     help="player's default crossfade seconds (default: 10.0)",
 )
 playerGroup.add_argument(
-    "--default-gapless",
-    type=bool,
-    default=False,
-    help="player's default gapless state (default: False)",
-)
-playerGroup.add_argument(
     "--default-autoplay",
     type=bool,
     default=True,
@@ -229,7 +223,6 @@ if not args.config:
     Config.DEFAULT_AUTOPLAY = args.default_autoplay
     Config.DEFAULT_VOLUME = round(args.default_volume / 100, 3)
     Config.DEFAULT_CROSSFADE = args.default_crossfade
-    Config.DEFAULT_GAPLESS = args.default_gapless
     Config.BUFFERLIMIT = args.bufferlimit
     Config.VCTIMEOUT = args.timeout
     Config.ENABLED_EXT_RESOLVER = args.enabled_resolver

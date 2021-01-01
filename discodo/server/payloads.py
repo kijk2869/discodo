@@ -133,21 +133,6 @@ class WebsocketPayloads:
         await self.sendJson(payload)
 
     @need_manager
-    async def setGapless(self, Data: dict) -> None:
-        VoiceClient = self.ClientManager.getVC(Data["guild_id"])
-        if not VoiceClient:
-            raise NotConnected
-
-        VoiceClient.gapless = Data["gapless"]
-
-        payload = {
-            "op": "setGapless",
-            "d": {"guild_id": Data["guild_id"], "gapless": VoiceClient.gapless},
-        }
-
-        await self.sendJson(payload)
-
-    @need_manager
     async def setAutoplay(self, Data: dict) -> None:
         VoiceClient = self.ClientManager.getVC(Data["guild_id"])
         if not VoiceClient:
@@ -294,7 +279,6 @@ class WebsocketPayloads:
                     "autoplay": VoiceClient.autoplay,
                     "volume": VoiceClient.volume,
                     "crossfade": VoiceClient.crossfade,
-                    "gapless": VoiceClient.gapless,
                     "filter": VoiceClient.filter,
                 },
             },

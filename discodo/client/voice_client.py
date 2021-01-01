@@ -108,12 +108,6 @@ class VoiceClient:
 
         return await self.http.setAutoplay(autoplay)
 
-    async def setGapless(self, gapless: bool, ws: bool = True) -> bool:
-        if ws:
-            return (await self.query("setGapless", {"gapless": gapless}))["gapless"]
-
-        return await self.http.setGapless(gapless)
-
     async def setFilter(self, filter: dict, ws: bool = True) -> dict:
         if ws:
             return await self.query("setFilter", {"filter": filter})
