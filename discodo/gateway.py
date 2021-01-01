@@ -218,11 +218,9 @@ class VoiceSocket:
 
         start, end = 4, _recieved.index(0, 4)
         self.client.ip = _recieved[start:end].decode("ascii")
-        self.client.port = struct.unpack_from(
-            ">H", _recieved, len(_recieved) - 2)[0]
+        self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
 
-        encryptModes = [Mode for Mode in data["modes"]
-                        if Mode in Cipher.available]
+        encryptModes = [Mode for Mode in data["modes"] if Mode in Cipher.available]
         log.debug(f'recieved encrypt modes {data["modes"]}')
 
         encryptMode = encryptModes[0]

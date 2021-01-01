@@ -20,16 +20,14 @@ class RoutePlanner:
         ] = collections.defaultdict(int)
 
         self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
-        self.excludeIps = [ipaddress.ip_address(
-            excludeIp) for excludeIp in excludeIps]
+        self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
 
     def mark_failed_address(
         self,
         address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
         status: int = 429,
     ) -> None:
-        self.failedAddress[address] = {
-            "status": status, "failed_at": time.time()}
+        self.failedAddress[address] = {"status": status, "failed_at": time.time()}
 
     def unmark_failed_address(
         self, address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address]
