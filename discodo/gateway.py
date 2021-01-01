@@ -105,6 +105,9 @@ class VoiceSocket:
         self.heartbeatTimeout = 60.0
         self.threadId = threading.get_ident()
 
+    def __del__(self) -> None:
+        self.loop.create_task(self.close())
+
     @classmethod
     async def connect(cls, client, resume=False):
         session = aiohttp.ClientSession()
