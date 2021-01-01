@@ -1,18 +1,23 @@
 """
-Thx for Sannoob
+Thx for @Sannoob
 """
 
 import collections
 import ipaddress
 import random
 import time
-from typing import Union
+from typing import Dict, Union
 
 
 class RoutePlanner:
     def __init__(self, ipBlocks: list, excludeIps: list = []) -> None:
-        self.failedAddress = {}
-        self.usedCount = collections.defaultdict(int)
+        self.failedAddress: Dict[
+            Union[ipaddress.IPv4Address, ipaddress.IPv6Address],
+            Dict[str, Union[str, float]],
+        ] = {}
+        self.usedCount: Dict[
+            Union[ipaddress.IPv4Address, ipaddress.IPv6Address], int
+        ] = collections.defaultdict(int)
 
         self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
         self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
@@ -32,12 +37,12 @@ class RoutePlanner:
     def __get_random(
         self, ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
     ) -> str:
-        cidr = ipBlock.prefixlen
+        cidr: int = ipBlock.prefixlen
 
-        host_bits = (128 if ipBlock.version == 6 else 32) - cidr
+        host_bits: int = (128 if ipBlock.version == 6 else 32) - cidr
 
-        start = (int(ipBlock.broadcast_address) >> host_bits) << host_bits
-        end = start | ((1 << host_bits) - 1)
+        start: int = (int(ipBlock.broadcast_address) >> host_bits) << host_bits
+        end: int = start | ((1 << host_bits) - 1)
 
         return ipaddress.ip_address(random.randrange(start, end))
 
