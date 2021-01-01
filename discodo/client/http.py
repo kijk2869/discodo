@@ -60,9 +60,6 @@ class HTTPClient:
             "POST", "/setCrossfade", json={"crossfade": float(crossfade)}
         )
 
-    async def setGapless(self, gapless: bool) -> None:
-        return await self.fetch("POST", "/setGapless", json={"gapless": bool(gapless)})
-
     async def setAutoplay(self, autoplay: bool) -> None:
         return await self.fetch(
             "POST", "/setAutoplay", json={"autoplay": bool(autoplay)}

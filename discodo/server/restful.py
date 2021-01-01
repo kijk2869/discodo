@@ -142,18 +142,6 @@ async def setCrossfade(request, VoiceClient) -> response.empty:
     return response.empty()
 
 
-@app.post("/setGapless")
-@authorized
-@need_voiceclient
-async def setGapless(request, VoiceClient) -> response.empty:
-    if "gapless" not in request.json or not isinstance(request.json["gapless"], bool):
-        abort(400, "Bad data `gapless`")
-
-    VoiceClient.gapless = request.json["gapless"]
-
-    return response.empty()
-
-
 @app.post("/setAutoplay")
 @authorized
 @need_voiceclient
@@ -261,7 +249,6 @@ async def resume(request, VoiceClient) -> JSONResponse:
                 "autoplay": VoiceClient.autoplay,
                 "volume": VoiceClient.volume,
                 "crossfade": VoiceClient.crossfade,
-                "gapless": VoiceClient.gapless,
                 "filter": VoiceClient.filter,
             },
         }

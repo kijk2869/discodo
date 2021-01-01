@@ -19,7 +19,6 @@ class Player(threading.Thread):
 
         self._volume = 1.0
         self._crossfade = 5.0
-        self._gapless = False
         self._end = threading.Event()
 
         self._getSourceTask = None
@@ -35,32 +34,19 @@ class Player(threading.Thread):
 
     @property
     def crossfade(self) -> Union[float, None]:
-        if self._gapless:
-            return None
-
         return self._crossfade
 
     @crossfade.setter
     def crossfade(self, value: float) -> None:
-        if self._gapless:
-            raise ValueError("Cannot use crossfade when gapless mode is enabled.")
-
         self._crossfade = value
 
     @property
     def crossfadeVolume(self) -> Union[float, None]:
-        if self._gapless:
-            return None
-
-        return 1.0 / (self.client.crossfade / Config.DELAY)
-
-    @property
-    def gapless(self) -> bool:
-        return self._gapless
-
-    @gapless.setter
-    def gapless(self, value: bool) -> None:
-        self._gapless = value
+        return (
+            (1.0 / (self.client.crossfade / Config.DELAY))
+            if self.client.crossfade
+            else 1.0
+        )
 
     def seek(self, offset: int) -> None:
         if not self.current:
@@ -86,7 +72,7 @@ class Player(threading.Thread):
         return self._current
 
     @current.setter
-    def current(self, value: None) -> None:
+    def current(self, _: None) -> None:
         self.client.dispatcher.dispatch("SOURCE_END", source=self._current)
 
         self.client.loop.call_soon_threadsafe(self._current.cleanup)
@@ -97,14 +83,16 @@ class Player(threading.Thread):
         is_load_condition = (
             not self._current
             or self._current.stopped
-            or self._current.remain <= (Config.PRELOAD_TIME + (self.crossfade or 0))
+            or self._current.remain <= (Config.PRELOAD_TIME + self.crossfade)
         )
 
         if not self._next:
             if not self.client.Queue:
                 if self._current and is_load_condition and not self._request_dispatched:
                     self.client.dispatcher.dispatch(
-                        "REQUIRE_NEXT_SOURCE", current=self._current
+                        "REQUIRE_NEXT_SOURCE",
+                        current=self._current,
+                        autoplay=self.client.autoplay,
                     )
                     self._request_dispatched = True
 
@@ -113,24 +101,24 @@ class Player(threading.Thread):
             self._next = self.client.Queue[0]
             self._request_dispatched = False
 
-        if isinstance(self._next, AudioData):
-
-            def setSource(Source: Union[AudioData, AudioSource]) -> None:
-                if isinstance(Source, AudioData) and Source == self.client.Queue[0]:
-                    self._next = None
-                    del self.client.Queue[0]
-                if (
-                    isinstance(Source, AudioSource)
-                    and Source.AudioData == self.client.Queue[0]
-                ):
-                    self._next = self.client.Queue[0] = Source
-
-            self.getSource(self._next, setSource)
-
+        if not self.client.Queue or self._next != self.client.Queue[0]:
+            self._next = None
             return None
 
-        if self._next != self.client.Queue[0]:
-            self._next = None
+        if isinstance(self._next, AudioData):
+            if is_load_condition:
+
+                def setSource(Source: Union[AudioData, AudioSource]) -> None:
+                    if isinstance(Source, AudioData) and Source == self.client.Queue[0]:
+                        self._next = None
+                        del self.client.Queue[0]
+                    if (
+                        isinstance(Source, AudioSource)
+                        and Source.AudioData == self.client.Queue[0]
+                    ):
+                        self._next = self.client.Queue[0] = Source
+
+                self.getSource(self._next, setSource)
             return None
 
         if self._next.filter != self.client.filter:
@@ -144,7 +132,7 @@ class Player(threading.Thread):
         return self._next
 
     @next.setter
-    def next(self, value: None) -> None:
+    def next(self, _: None) -> None:
         if not self._next:
             return
 
@@ -192,24 +180,18 @@ class Player(threading.Thread):
 
         Data = self.current.read()
 
-        if (
-            not Data
-            or self.current.volume <= 0.0
-            or (self.gapless and self.current.stopped and self.next)
-        ):
+        if not Data or self.current.volume <= 0.0:
             self._crossfadeLoop = 0
             self.current = None
 
             return self.read()
 
         is_live = self.current.AudioData and self.current.AudioData.is_live
-        is_crossfade_timing = (
-            not self.gapless
-            and self.next
-            and (self.current.remain <= self.crossfade or self.current.stopped)
+        is_crossfade_timing = self.next and (
+            self.current.remain <= self.crossfade or self.current.stopped
         )
 
-        if not self.gapless and not is_live and is_crossfade_timing:
+        if is_crossfade_timing and not is_live and self.next.AudioFifo.samples >= 960:
             NextData = self.next.read()
             if NextData:
                 self._crossfadeLoop += 1
@@ -222,7 +204,7 @@ class Player(threading.Thread):
         elif self.next:
             self.next.volume = 1.0
 
-        if self.current.stopped:
+        if not self.next and self.current.stopped and not self.client.Queue:
             if self.current.volume > 0.0:
                 self.current.volume = round(self.current.volume - 0.01, 3)
         elif not is_crossfade_timing:

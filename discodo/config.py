@@ -17,7 +17,6 @@ class _Config:
         "DEFAULT_AUTOPLAY",
         "DEFAULT_VOLUME",
         "DEFAULT_CROSSFADE",
-        "DEFAULT_GAPLESS",
         "SAMPLING_RATE",
         "CHANNELS",
         "FRAME_LENGTH",
@@ -50,7 +49,6 @@ class _Config:
         self.DEFAULT_AUTOPLAY: bool = True
         self.DEFAULT_VOLUME: float = 1.0
         self.DEFAULT_CROSSFADE: float = 10.0
-        self.DEFAULT_GAPLESS: bool = False
 
         # AUDIO
         self.SAMPLING_RATE: int = 48000
