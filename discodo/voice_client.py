@@ -7,11 +7,11 @@ from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
 
 from .config import Config
+from .connector import VoiceConnector
 from .errors import NotPlaying
 from .player import Player
 from .source import AudioData, AudioSource
 from .utils import EventDispatcher
-from .voice_connector import VoiceConnector
 
 log = logging.getLogger("discodo.VoiceClient")
 
