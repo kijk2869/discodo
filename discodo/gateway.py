@@ -11,7 +11,7 @@ from typing import Dict, Optional
 import aiohttp
 
 from .errors import WebsocketConnectionClosed
-from .natives import Encrypter
+from .natives import Cipher
 
 log = logging.getLogger("discodo.gateway")
 
@@ -217,7 +217,7 @@ class VoiceSocket:
         self.client.ip = _recieved[start:end].decode("ascii")
         self.client.port = struct.unpack_from(">H", _recieved, len(_recieved) - 2)[0]
 
-        encryptModes = [Mode for Mode in data["modes"] if Mode in Encrypter.available]
+        encryptModes = [Mode for Mode in data["modes"] if Mode in Cipher.available]
         log.debug(f'recieved encrypt modes {data["modes"]}')
 
         encryptMode = encryptModes[0]

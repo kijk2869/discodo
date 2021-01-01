@@ -10,7 +10,7 @@ from discodo.errors import WebsocketConnectionClosed
 
 from .config import Config
 from .gateway import VoiceSocket
-from .natives import Encrypter, opus
+from .natives import Cipher, opus
 
 log = logging.getLogger("discodo.VoiceConnector")
 
@@ -207,7 +207,7 @@ class VoiceConnector:
         struct.pack_into(">I", header, 4, self.timestamp)
         struct.pack_into(">I", header, 8, self.ssrc)
 
-        return getattr(Encrypter, self.encryptMode)(self.secretKey, header, data)
+        return getattr(Cipher, self.encryptMode)(self.secretKey, header, data)
 
     def send(self, data: bytes, encode: bool = True) -> None:
         """

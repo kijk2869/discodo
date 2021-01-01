@@ -1,7 +1,7 @@
 import nacl.secret
 
 
-class Encrypter:
+class Cipher:
     available = ["xsalsa20_poly1305", "xsalsa20_poly1305_suffix"]
 
     def xsalsa20_poly1305(key: list, header: bytearray, data: bytes) -> bytes:
