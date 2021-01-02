@@ -16,7 +16,7 @@ Discodo is an enhanced audio player for discord.
 ## Client libraries
 
 * [discodo](https://github.com/kijk2869/discodo) (Python, discord.py)
-* [discodo.js](https://github.com/SiruBOT/discodo.js) (Node.js, discord.js)
+* [discodo.js](Under Developing) (Node.js, discord.js)
 
 ## Content
 
