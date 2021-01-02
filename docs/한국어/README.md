@@ -16,7 +16,7 @@
 ## 클라이언트 라이브러리
 
 * [discodo](https://github.com/kijk2869/discodo) (Python, discord.py)
-* [discodo.js](https://github.com/SiruBOT/discodo.js) (Node.js, discord.js)
+* ~~[discodo.js](개발중) (Node.js, discord.js)~~ **개발중**
 
 ## 본문
 
