@@ -11,6 +11,8 @@ class AudioSource(PyAVSource):
         self.AudioData = AudioData
         self.address = self.AudioData.address if self.AudioData else None
 
+        self._skipped: bool = False
+
     def __dict__(self) -> dict:
         Value = self.AudioData.__dict__() if self.AudioData else {}
 
@@ -60,3 +62,17 @@ class AudioSource(PyAVSource):
             raise ValueError("Cannot use `atempo` filter in live streaming.")
 
         self._filter = value
+
+    @property
+    def skipped(self) -> bool:
+        return self._skipped
+
+    @skipped.setter
+    def skipped(self, Value: bool) -> None:
+        if Value:
+            self.stop()
+
+        self._skipped = Value
+
+    def skip(self) -> None:
+        self.skipped = True

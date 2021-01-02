@@ -82,7 +82,7 @@ class Player(threading.Thread):
     def next(self) -> AudioSource:
         is_load_condition = (
             not self._current
-            or self._current.stopped
+            or self._current.skipped
             or self._current.remain <= (Config.PRELOAD_TIME + self.crossfade)
         )
 
@@ -188,7 +188,7 @@ class Player(threading.Thread):
 
         is_live = self.current.AudioData and self.current.AudioData.is_live
         is_crossfade_timing = self.next and (
-            self.current.remain <= self.crossfade or self.current.stopped
+            self.current.remain <= self.crossfade or self.current.skipped
         )
 
         if is_crossfade_timing and not is_live and self.next.AudioFifo.samples >= 960:
@@ -204,7 +204,7 @@ class Player(threading.Thread):
         elif self.next:
             self.next.volume = 1.0
 
-        if not self.next and self.current.stopped and not self.client.Queue:
+        if not self.next and self.current.skipped and not self.client.Queue:
             if self.current.volume > 0.0:
                 self.current.volume = round(self.current.volume - 0.01, 3)
         elif not is_crossfade_timing:

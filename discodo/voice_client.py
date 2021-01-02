@@ -318,7 +318,7 @@ class VoiceClient(VoiceConnector):
         if offset > 1:
             del self.Queue[0 : (offset - 1)]
 
-        self.player.current.stop()
+        self.player.current.skip()
 
     def pause(self) -> bool:
         """
