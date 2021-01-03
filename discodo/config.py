@@ -53,7 +53,7 @@ class _Config:
         # AUDIO
         self.SAMPLING_RATE: int = 48000
         self.CHANNELS: int = 2
-        self.FRAME_LENGTH: int = 20
+        self.FRAME_LENGTH: int = 60  # 2.5, 5, 10, 20, 40, 60
         self.SAMPLE_SIZE: int = 4
         self.EXPECTED_PACKETLOSS: int = 0
         self.BITRATE: int = 128

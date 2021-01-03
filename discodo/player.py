@@ -191,7 +191,7 @@ class Player(threading.Thread):
             self.current.remain <= self.crossfade or self.current.skipped
         )
 
-        if is_crossfade_timing and not is_live and self.next.AudioFifo.samples >= 960:
+        if is_crossfade_timing and not is_live and self.next.AudioFifo.is_ready():
             NextData = self.next.read()
             if NextData:
                 self._crossfadeLoop += 1

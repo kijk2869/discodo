@@ -9,13 +9,18 @@ log = logging.getLogger("discodo.natives.AudioFifo")
 
 
 class AudioFifo(av.AudioFifo):
+    SAMPLES_PER_FRAME = Config.SAMPLES_PER_FRAME
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.AUDIOBUFFERLIMITMS = Config.BUFFERLIMIT * 50 * 960
+        self.AUDIOBUFFERLIMITMS = Config.BUFFERLIMIT * 50 * self.SAMPLES_PER_FRAME
 
         self.haveToFillBuffer = threading.Event()
         self.haveToFillBuffer.set()
+
+    def is_ready(self) -> bool:
+        return self.samples >= self.SAMPLES_PER_FRAME
 
     def check_buffer(self) -> None:
         if self.samples < self.AUDIOBUFFERLIMITMS:
@@ -23,7 +28,7 @@ class AudioFifo(av.AudioFifo):
         else:
             self.haveToFillBuffer.clear()
 
-    def read(self, samples: int = 960) -> bytes:
+    def read(self, samples: int = SAMPLES_PER_FRAME) -> bytes:
         AudioFrame = super().read(samples)
         if not AudioFrame:
             return
@@ -41,4 +46,6 @@ class AudioFifo(av.AudioFifo):
         self.check_buffer()
 
     def reset(self) -> None:
-        super().read(samples=max(self.samples - 960, 0), partial=True)
+        super().read(
+            samples=max(self.samples - self.SAMPLES_PER_FRAME, 0), partial=True
+        )

@@ -7,6 +7,7 @@ from typing import Coroutine
 
 import av
 
+from ..config import Config
 from ..natives import AudioFifo, AudioFilter
 from ..utils.threadLock import withLock
 
@@ -70,7 +71,7 @@ class PyAVSource:
             self._position
             - (
                 self.AudioFifo.samples
-                / 960
+                / Config.SAMPLES_PER_FRAME
                 / 50
                 * (float(self.filter["atempo"]) if "atempo" in self.filter else 1.0)
             ),
