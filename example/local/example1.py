@@ -57,7 +57,7 @@ async def on_message(message):
         )
 
     if message.content.startswith("!stop"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -67,7 +67,7 @@ async def on_message(message):
         return await message.channel.send("Player stopped and cleaned the queue.")
 
     if message.content.startswith("!play"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -85,7 +85,7 @@ async def on_message(message):
             return await message.channel.send(f"{Source.title} added.")
 
     if message.content.startswith("!skip"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -97,7 +97,7 @@ async def on_message(message):
         return await message.channel.send(f"{offset} skipped.")
 
     if message.content.startswith("!volume"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -111,7 +111,7 @@ async def on_message(message):
         return await message.channel.send(f"Set volume to {Volume * 100}%.")
 
     if message.content.startswith("!crossfade"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -127,7 +127,7 @@ async def on_message(message):
         )
 
     if message.content.startswith("!autoplay"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -144,7 +144,7 @@ async def on_message(message):
         )
 
     if message.content.startswith("!np"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -154,7 +154,7 @@ async def on_message(message):
         )
 
     if message.content.startswith("!shuffle"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -164,7 +164,7 @@ async def on_message(message):
         return await message.channel.send("Shuffle the queue.")
 
     if message.content.startswith("!queue"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")
@@ -182,7 +182,7 @@ Now playing: {vc.current.title} `{vc.current.position}:{vc.current.duration}`
         )
 
     if message.content.startswith("!seek"):
-        vc = Audio.getVC(message.guild.id)
+        vc = Audio.getVC(message.guild.id, safe=True)
 
         if not vc:
             return await message.channel.send("Please type `!join` first.")

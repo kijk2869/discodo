@@ -22,7 +22,7 @@ import discodo
 class MusicBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.Audio = discodo.self.AudioManager()
+        self.Audio = discodo.ClientManager()
 
     @commands.Cog.listener()
     async def on_socket_response(self, payload):
@@ -42,7 +42,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="stop")
     async def _stop(self, ctx):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -52,8 +52,8 @@ class MusicBot(commands.Cog):
         return await ctx.send("Player stopped and cleaned the queue.")
 
     @commands.command(name="play")
-    async def _play(self, ctx, music):
-        vc = self.Audio.getVC(ctx.guild.id)
+    async def _play(self, ctx, *, music):
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -69,7 +69,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="skip")
     async def _skip(self, ctx, offset: int = 1):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -80,7 +80,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="volume")
     async def _volume(self, ctx, offset: int = 100):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -91,7 +91,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="crossfade")
     async def _crossfade(self, ctx, offset: int = 10):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -102,7 +102,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="autoplay")
     async def _autoplay(self, ctx, offset: str = "on"):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -117,7 +117,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="np")
     async def _np(self, ctx):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -128,7 +128,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="shuffle")
     async def _shuffle(self, ctx):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -139,7 +139,7 @@ class MusicBot(commands.Cog):
 
     @commands.command(name="queue")
     async def _queue(self, ctx):
-        vc = self.Audio.getVC(ctx.guild.id)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
@@ -158,7 +158,7 @@ Now playing: {vc.current.title} `{vc.current.position}:{vc.player.current.durati
 
     @commands.command(name="seek")
     async def _seek(self, ctx, offset: int = 1):
-        vc = self.self.Audio.getVC(ctx.guild)
+        vc = self.Audio.getVC(ctx.guild.id, safe=True)
 
         if not vc:
             return await ctx.send("Please type `!join` first.")
