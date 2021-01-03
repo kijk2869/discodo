@@ -15,7 +15,7 @@ WORKDIR /opt/discodo
 RUN apt-get update && \
     apt-get install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev && \
     apt-get install --no-install-recommends -y pkg-config ffmpeg libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean
 
 # install discodo from pypi
 RUN pip install --no-cache-dir --force-reinstall discodo --no-binary av && \
