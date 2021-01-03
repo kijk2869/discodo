@@ -101,6 +101,8 @@ class VoiceSocket:
         self.session = session
         self.socket = socket
 
+        self.closeCode = None
+
         self.keepAliver = None
         self.heartbeatTimeout = 60.0
         self.threadId = threading.get_ident()
@@ -249,11 +251,12 @@ class VoiceSocket:
             aiohttp.WSMsgType.CLOSE,
             aiohttp.WSMsgType.CLOSING,
         ):
-            raise WebsocketConnectionClosed(self.socket, code=self._close_code)
+            raise WebsocketConnectionClosed(self.socket, code=self.socket.close_code)
 
     async def close(self, code: int = 1000) -> None:
         if self.keepAliver:
             self.keepAliver.stop()
 
+        self._close_code = code
         await self.socket.close(code=code)
         await self.session.close()
