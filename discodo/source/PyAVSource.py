@@ -72,7 +72,7 @@ class PyAVSource:
             - (
                 self.AudioFifo.samples
                 / Config.SAMPLES_PER_FRAME
-                / 50
+                / (1000 / Config.FRAME_LENGTH)
                 * (float(self.filter["atempo"]) if "atempo" in self.filter else 1.0)
             ),
             2,
