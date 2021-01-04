@@ -1,3 +1,4 @@
+import itertools
 import json
 import logging
 
@@ -51,9 +52,14 @@ async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
             None,
             map(
                 extract_video,
-                Data["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"][
-                    "sectionListRenderer"
-                ]["contents"][0]["itemSectionRenderer"]["contents"],
+                itertools.chain.from_iterable(
+                    map(
+                        lambda x: x.get("itemSectionRenderer", {}).get("contents", []),
+                        Data["contents"]["twoColumnSearchResultsRenderer"][
+                            "primaryContents"
+                        ]["sectionListRenderer"]["contents"],
+                    )
+                ),
             ),
         )
     )
