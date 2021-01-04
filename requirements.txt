@@ -1,5 +1,5 @@
 # For networking
-aiohttp==3.7.3
+aiohttp==aiohttp>=3.6.0,<3.8.0
 
 # Extra extractor resolver
 asyncspotify==0.12.1
