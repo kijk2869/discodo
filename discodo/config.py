@@ -66,7 +66,7 @@ class _Config:
         self.VCTIMEOUT: float = 300.0
 
         # EXTRA RESOLVER
-        self.ENABLED_EXT_RESOLVER: list = []  # melon, spotify
+        self.ENABLED_EXT_RESOLVER: list = []  # melon, spotify, vibe
 
         self.PLAYLIST_PAGE_LIMIT: int = 6
 
