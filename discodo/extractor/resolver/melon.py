@@ -5,7 +5,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 MELON_REGEX = re.compile(
-    r"(?:https?:\/\/)?(?:www\.)?melon.com\/album\/detail.htm\?albumId=([0-9]+)"
+    r"(?:https?:\/\/)?(?:www\.)?melon.com/album/detail.htm\?albumId=([0-9]+)"
 )
 
 
