@@ -30,12 +30,12 @@ async def extract(
     query = await resolve(query, connector)
 
     if isinstance(query, list):
-        Done, _ = await asyncio.wait(
-            [youtube_dl_extract(Item, address=address, **kwargs) for Item in query]
-        )
+        Futures = [extract(Item, address, **kwargs) for Item in query]
+
+        await asyncio.gather(*Futures)
 
         Results = []
-        for Future in Done:
+        for Future in Futures:
             try:
                 Results.append(Future.result())
             except:
