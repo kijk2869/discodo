@@ -3,7 +3,7 @@ import copy
 import ipaddress
 from typing import Coroutine, Union
 
-from youtube_dlc import YoutubeDL as YoutubeDLClient
+from youtube_dl import YoutubeDL as YoutubeDLClient
 
 from ..errors import NoSearchResults
 

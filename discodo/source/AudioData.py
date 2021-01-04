@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 import aiohttp
 import yarl
-import youtube_dlc
+import youtube_dl
 
 from ..config import Config
 from ..errors import Forbidden, TooManyRequests
@@ -85,7 +85,7 @@ class AudioData:
 
         try:
             Data = await extract(query, address=cls.address)
-        except youtube_dlc.utils.DownloadError as exc:
+        except youtube_dl.utils.DownloadError as exc:
             if Config.RoutePlanner and exc.exc_info[1].status == 429:
                 Config.RoutePlanner.mark_failed_address(cls.address)
 
@@ -101,7 +101,7 @@ class AudioData:
     async def gather(self):
         try:
             Data = await extract(self.webpage_url, address=self.address)
-        except youtube_dlc.utils.DownloadError as exc:
+        except youtube_dl.utils.DownloadError as exc:
             if Config.RoutePlanner and exc.exc_info[1].status == 429:
                 Config.RoutePlanner.mark_failed_address(self.address)
                 self.address = Config.RoutePlanner.get()
