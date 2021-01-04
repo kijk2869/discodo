@@ -7,7 +7,9 @@ import time
 from collections import deque
 from typing import Any
 
-import websockets
+import aiohttp
+
+from ..errors import WebsocketConnectionClosed
 
 log = logging.getLogger("discodo.client")
 
@@ -70,31 +72,38 @@ class keepAlive(threading.Thread):
         self.Stopped.set()
 
 
-class NodeConnection(websockets.client.WebSocketClientProtocol):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+class NodeConnection:
+    def __init__(self, Node, session, socket) -> None:
+        self.Node = Node
+        self.session = session
+        self.socket = socket
+        self.loop = Node.loop
+
+        self.closeCode = None
+
+        self.keepAliver = None
+        self.heartbeatTimeout = 60.0
+        self.threadId = threading.get_ident()
+
+    def __del__(self) -> None:
+        self.loop.create_task(self.close())
 
     @classmethod
-    async def connect(cls, node, loop=asyncio.get_event_loop(), timeout=10.0):
-        ws = await asyncio.wait_for(
-            websockets.connect(
-                node.WS_URL,
-                loop=loop,
-                klass=cls,
-                extra_headers={"Authorization": node.password},
-            ),
-            timeout=timeout,
+    async def connect(cls, node):
+        session = aiohttp.ClientSession()
+        socket = await session.ws_connect(
+            node.WS_URL,
+            max_msg_size=0,
+            timeout=30.0,
+            autoclose=False,
+            headers={"Authorization": node.password},
         )
 
-        ws.node = node
-        ws.heartbeatTimeout = 60.0
-        ws.threadId = threading.get_ident()
-
-        return ws
+        return cls(node, session, socket)
 
     @property
     def is_connected(self) -> bool:
-        return self.open and not self.closed
+        return not self.socket.closed
 
     @property
     def latency(self) -> float:
@@ -111,7 +120,7 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
 
     async def sendJson(self, data) -> None:
         log.debug(f"send to websocket {data}")
-        await super().send(json.dumps(data))
+        await self.socket.send_json(data)
 
     async def send(self, Operation: dict, Data: Any = None) -> None:
         payload = {"op": Operation, "d": Data}
@@ -119,12 +128,11 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         await self.sendJson(payload)
 
     async def poll(self) -> None:
-        try:
-            Message = await asyncio.wait_for(self.recv(), timeout=30.0)
-            JsonData = json.loads(Message)
-        except websockets.exceptions.ConnectionClosed as exc:
-            raise exc
-        else:
+        message = await asyncio.wait_for(self.socket.receive(), timeout=30.0)
+
+        if message.type is aiohttp.WSMsgType.TEXT:
+            JsonData = json.loads(message.data)
+
             Operation, Data = JsonData["op"], JsonData["d"]
 
             if Operation == "HELLO":
@@ -133,12 +141,22 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
                 await self.HEARTBEAT_ACK(Data)
 
             return Operation, Data
+        elif message.type is aiohttp.WSMsgType.ERROR:
+            raise WebsocketConnectionClosed(self.socket) from message.data
+        elif message.type in (
+            aiohttp.WSMsgType.CLOSED,
+            aiohttp.WSMsgType.CLOSE,
+            aiohttp.WSMsgType.CLOSING,
+        ):
+            raise WebsocketConnectionClosed(self.socket, code=self.socket.close_code)
 
-    async def close(self, *args, **kwargs) -> None:
-        if self._keepAliver:
-            self._keepAliver.stop()
+    async def close(self, code: int = 1000) -> None:
+        if self.keepAliver:
+            self.keepAliver.stop()
 
-        await super().close(*args, **kwargs)
+        self._close_code = code
+        await self.socket.close(code=code)
+        await self.session.close()
 
     async def HELLO(self, Data: dict) -> None:
         self._keepAliver = keepAlive(self, min(Data["heartbeat_interval"], 5.0))
