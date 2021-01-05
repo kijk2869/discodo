@@ -9,3 +9,7 @@ isort==5.7.0
 
 # Git pre commit
 pre-commit==2.9.3
+
+# Test code
+pytest==6.2.1
+pytest-asyncio==0.14.0
