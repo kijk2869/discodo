@@ -4,14 +4,14 @@ from discodo.extractor.resolver import melon, vibe
 
 
 @pytest.mark.asyncio
-async def test_melon() -> None:
+async def testMelon() -> None:
     assert await melon.get_album(
         "https://www.melon.com/album/detail.htm?albumId=10541761"
     ) == ["쿠기 (Coogie) - POW (Feat. GRAY)"]
 
 
 @pytest.mark.asyncio
-async def test_vibe() -> None:
+async def testVibe() -> None:
     assert await vibe.getChart("total")
 
     assert await vibe.getChart("genre-OS101")
