@@ -1,5 +1,6 @@
 import asyncio
 
+from ..errors import NodeException
 from ..utils import EventDispatcher
 from .http import HTTPClient
 
@@ -50,7 +51,12 @@ class VoiceClient:
 
         await self.send(Operation, Data)
 
-        return await Future
+        Data = await Future
+
+        if Data.get("traceback"):
+            raise NodeException(*Data["traceback"].items()[0])
+
+        return Data
 
     async def getSource(self, Query: str, ws: bool = True) -> dict:
         if ws:

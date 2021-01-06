@@ -14,6 +14,14 @@ class NoSearchResults(DiscodoException):
     pass
 
 
+class NodeException(DiscodoException):
+    def __init__(self, name, reason) -> None:
+        self.name = name
+        self.reason = reason
+
+        super().__init__(f"{name}{': ' if reason else ''}{reason}")
+
+
 class WebsocketConnectionClosed(DiscodoException):
     def __init__(self, socket, code=None) -> None:
         self.code = code or socket.close_code
