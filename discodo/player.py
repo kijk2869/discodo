@@ -83,7 +83,10 @@ class Player(threading.Thread):
         is_load_condition = (
             not self._current
             or self._current.skipped
-            or self._current.remain <= (Config.PRELOAD_TIME + self.crossfade)
+            or (
+                self._current.remain <= (Config.PRELOAD_TIME + self.crossfade)
+                and not (self._current.AudioData and self._current.AudioData.is_live)
+            )
         )
 
         if not self._next:
@@ -186,12 +189,16 @@ class Player(threading.Thread):
 
             return self.read()
 
-        is_live = self.current.AudioData and self.current.AudioData.is_live
         is_crossfade_timing = self.next and (
-            self.current.remain <= self.crossfade or self.current.skipped
+            (
+                self.current.remain <= self.crossfade
+                and not self.current.AudioData
+                and self.current.AudioData.is_live
+            )
+            or self.current.skipped
         )
 
-        if is_crossfade_timing and not is_live and self.next.AudioFifo.is_ready():
+        if is_crossfade_timing and self.next.AudioFifo.is_ready():
             NextData = self.next.read()
             if NextData:
                 self._crossfadeLoop += 1
@@ -202,7 +209,7 @@ class Player(threading.Thread):
 
                 Data = audioop.add(Data, NextData, 2)
         elif self.next:
-            self.next.volume = 1.0
+            self.next.volume = 0.0
 
         if not self.next and self.current.skipped and not self.client.Queue:
             if self.current.volume > 0.0:
