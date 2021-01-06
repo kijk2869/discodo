@@ -91,13 +91,18 @@ class NodeConnection:
     @classmethod
     async def connect(cls, node):
         session = aiohttp.ClientSession()
-        socket = await session.ws_connect(
-            node.WS_URL,
-            max_msg_size=0,
-            timeout=30.0,
-            autoclose=False,
-            headers={"Authorization": node.password},
-        )
+
+        try:
+            socket = await session.ws_connect(
+                node.WS_URL,
+                max_msg_size=0,
+                timeout=30.0,
+                autoclose=False,
+                headers={"Authorization": node.password},
+            )
+        except Exception as e:
+            await session.close()
+            raise e
 
         return cls(node, session, socket)
 

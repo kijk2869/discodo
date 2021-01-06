@@ -113,13 +113,18 @@ class VoiceSocket:
     @classmethod
     async def connect(cls, client, resume=False):
         session = aiohttp.ClientSession()
-        socket = await session.ws_connect(
-            f"wss://{client.endpoint}/?v=4",
-            max_msg_size=0,
-            timeout=30.0,
-            autoclose=False,
-            compress=15,
-        )
+
+        try:
+            socket = await session.ws_connect(
+                f"wss://{client.endpoint}/?v=4",
+                max_msg_size=0,
+                timeout=30.0,
+                autoclose=False,
+                compress=15,
+            )
+        except Exception as e:
+            await session.close()
+            raise e
 
         ws = cls(client, session, socket)
 
