@@ -6,9 +6,8 @@ import struct
 import threading
 import uuid
 
-from discodo.errors import WebsocketConnectionClosed
-
 from .config import Config
+from .errors import WebsocketConnectionClosed
 from .gateway import VoiceSocket
 from .natives import Cipher, opus
 

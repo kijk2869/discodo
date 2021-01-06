@@ -2,9 +2,7 @@ import asyncio
 import logging
 from typing import Any, Coroutine
 
-import websockets
-
-from ..errors import NodeNotConnected, VoiceClientNotFound
+from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
 from ..utils import EventDispatcher
 from .gateway import NodeConnection
 from .voice_client import VoiceClient
@@ -93,7 +91,7 @@ class Node:
         while True:
             try:
                 Operation, Data = await self.ws.poll()
-            except (asyncio.TimeoutError, websockets.ConnectionClosedError):
+            except (asyncio.TimeoutError, WebsocketConnectionClosed):
                 self.connected.clear()
 
                 if self.ws:
