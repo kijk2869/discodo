@@ -19,5 +19,5 @@ markdownify==0.6.1
 colorlog==4.6.2
 
 # Node webserver
-sanic==20.12.0
+sanic==20.12.1
 psutil==5.8.0
