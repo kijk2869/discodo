@@ -4,11 +4,13 @@ import json
 import logging
 import threading
 import time
+import warnings
 from collections import deque
 from typing import Any
 
 import aiohttp
 
+from .. import __version__
 from ..errors import WebsocketConnectionClosed
 
 log = logging.getLogger("discodo.client")
@@ -164,6 +166,12 @@ class NodeConnection:
         await self.session.close()
 
     async def HELLO(self, Data: dict) -> None:
+        if Data.get("version") != __version__:
+            warnings.warn(
+                f"Discodo version mismatch between server and client. (Node {Data.get('version')}/Client {__version__})",
+                UserWarning,
+            )
+
         self._keepAliver = keepAlive(self, min(Data["heartbeat_interval"], 5.0))
         self._keepAliver.start()
 

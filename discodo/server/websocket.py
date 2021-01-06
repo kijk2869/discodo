@@ -6,6 +6,7 @@ from typing import Coroutine
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
 
+from .. import __version__
 from ..config import Config
 from ..manager import ClientManager
 from .payloads import WebsocketPayloads
@@ -158,7 +159,10 @@ class WebsocketHandler:
     async def hello(self) -> None:
         payload = {
             "op": "HELLO",
-            "d": {"heartbeat_interval": Config.HANDSHAKE_INTERVAL},
+            "d": {
+                "version": __version__,
+                "heartbeat_interval": Config.HANDSHAKE_INTERVAL,
+            },
         }
 
         await self.sendJson(payload)
