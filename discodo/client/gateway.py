@@ -86,7 +86,7 @@ class NodeConnection:
         self.threadId = threading.get_ident()
 
     def __del__(self) -> None:
-        self.loop.create_task(self.close())
+        self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
     @classmethod
     async def connect(cls, node):
