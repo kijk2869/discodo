@@ -19,3 +19,7 @@ enabled = true
 
   [analyzers.meta]
   dockerfile_paths = ["Dockerfile"]
+
+[[analyzers]]
+name = "secrets"
+enabled = true
