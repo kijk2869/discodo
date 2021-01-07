@@ -1,7 +1,7 @@
 # Discodo
 
 ![PyPI](https://img.shields.io/pypi/v/discodo?logo=pypi)
-![Docker Image Version (latest by date)](https://img.shields.io/docker/v/kijk2869/discodo?arch=amd64&label=docker&logo=docker&sort=date)
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/kijk2869/discodo?arch=amd64&label=docker&logo=docker&sort=semver)
 ![PyPI - License](https://img.shields.io/pypi/l/discodo)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kijk2869/discodo/Python%20application?logo=github)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kijk2869/discodo/Upload%20Python%20Package?label=release&logo=pypi)
