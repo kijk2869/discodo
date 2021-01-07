@@ -30,6 +30,9 @@ jobs:
         sudo apt install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev
         sudo apt install --no-install-recommends -y pkg-config ffmpeg libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev
         python -m pip install -r requirements-dev.txt --no-binary av
+    - name: Install DeepSource CLI 
+      run: |
+        curl https://deepsource.io/cli | sh
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -38,4 +41,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cov=./ --cov-report xml
+    - name: Report coverage to DeepSource
+      run: |
+        ./bin/deepsource report --analyzer test-coverage --key python --value-file ./coverage.xml
