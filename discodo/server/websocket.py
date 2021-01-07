@@ -148,7 +148,7 @@ class WebsocketHandler:
         self.ClientManager.dispatcher.onAny(self.manager_event)
 
     async def manager_event(self, guild_id: int, **kwargs) -> None:
-        kwargs = {key: value for key, value in kwargs.items()}
+        kwargs = dict(kwargs.items())
         Event = kwargs.pop("event")
 
         payload = {"op": Event, "d": {"guild_id": guild_id}}

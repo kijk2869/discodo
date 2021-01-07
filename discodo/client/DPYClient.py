@@ -131,9 +131,7 @@ class DPYClient:
 
     @property
     def voiceClients(self):
-        return {
-            ID: Value
-            for ID, Value in list(
+        return dict(list(
                 chain.from_iterable(
                     [
                         Node.voiceClients.items()
@@ -141,8 +139,7 @@ class DPYClient:
                         if Node.is_connected
                     ]
                 )
-            )
-        }
+            ))
 
     def getVC(
         self, guild: Union[discord.Guild, int], safe: bool = False
