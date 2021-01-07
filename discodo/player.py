@@ -114,7 +114,7 @@ class Player(threading.Thread):
                 def setSource(Source: Union[AudioData, AudioSource]) -> None:
                     if isinstance(Source, AudioData) and Source == self.client.Queue[0]:
                         self._next = None
-                        del self.client.Queue[0]
+                        self.client.Queue.pop(0)
                     if (
                         isinstance(Source, AudioSource)
                         and Source.AudioData == self.client.Queue[0]
