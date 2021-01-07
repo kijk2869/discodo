@@ -147,7 +147,7 @@ class DPYClient:
         if isinstance(guild, discord.Guild):
             guild = guild.id
 
-        if not int(guild) in self.voiceClients and not safe:
+        if int(guild) not in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
         return self.voiceClients.get(int(guild))
