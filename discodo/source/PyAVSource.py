@@ -138,7 +138,8 @@ class PyAVSource:
         self.stopped = True
         return self.stopped
 
-    def is_opus(self) -> bool:
+    @staticmethod
+    def is_opus() -> bool:
         return False
 
     def cleanup(self) -> None:

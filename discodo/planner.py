@@ -34,8 +34,9 @@ class RoutePlanner:
     ) -> None:
         del self.failedAddress[address]
 
+    @staticmethod
     def __get_random(
-        self, ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
+        ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
     ) -> str:
         cidr: int = ipBlock.prefixlen
 
