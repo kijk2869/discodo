@@ -27,6 +27,7 @@ Discodo is an enhanced audio player for discord.
 python -m pip install --upgrade discodo
 ```
 
+On Linux environments, more dependencies are required.
 
 ## Execution
 
