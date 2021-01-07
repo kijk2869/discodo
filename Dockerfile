@@ -8,6 +8,9 @@ FROM python:3.8
 # You can override this arg using --build-arg
 ARG discodoRepoURL=https://github.com/kijk2869/discodo
 
+# Open default discodo node port
+EXPOSE 8000
+
 # set default workdir
 WORKDIR /opt/discodo
 

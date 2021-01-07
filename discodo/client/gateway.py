@@ -42,8 +42,9 @@ class keepAlive(threading.Thread):
                     Runner.result()
                 except:
                     pass
-                finally:
-                    return self.stop()
+                
+                self.stop()
+                return
 
             payload = {"op": "HEARTBEAT", "d": int(time.time() * 1000)}
             Runner = asyncio.run_coroutine_threadsafe(

@@ -23,6 +23,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install DeepSource CLI 
+      run: |
+        curl https://deepsource.io/cli | sh
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -38,4 +41,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest --cov=./ --cov-report xml
+    - name: Report coverage to DeepSource
+      run: |
+        ./bin/deepsource report --analyzer test-coverage --key python --value-file ./coverage.xml
+      env:
+        DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
