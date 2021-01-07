@@ -192,8 +192,7 @@ class Player(threading.Thread):
         is_crossfade_timing = self.next and (
             (
                 self.current.remain <= self.crossfade
-                and not self.current.AudioData
-                and self.current.AudioData.is_live
+                and not (self.current.AudioData and self.current.AudioData.is_live)
             )
             or self.current.skipped
         )
