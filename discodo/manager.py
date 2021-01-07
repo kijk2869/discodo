@@ -33,7 +33,7 @@ class ClientManager:
         return self.discordEvent.dispatch(Event, data=Data)
 
     def getVC(self, guildID: int, safe: bool = False) -> VoiceClient:
-        if not int(guildID) in self.voiceClients and not safe:
+        if int(guildID) not in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
         return self.voiceClients.get(int(guildID))
