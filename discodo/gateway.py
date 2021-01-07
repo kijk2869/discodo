@@ -45,8 +45,9 @@ class keepAliver(threading.Thread):
                     Runner.result()
                 except:
                     pass
-                finally:
-                    return self.stop()
+                
+                self.stop()
+                return
 
             payload: Dict[str, int] = {
                 "op": VoicePayload.HEARTBEAT,
