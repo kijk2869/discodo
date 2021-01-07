@@ -54,7 +54,7 @@ class VoiceClient:
         Data = await Future
 
         if Data.get("traceback"):
-            raise NodeException(*Data["traceback"].items()[0])
+            raise NodeException(*list(Data["traceback"].items())[0])
 
         return Data
 
