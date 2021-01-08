@@ -36,6 +36,8 @@ class NodeClient(OriginNode):
                 self.DPYClient.disconnect(self.DPYClient.client.get_guild(guildId))
             )
 
+        return super().close()
+
     async def destroy(self, *args, **kwargs) -> None:
         log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
@@ -131,7 +133,8 @@ class DPYClient:
 
     @property
     def voiceClients(self):
-        return dict(list(
+        return dict(
+            list(
                 chain.from_iterable(
                     [
                         Node.voiceClients.items()
@@ -139,7 +142,8 @@ class DPYClient:
                         if Node.is_connected
                     ]
                 )
-            ))
+            )
+        )
 
     def getVC(
         self, guild: Union[discord.Guild, int], safe: bool = False
