@@ -1,0 +1,25 @@
+<SAMI>
+
+<HEAD>
+<TITLE>Test Subtitle File</TITLE>
+
+
+<STYLE TYPE="text/css">
+<!--
+P {margin-left:8pt; margin-right:8pt; margin-bottom:2pt; margin-top:2pt;
+  text-align:center; font-size:20pt; font-family:arial, sans-serif;
+  font-weight:normal; color:White;}
+-->
+</STYLE>
+
+</HEAD>
+
+<BODY>
+
+<!--
+Annotation Test
+-->
+
+<SYNC Start=1>Hello, World!
+</BODY>
+</SAMI>

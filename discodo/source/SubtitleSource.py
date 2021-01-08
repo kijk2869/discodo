@@ -62,10 +62,10 @@ class smi(SubtitleFormat):
 
 
 class srv1(SubtitleFormat):
-    def __init__(self, Tree: ElementTree):
+    def __init__(self, Data: str):
         super().__init__()
 
-        self.Tree = Tree
+        self.Tree = ElementTree.fromstring(Data)
 
         self.TextElements = {
             float(TextElement.attrib["start"]): {
@@ -93,5 +93,4 @@ class srv1(SubtitleFormat):
             async with session.get(URL) as session:
                 Data = await session.text()
 
-        Tree = ElementTree.fromstring(Data)
-        return cls(Tree)
+        return cls(Data)
