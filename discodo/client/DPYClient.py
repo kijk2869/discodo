@@ -15,25 +15,25 @@ log = logging.getLogger("discodo.client")
 
 
 class NodeClient(OriginNode):
-    def __init__(self, DPYClient, *args, **kwargs) -> None:
+    def __init__(self, client, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.DPYClient = DPYClient
+        self.client = client
 
     async def _resumed(self, Data: dict) -> None:
         await super()._resumed(Data)
 
         for guild_id, vc_data in Data["voice_clients"].items():
-            guild = self.DPYClient.client.get_guild(int(guild_id))
+            guild = self.client.client.get_guild(int(guild_id))
             if "channel" in vc_data:
                 channel = guild.get_channel(vc_data["channel"])
-                self.loop.create_task(self.DPYClient.connect(channel))
+                self.loop.create_task(self.client.connect(channel))
             else:
-                self.loop.create_task(self.DPYClient.disconnect(guild))
+                self.loop.create_task(self.client.disconnect(guild))
 
     async def close(self) -> None:
         for guildId in self.voiceClients:
             self.loop.create_task(
-                self.DPYClient.disconnect(self.DPYClient.client.get_guild(guildId))
+                self.client.disconnect(self.client.client.get_guild(guildId))
             )
 
         return super().close()
@@ -42,8 +42,8 @@ class NodeClient(OriginNode):
         log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
 
-        if self in self.DPYClient.Nodes:
-            self.DPYClient.Nodes.remove(self)
+        if self in self.client.Nodes:
+            self.client.Nodes.remove(self)
 
 
 class DPYClient:
