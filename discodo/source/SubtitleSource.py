@@ -2,7 +2,7 @@ import re
 
 try:
     from defusedxml import cElementTree as ElementTree
-except:
+except ImportError:
     from defusedxml import ElementTree
 
 import aiohttp
