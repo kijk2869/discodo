@@ -21,7 +21,7 @@ RUN apt-get update && \
     apt-get clean
 
 # install discodo from pypi
-RUN pip install --no-cache-dir --force-reinstall discodo --no-binary av && \
+RUN pip install --no-cache-dir --force-reinstall git+${discodoRepoURL} --no-binary av && \
     echo "Discodo version: "$(python -m discodo --version)
 
 # Set workdir to /temp/discodo
