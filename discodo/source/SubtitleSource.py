@@ -1,5 +1,9 @@
 import re
-from xml.etree import ElementTree
+
+try:
+    from defusedxml import cElementTree as ElementTree
+except:
+    from defusedxml import ElementTree
 
 import aiohttp
 from markdownify import markdownify
