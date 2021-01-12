@@ -124,7 +124,9 @@ class VoiceClient(VoiceConnector):
         :rtype: str
         """
 
-        if not self.player or not self.Queue and not self.player.current:
+        if not self.player:
+            return "disconnected"
+        elif not self.Queue and not self.player.current:
             return "stopped"
         elif self.paused:
             return "paused"
