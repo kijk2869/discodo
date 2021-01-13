@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+        integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ=="
+        crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"
+        integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw=="
+        crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: #23272A;
+        }
+
+        body>.grid {
+            height: 100%;
+        }
+
+        .image {
+            margin-top: -100px;
+        }
+
+        .column {
+            max-width: 450px;
+        }
+
+        .title {
+            width: 350px;
+            margin: 20px 0;
+        }
+
+        .form {
+            background-color: white;
+        }
+
+        .version {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            color: #bababa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <div class="column">
+            <form class="ui large form">
+                <div class="ui raised segment">
+                    <img class="title" alt="DISCODO" src="/static/logo.png">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui fluid large submit button">Login</div>
+                    </div>
+                    <div class="ui error message"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <p class="version">{{ request.app.__version__ }}</p>
+</body>
+
+</html>
