@@ -74,7 +74,7 @@ class DPYClient:
                 return await originFunc()
 
     async def discord_socket_response(self, payload: dict) -> None:
-        if payload["t"] == "VOICE_SERVER_UPDATE":
+        if payload["t"] in ["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"]:
             VC = self.getVC(payload["d"]["guild_id"], safe=True)
             SelectNodes = [VC.Node] if VC else [self.getBestNode()]
         else:
