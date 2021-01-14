@@ -71,7 +71,7 @@ jobs:
       run: |
         pytest --cov=./ --cov-report xml
     - name: Report coverage to DeepSource
-      if: ${{ github.event == 'push' }}
+      if: ${{ github.event_name == 'push' }}
       run: |
         ./bin/deepsource report --analyzer test-coverage --key python --value-file ./coverage.xml
       env:
