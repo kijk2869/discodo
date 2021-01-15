@@ -27,7 +27,7 @@ class Encoder(json.JSONEncoder):
         return o.__dict__()
 
 
-class ModifyClientManager(ClientManager):
+class ModifiedClientManager(ClientManager):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -140,7 +140,7 @@ class WebsocketHandler:
             self.loop.create_task(self.resumed())
             log.debug(f"ClientManager of {user_id} resumed.")
         else:
-            self.ClientManager = ModifyClientManager(user_id=user_id)
+            self.ClientManager = ModifiedClientManager(user_id=user_id)
             self.app.ClientManagers[int(user_id)] = self.ClientManager
 
             log.debug(f"ClientManager of {user_id} intalized.")
