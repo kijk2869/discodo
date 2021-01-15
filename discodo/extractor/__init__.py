@@ -30,9 +30,9 @@ async def extract(
     query = await resolve(query, connector)
 
     if isinstance(query, list):
-        Tasks = [
-            asyncio.Task(extract(Item, address=address, **kwargs)) for Item in query
-        ]
+        Tasks = list(
+            map(lambda x: asyncio.Task(extract(x, address=address, **kwargs)), query)
+        )
 
         await asyncio.wait(Tasks)
 
