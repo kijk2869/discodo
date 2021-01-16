@@ -4,14 +4,10 @@ from typing import Any, Coroutine
 
 import aiohttp
 
-from ..errors import (
-    HTTPException,
-    NodeNotConnected,
-    VoiceClientNotFound,
-    WebsocketConnectionClosed,
-)
+from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
 from ..utils import EventDispatcher
 from .gateway import NodeConnection
+from .http import HTTPException
 from .voice_client import VoiceClient
 
 log = logging.getLogger("discodo.client")
