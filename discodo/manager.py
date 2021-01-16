@@ -14,6 +14,7 @@ class ClientManager:
         self.id = kwargs.get("user_id")
         self.session_id = kwargs.get("session_id")
 
+        self.Context = {}
         self.voiceClients = {}
 
         self.dispatcher = EventDispatcher()

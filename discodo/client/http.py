@@ -36,6 +36,14 @@ class HTTPClient:
 
                 raise HTTPException(response.status)
 
+    async def getVCContext(self) -> dict:
+        return (await self.fetch("GET", "/getVCContext"))["source"]
+
+    async def setVCContext(self, context: dict) -> dict:
+        return (await self.fetch("POST", "/setVCContext", json={"context": context}))[
+            "context"
+        ]
+
     async def getSource(self, query: str) -> dict:
         return (await self.fetch("GET", "/getSource", params={"query": query}))[
             "source"

@@ -55,6 +55,54 @@ class WebsocketPayloads:
         self.ClientManager.discordDispatch(Data)
 
     @need_manager
+    async def getContext(self, _: dict) -> None:
+        payload = {
+            "op": "getContext",
+            "d": {"context": self.ClientManager.Context},
+        }
+
+        await self.sendJson(payload)
+
+    @need_manager
+    async def setContext(self, Data: dict) -> None:
+        self.ClientManager.Context.update(Data["context"])
+
+        payload = {
+            "op": "setContext",
+            "d": {"context": self.ClientManager.Context},
+        }
+
+        await self.sendJson(payload)
+
+    @need_manager
+    async def getVCContext(self, Data: dict) -> None:
+        VoiceClient = self.ClientManager.getVC(Data["guild_id"])
+        if not VoiceClient:
+            raise NotConnected
+
+        payload = {
+            "op": "getVCContext",
+            "d": {"context": VoiceClient.Context},
+        }
+
+        await self.sendJson(payload)
+
+    @need_manager
+    async def setVCContext(self, Data: dict) -> None:
+        VoiceClient = self.ClientManager.getVC(Data["guild_id"])
+        if not VoiceClient:
+            raise NotConnected
+
+        VoiceClient.Context.update(Data["context"])
+
+        payload = {
+            "op": "setVCContext",
+            "d": {"context": VoiceClient.Context},
+        }
+
+        await self.sendJson(payload)
+
+    @need_manager
     async def getSource(self, Data: dict) -> None:
         payload = {
             "op": "getSource",
