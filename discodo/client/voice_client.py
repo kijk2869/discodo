@@ -58,6 +58,18 @@ class VoiceClient:
 
         return Data
 
+    async def getVCContext(self, ws: bool = True) -> dict:
+        if ws:
+            return (await self.query("getVCContext"))["context"]
+
+        return await self.http.getVCContext()
+
+    async def setVCContext(self, context: dict, ws: bool = True) -> dict:
+        if ws:
+            return (await self.query("setVCContext", {"context": context}))["context"]
+
+        return await self.http.setVCContext(context)
+
     async def getSource(self, Query: str, ws: bool = True) -> dict:
         if ws:
             return (await self.query("getSource", {"query": Query}))["source"]

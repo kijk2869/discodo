@@ -30,6 +30,8 @@ class VoiceClient(VoiceConnector):
         self.dispatcher.onAny(self.__dispatchToManager)
         self.dispatcher.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
 
+        self.Context = {}
+
         self.Queue = []
         self.player = None
 

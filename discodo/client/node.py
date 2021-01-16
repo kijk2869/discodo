@@ -2,7 +2,14 @@ import asyncio
 import logging
 from typing import Any, Coroutine
 
-from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
+import aiohttp
+
+from ..errors import (
+    HTTPException,
+    NodeNotConnected,
+    VoiceClientNotFound,
+    WebsocketConnectionClosed,
+)
 from ..utils import EventDispatcher
 from .gateway import NodeConnection
 from .voice_client import VoiceClient
@@ -70,6 +77,23 @@ class Node:
     @property
     def is_connected(self) -> bool:
         return self.connected.is_set() and self.ws and self.ws.is_connected
+
+    @property
+    def headers(self) -> dict:
+        return {
+            "Authorization": self.password,
+            "User-ID": str(self.user_id),
+        }
+
+    async def fetch(self, method: str, endpoint: str, **kwargs) -> dict:
+        URL = self.Node.URL + endpoint
+
+        async with aiohttp.ClientSession(headers=self.headers) as session:
+            async with session.request(method, URL, **kwargs) as response:
+                if 200 <= response.status < 300:
+                    return await response.json(content_type=None)
+
+                raise HTTPException(response.status)
 
     async def close(self) -> None:
         """ some action to do after disconnected from node """
@@ -160,6 +184,28 @@ class Node:
         await self.send("GET_STATUS")
 
         return await self.dispatcher.wait_for("STATUS", timeout=10.0)
+
+    async def getContext(self, ws: bool = True) -> dict:
+        if ws:
+            await self.send("getSource")
+
+            return (await self.dispatcher.wait_for("getSource", timeout=10.0))[
+                "context"
+            ]
+
+        return (await self.fetch("GET", "/getContext"))["context"]
+
+    async def setContext(self, context: dict, ws: bool = True) -> dict:
+        if ws:
+            await self.send("setContext", {"context": context})
+
+            return (await self.dispatcher.wait_for("setContext", timeout=10.0))[
+                "context"
+            ]
+
+        return (await self.fetch("POST", "/setContext", json={"context": context}))[
+            "context"
+        ]
 
 
 class Nodes(list):

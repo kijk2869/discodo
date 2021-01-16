@@ -21,6 +21,23 @@ def authorized(func: Coroutine) -> Coroutine:
     return wrapper
 
 
+def need_manager(func: Coroutine) -> Coroutine:
+    def wrapper(request, *args, **kwargs):
+        user_id = int(request.headers.get("User-ID"))
+
+        if (
+            not hasattr(request.app, "ClientManagers")
+            or not user_id in request.app.ClientManagers
+        ):
+            abort(404, "ClientManager not found.")
+
+        manager = request.app.ClientManagers[user_id]
+
+        return func(request, manager, *args, **kwargs)
+
+    return wrapper
+
+
 def need_voiceclient(func: Coroutine) -> Coroutine:
     def wrapper(request, *args, **kwargs):
         user_id = int(request.headers.get("User-ID"))
@@ -68,6 +85,44 @@ def JSONResponse(
         status=status,
         content_type=content_type,
     )
+
+
+@app.get("/getContext")
+@authorized
+@need_manager
+async def getSource(request, manager) -> JSONResponse:
+    return JSONResponse({"context": manager.Context})
+
+
+@app.get("/setContext")
+@authorized
+@need_manager
+async def getSource(request, manager) -> JSONResponse:
+    if "context" not in request.json:
+        abort(400, "Bad data `context`")
+
+    manager.Context.update(request.json["context"])
+
+    return JSONResponse({"context": manager.Context})
+
+
+@app.get("/getVCContext")
+@authorized
+@need_voiceclient
+async def getVCContext(request, VoiceClient) -> JSONResponse:
+    return JSONResponse({"context": VoiceClient.Context})
+
+
+@app.get("/setVCContext")
+@authorized
+@need_voiceclient
+async def setVCContext(request, VoiceClient) -> JSONResponse:
+    if "context" not in request.json:
+        abort(400, "Bad data `context`")
+
+    VoiceClient.Context.update(request.json["context"])
+
+    return JSONResponse({"context": VoiceClient.Context})
 
 
 @app.get("/getSource")
@@ -181,7 +236,7 @@ async def seek(request, VoiceClient) -> response.empty:
 @app.post("/skip")
 @authorized
 @need_voiceclient
-async def seek(request, VoiceClient) -> JSONResponse:
+async def skip(request, VoiceClient) -> JSONResponse:
     if "offset" not in request.json or not isinstance(request.json["offset"], int):
         abort(400, "Bad data `offset`")
 
@@ -233,7 +288,7 @@ async def remove(request, VoiceClient) -> JSONResponse:
 @app.get("/state")
 @authorized
 @need_voiceclient
-async def resume(request, VoiceClient) -> JSONResponse:
+async def state(request, VoiceClient) -> JSONResponse:
     return JSONResponse(
         {
             "id": VoiceClient.id,
