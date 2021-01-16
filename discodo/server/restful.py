@@ -90,14 +90,14 @@ def JSONResponse(
 @app.get("/getContext")
 @authorized
 @need_manager
-async def getSource(request, manager) -> JSONResponse:
+async def getContext(request, manager) -> JSONResponse:
     return JSONResponse({"context": manager.Context})
 
 
 @app.get("/setContext")
 @authorized
 @need_manager
-async def getSource(request, manager) -> JSONResponse:
+async def setContext(request, manager) -> JSONResponse:
     if "context" not in request.json:
         abort(400, "Bad data `context`")
 
