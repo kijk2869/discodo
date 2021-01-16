@@ -36,11 +36,15 @@ class HTTPClient:
 
                 raise HTTPException(response.status)
 
-    async def getSource(self) -> dict:
-        return (await self.fetch("GET", "/getSource"))["source"]
+    async def getSource(self, query: str) -> dict:
+        return (await self.fetch("GET", "/getSource", params={"query": query}))[
+            "source"
+        ]
 
-    async def searchSource(self) -> list:
-        return (await self.fetch("GET", "/searchSource"))["sources"]
+    async def searchSource(self, query: str) -> list:
+        return (await self.fetch("GET", "/searchSource", params={"query": query}))[
+            "sources"
+        ]
 
     async def putSource(self, source: dict) -> Union[int, list]:
         return (await self.fetch("POST", "/putSource", json={"source": dict(source)}))[
