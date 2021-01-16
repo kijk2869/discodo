@@ -1,6 +1,10 @@
 import logging
 import urllib.parse
-from xml.etree import ElementTree
+
+try:
+    from defusedxml import cElementTree as ElementTree
+except ImportError:
+    from defusedxml import ElementTree
 
 import aiohttp
 
