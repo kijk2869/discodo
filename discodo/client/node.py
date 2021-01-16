@@ -220,9 +220,9 @@ class Nodes(list):
         return list(map(lambda task: task.result(), Done))
 
     async def getStatus(self) -> Coroutine:
-        def get_task(Node):
-            if Node.is_connected:
-                return Node.getStatus()
+        def get_task(Item):
+            if Item.is_connected:
+                return Item.getStatus()
 
         task_list: list = list(filter(None, map(get_task, self)))
 
