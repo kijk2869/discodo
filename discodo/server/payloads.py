@@ -55,7 +55,7 @@ class WebsocketPayloads:
         self.ClientManager.discordDispatch(Data)
 
     @need_manager
-    async def getContext(self, Data: dict) -> None:
+    async def getContext(self, _: dict) -> None:
         payload = {
             "op": "getContext",
             "d": {"context": self.ClientManager.Context},
