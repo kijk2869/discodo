@@ -208,7 +208,7 @@ class Player(threading.Thread):
 
                 Data = audioop.add(Data, NextData, 2)
         elif self.next:
-            self.next.volume = 0.0
+            self.next.volume = 1.0 if self.crossfade == 0 else 0.0
 
         if not self.next and self.current.skipped and not self.client.Queue:
             if self.current.volume > 0.0:
