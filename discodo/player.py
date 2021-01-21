@@ -30,7 +30,7 @@ class Player(threading.Thread):
     def __del__(self) -> None:
         for Source in self.client.Queue:
             if isinstance(Source, AudioSource):
-                self.client.loop.run_coroutine_threadsafe(Source.cleanup)
+                Source.cleanup()
 
     @property
     def crossfade(self) -> Union[float, None]:
