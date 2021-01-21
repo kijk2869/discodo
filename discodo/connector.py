@@ -27,8 +27,8 @@ class VoiceConnector:
         self.guild_id = data.get("guild_id")
         self._channel_id = None
 
-        self._connected = asyncio.Event()
-        self._connectedThread = threading.Event()
+        self.connectedEvent = asyncio.Event()
+        self.connectedThreadEvent = threading.Event()
 
         self._polling = None
         self._sequence = self._timestamp = 0
@@ -129,8 +129,8 @@ class VoiceConnector:
         :rtype: None
         """
 
-        self._connected.clear()
-        self._connectedThread.clear()
+        self.connectedEvent.clear()
+        self.connectedThreadEvent.clear()
 
         if data:
             self.data = data
@@ -163,16 +163,16 @@ class VoiceConnector:
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWS())
 
-        self._connected.set()
-        self._connectedThread.set()
+        self.connectedEvent.set()
+        self.connectedThreadEvent.set()
 
     async def pollingWS(self) -> None:
         while True:
             try:
                 await self.ws.poll()
             except (asyncio.TimeoutError, WebsocketConnectionClosed) as e:
-                self._connected.clear()
-                self._connectedThread.clear()
+                self.connectedEvent.clear()
+                self.connectedThreadEvent.clear()
 
                 reason = (
                     f"with {e.code}"
@@ -186,7 +186,7 @@ class VoiceConnector:
 
                 try:
                     await asyncio.wait_for(
-                        self._connected.wait(), timeout=Config.VCTIMEOUT
+                        self.connectedEvent.wait(), timeout=Config.VCTIMEOUT
                     )
                 except asyncio.TimeoutError:
                     return self.__del__()
