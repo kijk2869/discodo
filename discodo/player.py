@@ -24,6 +24,7 @@ class Player(threading.Thread):
         self._getSourceTask = None
         self._current = self._next = None
 
+        self.loops = 0
         self._crossfadeLoop = 0
         self._request_dispatched = False
 
