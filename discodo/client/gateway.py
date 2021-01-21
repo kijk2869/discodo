@@ -42,7 +42,7 @@ class keepAlive(threading.Thread):
                     Runner.result()
                 except:
                     pass
-                
+
                 self.stop()
                 return
 
@@ -99,7 +99,7 @@ class NodeConnection:
             socket = await session.ws_connect(
                 node.WS_URL,
                 max_msg_size=0,
-                timeout=30.0,
+                timeout=60.0,
                 autoclose=False,
                 headers={"Authorization": node.password},
             )
