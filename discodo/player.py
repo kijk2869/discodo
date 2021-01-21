@@ -168,7 +168,7 @@ class Player(threading.Thread):
 
             Source.volume = 1.0
             Source.filter = self.client.filter
-        except:
+        except Exception:
             traceback.print_exc()
             self.client.dispatcher.dispatch(
                 "SOURCE_TRACEBACK", source=Data, traceback=traceback.format_exc()
@@ -259,7 +259,7 @@ class Player(threading.Thread):
                 self.loops += 1
                 nextTime = _start + Config.DELAY * self.loops
                 time.sleep(max(0, Config.DELAY + (nextTime - time.perf_counter())))
-            except:
+            except Exception:
                 traceback.print_exc()
                 self.dispatcher.dispatch(
                     "PLAYER_TRACEBACK", traceback=traceback.format_exc()
@@ -268,7 +268,7 @@ class Player(threading.Thread):
     def run(self) -> None:
         try:
             self.__do_run()
-        except:
+        except Exception:
             pass
         finally:
             self.stop()
