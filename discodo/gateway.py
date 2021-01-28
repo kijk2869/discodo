@@ -17,12 +17,12 @@ log = logging.getLogger("discodo.gateway")
 
 
 class keepAliver(threading.Thread):
-    def __init__(self, ws, interval: int, *args, **kwargs) -> None:
+    def __init__(self, ws, interval: float, *args, **kwargs) -> None:
         threading.Thread.__init__(self, *args, **kwargs)
         self.daemon = True
 
         self.ws = ws
-        self.interval: int = interval
+        self.interval: float = interval
         self.Stopped = threading.Event()
         self.latency: Optional[float] = None
         self.recent_latencies = deque(maxlen=20)
@@ -73,8 +73,8 @@ class keepAliver(threading.Thread):
                 self._lastSend = time.perf_counter()
 
     def ack(self) -> None:
-        self._lastAck: float = time.perf_counter()
-        self.latency: float = self._lastAck - self._lastSend
+        self._lastAck = time.perf_counter()
+        self.latency = self._lastAck - self._lastSend
         self.recent_latencies.append(self.latency)
 
     def stop(self) -> None:
@@ -137,11 +137,11 @@ class VoiceSocket:
         return ws
 
     @property
-    def latency(self) -> float:
+    def latency(self) -> Optional[float]:
         return self.keepAliver.latency if self.keepAliver else None
 
     @property
-    def averageLatency(self) -> float:
+    def averageLatency(self) -> Optional[float]:
         if not self.keepAliver:
             return None
 
@@ -211,7 +211,7 @@ class VoiceSocket:
             self.keepAliver = keepAliver(self, min(interval, 5.0))
             self.keepAliver.start()
 
-    async def createConnection(self, data: dict) -> None:
+    async def createConnection(self, data: Optional[dict]) -> None:
         self.client.ssrc = data["ssrc"]
         self.client.endpointIp = data["ip"]
         self.client.endpointPort = data["port"]
@@ -236,7 +236,7 @@ class VoiceSocket:
 
         await self.select_protocol(self.client.ip, self.client.port, encryptMode)
 
-    async def loadKey(self, data: dict) -> None:
+    async def loadKey(self, data: Optional[dict]) -> None:
         log.info("recieved voice secret key.")
 
         await self.speak(True)
