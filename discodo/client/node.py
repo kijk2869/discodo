@@ -1,78 +1,16 @@
 import asyncio
 import logging
-import multiprocessing
-import secrets
 from typing import Any, Coroutine
 
 import aiohttp
 
-from ..config import Config
 from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
-from ..utils import EventDispatcher, tcp
+from ..utils import EventDispatcher
 from .gateway import NodeConnection
 from .http import HTTPException
 from .voice_client import VoiceClient
 
 log = logging.getLogger("discodo.client")
-
-LocalNode = None
-
-
-class LocalNodeProcess(multiprocessing.Process):
-    def __init__(self, config: dict) -> None:
-        multiprocessing.Process.__init__(self)
-        self.daemon = True
-
-        self.config = config
-        self.host = config["HOST"]
-        self.port = config["PORT"]
-        self.password = config["PASSWORD"]
-
-    def run(self):
-        import os
-
-        import psutil
-
-        from ..server import server
-
-        Config.from_dict(self.config)
-
-        if hasattr(psutil, "HIGH_PRIORITY_CLASS"):
-            psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
-
-        loop = asyncio.get_event_loop()
-
-        loop.create_task(
-            server.create_server(
-                host=Config.HOST, port=Config.PORT, return_asyncio_server=True
-            )
-        )
-        loop.run_forever()
-
-
-def getLocalNode():
-    return LocalNode
-
-
-def spawnLocalNode(**kwargs):
-    global LocalNode
-
-    if LocalNode:
-        if LocalNode.is_alive():
-            raise ValueError("Local node already spawned")
-
-        LocalNode = None
-
-    kwargs["HOST"] = "127.0.0.1"
-    kwargs["PORT"] = tcp.getFreePort()
-    kwargs["PASSWORD"] = secrets.token_hex()
-
-    log.info(f"spawn local discodo node server on {kwargs['HOST']}:{kwargs['PORT']}")
-
-    LocalNode = LocalNodeProcess(kwargs)
-    LocalNode.start()
-
-    return LocalNode
 
 
 class Node:
