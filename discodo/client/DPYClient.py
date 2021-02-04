@@ -8,7 +8,7 @@ import discord
 from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher
 from .node import Node as OriginNode
-from .node import Nodes
+from .node import Nodes, launchLocalNode
 from .voice_client import VoiceClient
 
 log = logging.getLogger("discodo.client")
@@ -95,6 +95,33 @@ class DPYClient:
     async def _register_event(self, *args, **kwargs) -> None:
         await self.client.wait_until_ready()
         kwargs["user_id"] = self.client.user.id
+
+        Node = NodeClient(self, *args, **kwargs)
+        await Node.connect()
+
+        log.info(f"registering Node {Node.host}:{Node.port}")
+
+        self.Nodes.append(Node)
+
+        Node.dispatcher.on("VC_DESTROYED", self._vc_destroyed)
+        Node.dispatcher.onAny(self._node_event)
+
+        return self
+
+    def register_local_node(self, *args, **kwargs) -> None:
+        return self.loop.create_task(self._register_local_event(*args, **kwargs))
+
+    async def _register_local_event(
+        self, *args, launchOptions: dict = {}, **kwargs
+    ) -> None:
+        await self.client.wait_until_ready()
+
+        LocalNodeProc = await launchLocalNode(**launchOptions)
+
+        kwargs["user_id"] = self.client.user.id
+        kwargs["host"] = LocalNodeProc.HOST
+        kwargs["port"] = LocalNodeProc.PORT
+        kwargs["password"] = LocalNodeProc.PASSWORD
 
         Node = NodeClient(self, *args, **kwargs)
         await Node.connect()

@@ -76,6 +76,13 @@ def is_valid_file(parser, args):
         return json.load(fp)
 
 
+def is_valid_json(parser, args):
+    try:
+        return json.loads(args)
+    except Exception as e:
+        parser.error(f"The json {args} is not valid!")
+
+
 parser.add_argument(
     "--version",
     action="version",
@@ -88,6 +95,13 @@ parser.add_argument(
     type=lambda args: is_valid_file(parser, args),
     default={},
     help="Config json file path (default: None)",
+)
+
+parser.add_argument(
+    "--config-json",
+    type=lambda args: is_valid_json(parser, args),
+    default={},
+    help="Config json string (default: None)",
 )
 
 webGroup = parser.add_argument_group("Webserver Option")
@@ -210,7 +224,7 @@ logParser.add_argument(
 
 args = parser.parse_args()
 
-if not args.config:
+if not args.config and not args.config_json:
     verbose = args.verbose
 
     Config.HOST = args.host
@@ -229,9 +243,9 @@ if not args.config:
     Config.SPOTIFY_ID = args.spotify_id
     Config.SPOTIFY_SECRET = args.spotify_secret
 else:
-    verbose = args.config.pop("verbose", False)
+    verbose = (args.config or args.config_json).pop("verbose", False)
 
-    Config.from_dict(args.config)
+    Config.from_dict(args.config or args.config_json)
 
 if verbose:
     setLoggingLevel(logging.DEBUG)

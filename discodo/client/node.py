@@ -1,16 +1,52 @@
 import asyncio
+import json
 import logging
+import os
+import secrets
+import sys
 from typing import Any, Coroutine
 
 import aiohttp
 
+from .. import __dirname
 from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
-from ..utils import EventDispatcher
+from ..utils import EventDispatcher, tcp
 from .gateway import NodeConnection
 from .http import HTTPException
 from .voice_client import VoiceClient
 
 log = logging.getLogger("discodo.client")
+
+LocalNodeProc = None
+
+
+def getLocalNode():
+    return LocalNodeProc
+
+
+async def launchLocalNode(**options):
+    global LocalNodeProc
+
+    if LocalNodeProc and LocalNodeProc.returncode is not None:
+        raise ValueError("LocalNode already launched.")
+
+    options["HOST"] = "127.0.0.1"
+    options["PORT"] = tcp.getFreePort()
+    options["PASSWORD"] = secrets.token_hex()
+
+    log.info(f"launching local node process on {options['HOST']}:{options['PORT']}")
+
+    os.environ["PYTHONPATH"] = os.path.dirname(__dirname)
+
+    LocalNodeProc = await asyncio.create_subprocess_exec(
+        sys.executable, "-m", "discodo", "--config-json", json.dumps(options)
+    )
+
+    LocalNodeProc.HOST = options["HOST"]
+    LocalNodeProc.PORT = options["PORT"]
+    LocalNodeProc.PASSWORD = options["PASSWORD"]
+
+    return LocalNodeProc
 
 
 class Node:

@@ -1,5 +1,9 @@
 __version__ = "2.3.10"
 
+import os
+
+__dirname = os.path.abspath(os.path.dirname(__file__))
+
 from .client import *
 from .config import Config
 from .errors import *
