@@ -163,6 +163,8 @@ class Player(threading.Thread):
             )
 
     async def _getSource(self, Data: AudioData, callback: Callable) -> None:
+        Source = None
+
         try:
             Source = await Data.source()
 
