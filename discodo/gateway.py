@@ -239,6 +239,8 @@ class VoiceSocket:
     async def loadKey(self, data: Optional[dict]) -> None:
         log.info("recieved voice secret key.")
 
+        self.client.speakState = False
+
         self.client.encryptMode = data["mode"]
         self.client.secretKey = data.get("secret_key")
 

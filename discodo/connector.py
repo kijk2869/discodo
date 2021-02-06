@@ -33,6 +33,7 @@ class VoiceConnector:
         self._polling = None
         self._sequence = self._timestamp = 0
         self.encoder = opus.Encoder()
+        self.speakState = False
 
         if data:
             self.loop.create_task(self.createSocket())
