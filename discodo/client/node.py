@@ -39,12 +39,27 @@ async def launchLocalNode(**options):
     os.environ["PYTHONPATH"] = os.path.dirname(__dirname)
 
     LocalNodeProc = await asyncio.create_subprocess_exec(
-        sys.executable, "-m", "discodo", "--config-json", json.dumps(options)
+        sys.executable,
+        "-m",
+        "discodo",
+        "--config-json",
+        json.dumps(options),
+        stdout=asyncio.subprocess.PIPE,
     )
 
     LocalNodeProc.HOST = options["HOST"]
     LocalNodeProc.PORT = options["PORT"]
     LocalNodeProc.PASSWORD = options["PASSWORD"]
+
+    try:
+        await asyncio.wait_for(LocalNodeProc.stdout.readline(), timeout=20.0)
+    except asyncio.TimeoutError as e:
+        raise SystemError("Launching discodo subprocess timed out.") from e
+
+    if LocalNodeProc.returncode:
+        raise SystemError("Cannot launch discodo subprocess.")
+
+    log.info(f"Local node process launched on {options['HOST']}:{options['PORT']}")
 
     return LocalNodeProc
 
