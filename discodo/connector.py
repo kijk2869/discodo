@@ -174,6 +174,9 @@ class VoiceConnector:
                 self.connectedEvent.clear()
                 self.connectedThreadEvent.clear()
 
+                await self.ws.close()
+                self.ws = None
+
                 reason = (
                     f"with {e.code}"
                     if isinstance(e, WebsocketConnectionClosed)
