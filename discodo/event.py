@@ -36,6 +36,11 @@ class DiscordEvent:
 
     async def VOICE_STATE_UPDATE(self, data: dict) -> None:
         if not self.manager.id or data["user_id"] != str(self.manager.id):
+            if self.manager.getVC(data["guild_id"], safe=True):
+                vc = self.manager.getVC(data["guild_id"])
+
+                if data.get("channel_id") and int(data["channel_id"]) == vc.channel_id:
+                    vc.speakState = False
             return
 
         log.info(f'recieve self voice update. set session id {data["session_id"]}')

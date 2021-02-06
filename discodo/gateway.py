@@ -192,7 +192,7 @@ class VoiceSocket:
 
         payload = {
             "op": VoicePayload.SPEAKING,
-            "d": {"speaking": int(state), "delay": 0},
+            "d": {"speaking": int(state), "delay": 0, "ssrc": self.client.ssrc},
         }
         await self.sendJson(payload)
 
@@ -238,9 +238,6 @@ class VoiceSocket:
 
     async def loadKey(self, data: Optional[dict]) -> None:
         log.info("recieved voice secret key.")
-
-        await self.speak(True)
-        await self.speak(False)
 
         self.client.encryptMode = data["mode"]
         self.client.secretKey = data.get("secret_key")
