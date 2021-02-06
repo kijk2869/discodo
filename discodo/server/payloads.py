@@ -351,6 +351,24 @@ class WebsocketPayloads:
         return await self.sendJson(payload)
 
     @need_manager
+    async def getQueueSource(self, Data: dict) -> None:
+        VoiceClient = self.ClientManager.getVC(Data["guild_id"])
+        if not VoiceClient:
+            raise NotConnected
+
+        payload = {
+            "op": "getQueue",
+            "d": {
+                "guild_id": Data["guild_id"],
+                "source": next(
+                    filter(lambda x: x.tag == Data["tag"], VoiceClient.Queue), None
+                ),
+            },
+        }
+
+        return await self.sendJson(payload)
+
+    @need_manager
     async def VC_DESTROY(self, Data: dict) -> None:
         self.ClientManager.delVC(Data["guild_id"])
 

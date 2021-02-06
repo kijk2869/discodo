@@ -1,3 +1,4 @@
+import uuid
 from typing import Any, Dict, List
 
 import aiohttp
@@ -13,6 +14,8 @@ from .AudioSource import AudioSource
 
 class AudioData:
     def __init__(self, data: dict) -> None:
+        self.tag = str(uuid.uuid4())
+
         self.id = data["id"]
         self.title = data.get("title")
 
@@ -62,6 +65,7 @@ class AudioData:
     def __dict__(self) -> dict:
         return {
             "_type": "AudioData",
+            "tag": self.tag,
             "id": self.id,
             "title": self.title,
             "webpage_url": self.webpage_url,
