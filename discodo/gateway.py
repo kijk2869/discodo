@@ -98,8 +98,6 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
     def __del__(self) -> None:
         self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
-        super().__del__()
-
     @classmethod
     async def connect(cls, client, resume=False):
         ws = await websockets.connect(

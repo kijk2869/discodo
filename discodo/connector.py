@@ -184,7 +184,7 @@ class VoiceConnector:
                 closeCode = WebsocketCloseCode(e.code)
 
                 reason = (
-                    f"with {closeCode.code}: {closeCode.name}"
+                    f"with {closeCode.value}: {closeCode.name}"
                     if isinstance(e, ConnectionClosed)
                     else "because timed out."
                 )

@@ -78,8 +78,6 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
     def __del__(self) -> None:
         self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
-        super().__del__()
-
     @classmethod
     async def connect(cls, node, timeout=10.0):
         ws = await asyncio.wait_for(

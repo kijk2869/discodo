@@ -5,6 +5,7 @@ class WebsocketCloseCode(enum.Enum):
     HEARTBEAT_TIMEOUT = 1000
     CLOUDFLARE = 1001
     ABNORMAL = 1006
+    NORMAL = 4000
     UNKNOWN_OP_CODE = 4001
     NOT_AUTHENTICATED = 4003
     AUTHENTICATION_FAILED = 4004
@@ -19,6 +20,10 @@ class WebsocketCloseCode(enum.Enum):
 
     WARN_CODES = [1006, 4001, 4003, 4004, 4005, 4006, 4009, 4011, 4012, 4016]
     RESUME_CODES = [1000, 1001, 1006, 4001, 4015]
+
+    @classmethod
+    def __missing__(cls, _):
+        return cls.NORMAL
 
     @property
     def warn(self) -> bool:
