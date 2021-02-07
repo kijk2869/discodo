@@ -7,9 +7,10 @@ import sys
 from typing import Any, Coroutine
 
 import aiohttp
+from websockets.exceptions import ConnectionClosed
 
 from .. import __dirname
-from ..errors import NodeNotConnected, VoiceClientNotFound, WebsocketConnectionClosed
+from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher, tcp
 from .gateway import NodeConnection
 from .http import HTTPException
@@ -162,7 +163,7 @@ class Node:
         while True:
             try:
                 Operation, Data = await self.ws.poll()
-            except (asyncio.TimeoutError, WebsocketConnectionClosed):
+            except (asyncio.TimeoutError, ConnectionClosed):
                 self.connected.clear()
 
                 if self.ws:

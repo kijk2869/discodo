@@ -8,9 +8,8 @@ import time
 from collections import deque
 from typing import Dict, Optional
 
-import aiohttp
+import websockets
 
-from .errors import WebsocketConnectionClosed
 from .natives import Cipher
 
 log = logging.getLogger("discodo.gateway")
@@ -95,39 +94,25 @@ class VoicePayload:
     CLIENT_DISCONNECT = 13
 
 
-class VoiceSocket:
-    def __init__(self, client, session, socket) -> None:
-        self.loop = client.loop
-        self.client = client
-        self.session = session
-        self.socket = socket
-
-        self.closeCode = None
-
-        self.keepAliver = None
-        self.heartbeatTimeout = 60.0
-        self.threadId = threading.get_ident()
-
+class VoiceSocket(websockets.client.WebSocketClientProtocol):
     def __del__(self) -> None:
         self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
+        super().__del__()
+
     @classmethod
     async def connect(cls, client, resume=False):
-        session = aiohttp.ClientSession()
+        ws = await websockets.connect(
+            f"wss://{client.endpoint}/?v=4",
+            loop=client.loop,
+            klass=cls,
+            compression=None,
+        )
 
-        try:
-            socket = await session.ws_connect(
-                f"wss://{client.endpoint}/?v=4",
-                max_msg_size=0,
-                timeout=60.0,
-                autoclose=False,
-                compress=15,
-            )
-        except Exception as e:
-            await session.close()
-            raise e
-
-        ws = cls(client, session, socket)
+        ws.client = client
+        ws.keepAliver = None
+        ws.heartbeatTimeout = 60.0
+        ws.threadId = threading.get_ident()
 
         if not resume:
             await ws.identify()
@@ -151,7 +136,7 @@ class VoiceSocket:
 
     async def sendJson(self, data: dict) -> None:
         log.debug(f"send to websocket {data}")
-        await self.socket.send_json(data)
+        await self.send(json.dumps(data))
 
     async def identify(self) -> None:
         payload = {
@@ -245,23 +230,11 @@ class VoiceSocket:
         self.client.secretKey = data.get("secret_key")
 
     async def poll(self) -> None:
-        message = await asyncio.wait_for(self.socket.receive(), timeout=30.0)
+        message = await asyncio.wait_for(self.recv(), timeout=30.0)
+        await self.messageRecieved(json.loads(message))
 
-        if message.type is aiohttp.WSMsgType.TEXT:
-            await self.messageRecieved(json.loads(message.data))
-        elif message.type is aiohttp.WSMsgType.ERROR:
-            raise WebsocketConnectionClosed(self.socket) from message.data
-        elif message.type in (
-            aiohttp.WSMsgType.CLOSED,
-            aiohttp.WSMsgType.CLOSE,
-            aiohttp.WSMsgType.CLOSING,
-        ):
-            raise WebsocketConnectionClosed(self.socket, code=self.socket.close_code)
-
-    async def close(self, code: int = 1000) -> None:
+    async def close(self, *args, **kwargs) -> None:
         if self.keepAliver:
             self.keepAliver.stop()
 
-        self._close_code = code
-        await self.socket.close(code=code)
-        await self.session.close()
+        await super().close(*args, **kwargs)

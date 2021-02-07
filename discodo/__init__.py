@@ -6,6 +6,7 @@ __dirname = os.path.abspath(os.path.dirname(__file__))
 
 from .client import *
 from .config import Config
+from .enums import *
 from .errors import *
 from .event import DiscordEvent
 from .extractor import extract

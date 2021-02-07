@@ -4,10 +4,13 @@ import re
 import socket
 import struct
 import threading
+import traceback
 import uuid
 
+from websockets.exceptions import ConnectionClosed
+
 from .config import Config
-from .errors import WebsocketConnectionClosed
+from .enums import WebsocketCloseCode
 from .gateway import VoiceSocket
 from .natives import Cipher, opus
 
@@ -171,29 +174,41 @@ class VoiceConnector:
         while True:
             try:
                 await self.ws.poll()
-            except (asyncio.TimeoutError, WebsocketConnectionClosed) as e:
+            except (asyncio.TimeoutError, ConnectionClosed) as e:
                 self.connectedEvent.clear()
                 self.connectedThreadEvent.clear()
 
-                await self.ws.close()
-                self.ws = None
+                if not isinstance(e, ConnectionClosed):
+                    e.code = 1000
+
+                closeCode = WebsocketCloseCode(e.code)
 
                 reason = (
-                    f"with {e.code}"
-                    if isinstance(e, WebsocketConnectionClosed)
+                    f"with {closeCode.code}: {closeCode.name}"
+                    if isinstance(e, ConnectionClosed)
                     else "because timed out."
                 )
 
-                log.info(
-                    f"voice connection of {self.guild_id} destroyed {reason}. wait for events."
+                (log.warn if closeCode.warn else log.info)(
+                    f"voice connection of {self.guild_id} destroyed {reason}. {'resuming...' if closeCode.resume else 'wait for events.'}"
                 )
+
+                if closeCode.resume:
+                    await self.createSocket()
 
                 try:
                     await asyncio.wait_for(
                         self.connectedEvent.wait(), timeout=Config.VCTIMEOUT
                     )
                 except asyncio.TimeoutError:
+                    if closeCode.resume:
+                        log.warn(
+                            f"resuming voice connection of {self.guild_id} timed out."
+                        )
+
                     return self.__del__()
+            except:
+                traceback.print_exc()
 
     def makePacket(self, data: bytes) -> bytes:
         """

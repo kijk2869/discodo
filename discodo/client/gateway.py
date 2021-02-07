@@ -8,10 +8,9 @@ import warnings
 from collections import deque
 from typing import Any
 
-import aiohttp
+import websockets
 
 from .. import __version__
-from ..errors import WebsocketConnectionClosed
 
 log = logging.getLogger("discodo.client")
 
@@ -75,43 +74,34 @@ class keepAlive(threading.Thread):
         self.Stopped.set()
 
 
-class NodeConnection:
-    def __init__(self, Node, session, socket) -> None:
-        self.Node = Node
-        self.session = session
-        self.socket = socket
-        self.loop = Node.loop
-
-        self.closeCode = None
-
-        self.keepAliver = None
-        self.heartbeatTimeout = 60.0
-        self.threadId = threading.get_ident()
-
+class NodeConnection(websockets.client.WebSocketClientProtocol):
     def __del__(self) -> None:
         self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
+        super().__del__()
+
     @classmethod
-    async def connect(cls, node):
-        session = aiohttp.ClientSession()
-
-        try:
-            socket = await session.ws_connect(
+    async def connect(cls, node, timeout=10.0):
+        ws = await asyncio.wait_for(
+            websockets.connect(
                 node.WS_URL,
-                max_msg_size=0,
-                timeout=60.0,
-                autoclose=False,
-                headers={"Authorization": node.password},
-            )
-        except Exception as e:
-            await session.close()
-            raise e
+                loop=node.loop,
+                klass=cls,
+                extra_headers={"Authorization": node.password},
+            ),
+            timeout=timeout,
+        )
 
-        return cls(node, session, socket)
+        ws.Node = node
+        ws.keepAliver = None
+        ws.heartbeatTimeout = 60.0
+        ws.threadId = threading.get_ident()
+
+        return ws
 
     @property
     def is_connected(self) -> bool:
-        return not self.socket.closed
+        return self.open and not self.closed
 
     @property
     def latency(self) -> float:
@@ -128,7 +118,7 @@ class NodeConnection:
 
     async def sendJson(self, data) -> None:
         log.debug(f"send to websocket {data}")
-        await self.socket.send_json(data)
+        await super().send(json.dumps(data))
 
     async def send(self, Operation: dict, Data: Any = None) -> None:
         payload = {"op": Operation, "d": Data}
@@ -136,35 +126,24 @@ class NodeConnection:
         await self.sendJson(payload)
 
     async def poll(self) -> None:
-        message = await asyncio.wait_for(self.socket.receive(), timeout=30.0)
+        message = await asyncio.wait_for(self.recv(), timeout=30.0)
 
-        if message.type is aiohttp.WSMsgType.TEXT:
-            JsonData = json.loads(message.data)
+        JsonData = json.loads(message)
 
-            Operation, Data = JsonData["op"], JsonData["d"]
+        Operation, Data = JsonData["op"], JsonData["d"]
 
-            if Operation == "HELLO":
-                await self.HELLO(Data)
-            elif Operation == "HEARTBEAT_ACK":
-                await self.HEARTBEAT_ACK(Data)
+        if Operation == "HELLO":
+            await self.HELLO(Data)
+        elif Operation == "HEARTBEAT_ACK":
+            await self.HEARTBEAT_ACK(Data)
 
-            return Operation, Data
-        elif message.type is aiohttp.WSMsgType.ERROR:
-            raise WebsocketConnectionClosed(self.socket) from message.data
-        elif message.type in (
-            aiohttp.WSMsgType.CLOSED,
-            aiohttp.WSMsgType.CLOSE,
-            aiohttp.WSMsgType.CLOSING,
-        ):
-            raise WebsocketConnectionClosed(self.socket, code=self.socket.close_code)
+        return Operation, Data
 
-    async def close(self, code: int = 1000) -> None:
+    async def close(self, *args, **kwargs) -> None:
         if self.keepAliver:
             self.keepAliver.stop()
 
-        self._close_code = code
-        await self.socket.close(code=code)
-        await self.session.close()
+        await super().close(*args, **kwargs)
 
     async def HELLO(self, Data: dict) -> None:
         if Data.get("version") != __version__:

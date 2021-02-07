@@ -22,13 +22,6 @@ class NodeException(DiscodoException):
         super().__init__(f"{name}{': ' if reason else ''}{reason}")
 
 
-class WebsocketConnectionClosed(DiscodoException):
-    def __init__(self, socket, code=None) -> None:
-        self.code = code or socket.close_code
-
-        super().__init__(f"Websocket connection closed with {self.code}")
-
-
 class VoiceClientNotFound(DiscodoException):
     pass
 
