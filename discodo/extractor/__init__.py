@@ -46,12 +46,15 @@ async def extract(
         return Results
 
     if not URL_REGEX.match(query):
-        searchResult: list = await Youtube.search(query, connector)
+        try:
+            searchResult: list = await Youtube.search(query, connector)
+        except:
+            pass
+        else:
+            if not searchResult:
+                raise NoSearchResults
 
-        if not searchResult:
-            raise NoSearchResults
-
-        return searchResult[0]
+            return searchResult[0]
 
     Match = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
     if Match:
