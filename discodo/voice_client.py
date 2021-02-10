@@ -241,7 +241,7 @@ class VoiceClient(VoiceConnector):
         if not isinstance(Source, (list, AudioData, AudioSource)):
             raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
 
-        self.Queue += Source if isinstance(Source, list) else [Source]
+        self.Queue.extend(Source if isinstance(Source, list) else [Source])
 
         self.dispatcher.dispatch(
             "putSource", sources=(Source if isinstance(Source, list) else [Source])
