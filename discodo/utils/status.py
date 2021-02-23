@@ -31,11 +31,11 @@ def getCpuCount():
 
 
 def getNetworkInbound():
-    return round(psutil.net_io_counters().bytes_recv / 1e6)
+    return round(psutil.net_io_counters().bytes_recv / 1e6)  # type: ignore
 
 
 def getNetworkOutbound():
-    return round(psutil.net_io_counters().bytes_sent / 1e6)
+    return round(psutil.net_io_counters().bytes_sent / 1e6)  # type: ignore
 
 
 def getStatus():

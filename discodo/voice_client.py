@@ -1,7 +1,5 @@
-import logging
 import random
 import re
-from typing import Union
 
 from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
@@ -11,44 +9,39 @@ from .connector import VoiceConnector
 from .errors import NotPlaying
 from .player import Player
 from .source import AudioData, AudioSource
-from .utils import EventDispatcher
-
-log = logging.getLogger("discodo.VoiceClient")
-
-YOUTUBE_VIDEO_REGEX = re.compile(
-    r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$"
-)
+from .utils import CallbackList, EventDispatcher
 
 
 class VoiceClient(VoiceConnector):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, manager, data=None):
+        super().__init__(manager, data=data)
 
         self.relatedClient = relatedClient()
 
         self.dispatcher = EventDispatcher()
-        self.dispatcher.onAny(self.__dispatchToManager)
+        self.dispatcher.onAny(
+            lambda event, *args, **kwargs: manager.dispatcher.dispatch(
+                self.guild_id, *args, event=event, **kwargs
+            )
+        )
         self.dispatcher.on("REQUIRE_NEXT_SOURCE", self.__fetchAutoPlay)
 
         self.Context = {}
+        self.Queue = CallbackList()
+        self.Queue.callback = self.__queueCallback
 
-        self.Queue = []
         self.player = None
-
-        self._filter = {}
         self.paused = False
 
-        self._autoplay = Config.DEFAULT_AUTOPLAY
-        self._crossfade = Config.DEFAULT_CROSSFADE
-
+        self.filter = {}
+        self.autoplay = Config.DEFAULT_AUTOPLAY
         self._volume = Config.DEFAULT_VOLUME
+        self._crossfade = Config.DEFAULT_CROSSFADE
 
         self.dispatcher.dispatch("VC_CREATED", id=self.id)
 
-    def __del__(self) -> None:
+    def __del__(self):
         guild_id = int(self.guild_id) if self.guild_id else None
-
-        log.info(f"destroying voice client of {guild_id}.")
 
         if self.manager.voiceClients.get(guild_id) == self:
             self.dispatcher.dispatch("VC_DESTROYED")
@@ -59,73 +52,59 @@ class VoiceClient(VoiceConnector):
         if self.player and self.player.is_alive():
             self.player.stop()
 
-        for Item in self.Queue:
-            if isinstance(Item, AudioSource):
-                self.loop.call_soon_threadsafe(Item.cleanup)
+        for Item in filter(lambda x: isinstance(x, AudioSource), self.Queue):
+            self.loop.call_soon_threadsafe(Item.cleanup)
 
     def __repr__(self) -> str:
         return f"<VoiceClient guild_id={self.guild_id} volume={self.volume} crossfade={self.crossfade} autoplay={self.autoplay}>"
 
-    def __dispatchToManager(self, event, *args, **kwargs) -> None:
-        self.manager.dispatcher.dispatch(self.guild_id, *args, event=event, **kwargs)
-
     async def __fetchAutoPlay(self, current, **_):
-        for _ in range(5):
-            if self.autoplay and not self.Queue:
-                if YOUTUBE_VIDEO_REGEX.match(current.webpage_url):
-                    address = Config.RoutePlanner.get() if Config.RoutePlanner else None
-                    try:
-                        Related = await self.relatedClient.async_get(
-                            current.webpage_url, local_addr=address
-                        )
-                    except RateLimited:
-                        Config.RoutePlanner.mark_failed_address(address)
-                    else:
-                        return await self.loadSource(
-                            "https://www.youtube.com/watch?v=" + Related["id"],
-                            related=True,
-                        )
+        if (
+            self.autoplay
+            and not self.Queue
+            and re.match(
+                r"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$",
+                current.webpage_url,
+            )
+        ):
+            for _ in range(5):
+                address = Config.RoutePlanner.get() if Config.RoutePlanner else None
+                try:
+                    Related = await self.relatedClient.async_get(
+                        current.webpage_url, local_addr=address
+                    )
+                except RateLimited:
+                    Config.RoutePlanner.mark_failed_address(address)
+                else:
+                    return await self.loadSource(
+                        "https://www.youtube.com/watch?v=" + Related["id"],
+                        related=True,
+                    )
 
-    def __spawnPlayer(self) -> None:
-        if self.player and self.player.is_alive():
-            return
-
-        self.player = Player(self)
-        self.player.crossfade = self.crossfade
-
-        self.player.start()
+    def __queueCallback(self, name, *args):
+        self.dispatcher.dispatch("QUEUE_EVENT", name=name, args=args)
 
     @property
-    def channel_id(self) -> int:
+    def channel_id(self):
         return self._channel_id
 
     @channel_id.setter
-    def channel_id(self, value: int) -> None:
+    def channel_id(self, value) -> None:
         self._channel_id = int(value)
 
         self.dispatcher.dispatch("VC_CHANNEL_EDITED", channel_id=self._channel_id)
 
-    async def createSocket(self, data: dict = None) -> None:
-        """
-        Create UDP socket with discord to send voice packet.
+    async def createSocket(self, data=None):
+        await super().createSocket(data=data)
 
-        :param dict data: A VOICE_SERVER_UPDATE payload, defaults to None
-        :rtype: None
-        """
+        if self.player and self.player.is_alive():
+            return
 
-        await super().createSocket(data)
-
-        self.__spawnPlayer()
+        self.player = Player(self)
+        self.player.start()
 
     @property
-    def state(self) -> str:
-        """
-        The current state of playback of the voice client
-
-        :getter: Returns VoiceClient state
-        :rtype: str
-        """
-
+    def state(self):
         if not self.player:
             return "disconnected"
         elif not self.Queue and not self.player.current:
@@ -137,182 +116,66 @@ class VoiceClient(VoiceConnector):
 
     @property
     def volume(self) -> float:
-        """
-        Current volume of the voice client (0.0~2.0)
-
-        :getter: Returns VoiceClient volume
-        :setter: Set VoiceClient volume
-        :rtype: float
-        """
-
         return self._volume
 
     @volume.setter
-    def volume(self, value: float) -> None:
+    def volume(self, value: float):
         self._volume = round(max(value, 0.0), 2)
 
     @property
     def crossfade(self) -> float:
-        """
-        Current crossfade value of the voice client
-
-        :getter: Returns VoiceClient crossfade
-        :setter: Set VoiceClient crossfade
-        :rtype: float
-        """
-
         return self._crossfade
 
     @crossfade.setter
-    def crossfade(self, value: float) -> None:
-        if not isinstance(value, float):
-            return TypeError("`crossfade` property must be `float`.")
-
-        self.player.crossfade = self._crossfade = round(max(value, 0.0), 1)
+    def crossfade(self, value: float):
+        self._crossfade = round(max(value, 0.0), 1)
 
     @property
-    def autoplay(self) -> bool:
-        """
-        Current autoplay value of the voice client
-
-        :getter: Returns VoiceClient autoplay
-        :setter: Set VoiceClient autoplay
-        :rtype: bool
-        """
-
-        return self._autoplay
-
-    @autoplay.setter
-    def autoplay(self, value: bool) -> None:
-        if not isinstance(value, bool):
-            return TypeError("`autoplay` property must be `bool`.")
-
-        self._autoplay = value
-
-    @property
-    def filter(self) -> dict:
-        """
-        Current filter value of the voice client
-
-        :getter: Returns VoiceClient filter
-        :setter: Set VoiceClient filter
-        :rtype: dict
-        """
-
-        return self._filter
-
-    @filter.setter
-    def filter(self, value: dict) -> None:
-        if not isinstance(value, dict):
-            return TypeError("`filter` property must be `dict`.")
-
-        self._filter = value
-
-    @property
-    def current(self) -> Union[AudioSource, AudioData]:
-        """
-        Current source of the voice client
-
-        :getter: Returns current source
-        :rtype: :class:`AudioSource` or :class:`AudioData`
-        """
+    def current(self):
+        if not self.player:
+            return
 
         return self.player.current
 
     @property
-    def next(self) -> Union[AudioSource, AudioData]:
-        """
-        Next source of the voice client
-
-        :getter: Returns next source
-        :rtype: :class:`AudioSource` or :class:`AudioData`
-        """
+    def next(self):
+        if not self.player:
+            return
 
         return self.player.next
 
-    def putSource(self, Source: Union[list, AudioData, AudioSource]) -> int:
-        """
-        Put source to Queue.
+    async def getSource(self, query):
+        return await AudioData.create(query)
 
-        :param Source: list or :class:`AudioSource` or :class:`AudioData` to put on Queue
-        :rtype: int
-        """
+    def putSource(self, source):
+        sources = source if isinstance(source, list) else [source]
 
-        if not isinstance(Source, (list, AudioData, AudioSource)):
-            raise TypeError("`Source` must be `list` or `AudioData` or `AudioSource`.")
+        self.Queue.extend(sources)
 
-        self.Queue.extend(Source if isinstance(Source, list) else [Source])
-
-        self.dispatcher.dispatch(
-            "putSource", sources=(Source if isinstance(Source, list) else [Source])
-        )
+        self.dispatcher.dispatch("putSource", sources=sources)
 
         return (
-            self.Queue.index(Source)
-            if not isinstance(Source, list)
-            else [self.Queue.index(Item) for Item in Source]
+            self.Queue.index(source)
+            if not isinstance(source, list)
+            else list(map(lambda Item: self.Queue.index(Item), sources))
         )
 
-    async def getSource(self, Query: str) -> AudioData:
-        """
-        Get source from Query
+    async def loadSource(self, query, **kwargs):
+        source = await self.getSource(query)
 
-        :param str Query: Query to search
-        :rtype: :class:`AudioData`
-        """
+        if isinstance(kwargs.get("related"), bool):
+            source.related = kwargs["related"]
 
-        return await AudioData.create(Query)
+        self.putSource(source)
 
-    async def loadSource(self, Query: str, **kwargs) -> AudioData:
-        """
-        Get source from Query and put it on Queue.
+        self.dispatcher.dispatch("loadSource", source=source, **kwargs)
 
-        :param str Query: Query to search
-        :rtype: :class:`AudioData`
-        """
+        return source
 
-        Data = await self.getSource(Query)
-
-        if "related" in kwargs and isinstance(kwargs["related"], bool):
-            Data.related = kwargs["related"]
-
-        Index = self.putSource(Data)
-
-        self.dispatcher.dispatch(
-            "loadSource",
-            source=(
-                {"data": Data, "index": Index}
-                if not isinstance(Data, list)
-                else list(
-                    map(
-                        lambda zipped: {"data": zipped[0], "index": zipped[1]},
-                        zip(Data, Index),
-                    )
-                )
-            ),
-            **kwargs,
-        )
-
-        return Data
-
-    async def seek(self, offset: int) -> None:
-        """
-        Seek current playing source.
-
-        :param float offset: offset to seek
-        :rtype: None
-        """
-
+    async def seek(self, offset):
         return await self.player.seek(offset)
 
-    def skip(self, offset: int = 1) -> None:
-        """
-        skip current playing source.
-
-        :param float offset: offset to skip
-        :rtype: None
-        """
-
+    def skip(self, offset=1):
         if not self.player.current:
             raise NotPlaying
 
@@ -324,36 +187,18 @@ class VoiceClient(VoiceConnector):
 
         self.player.current.skip()
 
-    def pause(self) -> bool:
-        """
-        Pause playing
-
-        :rtype: True
-        """
-
+    def pause(self):
         self.paused = True
-        return True
 
-    def resume(self) -> bool:
-        """
-        Resume playing
+        return self.paused
 
-        :rtype: True
-        """
-
+    def resume(self):
         self.paused = False
-        return False
 
-    def shuffle(self) -> dict:
-        """
-        Shuffle Queue.
+        return self.paused
 
-        :rtype: dict
-        """
-
+    def shuffle(self):
         if not self.Queue:
             raise ValueError("`Queue` is empty now.")
 
         random.shuffle(self.Queue)
-
-        return self.Queue

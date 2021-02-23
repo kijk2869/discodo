@@ -23,52 +23,55 @@ YOUTUBE_PLAYLIST_ID_REGEX = re.compile(
 async def extract(
     query: Union[str, list],
     address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
-    **kwargs
+    search: bool = False,
+    **kwargs,
 ) -> dict:
-    connector = aiohttp.TCPConnector(local_addr=(str(address), 0)) if address else None
+    async with aiohttp.ClientSession(
+        connector=aiohttp.TCPConnector(local_addr=(str(address), 0))
+        if address
+        else None
+    ) as session:
+        query = await resolve(query, session)
 
-    query = await resolve(query, connector)
+        if isinstance(query, list):
+            Tasks = list(
+                map(
+                    lambda x: asyncio.Task(extract(x, address=address, **kwargs)), query
+                )
+            )
 
-    if isinstance(query, list):
-        Tasks = list(
-            map(lambda x: asyncio.Task(extract(x, address=address, **kwargs)), query)
-        )
+            await asyncio.wait(Tasks)
 
-        await asyncio.wait(Tasks)
+            Results = []
+            for Task in Tasks:
+                try:
+                    Results.append(Task.result())
+                except:
+                    pass
 
-        Results = []
-        for Task in Tasks:
+            return Results
+
+        if not URL_REGEX.match(query):
             try:
-                Results.append(Task.result())
+                searchResult: list = await Youtube.search(query, session)
             except:
                 pass
+            else:
+                if not searchResult:
+                    raise NoSearchResults
 
-        return Results
+                return searchResult if search else searchResult[0]
 
-    if not URL_REGEX.match(query):
-        try:
-            searchResult: list = await Youtube.search(query, connector)
-        except:
-            pass
-        else:
-            if not searchResult:
-                raise NoSearchResults
+        Match = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
+        if Match:
+            if Match.group(1).startswith(("RD", "UL", "PU")):
+                urlInfo = urllib.parse.parse_qs(urllib.parse.urlparse(query).query)
 
-            return searchResult[0]
+                if urlInfo.get("v") and urlInfo.get("list"):
+                    return await Youtube.extract_mix(
+                        urlInfo["v"][0], urlInfo.get("list")[0], session
+                    )
+            else:
+                return await Youtube.extract_playlist(Match.group(1), session)
 
-    Match = YOUTUBE_PLAYLIST_ID_REGEX.match(query)
-    if Match:
-        if Match.group(1).startswith(("RD", "UL", "PU")):
-            urlInfo = urllib.parse.parse_qs(urllib.parse.urlparse(query).query)
-
-            if urlInfo.get("v") and urlInfo.get("list"):
-                return await Youtube.extract_mix(
-                    urlInfo["v"][0], urlInfo.get("list")[0], connector
-                )
-        else:
-            return await Youtube.extract_playlist(Match.group(1), connector)
-
-    return await youtube_dl_extract(query, address=address, **kwargs)
-
-
-search = Youtube.search
+        return await youtube_dl_extract(query, address=address, **kwargs)

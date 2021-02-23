@@ -1,22 +1,17 @@
 import asyncio
 import json
-import logging
 import os
 import secrets
 import sys
-from typing import Any, Coroutine
 
 import aiohttp
-from websockets.exceptions import ConnectionClosed
+from websockets import ConnectionClosed
 
 from .. import __dirname
 from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher, tcp
 from .gateway import NodeConnection
-from .http import HTTPException
 from .voice_client import VoiceClient
-
-log = logging.getLogger("discodo.client")
 
 LocalNodeProc = None
 
@@ -34,8 +29,6 @@ async def launchLocalNode(**options):
     options["HOST"] = "127.0.0.1"
     options["PORT"] = tcp.getFreePort()
     options["PASSWORD"] = secrets.token_hex()
-
-    log.info(f"launching local node process on {options['HOST']}:{options['PORT']}")
 
     os.environ["PYTHONPATH"] = os.path.dirname(__dirname)
 
@@ -60,21 +53,22 @@ async def launchLocalNode(**options):
     if LocalNodeProc.returncode:
         raise SystemError("Cannot launch discodo subprocess.")
 
-    log.info(f"Local node process launched on {options['HOST']}:{options['PORT']}")
-
     return LocalNodeProc
 
 
 class Node:
     def __init__(
         self,
-        host: str,
-        port: int,
-        user_id: int = None,
-        password: str = "hellodiscodo",
-        region: str = None,
-    ) -> None:
+        host,
+        port,
+        user_id,
+        shard_id=None,
+        password="hellodiscodo",
+        region=None,
+    ):
         self.ws = None
+        self.session = aiohttp.ClientSession()
+
         self.dispatcher = EventDispatcher()
         self.dispatcher.onAny(self.onAnyEvent)
 
@@ -85,11 +79,17 @@ class Node:
         self.password = password
 
         self.user_id = user_id
+        self.shard_id = shard_id
         self.region = region
 
         self._polling = None
         self.voiceClients = {}
         self.connected = asyncio.Event()
+
+    def __del__(self):
+        self.loop.call_soon_threadsafe(
+            lambda: self.loop.create_task(self.session.close())
+        )
 
     def __repr__(self) -> str:
         return (
@@ -105,11 +105,15 @@ class Node:
     def WS_URL(self) -> str:
         return f"ws://{self.host}:{self.port}/ws"
 
-    async def connect(self) -> None:
+    @property
+    def is_connected(self) -> bool:
+        return self.connected.is_set() and self.ws and self.ws.is_connected
+
+    async def connect(self):
         if self.connected.is_set():
             raise ValueError("Node already connected")
 
-        if self.ws and not self.ws.closed:
+        if self.ws and self.ws.is_connected:
             await self.ws.close()
 
         self.ws = await NodeConnection.connect(self)
@@ -119,45 +123,25 @@ class Node:
         if not self._polling or self._polling.done():
             self._polling = self.loop.create_task(self.pollingWS())
 
-        if self.user_id:
-            await self.ws.send("IDENTIFY", {"user_id": self.user_id})
+        await self.send(
+            "IDENTIFY", {"user_id": self.user_id, "shard_id": self.shard_id}
+        )
 
-    @property
-    def is_connected(self) -> bool:
-        return self.connected.is_set() and self.ws and self.ws.is_connected
-
-    @property
-    def headers(self) -> dict:
-        return {
-            "Authorization": self.password,
-            "User-ID": str(self.user_id),
-        }
-
-    async def fetch(self, method: str, endpoint: str, **kwargs) -> dict:
-        URL = self.Node.URL + endpoint
-
-        async with aiohttp.ClientSession(headers=self.headers) as session:
-            async with session.request(method, URL, **kwargs) as response:
-                if 200 <= response.status < 300:
-                    return await response.json(content_type=None)
-
-                raise HTTPException(response.status)
-
-    async def close(self) -> None:
+    async def close(self):
         """ some action to do after disconnected from node """
 
-        return
+        ...
 
-    async def destroy(self) -> None:
+    async def destroy(self):
         if self._polling and not self._polling.done():
             self._polling.cancel()
 
         if self.ws and not self.ws.closed:
             await self.ws.close()
+        self.ws = None
 
         self.connected.clear()
         self.voiceClients = {}
-        self.ws = None
 
     async def pollingWS(self) -> None:
         while True:
@@ -168,24 +152,22 @@ class Node:
 
                 if self.ws:
                     await self.ws.close()
+                self.ws = None
 
                 await self.close()
-
-                self.ws = None
                 self.voiceClients = {}
-                return
 
-            log.debug(f"event {Operation} dispatched from websocket with {Data}")
+                return
 
             self.dispatcher.dispatch(Operation, Data)
 
-    def send(self, *args, **kwargs) -> Coroutine:
+    def send(self, Operation, Data=None):
         if not self.ws:
             raise NodeNotConnected
 
-        return self.ws.send(*args, **kwargs)
+        return self.ws.sendJson({"op": Operation, "d": Data})
 
-    async def _resumed(self, Data: dict) -> None:
+    async def onResumed(self, Data):
         for voice_client in self.voiceClients:
             voice_client.__del__()
 
@@ -196,7 +178,7 @@ class Node:
 
     async def onAnyEvent(self, Operation, Data):
         if Operation == "RESUMED":
-            await self._resumed(Data)
+            await self.onResumed(Data)
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
             self.voiceClients[guild_id] = VoiceClient(self, Data["id"], guild_id)
@@ -211,13 +193,13 @@ class Node:
             if guild_id in self.voiceClients:
                 self.voiceClients[guild_id].__del__()
 
-    def getVC(self, guildID: int, safe: bool = False) -> VoiceClient:
+    def getVC(self, guildID, safe=False):
         if not int(guildID) in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
         return self.voiceClients.get(int(guildID))
 
-    async def discordDispatch(self, payload: dict) -> None:
+    async def discordDispatch(self, payload):
         if not payload["t"] in [
             "READY",
             "RESUME",
@@ -228,36 +210,14 @@ class Node:
 
         return await self.send("DISCORD_EVENT", payload)
 
-    async def getStatus(self) -> dict:
+    async def getStatus(self):
         await self.send("GET_STATUS")
 
         return await self.dispatcher.wait_for("STATUS", timeout=10.0)
 
-    async def getContext(self, ws: bool = True) -> dict:
-        if ws:
-            await self.send("getSource")
-
-            return (await self.dispatcher.wait_for("getSource", timeout=10.0))[
-                "context"
-            ]
-
-        return (await self.fetch("GET", "/getContext"))["context"]
-
-    async def setContext(self, context: dict, ws: bool = True) -> dict:
-        if ws:
-            await self.send("setContext", {"context": context})
-
-            return (await self.dispatcher.wait_for("setContext", timeout=10.0))[
-                "context"
-            ]
-
-        return (await self.fetch("POST", "/setContext", json={"context": context}))[
-            "context"
-        ]
-
 
 class Nodes(list):
-    async def connect(self) -> Coroutine:
+    async def connect(self):
         task_list: list = list(map(lambda Node: Node.connect(), self))
 
         if not task_list:
@@ -267,7 +227,7 @@ class Nodes(list):
 
         return list(map(lambda task: task.result(), Done))
 
-    async def getStatus(self) -> Coroutine:
+    async def getStatus(self):
         def get_task(Item):
             if Item.is_connected:
                 return Item.getStatus()

@@ -1,37 +1,27 @@
-from typing import Coroutine
-
 from sanic import Sanic, response
 from sanic.exceptions import abort
 
 from .. import __version__
-from ..config import Config
-from ..status import getStatus
+from ..utils import getStatus
 from .planner import app as PlannerBlueprint
 from .restful import app as RestfulBlueprint
 from .websocket import app as WebsocketBlueprint
 
-app = Sanic(__name__)
+app = Sanic(__name__, configure_logging=False)
 
-app.blueprint(WebsocketBlueprint)
+app.config.KEEP_ALIVE_TIMEOUT = 75
+app.config.FALLBACK_ERROR_FORMAT = "json"
+
 app.blueprint(PlannerBlueprint)
+app.blueprint(WebsocketBlueprint)
 app.blueprint(RestfulBlueprint)
 
 
-def authorized(func: Coroutine) -> Coroutine:
-    def wrapper(request, *args, **kwargs) -> Coroutine:
-        if request.headers.get("Authorization") != Config.PASSWORD:
-            abort(403, "Password mismatch.")
-
-        return func(request, *args, **kwargs)
-
-    return wrapper
-
-
 @app.route("/")
-async def index(request) -> response:
+async def index(request):
     return response.html(f"<h1>Discodo</h1> <h3>{__version__}")
 
 
-@app.get("/status")
-async def status(request) -> response:
+@app.route("/status")
+async def status(request):
     return response.json(getStatus())

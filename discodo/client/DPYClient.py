@@ -1,26 +1,25 @@
 import asyncio
-import logging
-from itertools import chain
-from typing import Union
+import itertools
 
 import discord
+import discord.ext
 
 from ..errors import NodeNotConnected, VoiceClientNotFound
-from ..utils import EventDispatcher
+from ..utils.eventDispatcher import EventDispatcher
 from .node import Node as OriginNode
 from .node import Nodes, launchLocalNode
-from .voice_client import VoiceClient
-
-log = logging.getLogger("discodo.client")
 
 
 class NodeClient(OriginNode):
-    def __init__(self, client, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, client, host, port, user_id, shard_id, password, region):
+        super().__init__(
+            host, port, user_id, shard_id=shard_id, password=password, region=region
+        )
+
         self.client = client
 
-    async def _resumed(self, Data: dict) -> None:
-        await super()._resumed(Data)
+    async def onResumed(self, Data):
+        await super().onResumed(Data)
 
         for guild_id, vc_data in Data["voice_clients"].items():
             guild = self.client.client.get_guild(int(guild_id))
@@ -36,10 +35,7 @@ class NodeClient(OriginNode):
                 self.client.disconnect(self.client.client.get_guild(guildId))
             )
 
-        return super().close()
-
     async def destroy(self, *args, **kwargs) -> None:
-        log.infmo(f"destroying Node {self.URL}")
         await super().destroy(*args, **kwargs)
 
         if self in self.client.Nodes:
@@ -47,20 +43,23 @@ class NodeClient(OriginNode):
 
 
 class DPYClient:
-    def __init__(self, client) -> None:
+    def __init__(self, client):
         self.client = client
         self.loop = client.loop or asyncio.get_event_loop()
 
         self.dispatcher = EventDispatcher()
-        self.event = self.dispatcher.event
 
         self.Nodes = Nodes()
-        self.__register_event()
+        self.__registerEvent()
 
     def __repr__(self) -> str:
         return f"<DPYClient Nodes={self.Nodes} voiceClients={len(self.voiceClients)}>"
 
-    def __register_event(self):
+    @property
+    def event(self):
+        return self.dispatcher.event
+
+    def __registerEvent(self):
         if hasattr(self.client, "on_socket_response"):
             originFunc = self.client.on_socket_response
         else:
@@ -68,12 +67,24 @@ class DPYClient:
 
         @self.client.event
         async def on_socket_response(*args, **kwargs):
-            self.loop.create_task(self.discord_socket_response(*args, **kwargs))
+            self.loop.create_task(self.discordDispatch(*args, **kwargs))
 
             if originFunc:
                 return await originFunc()
 
-    async def discord_socket_response(self, payload: dict) -> None:
+        if isinstance(self.client, discord.ext.commands.Bot):
+            originContextFunc = discord.ext.commands.Context.voice_client.fget
+
+            @discord.ext.commands.Context.voice_client.getter
+            def voice_client(ctx):
+                if ctx.bot == self.client:
+                    return self.getVC(ctx.guild, safe=True)
+
+                return originContextFunc(ctx)
+
+            discord.ext.commands.Context.voice_client = voice_client
+
+    async def discordDispatch(self, payload) -> None:
         if payload["t"] in ["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"]:
             VC = self.getVC(payload["d"]["guild_id"], safe=True)
             SelectNodes = [VC.Node] if VC else [self.getBestNode()]
@@ -91,66 +102,59 @@ class DPYClient:
                 return_when="ALL_COMPLETED",
             )
 
-    def register_node(self, *args, **kwargs) -> None:
-        return self.loop.create_task(self._register_event(*args, **kwargs))
+    def registerNode(
+        self,
+        host=None,
+        port=None,
+        password="hellodiscodo",
+        region=None,
+        launchOptions=None,
+    ):
+        if launchOptions is None:
+            launchOptions = {}
 
-    async def _register_event(self, *args, **kwargs) -> None:
-        await self.client.wait_until_ready()
-        kwargs["user_id"] = self.client.user.id
+        async def connectNode(self, host, port, password, region, launchOptions):
+            await self.client.wait_until_ready()
 
-        Node = NodeClient(self, *args, **kwargs)
-        await Node.connect()
+            if not host or not port:
+                LocalNodeProc = await launchLocalNode(**launchOptions)
 
-        log.info(f"registering Node {Node.host}:{Node.port}")
+                host = LocalNodeProc.HOST
+                port = LocalNodeProc.PORT
+                password = LocalNodeProc.PASSWORD
 
-        self.Nodes.append(Node)
+            user_id = self.client.user.id
+            shard_id = (
+                self.client.shard_id
+                if isinstance(self.client, discord.Client)
+                else None
+            )
 
-        Node.dispatcher.on("VC_DESTROYED", self._vc_destroyed)
-        Node.dispatcher.onAny(self._node_event)
+            Node = NodeClient(self, host, port, user_id, shard_id, password, region)
+            await Node.connect()
 
-        return self
+            self.Nodes.append(Node)
+            Node.dispatcher.on("VC_DESTROYED", self._onVCDestroyed)
+            Node.dispatcher.onAny(self._onAnyNodeEvent)
 
-    def register_local_node(self, *args, **kwargs) -> None:
-        return self.loop.create_task(self._register_local_event(*args, **kwargs))
+        return self.loop.create_task(
+            connectNode(self, host, port, password, region, launchOptions)
+        )
 
-    async def _register_local_event(
-        self, *args, launchOptions: dict = {}, **kwargs
-    ) -> None:
-        await self.client.wait_until_ready()
-
-        LocalNodeProc = await launchLocalNode(**launchOptions)
-
-        kwargs["user_id"] = self.client.user.id
-        kwargs["host"] = LocalNodeProc.HOST
-        kwargs["port"] = LocalNodeProc.PORT
-        kwargs["password"] = LocalNodeProc.PASSWORD
-
-        Node = NodeClient(self, *args, **kwargs)
-        await Node.connect()
-
-        log.info(f"registering Node {Node.host}:{Node.port}")
-
-        self.Nodes.append(Node)
-
-        Node.dispatcher.on("VC_DESTROYED", self._vc_destroyed)
-        Node.dispatcher.onAny(self._node_event)
-
-        return self
-
-    async def _vc_destroyed(self, Data: dict) -> None:
-        guild = self.client.get_guild(int(Data["guild_id"]))
+    async def _onVCDestroyed(self, data):
+        guild = self.client.get_guild(int(data["guild_id"]))
         ws = self.__get_websocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
 
-    async def _node_event(self, Event: str, Data: dict) -> None:
-        if not isinstance(Data, dict) or not "guild_id" in Data:
+    async def _onAnyNodeEvent(self, event, data):
+        if not isinstance(data, dict) or not "guild_id" in data:
             return
 
-        guild = self.client.get_guild(int(Data["guild_id"]))
+        guild = self.client.get_guild(int(data["guild_id"]))
         vc = self.getVC(guild)
 
-        self.dispatcher.dispatch(Event, vc, Data)
+        self.dispatcher.dispatch(event, vc, data)
 
     def getBestNode(self):
         SortedWithPerformance = sorted(
@@ -164,7 +168,7 @@ class DPYClient:
     def voiceClients(self):
         return dict(
             list(
-                chain.from_iterable(
+                itertools.chain.from_iterable(
                     [
                         Node.voiceClients.items()
                         for Node in self.Nodes
@@ -174,9 +178,7 @@ class DPYClient:
             )
         )
 
-    def getVC(
-        self, guild: Union[discord.Guild, int], safe: bool = False
-    ) -> VoiceClient:
+    def getVC(self, guild, safe=False):
         if isinstance(guild, discord.Guild):
             guild = guild.id
 
@@ -185,21 +187,20 @@ class DPYClient:
 
         return self.voiceClients.get(int(guild))
 
-    def __get_websocket(self, id: int):
+    def getWebsocket(self, id):
         if isinstance(self.client, discord.AutoShardedClient):
             return self.client.shards[id].ws
         elif not self.client.shard_id or self.client.shard_id == id:
             return self.client.ws
 
     async def connect(self, channel: discord.VoiceChannel) -> None:
-        log.info(f"connecting to {channel.id} of {channel.guild.id}")
         if not hasattr(channel, "guild"):
             raise ValueError
 
         if not self.getBestNode():
             raise NodeNotConnected
 
-        ws = self.__get_websocket(channel.guild.shard_id)
+        ws = self.getWebsocket(channel.guild.shard_id)
 
         await ws.voice_state(channel.guild.id, channel.id)
 
@@ -212,18 +213,16 @@ class DPYClient:
         return VC
 
     async def disconnect(self, guild: discord.Guild) -> None:
-        log.info(f"disconnecting voice of {guild.id} without destroying")
-        ws = self.__get_websocket(guild.shard_id)
+        ws = self.getWebsocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
 
     async def destroy(self, guild: discord.Guild) -> None:
-        log.info(f"destroying voice client of {guild.id}")
         if not guild.id in self.voiceClients:
             raise VoiceClientNotFound
 
         vc = self.getVC(guild.id)
-        ws = self.__get_websocket(guild.shard_id)
+        ws = self.getWebsocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
         await vc.destroy()

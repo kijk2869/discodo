@@ -2,7 +2,7 @@ import asyncio
 import collections
 import functools
 import traceback
-from typing import Callable, Coroutine
+from typing import Callable
 
 
 class EventDispatcher:
@@ -86,13 +86,11 @@ class EventDispatcher:
     def once(self, event: str, func: Callable):
         def wrapper(*args, **kwargs):
             self.off(event, func)
-            return event(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return self.on(event, wrapper)
 
-    def wait_for(
-        self, event: str, condition: Callable = None, timeout: float = None
-    ) -> Coroutine:
+    def wait_for(self, event: str, condition: Callable = None, timeout: float = None):
         Future = self.loop.create_future()
 
         if not condition:

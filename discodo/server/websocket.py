@@ -1,7 +1,7 @@
 import asyncio
+import contextlib
 import json
 import logging
-from typing import Coroutine
 
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
@@ -11,35 +11,36 @@ from ..config import Config
 from ..manager import ClientManager
 from .payloads import WebsocketPayloads
 
-log = logging.getLogger("discodo.server")
-
 app = Blueprint(__name__)
+
+log = logging.getLogger("discodo.server.websocket")
 
 
 @app.websocket("/ws")
-async def socket_feed(request, ws) -> None:
+async def feedSocket(request, ws) -> None:
     handler = WebsocketHandler(request, ws)
     await handler.join()
 
 
 class Encoder(json.JSONEncoder):
-    def default(self, o):
-        return o.__dict__()
+    @staticmethod
+    def default(o):
+        return o.toDict()
 
 
 class ModifiedClientManager(ClientManager):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._binded = asyncio.Event()
 
 
 class WebsocketHandler:
-    def __init__(self, request, ws) -> None:
+    def __init__(self, request, ws):
         self.loop = asyncio.get_event_loop()
 
-        self.request = request
         self.ws = ws
+        self.request = request
         self.app = request.app
 
         if not hasattr(self.app, "ClientManagers"):
@@ -48,71 +49,86 @@ class WebsocketHandler:
         self.ClientManager = None
 
         self._running = asyncio.Event()
-        self.loop.create_task(self._handle())
+        self.loop.create_task(self.handle())
 
-    def __del__(self) -> None:
+    def __del__(self):
         if self.ClientManager:
-            self.ClientManager.dispatcher.offAny(self.manager_event)
+            if self.managerEvent in self.ClientManager.dispatcher._Any:
+                self.ClientManager.dispatcher.offAny(self.managerEvent)
 
-            self.loop.create_task(self.wait_for_bind())
+            self.loop.create_task(self.waitForBind())
 
-    async def wait_for_bind(self) -> None:
+    @property
+    def requester(self):
+        return f"{self.request.ip}:{self.request.port}"
+
+    async def waitForBind(self):
         self.ClientManager._binded.clear()
-
+        print("clear binded" * 10)
         try:
             await asyncio.wait_for(
                 self.ClientManager._binded.wait(), timeout=Config.VCTIMEOUT
             )
         except asyncio.TimeoutError:
+            print("wait for bind timed out" * 100)
+            print(self.ClientManager._binded)
             self.ClientManager.__del__()
-            del self.app.ClientManagers[int(self.ClientManager.id)]
+            del self.app.ClientManagers[self.ClientManager.tag]
             self.ClientManager = None
 
-    def join(self) -> Coroutine:
+    def join(self):
         return self._running.wait()
 
-    async def _handle(self) -> None:
-        log.info(f"new websocket connection created from {self.request.ip}.")
+    async def sendJson(self, data):
+        log.debug(f"{self.requester} < {data}")
 
+        with contextlib.suppress(ConnectionClosed):
+            await self.ws.send(json.dumps(data, cls=Encoder))
+
+    async def handle(self):
         if self.request.headers.get("Authorization") != Config.PASSWORD:
-            log.warning(
-                f"websocket connection from {self.request.ip} forbidden: password mismatch."
-            )
-            return await self.forbidden("Password mismatch.")
+            return await self.sendJson({"op": "FORBIDDEN", "d": "Password mismatch."})
 
-        await self.hello()
+        await self.sendJson(
+            {
+                "op": "HELLO",
+                "d": {
+                    "version": __version__,
+                    "heartbeat_interval": Config.HANDSHAKE_INTERVAL,
+                },
+            }
+        )
 
         while True:
             try:
                 RAWDATA = await asyncio.wait_for(
                     self.ws.recv(), timeout=Config.HANDSHAKE_TIMEOUT
                 )
-            except (asyncio.TimeoutError, ConnectionClosed) as exception:
-                if isinstance(exception, asyncio.TimeoutError):
-                    log.info("websocket connection closing because of timeout.")
-                elif isinstance(exception, ConnectionClosed):
-                    log.info(
-                        f"websocket connection disconnected. code {exception.code}"
-                    )
-
+            except (asyncio.TimeoutError, ConnectionClosed) as e:
+                if self.managerEvent in self.ClientManager.dispatcher._Any:
+                    self.ClientManager.dispatcher.offAny(self.managerEvent)
                 return
 
             try:
-                _Data = json.loads(RAWDATA)
-                Operation, Data = _Data.get("op"), _Data.get("d")
+                _data = json.loads(RAWDATA)
+                log.debug(f"{self.requester} > {_data}")
+
+                Operation, Data = _data.get("op"), _data.get("d")
             except:
                 continue
 
             if Operation and hasattr(WebsocketPayloads, Operation):
-                log.debug(f"{Operation} dispatched with {Data}")
-
                 Func = getattr(WebsocketPayloads, Operation)
                 self.loop.create_task(self.__run_event(Func, Operation, Data))
 
-    async def __run_event(self, Func: Coroutine, Operation: str, Data) -> None:
+    async def __run_event(self, Func, Operation, Data):
         try:
             await Func(self, Data)
         except Exception as e:
+            log.exception(
+                f"while handle {Func.__name__} on {self.requester}, an error occured."
+            )
+
             payload = {
                 "op": Operation,
                 "d": {"traceback": {type(e).__name__: str(e)}},
@@ -123,53 +139,25 @@ class WebsocketHandler:
 
             await self.sendJson(payload)
 
-    async def sendJson(self, Data: dict) -> None:
-        log.debug(f"send {Data} to websocket connection of {self.request.ip}.")
-        try:
-            await self.ws.send(json.dumps(Data, cls=Encoder))
-        except ConnectionClosed:
-            log.debug(
-                f"while sending data to websocket connection of {self.request.ip}, the connection closed, ignored."
-            )
+    async def initializeManager(self, user_id, shard_id=None) -> None:
+        tag = f"{user_id}{f'-{shard_id}' if shard_id is not None else ''}"
 
-    async def initialize_manager(self, user_id: int) -> None:
-        if int(user_id) in self.app.ClientManagers:
-            self.ClientManager = self.app.ClientManagers[int(user_id)]
+        if tag in self.app.ClientManagers:
+            self.ClientManager = self.app.ClientManagers[tag]
             self.ClientManager._binded.set()
 
             self.loop.create_task(self.resumed())
-            log.debug(f"ClientManager of {user_id} resumed.")
         else:
             self.ClientManager = ModifiedClientManager(user_id=user_id)
-            self.app.ClientManagers[int(user_id)] = self.ClientManager
+            self.ClientManager.tag = tag
+            self.app.ClientManagers[tag] = self.ClientManager
 
-            log.debug(f"ClientManager of {user_id} intalized.")
+        self.ClientManager.dispatcher.onAny(self.managerEvent)
 
-        self.ClientManager.dispatcher.onAny(self.manager_event)
-
-    async def manager_event(self, guild_id: int, **kwargs) -> None:
-        Event = kwargs.pop("event")
-
-        payload = {"op": Event, "d": {"guild_id": guild_id}}
-        payload["d"] = dict(payload["d"], **kwargs)
-
-        await self.sendJson(payload)
-
-    async def hello(self) -> None:
-        payload = {
-            "op": "HELLO",
-            "d": {
-                "version": __version__,
-                "heartbeat_interval": Config.HANDSHAKE_INTERVAL,
-            },
-        }
-
-        await self.sendJson(payload)
-
-    async def forbidden(self, message: str) -> None:
-        payload = {"op": "FORBIDDEN", "d": message}
-
-        await self.sendJson(payload)
+    async def managerEvent(self, guild_id, **kwargs) -> None:
+        await self.sendJson(
+            {"op": kwargs.pop("event"), "d": {"guild_id": guild_id, **kwargs}}
+        )
 
     async def resumed(self) -> None:
         payload = {

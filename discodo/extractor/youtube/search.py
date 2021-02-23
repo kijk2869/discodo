@@ -9,15 +9,14 @@ from . import DATA_JSON, YOUTUBE_HEADERS
 log = logging.getLogger("discodo.extractor.youtube")
 
 
-async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
+async def search(Query: str, session):
     log.info(f"Downloading search page of {Query}")
-    async with aiohttp.ClientSession(
-        headers=YOUTUBE_HEADERS, connector=connector
-    ) as session:
-        async with session.get(
-            "https://www.youtube.com/results", params={"search_query": Query}
-        ) as resp:
-            Body: str = await resp.text()
+    async with session.get(
+        "https://www.youtube.com/results",
+        headers=YOUTUBE_HEADERS,
+        params={"search_query": Query},
+    ) as resp:
+        Body: str = await resp.text()
 
     Search = DATA_JSON.search(Body)
 
@@ -26,8 +25,8 @@ async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
 
     Data = json.loads(Search.group(1))
 
-    def extract_video(Data: dict) -> dict:
-        Renderer: dict = Data.get("videoRenderer")
+    def extract_video(Data: dict):
+        Renderer = Data.get("videoRenderer")
 
         if not Renderer or not Renderer.get("lengthText"):
             return
@@ -47,7 +46,7 @@ async def search(Query: str, connector: aiohttp.TCPConnector = None) -> None:
             ),
         }
 
-    Videos: list = list(
+    Videos = list(
         filter(
             None,
             map(

@@ -1,17 +1,45 @@
+from http.client import responses
+
+
 class DiscodoException(Exception):
-    pass
+    ...
 
 
-class Forbidden(DiscodoException):
-    pass
+class EncryptModeNotReceived(DiscodoException):
+    ...
 
 
-class TooManyRequests(DiscodoException):
-    pass
+class NotPlaying(DiscodoException):
+    ...
+
+
+class VoiceClientNotFound(DiscodoException):
+    ...
 
 
 class NoSearchResults(DiscodoException):
-    pass
+    ...
+
+
+class OpusLoadError(DiscodoException):
+    ...
+
+
+class HTTPException(DiscodoException):
+    def __init__(self, status: int) -> None:
+        super().__init__(f"{status} {responses.get(status, 'Unknown Status Code')}")
+
+
+class Forbidden(DiscodoException):
+    ...
+
+
+class TooManyRequests(DiscodoException):
+    ...
+
+
+class NotSeekable(DiscodoException):
+    ...
 
 
 class NodeException(DiscodoException):
@@ -22,21 +50,5 @@ class NodeException(DiscodoException):
         super().__init__(f"{name}{': ' if reason else ''}{reason}")
 
 
-class VoiceClientNotFound(DiscodoException):
-    pass
-
-
-class NotConnected(DiscodoException):
-    pass
-
-
-class NotSeekable(DiscodoException):
-    pass
-
-
-class NotPlaying(DiscodoException):
-    pass
-
-
 class NodeNotConnected(DiscodoException):
-    pass
+    ...

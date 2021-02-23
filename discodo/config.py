@@ -1,5 +1,4 @@
-import uuid
-from typing import Union
+from typing import Optional, Union
 
 from .planner import RoutePlanner
 
@@ -38,8 +37,8 @@ class _Config:
         self.HOST: str = "0.0.0.0"
         self.PORT: int = 8000
         self.PASSWORD: str = "hellodiscodo"
-        self.HANDSHAKE_INTERVAL: str = 15
-        self.HANDSHAKE_TIMEOUT: str = 60.0
+        self.HANDSHAKE_INTERVAL: float = 15
+        self.HANDSHAKE_TIMEOUT: float = 60.0
 
         # NETWORK
         self.IPBLOCKS: list = []
@@ -70,11 +69,8 @@ class _Config:
 
         self.PLAYLIST_PAGE_LIMIT: int = 6
 
-        self.SPOTIFY_ID: str = None
-        self.SPOTIFY_SECRET: str = None
-
-        # ETC
-        self.RANDOM_STATE: str = str(uuid.uuid4())
+        self.SPOTIFY_ID: Optional[str] = None
+        self.SPOTIFY_SECRET: Optional[str] = None
 
     @property
     def SAMPLES_PER_FRAME(self) -> int:

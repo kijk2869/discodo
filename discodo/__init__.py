@@ -1,4 +1,4 @@
-__version__ = "2.3.12.1"
+__version__ = "2.4"
 
 import os
 
@@ -8,12 +8,12 @@ from .client import *
 from .config import Config
 from .enums import *
 from .errors import *
-from .event import DiscordEvent
+from .events import *
 from .extractor import extract
 from .manager import ClientManager
 from .natives import *
+from .planner import RoutePlanner
 from .player import Player
 from .source import *
-from .status import getStatus
 from .utils import *
 from .voice_client import VoiceClient

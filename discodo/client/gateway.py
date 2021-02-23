@@ -1,82 +1,26 @@
 import asyncio
-import concurrent.futures
+import collections
 import json
-import logging
-import threading
 import time
 import warnings
-from collections import deque
-from typing import Any
+from typing import Optional
 
 import websockets
 
 from .. import __version__
 
-log = logging.getLogger("discodo.client")
-
-
-class keepAlive(threading.Thread):
-    def __init__(self, ws, interval: int, *args, **kwargs) -> None:
-        threading.Thread.__init__(self, *args, **kwargs)
-        self.daemon = True
-
-        self.ws = ws
-        self.interval = interval
-        self.Stopped = threading.Event()
-        self.latency = None
-        self.recent_latencies = deque(maxlen=20)
-
-        self._lastAck = self._lastSend = time.perf_counter()
-        self.timeout = ws.heartbeatTimeout
-        self.threadId = ws.threadId
-
-    def run(self) -> None:
-        while not self.Stopped.wait(self.interval):
-            if (self._lastAck + self.timeout) < time.perf_counter():
-                Runner = asyncio.run_coroutine_threadsafe(
-                    self.ws.close(4000), self.ws.loop
-                )
-
-                try:
-                    Runner.result()
-                except:
-                    pass
-
-                self.stop()
-                return
-
-            payload = {"op": "HEARTBEAT", "d": int(time.time() * 1000)}
-            Runner = asyncio.run_coroutine_threadsafe(
-                self.ws.sendJson(payload), self.ws.loop
-            )
-            try:
-                totalBlocked = 0
-                while True:
-                    try:
-                        Runner.result(10)
-                        break
-                    except concurrent.futures.TimeoutError:
-                        totalBlocked += 10
-                        log.warning(
-                            f"Heartbeat blocked for more than {totalBlocked} seconds."
-                        )
-            except:
-                return self.stop()
-            else:
-                self._lastSend = time.perf_counter()
-
-    def ack(self) -> None:
-        self._lastAck = time.perf_counter()
-        self.latency = self._lastAck - self._lastSend
-        self.recent_latencies.append(self.latency)
-
-    def stop(self) -> None:
-        self.Stopped.set()
-
 
 class NodeConnection(websockets.client.WebSocketClientProtocol):
-    def __del__(self) -> None:
-        self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.keepAliver = None
+        self.heartbeatTimeout = 60.0
+
+        self.latency: Optional[float] = None
+        self.recent_latencies = collections.deque(maxlen=20)
+
+        self._lastAck = self._lastSend = time.perf_counter()
 
     @classmethod
     async def connect(cls, node, timeout=10.0):
@@ -91,57 +35,48 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
         )
 
         ws.Node = node
-        ws.keepAliver = None
-        ws.heartbeatTimeout = 60.0
-        ws.threadId = threading.get_ident()
 
         return ws
+
+    def __del__(self):
+        self.loop.call_soon_threadsafe(lambda: self.loop.create_task(self.close()))
 
     @property
     def is_connected(self) -> bool:
         return self.open and not self.closed
 
     @property
-    def latency(self) -> float:
-        return self._keepAliver.latency if self._keepAliver else None
+    def averagedLatency(self) -> Optional[float]:
+        return sum(self.recent_latencies) / len(self.recent_latencies)
 
-    @property
-    def averageLatency(self) -> float:
-        if not self._keepAliver:
-            return None
+    async def sendJson(self, data: dict) -> None:
+        await self.send(json.dumps(data))
 
-        return sum(self._keepAliver.recent_latencies) / len(
-            self._keepAliver.recent_latencies
-        )
+    async def handleHeartbeat(self):
+        while True:
+            if self._lastAck + self.heartbeatTimeout < time.perf_counter():
+                await self.close(4000)
+                return
 
-    async def sendJson(self, data) -> None:
-        log.debug(f"send to websocket {data}")
-        await super().send(json.dumps(data))
+            await self.sendJson({"op": "HEARTBEAT", "d": int(time.time() * 1000)})
 
-    async def send(self, Operation: dict, Data: Any = None) -> None:
-        payload = {"op": Operation, "d": Data}
+            self._lastSend = time.perf_counter()
 
-        await self.sendJson(payload)
+            await asyncio.sleep(self.heartbeatInterval)
 
-    async def poll(self) -> None:
-        message = await asyncio.wait_for(self.recv(), timeout=30.0)
+    async def poll(self):
+        message = json.loads(await asyncio.wait_for(self.recv(), timeout=30.0))
 
-        JsonData = json.loads(message)
-
-        Operation, Data = JsonData["op"], JsonData["d"]
+        Operation, Data = message["op"], message.get("d")
 
         if Operation == "HELLO":
             await self.HELLO(Data)
         elif Operation == "HEARTBEAT_ACK":
-            await self.HEARTBEAT_ACK(Data)
+            self._lastAck = time.perf_counter()
+            self.latency = self._lastAck - self._lastSend
+            self.recent_latencies.append(self.latency)
 
         return Operation, Data
-
-    async def close(self, *args, **kwargs) -> None:
-        if self.keepAliver:
-            self.keepAliver.stop()
-
-        await super().close(*args, **kwargs)
 
     async def HELLO(self, Data: dict) -> None:
         if Data.get("version") != __version__:
@@ -150,8 +85,15 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
                 UserWarning,
             )
 
-        self._keepAliver = keepAlive(self, min(Data["heartbeat_interval"], 5.0))
-        self._keepAliver.start()
+        self.heartbeatInterval = min(Data["heartbeat_interval"], 5.0)
 
-    async def HEARTBEAT_ACK(self, Data: dict) -> None:
-        self._keepAliver.ack()
+        if self.keepAliver and not self.keepAliver.done():
+            self.keepAliver.cancel()
+
+        self.keepAliver = self.loop.create_task(self.handleHeartbeat())
+
+    async def close(self, *args, **kwargs):
+        if self.keepAliver and not self.keepAliver.done():
+            self.keepAliver.cancel()
+
+        await super().close(*args, **kwargs)

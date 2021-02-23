@@ -1,23 +1,44 @@
 import asyncio
+import logging
 
 from ..errors import NodeException
 from ..utils import EventDispatcher
 from .http import HTTPClient
+from .models import AudioData, AudioSource, Queue, ensureQueueObjectType
 
 
 class VoiceClient:
-    def __init__(self, Node, id: str, guild_id: int) -> None:
+    def __init__(self, Node, id, guild_id):
         self.Node = Node
         self.loop = Node.loop
 
         self.id = id
         self.guild_id = guild_id
-        self.channel_id: int = None
+        self.channel_id = None
 
         self.http = HTTPClient(self)
         self.dispatcher = EventDispatcher()
 
-        self.dispatcher.on("VC_CHANNEL_EDITED", self.__channel_editied)
+        self.dispatcher.on(
+            "VC_CHANNEL_EDITED",
+            lambda channel_id: setattr(self, "channel_id", channel_id),
+        )
+
+        self._volume = 1.0
+        self._crossfade = 10.0
+        self._autoplay = True
+        self._filter = {}
+
+        self.dispatcher.on("getState", self.handleGetState)
+
+        self.loop.create_task(self.send("getState", {}))
+
+        self.Queue = Queue(self)
+
+        self.dispatcher.on("getQueue", self.Queue.handleGetQueue)
+        self.dispatcher.on("QUEUE_EVENT", self.Queue.handleQueueEvent)
+
+        self.loop.create_task(self.send("getQueue", {}))
 
     def __repr__(self) -> str:
         return f"<VoiceClient id={self.id} guild_id={self.guild_id} channel_id={self.channel_id} Node={self.Node}>"
@@ -27,148 +48,132 @@ class VoiceClient:
         if vc and vc == self:
             self.Node.voiceClients.pop(self.guild_id)
 
-    def __channel_editied(self, channel_id: int) -> None:
-        self.channel_id: int = channel_id
+    @property
+    def volume(self):
+        return self._volume
 
-    async def send(self, Operation: str, Data: dict = {}):
-        Data["guild_id"] = self.guild_id
+    @property
+    def crossfade(self):
+        return self._crossfade
 
-        return await self.Node.send(Operation, Data)
+    @property
+    def autoplay(self):
+        return self._autoplay
 
-    async def query(
-        self, Operation: str, Data: dict = {}, Event: str = None, timeout: float = 10.0
-    ) -> dict:
-        if not Event:
-            Event = Operation
+    @property
+    def filter(self):
+        return self._filter
 
-        Future = self.loop.create_task(
+    def handleGetState(self, data):
+        options = data["options"]
+
+        self._volume = options["volume"]
+        self._crossfade = options["crossfade"]
+        self._autoplay = options["autoplay"]
+        self._filter = options["filter"]
+
+    async def send(self, op, data):
+        data["guild_id"] = self.guild_id
+
+        return await self.Node.send(op, data)
+
+    async def query(self, op, data=None, event=None, timeout=10.0):
+        if not event:
+            event = op
+        if not data:
+            data = {}
+
+        Task = self.loop.create_task(
             self.dispatcher.wait_for(
-                Event,
-                condition=lambda Data: int(Data["guild_id"]) == int(self.guild_id),
-                timeout=timeout,
+                event, condition=lambda d: int(d["guild_id"]) == int(self.guild_id)
             )
         )
 
-        await self.send(Operation, Data)
+        await self.send(op, data)
 
-        Data = await Future
+        Data = await Task
 
         if Data.get("traceback"):
             raise NodeException(*list(Data["traceback"].items())[0])
 
         return Data
 
-    async def getVCContext(self, ws: bool = True) -> dict:
-        if ws:
-            return (await self.query("getVCContext"))["context"]
-
+    async def getContext(self):
         return await self.http.getVCContext()
 
-    async def setVCContext(self, context: dict, ws: bool = True) -> dict:
-        if ws:
-            return (await self.query("setVCContext", {"context": context}))["context"]
+    async def setContext(self, data):
+        return await self.http.setVCContext(data)
 
-        return await self.http.setVCContext(context)
+    async def getSource(self, query):
+        data = await self.http.getSource(query)
 
-    async def getSource(self, Query: str, ws: bool = True) -> dict:
-        if ws:
-            return (await self.query("getSource", {"query": Query}))["source"]
+        return ensureQueueObjectType(self, data["source"])
 
-        return await self.http.getSource(Query)
+    async def searchSources(self, query):
+        return await self.http.searchSources(query)
 
-    async def searchSources(self, Query: str, ws: bool = True) -> list:
-        if ws:
-            return (await self.query("searchSources", {"query": Query}))["sources"]
+    async def putSource(self, source):
+        return await self.http.putSource(source)
 
-        return await self.http.searchSources(Query)
+    async def loadSource(self, query):
+        data = await self.http.loadSource(query)
 
-    async def loadSource(self, Query: str, ws: bool = True) -> dict:
-        if ws:
-            return (await self.query("loadSource", {"query": Query}))["source"]
+        return ensureQueueObjectType(self, data["source"])
 
-        return await self.http.loadSource(Query)
-
-    async def putSource(self, Source: dict, ws: bool = True) -> int:
-        if ws:
-            return (await self.query("putSource", {"song": Source}))["index"]
-
-        return await self.http.putSource(Source)
-
-    async def skip(self, offset: int = 1, ws: bool = True) -> int:
-        if ws:
-            return (await self.query("skip", {"offset": offset}))["remain"]
-
+    async def skip(self, offset=1):
         return await self.http.skip(offset)
 
-    async def seek(self, offset: float, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("seek", {"offset": offset})
-
+    async def seek(self, offset):
         return await self.http.seek(offset)
 
-    async def setVolume(self, volume: int, ws: bool = True) -> float:
-        if ws:
-            return (await self.query("setVolume", {"volume": volume}))["volume"]
+    async def getOptions(self):
+        return await self.http.getOptions()
 
-        return await self.http.setVolume(volume)
+    async def setOptions(self, **options):
+        if "volume" in options:
+            self._volume = options["volume"]
+        if "crossfade" in options:
+            self._crossfade = options["crossfade"]
+        if "autoplay" in options:
+            self._autoplay = options["autoplay"]
+        if "filter" in options:
+            self._filter = options["filter"]
 
-    async def setCrossfade(self, crossfade: float, ws: bool = True) -> float:
-        if ws:
-            return (await self.query("setCrossfade", {"crossfade": crossfade}))[
-                "crossfade"
-            ]
+        return await self.http.setOptions(options)
 
-        return await self.http.setCrossfade(crossfade)
+    async def setVolume(self, volume):
+        return await self.setOptions(volume=volume)
 
-    async def setAutoplay(self, autoplay: bool, ws: bool = True) -> bool:
-        if ws:
-            return (await self.query("setAutoplay", {"autoplay": autoplay}))["autoplay"]
+    async def setCrossfade(self, crossfade):
+        return await self.setOptions(crossfade=crossfade)
 
-        return await self.http.setAutoplay(autoplay)
+    async def setAutoplay(self, autoplay):
+        return await self.setOptions(autoplay=autoplay)
 
-    async def setFilter(self, filter: dict, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("setFilter", {"filter": filter})
+    async def setFilter(self, filter):
+        return await self.setOptions(filter=filter)
 
-        return await self.http.setFilter(filter)
-
-    async def pause(self, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("pause")
-
+    async def pause(self):
         return await self.http.pause()
 
-    async def resume(self, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("resume")
-
+    async def resume(self):
         return await self.http.resume()
 
-    async def getQueue(self, ws: bool = True) -> list:
-        if ws:
-            return (await self.query("getQueue"))["entries"]
-
-        return await self.http.getQueue()
-
-    async def getState(self, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("getState")
-
-        return await self.http.getState()
-
-    async def shuffle(self, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("shuffle")
-
+    async def shuffle(self):
         return await self.http.shuffle()
 
-    async def remove(self, index: int, ws: bool = True) -> dict:
-        if ws:
-            return await self.query("remove", {"index": index})
-
+    async def remove(self, index):
         return await self.http.remove(index)
 
-    async def requestSubtitle(self, lang: str = None, url: str = None) -> dict:
+    async def fetchQueue(self, ws=True):
+        if ws:
+            await self.query("getQueue")
+        else:
+            self.Queue.handleGetQueue(await self.http.queue())
+
+        return self.Queue
+
+    async def requestSubtitle(self, lang=None, url=None):
         if not any([lang, url]):
             raise ValueError("Either `lang` or `url` is needed.")
 
@@ -180,7 +185,7 @@ class VoiceClient:
 
         return await self.query("requestSubtitle", Data)
 
-    async def getSubtitle(self, *args, callback: callable, **kwargs):
+    async def getSubtitle(self, *args, callback, **kwargs):
         if not asyncio.iscoroutinefunction(callback):
             raise ValueError("Callback function must be coroutine function.")
 
@@ -215,5 +220,5 @@ class VoiceClient:
 
         return Data
 
-    async def destroy(self) -> dict:
-        return await self.query("VC_DESTROY", Event="VC_DESTROYED")
+    async def destroy(self):
+        return await self.query("VC_DESTROY", event="VC_DESTROYED")

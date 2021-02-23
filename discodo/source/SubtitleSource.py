@@ -52,7 +52,7 @@ class smi(SubtitleFormat):
         }
 
         self.duration = sorted(
-            [TextElement["end"] for TextElement in self.TextElements.values()]
+            map(lambda TextElement: TextElement["end"], self.TextElements.values())
         )[-1]
 
     @classmethod
@@ -88,7 +88,7 @@ class srv1(SubtitleFormat):
         }
 
         self.duration = sorted(
-            [TextElement["end"] for TextElement in self.TextElements.values()]
+            map(lambda TextElement: TextElement["end"], self.TextElements.values())
         )[-1]
 
     @classmethod

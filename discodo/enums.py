@@ -1,6 +1,25 @@
 import enum
 
 
+class VoicePayload(enum.Enum):
+    UNKNOWN = -1
+    IDENTIFY = 0
+    SELECT_PROTOCOL = 1
+    READY = 2
+    HEARTBEAT = 3
+    SESSION_DESCRIPTION = 4
+    SPEAKING = 5
+    HEARTBEAT_ACK = 6
+    RESUME = 7
+    HELLO = 8
+    RESUMED = 9
+    CLIENT_DISCONNECT = 13
+
+    @classmethod
+    def _missing_(cls, _):
+        return cls.UNKNOWN
+
+
 class WebsocketCloseCode(enum.Enum):
     HEARTBEAT_TIMEOUT = 1000
     CLOUDFLARE = 1001

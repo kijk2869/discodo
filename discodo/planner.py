@@ -1,7 +1,3 @@
-"""
-Thx for @Sannoob
-"""
-
 import collections
 import ipaddress
 import random
@@ -19,8 +15,8 @@ class RoutePlanner:
             Union[ipaddress.IPv4Address, ipaddress.IPv6Address], int
         ] = collections.defaultdict(int)
 
-        self.ipBlocks = [ipaddress.ip_network(ipBlock) for ipBlock in ipBlocks]
-        self.excludeIps = [ipaddress.ip_address(excludeIp) for excludeIp in excludeIps]
+        self.ipBlocks = list(map(ipaddress.ip_network, ipBlocks))
+        self.excludeIps = list(map(ipaddress.ip_address, excludeIps))
 
     def mark_failed_address(
         self,
@@ -37,7 +33,7 @@ class RoutePlanner:
     @staticmethod
     def __get_random(
         ipBlock: Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
-    ) -> str:
+    ) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address]:
         cidr: int = ipBlock.prefixlen
 
         host_bits: int = (128 if ipBlock.version == 6 else 32) - cidr
@@ -55,7 +51,7 @@ class RoutePlanner:
         self.usedCount[sortedIpBlocks[0]] += 1
 
         if len(self.failedAddress) >= sum(
-            [ipBlock.num_addresses for ipBlock in self.ipBlocks]
+            map(lambda ipBlock: ipBlock.num_addresses, self.ipBlocks)
         ):
             raise ValueError("No Ips available")
 

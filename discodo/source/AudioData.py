@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import aiohttp
 import yarl
@@ -7,13 +7,15 @@ import youtube_dl
 
 from ..config import Config
 from ..errors import Forbidden, TooManyRequests
-from ..extractor import extract
+from ..extractor import extract, youtube_dl_extract
 from ..extractor.youtube_dl import clear_cache
 from .AudioSource import AudioSource
 
 
 class AudioData:
-    def __init__(self, data: dict) -> None:
+    _source = None
+
+    def __init__(self, data) -> None:
         self.tag = str(uuid.uuid4())
 
         self.id = data["id"]
@@ -34,7 +36,7 @@ class AudioData:
         self.uploader = data.get("uploader")
         self.description = data.get("description")
 
-        def getUsableSubtitle(Data: Dict[str, Any]) -> Dict[str, Any]:
+        def getUsableSubtitle(Data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             Usable: List[Any] = list(
                 filter(lambda Subtitle: Subtitle.get("ext") == "srv1", Data)
             )
@@ -59,10 +61,9 @@ class AudioData:
         self.chapters = data.get("chapters", {})
 
         self.related: bool = False
+        self.Context = {}
 
-        self._source = None
-
-    def __dict__(self) -> dict:
+    def toDict(self) -> dict:
         return {
             "_type": "AudioData",
             "tag": self.tag,
@@ -78,17 +79,37 @@ class AudioData:
             "subtitles": self.subtitles,
             "chapters": self.chapters,
             "related": self.related,
+            "context": self.Context,
         }
+
+    @classmethod
+    def fromDict(cls, data):
+        cls.tag = data["tag"]
+        cls.id = data["id"]
+        cls.title = data["title"]
+        cls.webpage_url = data["webpage_url"]
+        cls.thumbnail = data["thumbnail"]
+        cls.url = data["url"]
+        cls.duration = data["duration"]
+        cls.is_live = data["is_live"]
+        cls.uploader = data["uploader"]
+        cls.description = data["description"]
+        cls.subtitles = data["subtitles"]
+        cls.chapters = data["chapters"]
+        cls.related = data["related"]
+        cls.Context = data["Context"]
+
+        return cls
 
     def __repr__(self) -> str:
         return f"<AudioData id={self.id} title='{self.title}' duration={self.duration} address='{self.address}'>"
 
     @classmethod
-    async def create(cls, query: str):
+    async def create(cls, query: str, search=False):
         cls.address = Config.RoutePlanner.get() if Config.RoutePlanner else None
 
         try:
-            Data = await extract(query, address=cls.address)
+            Data = await extract(query, address=cls.address, search=search)
         except youtube_dl.utils.DownloadError as exc:
             if Config.RoutePlanner and exc.exc_info[1].status == 429:
                 Config.RoutePlanner.mark_failed_address(cls.address)

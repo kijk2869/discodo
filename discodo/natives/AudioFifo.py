@@ -1,5 +1,6 @@
 import logging
 import threading
+import traceback
 
 import av
 
@@ -43,6 +44,7 @@ class AudioFifo(av.AudioFifo):
         try:
             super().write(*args, **kwargs)
         except:
+            traceback.print_exc()
             log.warning("while writing on fifo, an error occured, ignored.")
 
         self.check_buffer()

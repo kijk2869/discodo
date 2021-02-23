@@ -1,5 +1,5 @@
 # For networking
-aiohttp>=3.6.0,<3.8.0
+aiohttp[speedups]>=3.6.0,<3.8.0
 websockets==8.1
 
 # Extra extractor resolver
@@ -18,7 +18,7 @@ defusedxml==0.6.0
 markdownify==0.6.5
 
 # Logging
-colorlog==4.7.2
+rich==9.11.0
 
 # Node webserver
 sanic==20.12.2

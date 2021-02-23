@@ -1,11 +1,14 @@
 import asyncio
 import copy
 import ipaddress
+import logging
 from typing import Coroutine, Union
 
 from youtube_dl import YoutubeDL as YoutubeDLClient
 
 from ..errors import NoSearchResults
+
+log = logging.getLogger("discodo.extractor.youtube_dl")
 
 YTDLOption = {
     "format": "(bestaudio[ext=opus]/bestaudio/best)[protocol!=http_dash_segments]",
@@ -16,6 +19,7 @@ YTDLOption = {
     "skip_download": True,
     "writesubtitles": True,
     "noplaylist": True,
+    "logger": log,
 }
 
 
