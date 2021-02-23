@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import json
 import logging
+import uuid
 
 from sanic import Blueprint
 from sanic.websocket import ConnectionClosed
@@ -37,6 +38,7 @@ class ModifiedClientManager(ClientManager):
 
 class WebsocketHandler:
     def __init__(self, request, ws):
+        self.state = str(uuid.uuid4())
         self.loop = asyncio.get_event_loop()
 
         self.ws = ws
@@ -63,15 +65,16 @@ class WebsocketHandler:
         return f"{self.request.ip}:{self.request.port}"
 
     async def waitForBind(self):
+        if self.state != self.ClientManager.state:
+            return
+
         self.ClientManager._binded.clear()
-        print("clear binded" * 10)
+
         try:
             await asyncio.wait_for(
                 self.ClientManager._binded.wait(), timeout=Config.VCTIMEOUT
             )
         except asyncio.TimeoutError:
-            print("wait for bind timed out" * 100)
-            print(self.ClientManager._binded)
             self.ClientManager.__del__()
             del self.app.ClientManagers[self.ClientManager.tag]
             self.ClientManager = None
@@ -152,6 +155,7 @@ class WebsocketHandler:
             self.ClientManager.tag = tag
             self.app.ClientManagers[tag] = self.ClientManager
 
+        self.ClientManager.state = self.state
         self.ClientManager.dispatcher.onAny(self.managerEvent)
 
     async def managerEvent(self, guild_id, **kwargs) -> None:

@@ -160,10 +160,11 @@ class VoiceClient:
         return await self.http.resume()
 
     async def shuffle(self):
-        return await self.http.shuffle()
+        data = await self.http.shuffle()
 
-    async def remove(self, index):
-        return await self.http.remove(index)
+        self.Queue.handleGetQueue(data)
+
+        return self.Queue
 
     async def fetchQueue(self, ws=True):
         if ws:

@@ -10,7 +10,7 @@ def isInQueue(func):
         if self not in self.VoiceClient.Queue:
             raise ValueError("this source is not in queue.")
 
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
@@ -21,7 +21,7 @@ def isNotInQueue(func):
         if self in self.VoiceClient.Queue:
             raise ValueError("this source is already in queue.")
 
-        return func(*args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
