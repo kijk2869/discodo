@@ -53,10 +53,12 @@ async def launchLocalNode(**options):
     LocalNodeProc.PASSWORD = options["PASSWORD"]
 
     try:
-        await asyncio.wait_for(LocalNodeProc.stdout.readline(), timeout=20.0)
+        data = await asyncio.wait_for(LocalNodeProc.stdout.readline(), timeout=20.0)
     except asyncio.TimeoutError as e:
         raise SystemError("Launching discodo subprocess timed out.") from e
-
+    
+    log.debug(f"Local node process returned {data}")
+             
     if LocalNodeProc.returncode:
         raise SystemError("Cannot launch discodo subprocess.")
 
