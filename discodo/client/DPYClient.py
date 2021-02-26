@@ -143,7 +143,7 @@ class DPYClient:
 
     async def _onVCDestroyed(self, data):
         guild = self.client.get_guild(int(data["guild_id"]))
-        ws = self.__get_websocket(guild.shard_id)
+        ws = self.getWebsocket(guild.shard_id)
 
         await ws.voice_state(guild.id, None)
 
@@ -152,7 +152,10 @@ class DPYClient:
             return
 
         guild = self.client.get_guild(int(data["guild_id"]))
-        vc = self.getVC(guild)
+        vc = self.getVC(guild, safe=True)
+
+        if not vc:
+            return
 
         self.dispatcher.dispatch(event, vc, data)
 

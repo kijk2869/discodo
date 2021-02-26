@@ -16,52 +16,68 @@ class AudioData:
     _source = None
 
     def __init__(self, data) -> None:
-        self.tag = str(uuid.uuid4())
-
-        self.id = data["id"]
-        self.title = data.get("title")
-
-        if data.get("_type") == "url" and data.get("ie_key") == "Youtube":
-            self.webpage_url = f"https://www.youtube.com/watch?v={self.id}"
-            self.thumbnail = f"https://i.ytimg.com/vi/{self.id}/hqdefault.jpg"
-            self.stream_url = None
+        if data.get("_type") in ["AudioData", "AudioSource"]:
+            self.tag = data["tag"]
+            self.id = data["id"]
+            self.title = data["title"]
+            self.webpage_url = data["webpage_url"]
+            self.thumbnail = data["thumbnail"]
+            self.stream_url = data["url"]
+            self.duration = data["duration"]
+            self.is_live = data["is_live"]
+            self.uploader = data["uploader"]
+            self.description = data["description"]
+            self.subtitles = data["subtitles"]
+            self.chapters = data["chapters"]
+            self.related = data["related"]
+            self.Context = data["context"]
         else:
-            self.webpage_url = data.get("webpage_url")
-            self.thumbnail = data.get("thumbnail")
-            self.stream_url = data.get("url")
+            self.tag = str(uuid.uuid4())
 
-        self.duration = data.get("duration")
-        self.is_live = data.get("is_live", False)
+            self.id = data["id"]
+            self.title = data.get("title")
 
-        self.uploader = data.get("uploader")
-        self.description = data.get("description")
+            if data.get("_type") == "url" and data.get("ie_key") == "Youtube":
+                self.webpage_url = f"https://www.youtube.com/watch?v={self.id}"
+                self.thumbnail = f"https://i.ytimg.com/vi/{self.id}/hqdefault.jpg"
+                self.stream_url = None
+            else:
+                self.webpage_url = data.get("webpage_url")
+                self.thumbnail = data.get("thumbnail")
+                self.stream_url = data.get("url")
 
-        def getUsableSubtitle(Data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-            Usable: List[Any] = list(
-                filter(lambda Subtitle: Subtitle.get("ext") == "srv1", Data)
-            )
+            self.duration = data.get("duration")
+            self.is_live = data.get("is_live", False)
 
-            if Usable:
-                return Usable[0]["url"]
+            self.uploader = data.get("uploader")
+            self.description = data.get("description")
 
-        self.subtitles = (
-            dict(
-                map(
-                    lambda Data: (
-                        Data[0],
-                        getUsableSubtitle(Data[1]),
-                    ),
-                    data["subtitles"].items(),
+            def getUsableSubtitle(Data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+                Usable: List[Any] = list(
+                    filter(lambda Subtitle: Subtitle.get("ext") == "srv1", Data)
                 )
+
+                if Usable:
+                    return Usable[0]["url"]
+
+            self.subtitles = (
+                dict(
+                    map(
+                        lambda Data: (
+                            Data[0],
+                            getUsableSubtitle(Data[1]),
+                        ),
+                        data["subtitles"].items(),
+                    )
+                )
+                if "subtitles" in data
+                else {}
             )
-            if "subtitles" in data
-            else {}
-        )
 
-        self.chapters = data.get("chapters", {})
+            self.chapters = data.get("chapters", {})
 
-        self.related: bool = False
-        self.Context = {}
+            self.related: bool = False
+            self.Context = {}
 
     def toDict(self) -> dict:
         return {
@@ -81,25 +97,6 @@ class AudioData:
             "related": self.related,
             "context": self.Context,
         }
-
-    @classmethod
-    def fromDict(cls, data):
-        cls.tag = data["tag"]
-        cls.id = data["id"]
-        cls.title = data["title"]
-        cls.webpage_url = data["webpage_url"]
-        cls.thumbnail = data["thumbnail"]
-        cls.url = data["url"]
-        cls.duration = data["duration"]
-        cls.is_live = data["is_live"]
-        cls.uploader = data["uploader"]
-        cls.description = data["description"]
-        cls.subtitles = data["subtitles"]
-        cls.chapters = data["chapters"]
-        cls.related = data["related"]
-        cls.Context = data["Context"]
-
-        return cls
 
     def __repr__(self) -> str:
         return f"<AudioData id={self.id} title='{self.title}' duration={self.duration} address='{self.address}'>"

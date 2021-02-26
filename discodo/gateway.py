@@ -1,5 +1,6 @@
 import asyncio
 import collections
+import contextlib
 import inspect
 import json
 import logging
@@ -61,18 +62,19 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
         return await super().send(data)
 
     async def handleHeartbeat(self):
-        while True:
-            if self._lastAck + self.heartbeatTimeout < time.perf_counter():
-                await self.close(4000)
-                return
+        with contextlib.suppress(websockets.ConnectionClosedError):
+            while True:
+                if self._lastAck + self.heartbeatTimeout < time.perf_counter():
+                    await self.close(4000)
+                    return
 
-            await self.sendJson(
-                {"op": VoicePayload.HEARTBEAT.value, "d": int(time.time() * 1000)}
-            )
+                await self.sendJson(
+                    {"op": VoicePayload.HEARTBEAT.value, "d": int(time.time() * 1000)}
+                )
 
-            self._lastSend = time.perf_counter()
+                self._lastSend = time.perf_counter()
 
-            await asyncio.sleep(self.heartbeatInterval)
+                await asyncio.sleep(self.heartbeatInterval)
 
     async def identify(self):
         payload = {

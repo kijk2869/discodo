@@ -30,6 +30,7 @@ class AudioData:
     def __init__(self, VoiceClient, data):
         self.VoiceClient = VoiceClient
 
+        self.data = data
         for key, value in data.items():
             setattr(self, key, value)
 
@@ -42,9 +43,12 @@ class AudioData:
 
         return self.id == other.id
 
+    @isNotInQueue
+    async def put(self):
+        return await self.VoiceClient.putSource(self)
+
     @isInQueue
     async def getContext(self):
-
         data = await self.VoiceClient.http.getQueueSource(self.tag)
 
         return data.get("context")
@@ -70,6 +74,7 @@ class AudioSource:
     def __init__(self, VoiceClient, data):
         self.VoiceClient = VoiceClient
 
+        self.data = data
         for key, value in data.items():
             setattr(self, key, value)
 

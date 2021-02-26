@@ -181,6 +181,8 @@ class VoiceConnector:
                         )
 
                     return self.__del__()
+            except asyncio.CancelledError:
+                return self.__del__()
             except:
                 log.exception(
                     "while polling websocket, an unhandled exception occured."

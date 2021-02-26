@@ -110,10 +110,14 @@ class VoiceClient:
         return ensureQueueObjectType(self, data["source"])
 
     async def searchSources(self, query):
-        return await self.http.searchSources(query)
+        data = await self.http.searchSources(query)
+
+        return ensureQueueObjectType(self, data["sources"])
 
     async def putSource(self, source):
-        return await self.http.putSource(source)
+        data = await self.http.putSource(source.data)
+
+        return ensureQueueObjectType(self, data["source"])
 
     async def loadSource(self, query):
         data = await self.http.loadSource(query)

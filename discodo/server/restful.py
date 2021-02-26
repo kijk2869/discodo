@@ -141,9 +141,14 @@ async def putSource(request, VoiceClient):
     if "source" not in request.json:
         abort(400, "Bad data `source`")
 
-    index = VoiceClient.putSource(request.json["source"])
+    source = (
+        list(map(AudioData, request.json["source"]))
+        if isinstance(request.json["source"], list)
+        else AudioData(request.json["source"])
+    )
+    VoiceClient.putSource(source)
 
-    return JSONResponse({"index": index})
+    return JSONResponse({"source": source})
 
 
 @app.post("/loadSource")
