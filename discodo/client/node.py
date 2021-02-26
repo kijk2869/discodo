@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import secrets
+import socket
 import sys
 
 import aiohttp
@@ -53,7 +54,26 @@ async def launchLocalNode(**options):
     if LocalNodeProc.returncode:
         raise SystemError("Cannot launch discodo subprocess.")
 
-    return LocalNodeProc
+    loop = asyncio.get_event_loop()
+
+    for _ in range(30):
+        try:
+            transport, _ = await loop.create_connection(
+                asyncio.Protocol, host="localhost", port=8000
+            )
+            transport.close()
+        except ConnectionRefusedError:
+            await asyncio.sleep(1)
+            continue
+        except Exception as e:
+            # TODO: LOGGER
+            continue
+
+        return LocalNodeProc
+
+    LocalNodeProc.kill()
+
+    raise SystemError("Testing local node connection timed out.")
 
 
 class Node:

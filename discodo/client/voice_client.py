@@ -166,6 +166,9 @@ class VoiceClient:
 
         return self.Queue
 
+    async def getState(self):
+        return await self.query("getState")
+
     async def fetchQueue(self, ws=True):
         if ws:
             await self.query("getQueue")
