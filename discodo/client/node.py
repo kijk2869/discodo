@@ -76,6 +76,10 @@ async def launchLocalNode(**options):
             await asyncio.sleep(1)
             continue
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            await asyncio.sleep(1)
             # TODO: LOGGER
             continue
 
