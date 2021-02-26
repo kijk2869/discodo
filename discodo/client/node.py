@@ -59,14 +59,11 @@ async def launchLocalNode(**options):
     for _ in range(30):
         try:
             transport, _ = await loop.create_connection(
-                asyncio.Protocol, host="localhost", port=8000
+                asyncio.Protocol, host=LocalNodeProc.HOST, port=LocalNodeProc.PORT
             )
             transport.close()
-        except ConnectionRefusedError:
+        except (OSError, ConnectionRefusedError):
             await asyncio.sleep(1)
-            continue
-        except Exception as e:
-            # TODO: LOGGER
             continue
 
         return LocalNodeProc
