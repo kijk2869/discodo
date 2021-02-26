@@ -75,13 +75,6 @@ async def launchLocalNode(**options):
         except (OSError, ConnectionRefusedError):
             await asyncio.sleep(1)
             continue
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            await asyncio.sleep(1)
-            # TODO: LOGGER
-            continue
 
         return LocalNodeProc
 
