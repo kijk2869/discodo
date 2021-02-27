@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 
 from ..errors import NodeException
@@ -10,6 +11,7 @@ from .models import AudioData, AudioSource, Queue, ensureQueueObjectType
 class VoiceClient:
     def __init__(self, Node, id, guild_id):
         self.Node = Node
+        self.client = Node.client
         self.loop = Node.loop
 
         self.id = id
@@ -21,7 +23,7 @@ class VoiceClient:
 
         self.dispatcher.on(
             "VC_CHANNEL_EDITED",
-            lambda channel_id: setattr(self, "channel_id", channel_id),
+            lambda data: setattr(self, "channel_id", data["channel_id"]),
         )
 
         self._volume = 1.0
@@ -72,6 +74,8 @@ class VoiceClient:
         self._autoplay = options["autoplay"]
         self._filter = options["filter"]
 
+        self.channel_id = data["channel_id"]
+
     async def send(self, op, data):
         data["guild_id"] = self.guild_id
 
@@ -85,7 +89,9 @@ class VoiceClient:
 
         Task = self.loop.create_task(
             self.dispatcher.wait_for(
-                event, condition=lambda d: int(d["guild_id"]) == int(self.guild_id)
+                event,
+                condition=lambda d: int(d["guild_id"]) == int(self.guild_id),
+                timeout=timeout,
             )
         )
 
@@ -115,7 +121,11 @@ class VoiceClient:
         return ensureQueueObjectType(self, data["sources"])
 
     async def putSource(self, source):
-        data = await self.http.putSource(source.data)
+        data = await self.http.putSource(
+            list(map(lambda x: x.data, source))
+            if isinstance(source, list)
+            else source.data
+        )
 
         return ensureQueueObjectType(self, data["source"])
 
@@ -171,7 +181,11 @@ class VoiceClient:
         return self.Queue
 
     async def getState(self):
-        return await self.query("getState")
+        data = await self.query("getState")
+
+        data["current"] = ensureQueueObjectType(self, data["current"])
+
+        return data
 
     async def fetchQueue(self, ws=True):
         if ws:
@@ -227,6 +241,34 @@ class VoiceClient:
         self.dispatcher.on("subtitleDone", lyricsDone)
 
         return Data
+
+    async def moveTo(self, node):
+        if node == self.Node:
+            raise ValueError("Already connected to this node.")
+
+        channel = self.client.client.get_channel(self.channel_id)
+
+        if not channel:
+            raise ValueError("this voice client is not connected to the channel.")
+
+        State = await self.getState()
+
+        await self.destroy()
+
+        VC = await self.client.connect(channel, node)
+
+        await VC.setOptions(
+            volume=self.volume,
+            crossfade=self.crossfade,
+            autoplay=self.autoplay,
+            filter=self.filter,
+        )
+
+        await VC.putSource(
+            ([State["current"]] if State["current"] else []) + self.Queue
+        )
+
+        return VC
 
     async def destroy(self):
         return await self.query("VC_DESTROY", event="VC_DESTROYED")

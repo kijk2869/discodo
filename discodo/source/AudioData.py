@@ -17,6 +17,8 @@ class AudioData:
 
     def __init__(self, data) -> None:
         if data.get("_type") in ["AudioData", "AudioSource"]:
+            self.address = Config.RoutePlanner.get() if Config.RoutePlanner else None
+
             self.tag = data["tag"]
             self.id = data["id"]
             self.title = data["title"]

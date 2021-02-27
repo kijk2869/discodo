@@ -76,6 +76,7 @@ async def launchLocalNode(**options):
 class Node:
     def __init__(
         self,
+        client,
         host,
         port,
         user_id,
@@ -83,6 +84,8 @@ class Node:
         password="hellodiscodo",
         region=None,
     ):
+        self.client = client
+
         self.ws = None
         self.session = aiohttp.ClientSession()
 

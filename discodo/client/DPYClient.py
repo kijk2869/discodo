@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import itertools
 
 import discord
@@ -11,13 +12,6 @@ from .node import Nodes, launchLocalNode
 
 
 class NodeClient(OriginNode):
-    def __init__(self, client, host, port, user_id, shard_id, password, region):
-        super().__init__(
-            host, port, user_id, shard_id=shard_id, password=password, region=region
-        )
-
-        self.client = client
-
     async def onResumed(self, Data):
         await super().onResumed(Data)
 
@@ -25,7 +19,7 @@ class NodeClient(OriginNode):
             guild = self.client.client.get_guild(int(guild_id))
             if "channel" in vc_data:
                 channel = guild.get_channel(vc_data["channel"])
-                self.loop.create_task(self.client.connect(channel))
+                self.loop.create_task(self.client.connect(channel, self))
             else:
                 self.loop.create_task(self.client.disconnect(guild))
 
@@ -48,6 +42,8 @@ class DPYClient:
         self.loop = client.loop or asyncio.get_event_loop()
 
         self.dispatcher = EventDispatcher()
+
+        self.GuildReservationMap = {}
 
         self.Nodes = Nodes()
         self.__registerEvent()
@@ -87,7 +83,12 @@ class DPYClient:
     async def discordDispatch(self, payload) -> None:
         if payload["t"] in ["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"]:
             VC = self.getVC(payload["d"]["guild_id"], safe=True)
-            SelectNodes = [VC.Node] if VC else [self.getBestNode()]
+            SelectNodes = [
+                self.GuildReservationMap.get(
+                    int(payload["d"]["guild_id"]),
+                    (VC.Node if VC else self.getBestNode()),
+                )
+            ]
         else:
             SelectNodes = self.Nodes
 
@@ -196,22 +197,36 @@ class DPYClient:
         elif not self.client.shard_id or self.client.shard_id == id:
             return self.client.ws
 
-    async def connect(self, channel: discord.VoiceChannel) -> None:
+    async def connect(
+        self, channel: discord.VoiceChannel, node: NodeClient = None
+    ) -> None:
         if not hasattr(channel, "guild"):
             raise ValueError
 
-        if not self.getBestNode():
-            raise NodeNotConnected
+        if not node:
+            if not self.getBestNode():
+                raise NodeNotConnected
 
-        ws = self.getWebsocket(channel.guild.shard_id)
+            node = self.getBestNode()
 
-        await ws.voice_state(channel.guild.id, channel.id)
+        self.GuildReservationMap[channel.guild.id] = node
 
-        VC, _ = await self.dispatcher.wait_for(
-            "VC_CREATED",
-            lambda _, Data: int(Data["guild_id"]) == channel.guild.id,
-            timeout=10.0,
+        await self.getWebsocket(channel.guild.shard_id).voice_state(
+            channel.guild.id, channel.id
         )
+
+        VC = self.getVC(channel.guild, safe=True)
+
+        if not VC or VC.Node != node:
+            with contextlib.suppress(Exception):
+                VC, _ = await self.dispatcher.wait_for(
+                    "VC_CREATED",
+                    lambda _, Data: int(Data["guild_id"]) == channel.guild.id,
+                    timeout=10.0,
+                )
+
+        if self.GuildReservationMap.get(channel.guild.id) == node:
+            del self.GuildReservationMap[channel.guild.id]
 
         return VC
 
