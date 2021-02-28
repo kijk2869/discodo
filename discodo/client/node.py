@@ -50,13 +50,11 @@ async def launchLocalNode(**options):
     except asyncio.TimeoutError as e:
         raise SystemError("Launching discodo subprocess timed out.") from e
 
-    log.debug(f"Local node process returned {data}")
-
     if LocalNodeProc.returncode:
         raise SystemError("Cannot launch discodo subprocess.")
 
     loop = asyncio.get_event_loop()
-    
+
     for _ in range(30):
         try:
             transport, _ = await loop.create_connection(
