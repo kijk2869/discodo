@@ -41,7 +41,9 @@ Introduction
 ------------
 
 .. toctree::
+   :caption: Introduction
    :maxdepth: 1
 
    introduction/installation.rst
    introduction/quickstart.rst
+   introduction/logging.rst
