@@ -26,8 +26,17 @@ class OpusLoadError(DiscodoException):
 
 
 class HTTPException(DiscodoException):
-    def __init__(self, status: int) -> None:
-        super().__init__(f"{status} {responses.get(status, 'Unknown Status Code')}")
+    def __init__(self, status: int, data=None) -> None:
+        if not data:
+            data = {}
+
+        self.status = data.get("status", status)
+        self.description = data.get(
+            "description", responses.get(status, "Unknown Status Code")
+        )
+        self.message = data.get("message", "")
+
+        super().__init__(f"{self.status} {self.description}: {self.message}")
 
 
 class Forbidden(DiscodoException):

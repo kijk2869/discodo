@@ -38,8 +38,6 @@ class VoiceClient(VoiceConnector):
         self._volume = Config.DEFAULT_VOLUME
         self._crossfade = Config.DEFAULT_CROSSFADE
 
-        self.dispatcher.dispatch("VC_CREATED", id=self.id)
-
     def __del__(self):
         guild_id = int(self.guild_id) if self.guild_id else None
 

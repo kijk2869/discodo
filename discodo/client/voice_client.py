@@ -264,9 +264,11 @@ class VoiceClient:
             filter=self.filter,
         )
 
-        await VC.putSource(
-            ([State["current"]] if State["current"] else []) + self.Queue
-        )
+        if State["current"]:
+            await VC.putSource(State["current"])
+
+        if self.Queue:
+            await VC.putSource(self.Queue)
 
         return VC
 

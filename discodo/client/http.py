@@ -25,10 +25,12 @@ class HTTPClient:
         kwargs["headers"].update(self.headers)
 
         async with self.Node.session.request(method, URL, **kwargs) as response:
-            if 200 <= response.status < 300:
-                return await response.json(content_type=None)
+            data = await response.json(content_type=None)
 
-            raise HTTPException(response.status)
+            if 200 <= response.status < 300:
+                return data
+
+            raise HTTPException(response.status, data)
 
     async def getSource(self, query):
         return await self.fetch("GET", "/getSource", params={"query": query})

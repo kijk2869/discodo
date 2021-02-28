@@ -45,10 +45,14 @@ class DiscordEvent:
             vc.guild_id = int(data["guild_id"])
             vc.channel_id = int(data["channel_id"])
 
+            vc.dispatcher.dispatch("VC_CREATED", id=vc.id)
+
     async def VOICE_SERVER_UPDATE(self, data):
         if self.manager.getVC(data["guild_id"], safe=True):
             await self.manager.getVC(data["guild_id"]).createSocket(data)
         else:
-            self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
+            vc = self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
                 self.manager, data
             )
+
+            vc.dispatcher.dispatch("VC_CREATED", id=vc.id)

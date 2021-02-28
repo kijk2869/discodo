@@ -204,7 +204,7 @@ class Node:
             self.voiceClients[guild_id] = VoiceClient(self, Data["id"], guild_id)
 
         if Data and isinstance(Data, dict) and "guild_id" in Data:
-            vc = self.getVC(Data["guild_id"])
+            vc = self.getVC(Data["guild_id"], safe=True)
             if vc:
                 vc.dispatcher.dispatch(Operation, Data)
 
