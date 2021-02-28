@@ -20,10 +20,12 @@ AVOption = {
 
 
 class PyAVSource:
-    def __init__(self, Source: str) -> None:
+    def __init__(self, Source: str, start_position: float = 0.0) -> None:
         self.loop = asyncio.get_event_loop()
 
         self.Source: str = Source
+        self.start_position: float = start_position
+
         self.AVOption: dict = AVOption
         self.Container: av.StreamContainer = None
         self.selectAudioStream = self.FrameGenerator = None
@@ -167,6 +169,11 @@ class Loader(threading.Thread):
                     self.Source.Source, options=self.Source.AVOption
                 )
             self.Source._duration = round(self.Source.Container.duration / 1000000, 2)
+
+            if self.Source.start_position:
+                self.Source.Container.seek(
+                    round(max(self.Source.start_position, 1) * 1000000), any_frame=True
+                )
 
             self.Source.selectAudioStream = self.Source.Container.streams.audio[0]
             self.Source.FrameGenerator = self.Source.Container.decode(

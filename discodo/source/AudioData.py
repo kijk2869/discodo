@@ -33,8 +33,15 @@ class AudioData:
             self.chapters = data["chapters"]
             self.related = data["related"]
             self.Context = data["context"]
+
+            self.start_position = (
+                data["position"]
+                if data["_type"] == "AudioSource"
+                else data["start_position"]
+            )
         else:
             self.tag = str(uuid.uuid4())
+            self.start_position = 0.0
 
             self.id = data["id"]
             self.title = data.get("title")
@@ -98,6 +105,7 @@ class AudioData:
             "chapters": self.chapters,
             "related": self.related,
             "context": self.Context,
+            "start_position": self.start_position,
         }
 
     def __repr__(self) -> str:
@@ -171,6 +179,11 @@ class AudioData:
 
                 raise TooManyRequests
 
-            self._source = AudioSource(self.stream_url, AudioData=self, **kwargs)
+            self._source = AudioSource(
+                self.stream_url,
+                AudioData=self,
+                start_position=self.start_position,
+                **kwargs,
+            )
 
         return self._source
