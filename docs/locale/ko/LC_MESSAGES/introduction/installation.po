@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-28 16:55+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+#: ../../introduction/installation.rst:2
+msgid "Installation"
+msgstr ""
+
+#: ../../introduction/installation.rst:5
+msgid "Prerequisites"
+msgstr ""
+
+#: ../../introduction/installation.rst:7
+msgid "Discodo works with **Python 3.7 or higher.**"
+msgstr ""
+
+#: ../../introduction/installation.rst:9
+msgid "Ealier versions of Python may not be worked."
+msgstr ""
+
+#: ../../introduction/installation.rst:12
+msgid "Dependencies"
+msgstr ""
+
+#: ../../introduction/installation.rst:14
+msgid "On Linux environments, below dependencies are required:"
+msgstr ""
+
+#: ../../introduction/installation.rst:16
+msgid "``python3-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:17
+msgid "``libopus-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:18
+msgid "``libnacl-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:20
+msgid "PyAV depends upon several libraries from FFmpeg:"
+msgstr ""
+
+#: ../../introduction/installation.rst:22
+msgid "``libavcodec-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:23
+msgid "``libavdevice-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:24
+msgid "``libavfilter-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:25
+msgid "``libavformat-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:26
+msgid "``libavutil-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:27
+msgid "``libswresample-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:28
+msgid "``libswscale-dev``"
+msgstr ""
+
+#: ../../introduction/installation.rst:29
+msgid "``pkg-config``"
+msgstr ""
+
+#: ../../introduction/installation.rst:32
+msgid "Mac OS X"
+msgstr ""
+
+#: ../../introduction/installation.rst:39
+msgid "Ubuntu"
+msgstr ""
+
+#: ../../introduction/installation.rst:54
+msgid "Installing"
+msgstr ""
+
+#: ../../introduction/installation.rst:57
+msgid "PyPI"
+msgstr ""
+
+#: ../../introduction/installation.rst:64
+msgid "Docker"
+msgstr ""
+
+#: ../../introduction/installation.rst:71
+msgid "Execution"
+msgstr ""
+
+#: ../../introduction/installation.rst:73
+msgid "You can see additional options with the ``--help`` flag."
+msgstr ""
+
+#: ../../introduction/installation.rst:85
+msgid "Options"
+msgstr ""
+
+#: ../../introduction/installation.rst:134
+msgid "Config file"
+msgstr ""

@@ -1,0 +1,74 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-28 16:55+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+#: ../../introduction/logging.rst:2
+msgid "Setting Up Logging"
+msgstr ""
+
+#: ../../introduction/logging.rst:5
+msgid "Basic logging"
+msgstr ""
+
+#: ../../introduction/logging.rst:7
+msgid ""
+"discodo_ logs several information via the logging_ python module like "
+"discord.py_. It is strongly recommended to configure the logging module, "
+"as you can't see some error if it is not set up. You can configure the "
+"logging_ module as simple as:"
+msgstr ""
+
+#: ../../introduction/logging.rst:20
+msgid ""
+"Placed at the start of the code. This will output the logs from all "
+"libraries which use the logging_ module, including discodo_, to the "
+"console."
+msgstr ""
+
+#: ../../introduction/logging.rst:22
+msgid ""
+"The ``level`` argument specifies what level of events to log and can be "
+"any of ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO``, and ``DEBUG`` and "
+"default value is ``WARNING``"
+msgstr ""
+
+#: ../../introduction/logging.rst:24
+msgid "For more information, check the documentation of the logging_ module."
+msgstr ""
+
+#: ../../introduction/logging.rst:27
+msgid "Use rich formatter"
+msgstr ""
+
+#: ../../introduction/logging.rst:29
+msgid ""
+"Also, discodo_ uses rich_ to improve log readability. rich_ is an library"
+" for rich text and formatting in the terminal. To output the log to the "
+"terminal using rich_, you can set it as follows:"
+msgstr ""
+
+#: ../../introduction/logging.rst:38
+msgid ""
+"Because rich_ displays the ``log level`` separately, remove the ``level``"
+" from the ``format`` argument, and set ``rich_tracebacks`` to ``True`` "
+"for formatting tracebacks."
+msgstr ""
+
+#: ../../introduction/logging.rst:40
+msgid "When you set this, the log will be formatted as follows:"
+msgstr ""

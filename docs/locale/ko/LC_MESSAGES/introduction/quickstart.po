@@ -1,0 +1,93 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-28 16:55+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+#: ../../introduction/quickstart.rst:2
+msgid "Quickstart"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:5
+msgid "A Minimal Bot with discord.py_"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:8
+msgid "Let’s make a bot which uses local node feature."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:10
+msgid "It looks like this:"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:71
+msgid "Let's name this file ``simple_musicbot.py``"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:73
+msgid ""
+"Assume you know how to use discord.py_, and I will explain the discodo_ "
+"code step by step."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:77
+msgid ""
+"We create an instance of DPYClient. This client will manage voice "
+"connections to Discord."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:78
+msgid ""
+"After ``on_ready`` event, we use the DPYClient.event() decorator to "
+"register an event like discord.py_. In this case, ``SOURCE_START`` will "
+"be called when the music starts playing."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:79
+msgid ""
+"When the ``!join`` command is excuted, we check if the Message.author_ is"
+" connected to the voice channel. If it is, then we connected to the "
+"channel using DPYClient.connect."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:80
+msgid ""
+"When the ``!play`` command runs, set the VC.channel to the current "
+"message channel to send messages during playback, search for queries and "
+"add them to the list."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:81
+msgid ""
+"If the ``!stop`` command is excuted, we destroy the voice client via "
+"VoiceClient.destroy()"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:82
+msgid ""
+"Finally, we set local nodes to be used by not giving host argument to "
+"DPYClient.registerNode."
+msgstr ""
+
+#: ../../introduction/quickstart.rst:86
+msgid ""
+"Now that we've made a simple music bot, we have to run this. Just as you "
+"do when you run a discord.py_ Bot"
+msgstr ""
+
+#: ../../introduction/quickstart.rst:92
+msgid "Now you can try playing around with your basic musicbot."
+msgstr ""
