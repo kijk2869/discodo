@@ -42,10 +42,13 @@ class Player(threading.Thread):
         return (1.0 / (self.crossfade / Config.DELAY)) if self.crossfade else 1.0
 
     def seek(self, offset):
-        if not self.current:
+        if self.current:
+            return self.current.seek(offset)
+        elif self.client.Queue:
+            self.client.Queue[0].start_position = offset
+            return
+        else:
             raise NotPlaying
-
-        return self.current.seek(offset)
 
     @property
     def current(self):
