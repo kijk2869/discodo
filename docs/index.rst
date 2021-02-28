@@ -6,15 +6,42 @@
 Welcome to discodo's documentation!
 ===================================
 
+Discodo is an enhanced audio player for discord.
+
+Features
+--------
+
+- Standalone Audio Node
+- Youtube Related Video Autoplay
+- Crossfade and Audio effects
+- Synced Youtube Video Subtitle
+
+Supported sources
+-----------------
+
+- All sources that can be extracted from youtube-dl_
+- All formats that can be demuxed by libav_
+
+.. _youtube-dl: https://github.com/ytdl-org/youtube-dl
+.. _libav: https://libav.org/
+
+Client libraries
+----------------
+
+- discodo_ (Python_)
+- discodo.js_ (Under Developing) (Node.js_)
+
+.. _Python: https://www.python.org/
+.. _Node.js: https://nodejs.org/
+.. _discodo: https://github.com/kijk2869/discodo
+.. _discodo.js: Under Developing
+
+
+Introduction
+------------
+
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   introduction/installation.rst
+   introduction/quickstart.rst
