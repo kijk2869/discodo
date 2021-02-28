@@ -64,6 +64,12 @@ class AudioData:
         return self
 
     @isInQueue
+    async def seek(self, offset):
+        await self.VoiceClient.http.setQueueSource(self.tag, {"start_position": offset})
+
+        return self
+
+    @isInQueue
     async def remove(self):
         await self.VoiceClient.http.removeQueueSource(self.tag)
 
