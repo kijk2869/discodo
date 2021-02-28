@@ -213,16 +213,17 @@ class DPYClient:
 
         VC = self.getVC(channel.guild, safe=True)
 
-        if not VC or VC.Node != node:
-            Task = self.loop.create_task(
+        Task = (
+            self.loop.create_task(
                 self.dispatcher.wait_for(
                     "VC_CREATED",
                     lambda _, Data: int(Data["guild_id"]) == channel.guild.id,
                     timeout=10.0,
                 )
             )
-        else:
-            Task = None
+            if not VC or VC.Node != node
+            else None
+        )
 
         await self.getWebsocket(channel.guild.shard_id).voice_state(
             channel.guild.id, channel.id
