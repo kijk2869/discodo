@@ -19,56 +19,56 @@ msgstr ""
 
 #: ../../index.rst:40
 msgid "Introduction"
-msgstr ""
+msgstr "소개"
 
 #: ../../index.rst:7
 msgid "Welcome to discodo's documentation!"
-msgstr ""
+msgstr "discodo 문서에 오신 것을 환영합니다!"
 
 #: ../../index.rst:9
 msgid "Discodo is an enhanced audio player for discord."
-msgstr ""
+msgstr "Discodo는 디스코드를 위한 강화된 오디오 플레이어입니다."
 
 #: ../../index.rst:12
 msgid "Features"
-msgstr ""
+msgstr "기능들"
 
 #: ../../index.rst:14
 msgid "Standalone Audio Node"
-msgstr ""
+msgstr "독립형 오디오 노드"
 
 #: ../../index.rst:15
 msgid "Youtube Related Video Autoplay"
-msgstr ""
+msgstr "유튜브 추천영상 자동재생"
 
 #: ../../index.rst:16
 msgid "Crossfade and Audio effects"
-msgstr ""
+msgstr "크로스페이드와 음향 효과들"
 
 #: ../../index.rst:17
 msgid "Synced Youtube Video Subtitle"
-msgstr ""
+msgstr "유튜브 영상 싱크 자막"
 
 #: ../../index.rst:20
 msgid "Supported sources"
-msgstr ""
+msgstr "지원되는 소스들"
 
 #: ../../index.rst:22
 msgid "All sources that can be extracted from youtube-dl_"
-msgstr ""
+msgstr "youtube-dl_로 추출 가능한 모든 출처"
 
 #: ../../index.rst:23
-msgid "All formats that can be demuxed by libav_"
-msgstr ""
+msgid "All formats that can be demuxed by "
+msgstr "libav_로 디묵싱 가능한 모든 포멧"
 
 #: ../../index.rst:29
 msgid "Client libraries"
-msgstr ""
+msgstr "클라이언트 라이브러리"
 
 #: ../../index.rst:31
 msgid "discodo_ (Python_)"
-msgstr ""
+msgstr "discodo_ (Python_)"
 
 #: ../../index.rst:32
 msgid "discodo.js_ (Under Developing) (Node.js_)"
-msgstr ""
+msgstr "discodo.js_ (Under Developing) (Node.js_)"
