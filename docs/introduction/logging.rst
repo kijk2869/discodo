@@ -33,7 +33,7 @@ Also, discodo_ uses rich_ to improve log readability. rich_ is an library for ri
     import logging
     from rich.logging import RichHandler
 
-    logging.basicConfig(level=logging.INFO, format="%(message)s", handlers=[RichHandler(rich_tracebacks=True)])
+    logging.basicConfig(level=logging.INFO, format="%(name)s :\t%(message)s", handlers=[RichHandler(rich_tracebacks=True)])
 
 Because rich_ displays the ``log level`` separately, remove the ``level`` from the ``format`` argument, and set ``rich_tracebacks`` to ``True`` for formatting tracebacks.
 
