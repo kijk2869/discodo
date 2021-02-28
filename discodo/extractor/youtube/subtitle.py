@@ -6,8 +6,6 @@ try:
 except ImportError:
     from defusedxml import ElementTree
 
-import aiohttp
-
 log = logging.getLogger("discodo.extractor.youtube")
 
 

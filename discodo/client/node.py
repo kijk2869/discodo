@@ -2,7 +2,6 @@ import asyncio
 import json
 import os
 import secrets
-import socket
 import sys
 
 import aiohttp

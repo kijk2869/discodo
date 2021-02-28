@@ -7,7 +7,7 @@ import youtube_dl
 
 from ..config import Config
 from ..errors import Forbidden, TooManyRequests
-from ..extractor import extract, youtube_dl_extract
+from ..extractor import extract
 from ..extractor.youtube_dl import clear_cache
 from .AudioSource import AudioSource
 

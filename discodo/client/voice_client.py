@@ -1,11 +1,9 @@
 import asyncio
-import contextlib
-import logging
 
 from ..errors import NodeException
 from ..utils import EventDispatcher
 from .http import HTTPClient
-from .models import AudioData, AudioSource, Queue, ensureQueueObjectType
+from .models import Queue, ensureQueueObjectType
 
 
 class VoiceClient:

@@ -1,8 +1,6 @@
 import re
 from typing import Union
 
-import aiohttp
-
 URL_REGEX = re.compile(
     r"(?:https?:\/\/)?(?:www\.)?vibe\.naver\.com/(chart|track|album)/?(\d+)?"
 )

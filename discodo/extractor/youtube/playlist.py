@@ -1,8 +1,6 @@
 import json
 import logging
 
-import aiohttp
-
 from ...config import Config
 from . import DATA_JSON, YOUTUBE_HEADERS
 
@@ -15,7 +13,7 @@ async def extract_playlist(playlistId: str, session):
 
     log.info(f"Downloading playlist page of {playlistId}")
     async with session.get(
-        f"https://www.youtube.com/playlist",
+        "https://www.youtube.com/playlist",
         headers=YOUTUBE_HEADERS,
         params={"list": playlistId, "hl": "en"},
     ) as resp:
@@ -66,7 +64,7 @@ async def extract_playlist(playlistId: str, session):
                     "uploader": shortBylineText["runs"][0]["text"],
                     "duration": Renderer["lengthSeconds"],
                 }
-            elif "continuationItemRenderer" in Track:
+            if "continuationItemRenderer" in Track:
                 continuationsTokens.append(
                     Track["continuationItemRenderer"]["continuationEndpoint"][
                         "continuationCommand"
@@ -74,8 +72,7 @@ async def extract_playlist(playlistId: str, session):
                 )
 
                 return
-            else:
-                return
+            return
 
         Sources.extend(map(extract, trackList))
 

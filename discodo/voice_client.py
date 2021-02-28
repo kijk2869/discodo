@@ -155,7 +155,7 @@ class VoiceClient(VoiceConnector):
         return (
             self.Queue.index(source)
             if not isinstance(source, list)
-            else list(map(lambda Item: self.Queue.index(Item), sources))
+            else list(map(self.Queue.index, sources))
         )
 
     async def loadSource(self, query, **kwargs):

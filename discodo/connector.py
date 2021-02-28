@@ -5,7 +5,6 @@ import re
 import socket
 import struct
 import threading
-import traceback
 import uuid
 
 import websockets

@@ -44,11 +44,10 @@ class Player(threading.Thread):
     def seek(self, offset):
         if self.current:
             return self.current.seek(offset)
-        elif self.client.Queue:
+        if self.client.Queue:
             self.client.Queue[0].start_position = offset
             return
-        else:
-            raise NotPlaying
+        raise NotPlaying
 
     @property
     def current(self):

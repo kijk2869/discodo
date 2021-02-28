@@ -1,5 +1,4 @@
 from sanic import Sanic, response
-from sanic.exceptions import abort
 
 from .. import __version__
 from ..utils import getStatus

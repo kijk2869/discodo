@@ -2,8 +2,6 @@ import itertools
 import json
 import logging
 
-import aiohttp
-
 from . import DATA_JSON, YOUTUBE_HEADERS
 
 log = logging.getLogger("discodo.extractor.youtube")

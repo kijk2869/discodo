@@ -138,7 +138,8 @@ class Queue(list):
         self.VoiceClient = VoiceClient
         self.__checkArgumentType = functools.partial(ensureQueueObjectType, VoiceClient)
 
-    def __readonly(self, *args, **kwargs):
+    @staticmethod
+    def __readonly(*args, **kwargs):
         raise RuntimeError("Queue is readonly object.")
 
     __setitem__ = (

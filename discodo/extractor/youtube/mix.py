@@ -1,8 +1,6 @@
 import json
 import logging
 
-import aiohttp
-
 from . import DATA_JSON, YOUTUBE_HEADERS
 
 log = logging.getLogger("discodo.extractor.youtube")
@@ -14,7 +12,7 @@ async def extract_mix(vId: str, playlistId: str, session):
 
     log.info(f"Downloading playlist page of {playlistId}")
     async with session.get(
-        f"https://www.youtube.com/watch",
+        "https://www.youtube.com/watch",
         headers=YOUTUBE_HEADERS,
         params={"v": vId, "list": playlistId},
     ) as resp:

@@ -9,7 +9,8 @@ class CallbackList(list):
         "clear",
     ]
 
-    def callback(self, name, *args):
+    @staticmethod
+    def callback(name, *args):
         ...
 
     def __setitem__(self, index: int, value):
