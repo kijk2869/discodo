@@ -6,7 +6,7 @@ from discodo.extractor.resolver import melon, vibe
 
 @pytest.mark.asyncio
 async def testMelon() -> None:
-    async with aiohttp.ClientSession as session:
+    async with aiohttp.ClientSession() as session:
         assert await melon.get_album(
             "https://www.melon.com/album/detail.htm?albumId=10541761", session
         ) == ["쿠기 (Coogie) - POW (Feat. GRAY)"]
@@ -14,7 +14,7 @@ async def testMelon() -> None:
 
 @pytest.mark.asyncio
 async def testVibe() -> None:
-    async with aiohttp.ClientSession as session:
+    async with aiohttp.ClientSession() as session:
         assert await vibe.getChart("total", session)
 
         assert await vibe.getChart("genre-OS101", session)
