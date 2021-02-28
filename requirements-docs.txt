@@ -3,6 +3,7 @@
 # Document generator
 
 Sphinx==3.4.3
+pygments
 sphinx-rtd-theme==0.5.1
 
 # Translation

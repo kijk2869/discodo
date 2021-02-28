@@ -75,7 +75,7 @@ Assume you know how to use discord.py_, and I will explain the discodo_ code ste
 .. _discodo: https://github.com/kijk2869/discodo
 
 1. We create an instance of DPYClient. This client will manage voice connections to Discord.
-2. After ``on_ready`` event, we use the DPYClient.event() decorator to register an event like discord.py_. In this case, ``SOURCE_START`` will be called when the music starts playing.
+2. After ``on_ready`` event, we use the DPYClient.event() decorator to register an event like discord.py_ . In this case, ``SOURCE_START`` will be called when the music starts playing.
 3. When the ``!join`` command is excuted, we check if the Message.author_ is connected to the voice channel. If it is, then we connected to the channel using DPYClient.connect.
 4. When the ``!play`` command runs, set the VC.channel to the current message channel to send messages during playback, search for queries and add them to the list.
 5. If the ``!stop`` command is excuted, we destroy the voice client via VoiceClient.destroy()

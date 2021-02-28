@@ -66,5 +66,6 @@ html_static_path = ["_static"]
 
 # -- Options for sphinx-intl example
 
+language = None
 locale_dirs = ["locale/"]
 gettext_compact = False

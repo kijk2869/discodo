@@ -1,110 +1,103 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) 2021, kijk2869
 # This file is distributed under the same license as the discodo package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Translators:
+# Mary <mareowst@gmail.com>, 2021
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: discodo \n"
+"Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-02-28 16:55+0900\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2021-02-28 08:54+0000\n"
+"Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../../introduction/quickstart.rst:2
 msgid "Quickstart"
-msgstr "빠른 시작"
+msgstr "빠른 시작"
 
 #: ../../introduction/quickstart.rst:5
 msgid "A Minimal Bot with discord.py_"
-msgstr "discord.py_를 사용한 작은 봇"
+msgstr "discord.py_ 를 사용한 작은 봇"
 
 #: ../../introduction/quickstart.rst:8
 msgid "Let’s make a bot which uses local node feature."
-msgstr "한번 로컬 노드를 사용하는 봇을 만들어봅시다."
+msgstr "한번 로컬 노드를 사용하는 봇을 만들어봅시다."
 
 #: ../../introduction/quickstart.rst:10
 msgid "It looks like this:"
-msgstr "다음과 같습니다:"
+msgstr "다음과 같습니다:"
 
 #: ../../introduction/quickstart.rst:71
 msgid "Let's name this file ``simple_musicbot.py``"
-msgstr "이 파일의 이름을 ``simple_musicbot.py``로 바꿔봅시다"
+msgstr "이 파일의 이름을 ``simple_musicbot.py`` 로 바꿔봅시다"
 
 #: ../../introduction/quickstart.rst:73
 msgid ""
-"Assume you know how to use discord.py_, and I will explain the discodo_ "
-"code step by step."
-msgstr ""
-"discord.py_ 사용법을 알고 있다고 가정하고, discodo_ 코드를 단계별로 "
-"설명하겠습니다."
+"Assume you know how to use discord.py_, and I will explain the discodo_ code"
+" step by step."
+msgstr "discord.py_ 사용법을 알고 있다고 가정하고, discodo_ 코드를 단계별로 설명하겠습니다."
 
 #: ../../introduction/quickstart.rst:77
 msgid ""
 "We create an instance of DPYClient. This client will manage voice "
 "connections to Discord."
-msgstr ""
-"DPYClient 인스턴스를 생성합니다. 이 클라이언트는 디스코드와의 "
-"보이스 연결을 관리할 것입니다."
+msgstr "DPYClient 인스턴스를 생성합니다. 이 클라이언트는 디스코드와의 보이스 연결을 관리할 것입니다."
 
 #: ../../introduction/quickstart.rst:78
 msgid ""
-"After ``on_ready`` event, we use the DPYClient.event() decorator to "
-"register an event like discord.py_. In this case, ``SOURCE_START`` will "
-"be called when the music starts playing."
+"After ``on_ready`` event, we use the DPYClient.event() decorator to register"
+" an event like discord.py_. In this case, ``SOURCE_START`` will be called "
+"when the music starts playing."
 msgstr ""
-"``on_ready`` 이벤트 이후에, 우리는 discord.py와 비슷하게 DPYClient.event() "
-"데코레이터를 사용하여 이벤트를 등록합니다. 이 경우에는, ``SOURCE_START`` 는 "
-"음악 재생이 시작되었을때 호출될 것입니다."
+"``on_ready`` 이벤트 이후에, 우리는 discord.py와 비슷하게 DPYClient.event() 데코레이터를 사용하여 "
+"이벤트를 등록합니다. 이 경우에는, ``SOURCE_START`` 는 음악 재생이 시작되었을때 호출될 것입니다."
 
 #: ../../introduction/quickstart.rst:79
 msgid ""
-"When the ``!join`` command is excuted, we check if the Message.author_ is"
-" connected to the voice channel. If it is, then we connected to the "
-"channel using DPYClient.connect."
+"When the ``!join`` command is excuted, we check if the Message.author_ is "
+"connected to the voice channel. If it is, then we connected to the channel "
+"using DPYClient.connect."
 msgstr ""
-"``!join`` 커맨드가 실행됬을 때, Message.author_이 보이스 채널에 접속했는지 "
-"확인합니다. 만약 그렇다면, DPYClient.connect를 사용하여 그 채널에 "
-"접속합니다."
+"``!join`` 커맨드가 실행됬을 때, Message.author_ 이 보이스 채널에 접속했는지 확인합니다. 만약 그렇다면, "
+"DPYClient.connect를 사용하여 그 채널에 접속합니다."
 
 #: ../../introduction/quickstart.rst:80
 msgid ""
-"When the ``!play`` command runs, set the VC.channel to the current "
-"message channel to send messages during playback, search for queries and "
-"add them to the list."
+"When the ``!play`` command runs, set the VC.channel to the current message "
+"channel to send messages during playback, search for queries and add them to"
+" the list."
 msgstr ""
-"``!play`` 커맨드가 실행됬을 때, 재생 알림 메세지를 보내기 위해 VC.channel을 "
-"현재 메세지 채널로 설정하고, 인자를 검색하고 재생목록에 추가합니다."
+"``!play`` 커맨드가 실행됬을 때, 재생 알림 메세지를 보내기 위해 VC.channel을 현재 메세지 채널로 설정하고, 인자를 "
+"검색하고 재생목록에 추가합니다."
 
 #: ../../introduction/quickstart.rst:81
 msgid ""
 "If the ``!stop`` command is excuted, we destroy the voice client via "
 "VoiceClient.destroy()"
-msgstr ""
-"만약 ``!stop`` 커맨드가 실행된다면, VoiceClient.destroy()를 통해 "
-"보이스 클라이언트를 제거합니다."
+msgstr "만약 ``!stop`` 커맨드가 실행된다면, VoiceClient.destroy()를 통해 보이스 클라이언트를 제거합니다."
 
 #: ../../introduction/quickstart.rst:82
 msgid ""
 "Finally, we set local nodes to be used by not giving host argument to "
 "DPYClient.registerNode."
-msgstr ""
-"마지막으로, DPYClient.registerNode에 host 인자를 주지 않음으로서 로컬노드를 "
-"사용하도록 설정합니다."
+msgstr "마지막으로, DPYClient.registerNode에 host 인자를 주지 않음으로서 로컬노드를 사용하도록 설정합니다."
 
 #: ../../introduction/quickstart.rst:86
 msgid ""
-"Now that we've made a simple music bot, we have to run this. Just as you "
-"do when you run a discord.py_ Bot"
-msgstr "이제 간단한 음악 봇을 만들었으므로, 이 코드를 실행해야합니다."
-"discord.py_ 봇을 실행할 때 처럼 하면 됩니다."
+"Now that we've made a simple music bot, we have to run this. Just as you do "
+"when you run a discord.py_ Bot"
+msgstr "이제 간단한 음악 봇을 만들었으므로, 이 코드를 실행해야합니다. discord.py_ 봇을 실행할 때 처럼 하면 됩니다."
 
 #: ../../introduction/quickstart.rst:92
 msgid "Now you can try playing around with your basic musicbot."
-msgstr "이제 이 간단한 뮤직 봇으로 놀아 볼 수 있습니다."
+msgstr "이제 이 간단한 뮤직 봇으로 놀아 볼 수 있습니다."
