@@ -33,20 +33,20 @@ Mac OS X
 
 .. code-block:: console
 
-    brew install opus pkg-config ffmpeg
+    $ brew install opus pkg-config ffmpeg
 
 Ubuntu
 ^^^^^^
 
 .. code-block:: console
 
-    sudo apt update
+    $ sudo apt update
 
     # Our general dependencies
-    sudo apt install --no-install-recommends -y python3-dev libopus-dev libnacl-dev
+    $ sudo apt install --no-install-recommends -y python3-dev libopus-dev libnacl-dev
 
     # PyAV dependencies
-    sudo apt install --no-install-recommends -y \
+    $ sudo apt install --no-install-recommends -y \
         pkg-config libavformat-dev libavcodec-dev libavdevice-dev \
         libavutil-dev libswscale-dev libavresample-dev libavfilter-dev
 
@@ -58,14 +58,14 @@ PyPI
 
 .. code-block:: console
 
-    python3 -m pip install -U discodo
+    $ python3 -m pip install -U discodo
 
 Docker
 ^^^^^^
 
 .. code-block:: console
 
-    docker pull kijk2869/discodo:release-2.3.13
+    $ docker pull kijk2869/discodo:release-2.3.13
 
 Execution
 ---------
@@ -74,7 +74,7 @@ You can see additional options with the ``--help`` flag.
 
 .. code-block:: console
 
-    python3 -m discodo [-h] [--version] [--config CONFIG] [--config-json CONFIG_JSON] [--host HOST] [--port PORT]
+    $ python3 -m discodo [-h] [--version] [--config CONFIG] [--config-json CONFIG_JSON] [--host HOST] [--port PORT]
                [--auth AUTH] [--ws-interval WS_INTERVAL] [--ws-timeout WS_TIMEOUT] [--ip IP] [--exclude-ip EXCLUDE_IP]
                [--default-volume DEFAULT_VOLUME] [--default-crossfade DEFAULT_CROSSFADE]
                [--default-autoplay DEFAULT_AUTOPLAY] [--bufferlimit BUFFERLIMIT] [--preload PRELOAD]

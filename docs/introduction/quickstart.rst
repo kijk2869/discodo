@@ -87,6 +87,6 @@ Now that we've made a simple music bot, we have to run this. Just as you do when
 
 .. code-block:: console
 
-    python simple_musicbot.py
+    $ python simple_musicbot.py
 
 Now you can try playing around with your basic musicbot.
