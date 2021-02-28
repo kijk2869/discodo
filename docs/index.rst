@@ -37,9 +37,6 @@ Client libraries
 .. _discodo.js: Under Developing
 
 
-Introduction
-------------
-
 .. toctree::
    :caption: Introduction
    :maxdepth: 1
