@@ -57,6 +57,7 @@ class AudioData:
 
             self.duration = data.get("duration")
             self.is_live = data.get("is_live", False)
+            self.is_file = data.get("is_file", False)
 
             self.uploader = data.get("uploader")
             self.description = data.get("description")
@@ -153,31 +154,32 @@ class AudioData:
             await self.gather()
 
         if not self._source:
-            async with aiohttp.ClientSession() as session:
-                URL = yarl.URL(self.stream_url, encoded=True)
-                async with session.get(URL) as resp:
-                    Status = resp.status
+            if not self.is_file:
+                async with aiohttp.ClientSession() as session:
+                    URL = yarl.URL(self.stream_url, encoded=True)
+                    async with session.get(URL) as resp:
+                        Status = resp.status
 
-            if Status == 403:
-                if _retry == 0:
-                    return await self.source(
-                        *args, _retry=_retry + 1, _limited=True, **kwargs
-                    )
-                elif _retry == 1:
-                    await clear_cache()
-                    return await self.source(
-                        *args, _retry=_retry + 1, _limited=True, **kwargs
-                    )
+                if Status == 403:
+                    if _retry == 0:
+                        return await self.source(
+                            *args, _retry=_retry + 1, _limited=True, **kwargs
+                        )
+                    elif _retry == 1:
+                        await clear_cache()
+                        return await self.source(
+                            *args, _retry=_retry + 1, _limited=True, **kwargs
+                        )
 
-                raise Forbidden
-            if Status == 429:
-                if Config.RoutePlanner:
-                    Config.RoutePlanner.mark_failed_address(self.address)
-                    self.address = Config.RoutePlanner.get()
+                    raise Forbidden
+                if Status == 429:
+                    if Config.RoutePlanner:
+                        Config.RoutePlanner.mark_failed_address(self.address)
+                        self.address = Config.RoutePlanner.get()
 
-                    return await self.source(*args, _limited=True, **kwargs)
+                        return await self.source(*args, _limited=True, **kwargs)
 
-                raise TooManyRequests
+                    raise TooManyRequests
 
             self._source = AudioSource(
                 self.stream_url,

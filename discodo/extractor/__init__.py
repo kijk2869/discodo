@@ -6,7 +6,9 @@ from typing import Union
 
 import aiohttp
 
+from ..config import Config
 from ..errors import NoSearchResults
+from .local import extract as local_extract
 from .resolver import resolve
 from .youtube import Youtube
 from .youtube_dl import extract as youtube_dl_extract
@@ -50,6 +52,12 @@ async def extract(
                     pass
 
             return Results
+
+        if "local" in Config.ENABLED_EXT_RESOLVER:
+            localResult = await local_extract(query)
+
+            if localResult:
+                return localResult
 
         if not URL_REGEX.match(query):
             try:
