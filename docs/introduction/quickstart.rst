@@ -76,10 +76,10 @@ Assume you know how to use discord.py_, and I will explain the discodo_ code ste
 
 1. We create an instance of :py:class:`DPYClient`. This client will manage voice connections to Discord.
 2. After ``on_ready`` event, we use the :py:attr:`DPYClient.event()` decorator to register an event like discord.py_ . In this case, ``SOURCE_START`` will be called when the music starts playing.
-3. When the ``!join`` command is excuted, we check if the :py:attr:`discord.Message.author` is connected to the voice channel. If it is, then we connected to the channel using DPYClient.connect.
+3. When the ``!join`` command is excuted, we check if the :py:attr:`discord.Message.author` is connected to the voice channel. If it is, then we connected to the channel using :py:func:`DPYClient.connect()`
 4. When the ``!play`` command runs, set the VC.channel to the current message channel to send messages during playback, search for queries and add them to the list.
 5. If the ``!stop`` command is excuted, we destroy the voice client via :py:func:`VoiceClient.destroy()`
-6. Finally, we set local nodes to be used by not giving host argument to :py:func:`DPYClient.registerNode()`.
+6. Finally, we set local nodes to be used by not giving host argument to :py:func:`DPYClient.registerNode()`
 
 Now that we've made a simple music bot, we have to run this. Just as you do when you run a discord.py_ Bot
 

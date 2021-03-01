@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-28 18:41+0900\n"
+"POT-Creation-Date: 2021-02-28 21:01+0900\n"
 "PO-Revision-Date: 2021-02-28 08:54+0000\n"
 "Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
 "Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
@@ -49,27 +49,27 @@ msgstr "discord.py_ 사용법을 알고 있다고 가정하고, discodo_ �
 
 #: ../../introduction/quickstart.rst:77
 msgid ""
-"We create an instance of DPYClient. This client will manage voice "
-"connections to Discord."
-msgstr "DPYClient 인스턴스를 생성합니다. 이 클라이언트는 디스코드와의 보이스 연결을 관리할 것입니다."
+"We create an instance of :py:class:`DPYClient`. This client will manage "
+"voice connections to Discord."
+msgstr ":py:class:`DPYClient` 인스턴스를 생성합니다. 이 클라이언트는 디스코드와의 보이스 연결을 관리할 것입니다."
 
 #: ../../introduction/quickstart.rst:78
 msgid ""
-"After ``on_ready`` event, we use the DPYClient.event() decorator to register"
-" an event like discord.py_ . In this case, ``SOURCE_START`` will be called "
-"when the music starts playing."
+"After ``on_ready`` event, we use the :py:attr:`DPYClient.event()` decorator "
+"to register an event like discord.py_ . In this case, ``SOURCE_START`` will "
+"be called when the music starts playing."
 msgstr ""
-"``on_ready`` 이벤트 이후에, 우리는 discord.py_ 와 비슷하게 DPYClient.event() 데코레이터를 사용하여 "
-"이벤트를 등록합니다. 이 경우에는, ``SOURCE_START`` 는 음악 재생이 시작되었을 때 호출될 것입니다."
+"``on_ready`` 이벤트 이후에, 우리는 discord.py_ 와 비슷하게 :py:attr:`DPYClient.event()` "
+"데코레이터를 사용하여 이벤트를 등록합니다. 이 경우에는, ``SOURCE_START`` 는 음악 재생이 시작되었을 때 호출될 것입니다."
 
 #: ../../introduction/quickstart.rst:79
 msgid ""
-"When the ``!join`` command is excuted, we check if the Message.author_ is "
-"connected to the voice channel. If it is, then we connected to the channel "
-"using DPYClient.connect."
+"When the ``!join`` command is excuted, we check if the "
+":py:attr:`discord.Message.author` is connected to the voice channel. If it "
+"is, then we connected to the channel using :py:func:`DPYClient.connect()`"
 msgstr ""
-"``!join`` 커맨드가 실행됬을 때, Message.author_ 이 보이스 채널에 접속했는지 확인합니다. 만약 그렇다면, "
-"DPYClient.connect를 사용하여 그 채널에 접속합니다."
+"``!join`` 커맨드가 실행됬을 때, :py:attr:`discord.Message.author` 이 보이스 채널에 접속했는지 "
+"확인합니다. 만약 그렇다면, :py:func:`DPYClient.connect()` 를 사용하여 그 채널에 접속합니다."
 
 #: ../../introduction/quickstart.rst:80
 msgid ""
@@ -83,21 +83,25 @@ msgstr ""
 #: ../../introduction/quickstart.rst:81
 msgid ""
 "If the ``!stop`` command is excuted, we destroy the voice client via "
-"VoiceClient.destroy()"
-msgstr "만약 ``!stop`` 커맨드가 실행된다면, VoiceClient.destroy()를 통해 보이스 클라이언트를 제거합니다."
+":py:func:`VoiceClient.destroy()`"
+msgstr ""
+"만약 ``!stop`` 커맨드가 실행된다면, :py:func:`VoiceClient.destroy()` 를 통해 보이스 클라이언트를 "
+"제거합니다."
 
 #: ../../introduction/quickstart.rst:82
 msgid ""
 "Finally, we set local nodes to be used by not giving host argument to "
-"DPYClient.registerNode."
-msgstr "마지막으로, DPYClient.registerNode에 host 인자를 주지 않음으로서 로컬노드를 사용하도록 설정합니다."
+":py:func:`DPYClient.registerNode()`"
+msgstr ""
+"마지막으로, :py:func:`DPYClient.registerNode()` 에 host 인자를 주지 않음으로서 로컬노드를 사용하도록 "
+"설정합니다."
 
-#: ../../introduction/quickstart.rst:86
+#: ../../introduction/quickstart.rst:84
 msgid ""
 "Now that we've made a simple music bot, we have to run this. Just as you do "
 "when you run a discord.py_ Bot"
 msgstr "이제 간단한 음악 봇을 만들었으므로, 이 코드를 실행해야합니다. discord.py_ 봇을 실행할 때 처럼 하면 됩니다."
 
-#: ../../introduction/quickstart.rst:92
+#: ../../introduction/quickstart.rst:90
 msgid "Now you can try playing around with your basic musicbot."
 msgstr "이제 이 간단한 뮤직 봇으로 놀아 볼 수 있습니다."
