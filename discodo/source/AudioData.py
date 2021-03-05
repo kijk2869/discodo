@@ -165,7 +165,7 @@ class AudioData:
                         return await self.source(
                             *args, _retry=_retry + 1, _limited=True, **kwargs
                         )
-                    elif _retry == 1:
+                    if _retry == 1:
                         await clear_cache()
                         return await self.source(
                             *args, _retry=_retry + 1, _limited=True, **kwargs
