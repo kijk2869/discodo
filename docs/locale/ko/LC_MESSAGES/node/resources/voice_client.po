@@ -1,0 +1,350 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-05 12:56+0900\n"
+"PO-Revision-Date: 2021-03-05 03:56+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../node/resources/voice_client.rst:2
+msgid "VoiceClient"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:5
+msgid "Get State"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:8
+msgid "> Example getState"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:20
+msgid "< Example getState response"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:46
+msgid "Get Context"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:50
+msgid "Get context of the voice client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:52
+#: ../../node/resources/voice_client.rst:78
+#: ../../node/resources/voice_client.rst:106
+#: ../../node/resources/voice_client.rst:136
+#: ../../node/resources/voice_client.rst:166
+#: ../../node/resources/voice_client.rst:195
+#: ../../node/resources/voice_client.rst:229
+#: ../../node/resources/voice_client.rst:331
+#: ../../node/resources/voice_client.rst:359
+msgid "**Example response**:"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "Request Headers"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:60
+#: ../../node/resources/voice_client.rst:86
+#: ../../node/resources/voice_client.rst:116
+#: ../../node/resources/voice_client.rst:146
+#: ../../node/resources/voice_client.rst:177
+#: ../../node/resources/voice_client.rst:206
+#: ../../node/resources/voice_client.rst:239
+#: ../../node/resources/voice_client.rst:257
+#: ../../node/resources/voice_client.rst:277
+#: ../../node/resources/voice_client.rst:295
+#: ../../node/resources/voice_client.rst:313
+#: ../../node/resources/voice_client.rst:341
+#: ../../node/resources/voice_client.rst:369
+msgid "Password for discodo server"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:62
+#: ../../node/resources/voice_client.rst:88
+#: ../../node/resources/voice_client.rst:118
+#: ../../node/resources/voice_client.rst:148
+#: ../../node/resources/voice_client.rst:179
+#: ../../node/resources/voice_client.rst:208
+#: ../../node/resources/voice_client.rst:241
+#: ../../node/resources/voice_client.rst:259
+#: ../../node/resources/voice_client.rst:279
+#: ../../node/resources/voice_client.rst:297
+#: ../../node/resources/voice_client.rst:315
+#: ../../node/resources/voice_client.rst:343
+#: ../../node/resources/voice_client.rst:371
+msgid "the bot user id"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:63
+#: ../../node/resources/voice_client.rst:89
+#: ../../node/resources/voice_client.rst:119
+#: ../../node/resources/voice_client.rst:149
+#: ../../node/resources/voice_client.rst:180
+#: ../../node/resources/voice_client.rst:209
+#: ../../node/resources/voice_client.rst:242
+#: ../../node/resources/voice_client.rst:260
+#: ../../node/resources/voice_client.rst:280
+#: ../../node/resources/voice_client.rst:298
+#: ../../node/resources/voice_client.rst:316
+#: ../../node/resources/voice_client.rst:344
+#: ../../node/resources/voice_client.rst:372
+msgid "the bot shard id"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:64
+#: ../../node/resources/voice_client.rst:90
+#: ../../node/resources/voice_client.rst:120
+#: ../../node/resources/voice_client.rst:150
+#: ../../node/resources/voice_client.rst:181
+#: ../../node/resources/voice_client.rst:210
+#: ../../node/resources/voice_client.rst:243
+#: ../../node/resources/voice_client.rst:261
+#: ../../node/resources/voice_client.rst:281
+#: ../../node/resources/voice_client.rst:299
+#: ../../node/resources/voice_client.rst:317
+#: ../../node/resources/voice_client.rst:345
+#: ../../node/resources/voice_client.rst:373
+msgid "the guild id of queue"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:65
+#: ../../node/resources/voice_client.rst:91
+#: ../../node/resources/voice_client.rst:121
+#: ../../node/resources/voice_client.rst:151
+#: ../../node/resources/voice_client.rst:182
+#: ../../node/resources/voice_client.rst:211
+#: ../../node/resources/voice_client.rst:244
+#: ../../node/resources/voice_client.rst:262
+#: ../../node/resources/voice_client.rst:282
+#: ../../node/resources/voice_client.rst:300
+#: ../../node/resources/voice_client.rst:318
+#: ../../node/resources/voice_client.rst:346
+#: ../../node/resources/voice_client.rst:374
+msgid "the voiceclient id"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "Status Codes"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:67
+#: ../../node/resources/voice_client.rst:95
+#: ../../node/resources/voice_client.rst:125
+#: ../../node/resources/voice_client.rst:155
+#: ../../node/resources/voice_client.rst:184
+#: ../../node/resources/voice_client.rst:218
+#: ../../node/resources/voice_client.rst:246
+#: ../../node/resources/voice_client.rst:266
+#: ../../node/resources/voice_client.rst:284
+#: ../../node/resources/voice_client.rst:302
+#: ../../node/resources/voice_client.rst:320
+#: ../../node/resources/voice_client.rst:348
+#: ../../node/resources/voice_client.rst:376
+msgid "no error"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:68
+#: ../../node/resources/voice_client.rst:96
+#: ../../node/resources/voice_client.rst:126
+#: ../../node/resources/voice_client.rst:156
+#: ../../node/resources/voice_client.rst:185
+#: ../../node/resources/voice_client.rst:219
+#: ../../node/resources/voice_client.rst:247
+#: ../../node/resources/voice_client.rst:267
+#: ../../node/resources/voice_client.rst:285
+#: ../../node/resources/voice_client.rst:303
+#: ../../node/resources/voice_client.rst:321
+#: ../../node/resources/voice_client.rst:349
+#: ../../node/resources/voice_client.rst:377
+msgid "authorization failed or VoiceClient-ID mismatched"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:69
+#: ../../node/resources/voice_client.rst:97
+#: ../../node/resources/voice_client.rst:127
+#: ../../node/resources/voice_client.rst:157
+#: ../../node/resources/voice_client.rst:186
+#: ../../node/resources/voice_client.rst:220
+#: ../../node/resources/voice_client.rst:248
+#: ../../node/resources/voice_client.rst:268
+#: ../../node/resources/voice_client.rst:286
+#: ../../node/resources/voice_client.rst:304
+#: ../../node/resources/voice_client.rst:322
+#: ../../node/resources/voice_client.rst:350
+#: ../../node/resources/voice_client.rst:378
+msgid "ClientManager or VoiceClient not found"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:72
+msgid "Set Context"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:76
+msgid "Set context of the voice client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "JSON Parameters"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:93
+msgid "context to set"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:100
+msgid "Put Source"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:104
+msgid "Put the source object on Queue"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:123
+msgid "the source object to put"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:130
+msgid "Load Source"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:134
+msgid "Search query and put it on Queue"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:153
+msgid "query to search"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:160
+msgid "Get Options"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:164
+msgid "Get options of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:189
+msgid "Set Options"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:193
+msgid "Set options of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:213
+msgid "volume value"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:214
+msgid "crossfade value"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:215
+msgid "autoplay value"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:216
+msgid "filter value"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:223
+msgid "Get Position"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:227
+msgid "Get position of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:251
+msgid "Set Position (Seek)"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:255
+msgid "Set position of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:264
+msgid "position to seek"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:271
+msgid "Skip Current"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:275
+msgid "Skip current of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:289
+msgid "Pause"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:293
+msgid "Pause current of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:307
+msgid "Resume"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:311
+msgid "Resume current of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:325
+msgid "Shuffle Queue"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:329
+msgid "Shuffle the queue of the voice_client"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:353
+msgid "Get Queue"
+msgstr ""
+
+#: ../../node/resources/voice_client.rst:357
+msgid "Get the queue of the voice_client"
+msgstr ""

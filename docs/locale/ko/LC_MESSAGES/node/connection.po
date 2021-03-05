@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-05 10:24+0900\n"
+"POT-Creation-Date: 2021-03-05 12:56+0900\n"
 "PO-Revision-Date: 2021-03-05 01:26+0000\n"
 "Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
 "Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
@@ -103,12 +103,12 @@ msgstr ""
 " 그렇지 않으면 ``FORBIDDEN`` 을 수신합니다."
 
 #: ../../node/connection.rst:38
-msgid "< Example HELLO"
-msgstr "< HELLO 예제"
+msgid "> Example HELLO"
+msgstr ""
 
 #: ../../node/connection.rst:50
-msgid "< Example FORBIDDEN"
-msgstr "< FORBIDDEN 예제"
+msgid "> Example FORBIDDEN"
+msgstr ""
 
 #: ../../node/connection.rst:60
 msgid "Heartbeating"

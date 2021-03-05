@@ -34,7 +34,7 @@ Websocket Headers
 
 Once connected, the client should immediately receive ``HELLO`` with the connection's heartbeat interval unless you missed headers or mismatched, otherwise receive ``FORBIDDEN``.
 
-< Example HELLO
+> Example HELLO
 ^^^^^^^^^^^^^^^
 
 .. code-block:: json
@@ -46,7 +46,7 @@ Once connected, the client should immediately receive ``HELLO`` with the connect
         }
     }
 
-< Example FORBIDDEN
+> Example FORBIDDEN
 ^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: json

@@ -31,6 +31,12 @@ source_file = _build/gettext/node/connection.pot
 source_lang = en
 type = PO
 
+[discodo.docs__build_gettext_node_resources_voice_client]
+file_filter = locale/<lang>/LC_MESSAGES/node/resources/voice_client.po
+source_file = _build/gettext/node/resources/voice_client.pot
+source_lang = en
+type = PO
+
 [discodo.docs__build_gettext_node_resources_source]
 file_filter = locale/<lang>/LC_MESSAGES/node/resources/source.po
 source_file = _build/gettext/node/resources/source.pot
