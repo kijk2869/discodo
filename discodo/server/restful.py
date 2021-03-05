@@ -326,7 +326,7 @@ async def changeQueueItemTag(request, VoiceClient, tag):
     if "context" in request.json:
         source.Context = request.json["context"]
 
-    if "context" in request.json:
+    if "start_position" in request.json:
         source.start_position = request.json["start_position"]
 
     return JSONResponse(source)
