@@ -1,0 +1,350 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-05 11:56+0900\n"
+"PO-Revision-Date: 2021-03-05 02:57+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../node/resources/source.rst:2
+msgid "AudioData"
+msgstr ""
+
+#: ../../node/resources/source.rst:5
+msgid "AudioData Object"
+msgstr ""
+
+#: ../../node/resources/source.rst:8
+msgid "AudioData Structure"
+msgstr ""
+
+#: ../../node/resources/source.rst:11 ../../node/resources/source.rst:53
+msgid "Field"
+msgstr ""
+
+#: ../../node/resources/source.rst:11 ../../node/resources/source.rst:53
+msgid "Type"
+msgstr ""
+
+#: ../../node/resources/source.rst:11 ../../node/resources/source.rst:53
+msgid "Description"
+msgstr ""
+
+#: ../../node/resources/source.rst:13 ../../node/resources/source.rst:55
+msgid "_type"
+msgstr ""
+
+#: ../../node/resources/source.rst:13 ../../node/resources/source.rst:15
+#: ../../node/resources/source.rst:17 ../../node/resources/source.rst:55
+#: ../../node/resources/source.rst:57 ../../node/resources/source.rst:59
+msgid "string"
+msgstr ""
+
+#: ../../node/resources/source.rst:13
+msgid "fixed value ``AudioData``"
+msgstr ""
+
+#: ../../node/resources/source.rst:15 ../../node/resources/source.rst:57
+msgid "tag"
+msgstr ""
+
+#: ../../node/resources/source.rst:15 ../../node/resources/source.rst:57
+msgid "object tag (uuid)"
+msgstr ""
+
+#: ../../node/resources/source.rst:17 ../../node/resources/source.rst:59
+msgid "id"
+msgstr ""
+
+#: ../../node/resources/source.rst:17 ../../node/resources/source.rst:59
+msgid "source id"
+msgstr ""
+
+#: ../../node/resources/source.rst:19 ../../node/resources/source.rst:61
+msgid "title"
+msgstr ""
+
+#: ../../node/resources/source.rst:19 ../../node/resources/source.rst:21
+#: ../../node/resources/source.rst:23 ../../node/resources/source.rst:25
+#: ../../node/resources/source.rst:31 ../../node/resources/source.rst:33
+#: ../../node/resources/source.rst:61 ../../node/resources/source.rst:63
+#: ../../node/resources/source.rst:65 ../../node/resources/source.rst:67
+#: ../../node/resources/source.rst:73 ../../node/resources/source.rst:75
+msgid "?string"
+msgstr ""
+
+#: ../../node/resources/source.rst:19 ../../node/resources/source.rst:61
+msgid "source title"
+msgstr ""
+
+#: ../../node/resources/source.rst:21 ../../node/resources/source.rst:63
+msgid "webpage_url"
+msgstr ""
+
+#: ../../node/resources/source.rst:21 ../../node/resources/source.rst:63
+msgid "source webpage url"
+msgstr ""
+
+#: ../../node/resources/source.rst:23 ../../node/resources/source.rst:65
+msgid "thumbnail"
+msgstr ""
+
+#: ../../node/resources/source.rst:23 ../../node/resources/source.rst:65
+msgid "source thumbnail"
+msgstr ""
+
+#: ../../node/resources/source.rst:25 ../../node/resources/source.rst:67
+msgid "url"
+msgstr ""
+
+#: ../../node/resources/source.rst:25 ../../node/resources/source.rst:67
+msgid "source stream url"
+msgstr ""
+
+#: ../../node/resources/source.rst:27 ../../node/resources/source.rst:69
+msgid "duration"
+msgstr ""
+
+#: ../../node/resources/source.rst:27
+msgid "?integer"
+msgstr ""
+
+#: ../../node/resources/source.rst:27 ../../node/resources/source.rst:69
+msgid "source duration"
+msgstr ""
+
+#: ../../node/resources/source.rst:29 ../../node/resources/source.rst:71
+msgid "is_live"
+msgstr ""
+
+#: ../../node/resources/source.rst:29 ../../node/resources/source.rst:39
+#: ../../node/resources/source.rst:71 ../../node/resources/source.rst:81
+#: ../../node/resources/source.rst:87
+msgid "boolean"
+msgstr ""
+
+#: ../../node/resources/source.rst:29 ../../node/resources/source.rst:71
+msgid "source live state"
+msgstr ""
+
+#: ../../node/resources/source.rst:31 ../../node/resources/source.rst:73
+msgid "uploader"
+msgstr ""
+
+#: ../../node/resources/source.rst:31 ../../node/resources/source.rst:73
+msgid "source uploader"
+msgstr ""
+
+#: ../../node/resources/source.rst:33 ../../node/resources/source.rst:75
+msgid "description"
+msgstr ""
+
+#: ../../node/resources/source.rst:33 ../../node/resources/source.rst:75
+msgid "source description"
+msgstr ""
+
+#: ../../node/resources/source.rst:35 ../../node/resources/source.rst:77
+msgid "subtitles"
+msgstr ""
+
+#: ../../node/resources/source.rst:35 ../../node/resources/source.rst:37
+#: ../../node/resources/source.rst:41 ../../node/resources/source.rst:77
+#: ../../node/resources/source.rst:79 ../../node/resources/source.rst:83
+msgid "json"
+msgstr ""
+
+#: ../../node/resources/source.rst:35 ../../node/resources/source.rst:77
+msgid "source subtitles (Mostly SRV1)"
+msgstr ""
+
+#: ../../node/resources/source.rst:37 ../../node/resources/source.rst:79
+msgid "chapters"
+msgstr ""
+
+#: ../../node/resources/source.rst:37 ../../node/resources/source.rst:79
+msgid "source chapters (Only in youtube)"
+msgstr ""
+
+#: ../../node/resources/source.rst:39 ../../node/resources/source.rst:81
+msgid "related"
+msgstr ""
+
+#: ../../node/resources/source.rst:39 ../../node/resources/source.rst:81
+msgid "related playing state"
+msgstr ""
+
+#: ../../node/resources/source.rst:41 ../../node/resources/source.rst:83
+msgid "context"
+msgstr ""
+
+#: ../../node/resources/source.rst:41 ../../node/resources/source.rst:83
+msgid "object context"
+msgstr ""
+
+#: ../../node/resources/source.rst:43 ../../node/resources/source.rst:85
+msgid "start_position"
+msgstr ""
+
+#: ../../node/resources/source.rst:43 ../../node/resources/source.rst:85
+msgid "float"
+msgstr ""
+
+#: ../../node/resources/source.rst:43
+msgid "source start position"
+msgstr ""
+
+#: ../../node/resources/source.rst:47
+msgid "AudioSource Object"
+msgstr ""
+
+#: ../../node/resources/source.rst:50
+msgid "AudioSource Structure"
+msgstr ""
+
+#: ../../node/resources/source.rst:55
+msgid "fixed value ``AudioSource``"
+msgstr ""
+
+#: ../../node/resources/source.rst:69
+msgid "integer"
+msgstr ""
+
+#: ../../node/resources/source.rst:85
+msgid "start position"
+msgstr ""
+
+#: ../../node/resources/source.rst:87
+msgid "seekable"
+msgstr ""
+
+#: ../../node/resources/source.rst:87
+msgid "seekable state"
+msgstr ""
+
+#: ../../node/resources/source.rst:89
+msgid "position"
+msgstr ""
+
+#: ../../node/resources/source.rst:89
+msgid "?float"
+msgstr ""
+
+#: ../../node/resources/source.rst:89
+msgid "source current position"
+msgstr ""
+
+#: ../../node/resources/source.rst:93
+msgid "Get From The Queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:97
+msgid "The source object in queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:99 ../../node/resources/source.rst:128
+#: ../../node/resources/source.rst:161
+msgid "**Example response**:"
+msgstr ""
+
+#: ../../node/resources/source.rst:0 ../../node/resources/source.rst:0
+#: ../../node/resources/source.rst:0
+msgid "Parameters"
+msgstr ""
+
+#: ../../node/resources/source.rst:107 ../../node/resources/source.rst:136
+#: ../../node/resources/source.rst:174
+msgid "the tag or index of source object"
+msgstr ""
+
+#: ../../node/resources/source.rst:0 ../../node/resources/source.rst:0
+#: ../../node/resources/source.rst:0
+msgid "Request Headers"
+msgstr ""
+
+#: ../../node/resources/source.rst:110 ../../node/resources/source.rst:139
+#: ../../node/resources/source.rst:177
+msgid "Password for discodo server"
+msgstr ""
+
+#: ../../node/resources/source.rst:112 ../../node/resources/source.rst:141
+#: ../../node/resources/source.rst:179
+msgid "the bot user id"
+msgstr ""
+
+#: ../../node/resources/source.rst:113 ../../node/resources/source.rst:142
+#: ../../node/resources/source.rst:180
+msgid "the bot shard id"
+msgstr ""
+
+#: ../../node/resources/source.rst:114 ../../node/resources/source.rst:143
+#: ../../node/resources/source.rst:181
+msgid "the guild id of queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:115 ../../node/resources/source.rst:144
+#: ../../node/resources/source.rst:182
+msgid "the voiceclient id"
+msgstr ""
+
+#: ../../node/resources/source.rst:0 ../../node/resources/source.rst:0
+#: ../../node/resources/source.rst:0
+msgid "Status Codes"
+msgstr ""
+
+#: ../../node/resources/source.rst:117 ../../node/resources/source.rst:150
+#: ../../node/resources/source.rst:184
+msgid "no error"
+msgstr ""
+
+#: ../../node/resources/source.rst:118 ../../node/resources/source.rst:151
+#: ../../node/resources/source.rst:185
+msgid "authorization failed or VoiceClient-ID mismatched"
+msgstr ""
+
+#: ../../node/resources/source.rst:119 ../../node/resources/source.rst:152
+#: ../../node/resources/source.rst:186
+msgid "ClientManager or VoiceClient not found"
+msgstr ""
+
+#: ../../node/resources/source.rst:122
+msgid "Edit From The Queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:126
+msgid "Edit the source object in queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:0
+msgid "JSON Parameters"
+msgstr ""
+
+#: ../../node/resources/source.rst:146
+msgid "index to move the source in queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:147
+msgid "context to save on the object"
+msgstr ""
+
+#: ../../node/resources/source.rst:148
+msgid "position to start on (only in AudioData)"
+msgstr ""
+
+#: ../../node/resources/source.rst:155
+msgid "Remove From The Queue"
+msgstr ""
+
+#: ../../node/resources/source.rst:159
+msgid "Remove the source object in queue"
+msgstr ""
