@@ -9,7 +9,7 @@ from .models import Queue, ensureQueueObjectType
 class VoiceClient:
     """Represents a voice connection of the guild.
 
-    :var discord.Node Node: The node which the connection is connected with.
+    :var discodo.Node Node: The node which the connection is connected with.
     :var discodo.DPYClient client: The client which the connection is binded.
     :var asyncio.AbstractEventLoop loop: The event loop that the client uses for operation.
     :var str id: The id of the voice client, which is used on restful api.
