@@ -1,5 +1,5 @@
-VoiceClient
-===========
+Voice Client
+============
 
 Get State
 ---------
@@ -18,6 +18,7 @@ Get State
 
 
 < Example getState response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: json
 
