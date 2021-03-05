@@ -1,5 +1,5 @@
 from .utils import EventDispatcher
-from .voice_client import VoiceClient
+from .voice_client import DiscordVoiceClient
 
 
 class DiscordEvent:
@@ -39,7 +39,7 @@ class DiscordEvent:
                 int(data["channel_id"]) if data.get("channel_id") else None
             )
         elif data.get("channel_id"):
-            vc = self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
+            vc = self.manager.voiceClients[int(data["guild_id"])] = DiscordVoiceClient(
                 self.manager
             )
             vc.guild_id = int(data["guild_id"])
@@ -51,7 +51,7 @@ class DiscordEvent:
         if self.manager.getVC(data["guild_id"], safe=True):
             await self.manager.getVC(data["guild_id"]).createSocket(data)
         else:
-            vc = self.manager.voiceClients[int(data["guild_id"])] = VoiceClient(
+            vc = self.manager.voiceClients[int(data["guild_id"])] = DiscordVoiceClient(
                 self.manager, data
             )
 

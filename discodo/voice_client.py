@@ -12,7 +12,7 @@ from .source import AudioData, AudioSource
 from .utils import CallbackList, EventDispatcher
 
 
-class VoiceClient(VoiceConnector):
+class DiscordVoiceClient(VoiceConnector):
     def __init__(self, manager, data=None):
         super().__init__(manager, data=data)
 
