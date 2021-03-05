@@ -44,3 +44,9 @@ Client libraries
    introduction/installation.rst
    introduction/quickstart.rst
    introduction/logging.rst
+
+.. toctree::
+   :caption: Node
+   :maxdepth: 1
+
+   node/connection.rst

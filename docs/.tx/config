@@ -24,3 +24,9 @@ file_filter = locale/<lang>/LC_MESSAGES/introduction/quickstart.po
 source_file = _build/gettext/introduction/quickstart.pot
 source_lang = en
 type = PO
+
+[discodo.docs__build_gettext_node_connection]
+file_filter = locale/<lang>/LC_MESSAGES/node/connection.po
+source_file = _build/gettext/node/connection.pot
+source_lang = en
+type = PO

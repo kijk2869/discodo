@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-05 10:24+0900\n"
+"PO-Revision-Date: 2021-03-05 01:26+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../node/connection.rst:2
+msgid "Websocket Connection"
+msgstr ""
+
+#: ../../node/connection.rst:4
+msgid "Discodo using websocket to send and receive events."
+msgstr ""
+
+#: ../../node/connection.rst:7
+msgid "Payloads"
+msgstr ""
+
+#: ../../node/connection.rst:10
+msgid "Payload Structure"
+msgstr ""
+
+#: ../../node/connection.rst:13 ../../node/connection.rst:30
+msgid "Field"
+msgstr ""
+
+#: ../../node/connection.rst:13 ../../node/connection.rst:30
+msgid "Type"
+msgstr ""
+
+#: ../../node/connection.rst:13 ../../node/connection.rst:30
+msgid "Description"
+msgstr ""
+
+#: ../../node/connection.rst:15
+msgid "op"
+msgstr ""
+
+#: ../../node/connection.rst:15 ../../node/connection.rst:32
+msgid "string"
+msgstr ""
+
+#: ../../node/connection.rst:15
+msgid "operation name for the payload"
+msgstr ""
+
+#: ../../node/connection.rst:17
+msgid "d"
+msgstr ""
+
+#: ../../node/connection.rst:17
+msgid "?mixed (Mostly JSON)"
+msgstr ""
+
+#: ../../node/connection.rst:17
+msgid "event data"
+msgstr ""
+
+#: ../../node/connection.rst:21
+msgid "Connecting to Discodo"
+msgstr ""
+
+#: ../../node/connection.rst:24
+msgid "Connecting"
+msgstr ""
+
+#: ../../node/connection.rst:27
+msgid "Websocket Headers"
+msgstr ""
+
+#: ../../node/connection.rst:32
+msgid "Authorization"
+msgstr ""
+
+#: ../../node/connection.rst:32
+msgid "Password for discodo server"
+msgstr ""
+
+#: ../../node/connection.rst:35
+msgid ""
+"Once connected, the client should immediately receive ``HELLO`` with the "
+"connection's heartbeat interval unless you missed headers or mismatched, "
+"otherwise receive ``FORBIDDEN``."
+msgstr ""
+
+#: ../../node/connection.rst:38
+msgid "< Example HELLO"
+msgstr ""
+
+#: ../../node/connection.rst:50
+msgid "< Example FORBIDDEN"
+msgstr ""
+
+#: ../../node/connection.rst:60
+msgid "Heartbeating"
+msgstr ""
+
+#: ../../node/connection.rst:62
+msgid ""
+"Recieveing ``HELLO`` payload, the client should begin sending ``HEARTBEAT`` "
+"every ``heartbeat_interval`` seconds, until the connection closed."
+msgstr ""
+
+#: ../../node/connection.rst:65
+msgid "< Example HEARTBEAT"
+msgstr ""
+
+#: ../../node/connection.rst:74
+msgid "Event Data (``d``) can be ``None``, the server will echo them."
+msgstr ""
+
+#: ../../node/connection.rst:77
+msgid "> Example HEARTBEAT_ACK"
+msgstr ""
+
+#: ../../node/connection.rst:87
+msgid "Identifying"
+msgstr ""
+
+#: ../../node/connection.rst:89
+msgid ""
+"The client must send ``IDENTIFY`` to configure the audio manager before "
+"using."
+msgstr ""
+
+#: ../../node/connection.rst:92
+msgid "< Example IDENTIFY"
+msgstr ""
+
+#: ../../node/connection.rst:105
+msgid "Resumed"
+msgstr ""
+
+#: ../../node/connection.rst:107
+msgid ""
+"If the same ``user_id`` with the same ``shard_id`` is connected before "
+"``VC_TIMEOUT``, it will be resumed."
+msgstr ""
+
+#: ../../node/connection.rst:110
+msgid "> Example Resumed"
+msgstr ""
+
+#: ../../node/connection.rst:123
+msgid ""
+"When the client recieve ``RESUMED``, must reconnect to each voice channel."
+msgstr ""
+
+#: ../../node/connection.rst:126
+msgid "Disconnecting"
+msgstr ""
+
+#: ../../node/connection.rst:128
+msgid ""
+"If the connection is closed, the server will clean up manager and sources "
+"after ``VC_TIMEOUT``"
+msgstr ""
