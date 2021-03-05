@@ -50,3 +50,4 @@ Client libraries
    :maxdepth: 1
 
    node/connection.rst
+   node/resources/source.rst

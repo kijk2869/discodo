@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx_rtd_theme",
+    "sphinxcontrib.httpdomain",
 ]
 
 intersphinx_mapping = {
