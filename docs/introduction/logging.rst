@@ -1,3 +1,5 @@
+.. _logging_setup:
+
 Setting Up Logging
 ==================
 
