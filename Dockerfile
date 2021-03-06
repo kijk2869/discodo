@@ -24,7 +24,7 @@ WORKDIR /opt/discodo
 COPY . .
 
 # Move example config file
-RUN mv example/remote/config.inc.json config.json
+RUN mv example/config.inc.json config.json
 
 # install pypi dependencies
 RUN pip install --no-cache-dir --force-reinstall requirements.txt --no-binary av
