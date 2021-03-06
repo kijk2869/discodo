@@ -29,12 +29,6 @@ class NodeClient(OriginNode):
                 self.client.disconnect(self.client.client.get_guild(guildId))
             )
 
-    async def destroy(self, *args, **kwargs) -> None:
-        await super().destroy(*args, **kwargs)
-
-        if self in self.client.Nodes:
-            self.client.Nodes.remove(self)
-
 
 class DPYClient:
     r"""Represents a client connection that connects to Discodo.

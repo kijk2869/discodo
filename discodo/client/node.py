@@ -73,6 +73,20 @@ async def launchLocalNode(**options):
 
 
 class Node:
+    r"""Represents a discodo node connection.
+
+    :var discodo.DPYClient client: The client which the node is binded.
+    :var Optional ws: The websocket gateway the client is currently connected to.
+    :var EventDispatcher dispatcher: The event dispatcher that the client dispatches events.
+    :var asyncio.AbstractEventLoop loop: The event loop that the client uses for operation.
+    :var str host: The host of the node to connect to.
+    :var int port: The port of the node to connect to.
+    :var str password:  The password of the node to connect to.
+    :var int user_id: This bot's ID
+    :var Optional[int] shard_id: This bot's shard ID, could be ``None``
+    :var Optional[str] region: Region set when registering a node
+    :var dict voiceClients: A dictionary consisting of pairs of guild IDs and voice clients."""
+
     def __init__(
         self,
         client,
@@ -118,17 +132,31 @@ class Node:
 
     @property
     def URL(self) -> str:
+        r"""Represents the restful api url of the node.
+
+        :rtype: str"""
+
         return f"http://{self.host}:{self.port}"
 
     @property
     def WS_URL(self) -> str:
+        r"""Represents the websocket url of the node.
+
+        :rtype: str"""
+
         return f"ws://{self.host}:{self.port}/ws"
 
     @property
     def is_connected(self) -> bool:
+        r"""Represents whether the node is connected.
+
+        :rtype: bool"""
+
         return self.connected.is_set() and self.ws and self.ws.is_connected
 
     async def connect(self):
+        r"""Connect to the node."""
+
         if self.connected.is_set():
             raise ValueError("Node already connected")
 
@@ -152,6 +180,8 @@ class Node:
         ...
 
     async def destroy(self):
+        r"""Destroy the node and remove from the client."""
+
         if self._polling and not self._polling.done():
             self._polling.cancel()
 
@@ -161,6 +191,9 @@ class Node:
 
         self.connected.clear()
         self.voiceClients = {}
+
+        if self in self.client.Nodes:
+            self.client.Nodes.remove(self)
 
     async def pollingWS(self) -> None:
         while True:
@@ -180,11 +213,18 @@ class Node:
 
             self.dispatcher.dispatch(Operation, Data)
 
-    def send(self, Operation, Data=None):
+    async def send(self, op, data=None):
+        """Send websocket payload to the node
+
+        :param str op: Operation name of the payload
+        :param Optional[dict] data: Operation data to send with
+
+        :raises discodo.NodeNotConnected: The node is not connnected."""
+
         if not self.ws:
             raise NodeNotConnected
 
-        return self.ws.sendJson({"op": Operation, "d": Data})
+        return await self.ws.sendJson({"op": op, "d": data})
 
     async def onResumed(self, Data):
         for voice_client in self.voiceClients:
@@ -213,12 +253,28 @@ class Node:
                 self.voiceClients[guild_id].__del__()
 
     def getVC(self, guildID, safe=False):
+        r"""Get a voice client from the guild.
+
+        :param int guildID: guild ID from which to get the voice client.
+        :param bool safe: Whether to raise an exception when the voice client cannot be found, defaults to ``False``.
+
+        :raises discodo.VoiceClientNotFound: The voice client was not found and the ``safe`` value is ``False``.
+
+        :rtype: discodo.VoiceClient"""
+
         if not int(guildID) in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
         return self.voiceClients.get(int(guildID))
 
     async def discordDispatch(self, payload):
+        r"""Dispatch the discord payload to the node.
+
+        .. note::
+            If you are using :py:class:`discodo.DPYClient`, you don't have to use this.
+
+        :param dict payload: The event data from the discord."""
+
         if not payload["t"] in [
             "READY",
             "RESUME",
@@ -230,13 +286,25 @@ class Node:
         return await self.send("DISCORD_EVENT", payload)
 
     async def getStatus(self):
+        r"""Get status like cpu usage from the node with websocket.
+
+        :rtype: dict"""
+
         await self.send("GET_STATUS")
 
         return await self.dispatcher.wait_for("STATUS", timeout=10.0)
 
 
 class Nodes(list):
+    r"""Represents a discodo node connection list.
+
+    You can also use it like :py:class:`list`."""
+
     async def connect(self):
+        """Try to connect to all registered nodes.
+
+        :rtype: list"""
+
         task_list: list = list(map(lambda Node: Node.connect(), self))
 
         if not task_list:
@@ -247,6 +315,10 @@ class Nodes(list):
         return list(map(lambda task: task.result(), Done))
 
     async def getStatus(self):
+        """Try to get status from all registered nodes.
+
+        :rtype: list"""
+
         def get_task(Item):
             if Item.is_connected:
                 return Item.getStatus()
