@@ -27,7 +27,7 @@ COPY . .
 RUN mv example/config.inc.json config.json
 
 # install pypi dependencies
-RUN pip install --no-cache-dir --force-reinstall requirements.txt --no-binary av
+RUN pip install --no-cache-dir --force-reinstall -r requirements.txt --no-binary av
 
 # Echo discodo version
 RUN echo "Discodo version: "$(python -m discodo --version)
