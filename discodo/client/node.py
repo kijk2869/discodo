@@ -155,7 +155,9 @@ class Node:
         return self.connected.is_set() and self.ws and self.ws.is_connected
 
     async def connect(self):
-        r"""Connect to the node."""
+        r"""Connect to the node.
+
+        :raises ValueError: The node is already connected."""
 
         if self.connected.is_set():
             raise ValueError("Node already connected")
