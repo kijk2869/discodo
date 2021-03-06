@@ -37,7 +37,7 @@ class DPYClient:
     :param discord.Client class: The client of the bot with discord.py
 
     :var list Nodes: The list of :py:class:`discodo.Node` that is registered.
-    :var discodo.EventDispatcher dispatcher: The event dispatcher that the client dispatches events.
+    :var EventDispatcher dispatcher: The event dispatcher that the client dispatches events.
     :var asyncio.AbstractEventLoop loop: The event loop that the client uses for operation."""
 
     def __init__(self, client):

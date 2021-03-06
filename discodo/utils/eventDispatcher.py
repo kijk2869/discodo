@@ -6,6 +6,12 @@ from typing import Callable
 
 
 class EventDispatcher:
+    r"""Represents an event dispatcher similar to EventEmitter_
+
+    .. _EventEmitter: https://nodejs.org/api/events.html#events_class_eventemitter
+
+    :var Optional[asyncio.AbstractEventLoop] loop: The event loop that the dispatcher uses for operation, defaults to :py:meth:`asyncio.get_event_loop`"""
+
     def __init__(self, loop: asyncio.AbstractEventLoop = None) -> None:
         self._Events = collections.defaultdict(list)
         self._listeners = collections.defaultdict(list)
@@ -14,22 +20,54 @@ class EventDispatcher:
         self.loop = loop or asyncio.get_event_loop()
 
     def on(self, event: str, func: Callable):
+        """Adds the ``func`` function to the end of the listeners list of the ``event``
+
+        :param str event: The event name to listen to.
+        :param Callable func: The function to call when event dispatching.
+
+        :rtype: discodo.EventDispatcher"""
+
         self._Events[event].append(func)
         return self
 
     def off(self, event: str, func: Callable):
+        """Remove the ``func`` function from the listeners list of the ``event``
+
+        :param str event: The event name to remove from.
+        :param Callable func: The function to remove from the list.
+
+        :rtype: discodo.EventDispatcher"""
+
         self._Events[event].remove(func)
         return self
 
     def onAny(self, func: Callable):
+        """Adds the ``func`` function to the end of the listeners list
+
+        :param Callable func: The function to call when event dispatching.
+
+        :rtype: discodo.EventDispatcher"""
+
         self._Any.append(func)
         return self
 
     def offAny(self, func: Callable):
+        """Remove the ``func`` function from the listeners list
+
+        :param Callable func: The function to remove from the list.
+
+        :rtype: discodo.EventDispatcher"""
+
         self._Any.remove(func)
         return self
 
     def dispatch(self, event_: str, *args, **kwargs) -> None:
+        """Call the listeners which is matched with event name.
+
+        :param str event_: The event name to dispatch.
+        :param \*args: An argument list of data to dispatch with.
+        :param \*kwargs: A keyword argument list of data to dispatch with."""
+
         if self._Any:
             for func in self._Any:
                 try:
@@ -78,19 +116,28 @@ class EventDispatcher:
                 traceback.print_exc()
 
     def event(self, event: str):
+        """A decorator that registers an event to listen to.
+
+        :param str event: The event name to listen to."""
+
         def wrapper(func):
             self.on(event, func)
 
         return wrapper
 
-    def once(self, event: str, func: Callable):
-        def wrapper(*args, **kwargs):
-            self.off(event, func)
-            return func(*args, **kwargs)
+    async def wait_for(
+        self, event: str, condition: Callable = None, timeout: float = None
+    ):
+        """Waits for an event that is matching with ``condition`` to be dispatched for ``timeout``
 
-        return self.on(event, wrapper)
+        :param str event: The event name to wait for
+        :param Optional[Callable] condition: A predicate to check what to wait for. this function must return ``bool``
+        :param Optional[float] timeout: The number of seconds to wait.
 
-    def wait_for(self, event: str, condition: Callable = None, timeout: float = None):
+        :raises asyncio.TimeoutError: The timeout is provided and it was reached.
+
+        :rtype: Any"""
+
         Future = self.loop.create_future()
 
         if not condition:
@@ -98,4 +145,4 @@ class EventDispatcher:
 
         self._listeners[event].append((Future, condition))
 
-        return asyncio.wait_for(Future, timeout)
+        return await asyncio.wait_for(Future, timeout)

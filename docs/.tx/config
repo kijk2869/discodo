@@ -42,3 +42,9 @@ file_filter = locale/<lang>/LC_MESSAGES/node/resources/source.po
 source_file = _build/gettext/node/resources/source.pot
 source_lang = en
 type = PO
+
+[discodo.docs__build_gettext_high_api]
+file_filter = locale/<lang>/LC_MESSAGES/high_api.po
+source_file = _build/gettext/high_api.pot
+source_lang = en
+type = PO

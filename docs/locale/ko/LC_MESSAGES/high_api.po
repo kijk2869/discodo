@@ -1,0 +1,1348 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-06 11:54+0900\n"
+"PO-Revision-Date: 2021-03-06 02:55+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../high_api.rst:4
+msgid "High-level API"
+msgstr ""
+
+#: ../../high_api.rst:6
+msgid "This section outlines the API of discodo."
+msgstr ""
+
+#: ../../high_api.rst:10
+msgid ""
+"This module uses the Python logging module to log diagnostic and errors in "
+"an output independent way. If the logging module is not configured, logs "
+"will not be output anywhere. See :ref:`logging_setup` for more information."
+msgstr ""
+
+#: ../../high_api.rst:16
+msgid "Client"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:1
+msgid ""
+"Represents a client connection that connects to Discodo. This class will "
+"interact with Discodo nodes."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.destroy:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.disconnect:0
+#: ../../../discodo/client/DPYClient.pydocstring of discodo.DPYClient.event:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getWebsocket:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.dispatch:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.event:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.off:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.offAny:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.on:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.onAny:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.discordDispatch:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:0 ../../../discodo/client/node.pydocstring
+#: of discodo.client.node.Node.send:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.fetchQueue:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.loadSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.moveTo:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.putSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.searchSources:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.seek:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.send:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setAutoplay:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setContext:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setCrossfade:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setFilter:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setVolume:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.skip:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.moveTo:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.seek:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.setContext:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.setContext:0
+msgid "Parameters"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:4
+msgid "The client of the bot with discord.py"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher:0
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:0 ../../../discodo/errors.pydocstring of
+#: discodo.errors.HTTPException:0
+msgid "Variables"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:6
+msgid "The list of :py:class:`discodo.Node` that is registered."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:7
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:5
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:9
+msgid "The event dispatcher that the client dispatches events."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient:8
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:6
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:5
+msgid "The event loop that the client uses for operation."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:1
+msgid "Connect to the voice channel."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:3
+msgid "The channel to connect to."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:4
+msgid "The node to connect with, defaults to ``getBestNode()``"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.destroy:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.connect:0 ../../../discodo/client/node.pydocstring
+#: of discodo.client.node.Node.getVC:0
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node.send:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.put:0
+msgid "Raises"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:6
+msgid "The ``channel`` value has no ``guild`` property."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:7
+msgid "There is no discodo node that is connected."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:8
+msgid "The connection is not established in 10 seconds."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.connect:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getBestNode:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getWebsocket:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:0
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.DPYClient.voiceClients:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.off:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.offAny:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.on:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.onAny:0
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getCpuCount:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getMemory:0 ../../../discodo/utils/status.pydocstring
+#: of discodo.utils.status.getNetworkInbound:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getNetworkOutbound:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessCpu:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessMemory:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessThreads:0
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getStatus:0 ../../../discodo/utils/status.pydocstring
+#: of discodo.utils.status.getTotalCpu:0
+#: ../../../discodo/utils/tcp.pydocstring of discodo.utils.tcp.getFreePort:0
+#: ../../../discodo/client/node.pydocstring of discodo.Node.URL:0
+#: ../../../discodo/client/node.pydocstring of discodo.Node.WS_URL:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getStatus:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:0 ../../../discodo/client/node.pydocstring
+#: of discodo.Node.is_connected:0 ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Nodes.connect:0
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Nodes.getStatus:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.autoplay:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.crossfade:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.fetchQueue:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.filter:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getContext:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getOptions:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getState:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.loadSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.putSource:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.searchSources:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setAutoplay:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setContext:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setCrossfade:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setFilter:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setVolume:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.shuffle:0
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.volume:0 ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.getContext:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.moveTo:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.put:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.remove:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.seek:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.setContext:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.getContext:0
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.setContext:0
+msgid "Return type"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.destroy:1
+msgid "Destroy the voice client and disconnect from the voice channel"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.destroy:3
+msgid "The guild to destroy the voice client."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.destroy:5
+msgid "The voice client was not found."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.disconnect:1
+msgid "Disconnect from the voice channel."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.disconnect:4
+msgid ""
+"This coroutine doesn't destroy the voice client. Recommand to use "
+":meth:`destroy`"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.disconnect:6
+msgid "The guild to disconnect from."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of discodo.DPYClient.event:1
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.event:1
+msgid "A decorator that registers an event to listen to."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of discodo.DPYClient.event:3
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.event:3
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.on:3
+msgid "The event name to listen to."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getBestNode:1
+msgid "Get the node with the fewest connected players."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:1
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:1
+msgid "Get a voice client from the guild."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:3
+msgid "Guild or guild ID from which to get the voice client."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:5
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:4
+msgid ""
+"Whether to raise an exception when the voice client cannot be found, "
+"defaults to ``False``."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getVC:7
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:6
+msgid "The voice client was not found and the ``safe`` value is ``False``."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getWebsocket:1
+msgid "Get a websocket object of the shard from discord.py"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.getWebsocket:3
+msgid "The shard id to get a object."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:1
+msgid ""
+"Creates a websocket connection of the node and register it on the client."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:3
+msgid ""
+"If the value ``host`` or ``port`` is ``None``, it will launch local node "
+"process."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:5
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:7
+msgid "The host of the node to connect to."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:6
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:8
+msgid "The port of the node to connect to."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:7
+msgid "The password of the node to connect to, defaults to ``hellodiscodo``."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:8
+msgid ""
+"The region of the node to connect to. This is like a annotation. It is not "
+"involved in the actual connection."
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:9
+msgid "The options to use when launching a local node"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:0
+msgid "Returns"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.client.DPYClient.DPYClient.registerNode:11
+msgid "The scheduled task to connect with the node"
+msgstr ""
+
+#: ../../../discodo/client/DPYClient.pydocstring of
+#: discodo.DPYClient.voiceClients:1
+msgid "A property that returns all voice clients from all of connected nodes."
+msgstr ""
+
+#: ../../high_api.rst:22
+msgid "Utils"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher:1
+msgid "Represents an event dispatcher similar to EventEmitter_"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher:5
+msgid ""
+"The event loop that the dispatcher uses for operation, defaults to "
+":py:meth:`asyncio.get_event_loop`"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.dispatch:1
+msgid "Call the listeners which is matched with event name."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.dispatch:3
+msgid "The event name to dispatch."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.dispatch:4
+msgid "An argument list of data to dispatch with."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.dispatch:5
+msgid "A keyword argument list of data to dispatch with."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.off:1
+msgid "Remove the ``func`` function from the listeners list of the ``event``"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.off:3
+msgid "The event name to remove from."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.off:4
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.offAny:3
+msgid "The function to remove from the list."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.offAny:1
+msgid "Remove the ``func`` function from the listeners list"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.on:1
+msgid ""
+"Adds the ``func`` function to the end of the listeners list of the ``event``"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.on:4
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.onAny:3
+msgid "The function to call when event dispatching."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.onAny:1
+msgid "Adds the ``func`` function to the end of the listeners list"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:1
+msgid ""
+"Waits for an event that is matching with ``condition`` to be dispatched for "
+"``timeout``"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:3
+msgid "The event name to wait for"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:4
+msgid ""
+"A predicate to check what to wait for. this function must return ``bool``"
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:5
+msgid "The number of seconds to wait."
+msgstr ""
+
+#: ../../../discodo/utils/eventDispatcher.pydocstring of
+#: discodo.utils.eventDispatcher.EventDispatcher.wait_for:7
+msgid "The timeout is provided and it was reached."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getCpuCount:1
+msgid "Get cpu core count."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getMemory:1
+msgid "Get system memory usage. the unit is mega bytes."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getNetworkInbound:1
+msgid "Get network inbound counters. the unit is mega bytes."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getNetworkOutbound:1
+msgid "Get network outbound counters. the unit is mega bytes."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessCpu:1
+msgid "Get process cpu usage. the unit is percent."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessMemory:1
+msgid "Get process memory usage. the unit is mega bytes."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getProcessThreads:1
+msgid "Get process thread count."
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getStatus:1
+msgid "Represents all information to dictionary"
+msgstr ""
+
+#: ../../../discodo/utils/status.pydocstring of
+#: discodo.utils.status.getTotalCpu:1
+msgid "Get system cpu usage. the unit is percent."
+msgstr ""
+
+#: ../../../discodo/utils/callbackList.pydocstring of
+#: discodo.utils.callbackList.CallbackList:1
+msgid "A list that has callback when the value is changed."
+msgstr ""
+
+#: ../../../discodo/utils/callbackList.pydocstring of
+#: discodo.utils.callbackList.CallbackList.callback:1
+msgid "Override this function to use callback"
+msgstr ""
+
+#: ../../../discodo/utils/tcp.pydocstring of discodo.utils.tcp.getFreePort:1
+msgid "Get free port from the system."
+msgstr ""
+
+#: ../../high_api.rst:36
+msgid "Node"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:1
+msgid "Represents a discodo node connection."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:3
+msgid "The client which the node is binded."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:4
+msgid "The websocket gateway the client is currently connected to."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:9
+msgid "The password of the node to connect to."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:10
+msgid "This bot's ID"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:11
+msgid "This bot's shard ID, could be ``None``"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:12
+msgid "Region set when registering a node"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node:13
+msgid "A dictionary consisting of pairs of guild IDs and voice clients."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.Node.URL:1
+msgid "Represents the restful api url of the node."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.Node.WS_URL:1
+msgid "Represents the websocket url of the node."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.close:1
+msgid "some action to do after disconnected from node"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.connect:1
+msgid "Connect to the node."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.connect:3
+msgid "The node is already connected."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.destroy:1
+msgid "Destroy the node and remove from the client."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.discordDispatch:1
+msgid "Dispatch the discord payload to the node."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.discordDispatch:4
+msgid ""
+"If you are using :py:class:`discodo.DPYClient`, you don't have to use this."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.discordDispatch:6
+msgid "The event data from the discord."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getStatus:1
+msgid "Get status like cpu usage from the node with websocket."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Node.getVC:3
+msgid "guild ID from which to get the voice client."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.Node.is_connected:1
+msgid "Represents whether the node is connected."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node.send:1
+msgid "Send websocket payload to the node"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node.send:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.send:3
+msgid "Operation name of the payload"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node.send:4
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:4
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.send:4
+msgid "Operation data to send with"
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Node.send:6
+msgid "The node is not connnected."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Nodes:1
+msgid "Represents a discodo node connection list."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of discodo.client.node.Nodes:3
+msgid "You can also use it like :py:class:`list`."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Nodes.connect:1
+msgid "Try to connect to all registered nodes."
+msgstr ""
+
+#: ../../../discodo/client/node.pydocstring of
+#: discodo.client.node.Nodes.getStatus:1
+msgid "Try to get status from all registered nodes."
+msgstr ""
+
+#: ../../high_api.rst:45
+msgid "VoiceClient"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:1
+msgid "Represents a voice connection of the guild."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:3
+msgid "The node which the connection is connected with."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:4
+msgid "The client which the connection is binded."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:6
+msgid "The id of the voice client, which is used on restful api."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:7
+msgid "The guild id which is connected to."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:8
+msgid "The channel id which is connected to."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient:10
+msgid "The queue of the guild, it is synced to node and readonly."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.autoplay:1
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.filter:1
+msgid "Represents the autoplay state of this guild."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.crossfade:1
+msgid "Represents the crossfade duration of this guild."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.destroy:1
+msgid "Destroy the client"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.fetchQueue:1
+msgid "Fetch queue to force refresh the internal queue."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.fetchQueue:3
+msgid "Whether to request queue on websocket or not."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.filter:4
+msgid "For more information, check the documentation of the `FFmpeg Filter`_"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getContext:1
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.getContext:1
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.getContext:1
+msgid "Get the context from the node."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getOptions:1
+msgid "Get options of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSource:1
+msgid "Search the query and get source from extractor"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSource:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.loadSource:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.searchSources:3
+msgid "The query to search."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getState:1
+msgid "Fetch current player state."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:1
+msgid ""
+"Request to send synced subtitle to discodo node and handle event to callback"
+" function."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:3
+msgid "``lang`` or ``url`` is required."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:5
+msgid "The callback function on subtitle event, must be coroutine function."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:6
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:5
+msgid "The language to get subtitle."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.getSubtitle:7
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:6
+msgid "The subtitle url to fetch."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.loadSource:1
+msgid "Search the query and put source to the queue"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.moveTo:1
+msgid "Move the player's current Node."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.moveTo:3
+msgid "The node to move to."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.pause:1
+msgid "Pause the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.putSource:1
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.searchSources:1
+msgid "Search the query and get sources from extractor"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.putSource:3
+msgid "The source to put on the queue."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:1
+msgid "Send websocket payload to the node with guild id and await response."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:5
+msgid "Event name to receive response, defaults to ``op``"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:6
+msgid "Seconds to wait for response"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:8
+msgid "The query is timed out."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.query:9
+msgid "The node returned some exceptions."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:1
+msgid "Request to send synced subtitle to discodo node."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.requestSubtitle:3
+msgid "One of the parameters is required."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.resume:1
+msgid "Resume the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.seek:1
+msgid "Seek the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.seek:3
+msgid "The position to seek"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.send:1
+msgid "Send websocket payload to the node with guild id"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setAutoplay:1
+msgid "Set autoplay state of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setAutoplay:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:5
+msgid "The autoplay state of the player to change."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setContext:1
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.setContext:1
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.setContext:1
+msgid "Set the context to the node."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setContext:3
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.setContext:3
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource.setContext:3
+msgid "The context to set."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setCrossfade:1
+msgid "Set crossfade of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setCrossfade:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:4
+msgid "The crossfade of the player to change."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setFilter:1
+msgid "Set filter of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setFilter:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:6
+msgid "The filter object of the player to change."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:1
+msgid "Set options of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setOptions:3
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setVolume:3
+msgid "The volume of the player to change."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.setVolume:1
+msgid "Set volume of the player"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.shuffle:1
+msgid "Shuffle the queue"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.skip:1
+msgid "Skip the source"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.client.voice_client.VoiceClient.skip:3
+msgid "how many to skip the sources"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.volume:1
+msgid "Represents the volume of this guild."
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.volume:3
+msgid "The maximum value is ``2.0``"
+msgstr ""
+
+#: ../../../discodo/client/voice_client.pydocstring of
+#: discodo.VoiceClient.volume:6
+msgid ""
+"This value is a percentage with decimal points. For example, ``100%`` is "
+"``1.0``, and ``5%`` is ``0.05``."
+msgstr ""
+
+#: ../../high_api.rst:51
+msgid "AudioData"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:1
+msgid "Object with playback information"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:7
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:7
+msgid "Checks if two AudioSources are equal."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:11
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:11
+msgid "Checks if two AudioSources are not equal."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:13
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:13
+msgid "The tag of the object"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:14
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:14
+msgid "The id of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:15
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:15
+msgid "The title of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:16
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:16
+msgid "The webpage url of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:17
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:17
+msgid "The thumbnail url of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:18
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:18
+msgid "The stream url of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:19
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:19
+msgid "The duration of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:20
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:20
+msgid "Whether the source is live stream or not"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:21
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:21
+msgid "The uploader of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:22
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:23
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:24
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:22
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:23
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:24
+msgid "The description of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:25
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:25
+msgid "Whether this source is added by autoplay"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:26
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:26
+msgid "The context of the object"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData:27
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:27
+msgid "The start position of the source"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.moveTo:1
+msgid "Move this source to index in the queue."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.moveTo:3
+msgid "The index to move to"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.put:1
+msgid "Put the source into the queue."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.put:3
+msgid "The source is already in the queue."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.remove:1
+msgid "Remove this source from the queue."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.seek:1
+msgid "Seek this source to offset."
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioData.seek:3
+msgid "The position to start playing"
+msgstr ""
+
+#: ../../high_api.rst:57
+msgid "AudioSource"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:1
+msgid "Object with playback information that is loaded"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:28
+msgid "Whether the source is seekable or not"
+msgstr ""
+
+#: ../../../discodo/client/models.pydocstring of
+#: discodo.client.models.AudioSource:29
+msgid "The current position of the source"
+msgstr ""
+
+#: ../../high_api.rst:63
+msgid "Errors"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.DiscodoException:1
+msgid "The basic exception class of discodo"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of
+#: discodo.errors.EncryptModeNotReceived:1
+msgid ""
+"Exception that is thrown when trying to send packet before receveing encrypt"
+" mode."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of
+#: discodo.errors.EncryptModeNotReceived:3
+msgid "It's only raise in :py:class:`DiscordVoiceClient`"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.NotPlaying:1
+msgid ""
+"Exception that is thrown when trying to operate something while not playing."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.VoiceClientNotFound:1
+msgid "Exception that is thrown when there is no voice client."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.NoSearchResults:1
+msgid "Exception that is thrown when there is no search results."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.OpusLoadError:1
+msgid "Exception that is thrown when loading libopus failed."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.HTTPException:1
+msgid "Exception that is thrown when HTTP operation failed."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.HTTPException:3
+msgid "HTTP status code"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.HTTPException:4
+msgid "Description of the HTTP status code"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.HTTPException:5
+msgid "Server message with this request"
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.Forbidden:1
+msgid "Exception that is thrown when HTTP status code is 403."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.TooManyRequests:1
+msgid "Exception that is thrown when HTTP status code is 429."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.NotSeekable:1
+msgid ""
+"Exception that is thrown when trying to seek the source which is not "
+"seekable."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.NodeException:1
+msgid "Exception that is thrown when discodo node returns some exception."
+msgstr ""
+
+#: ../../../discodo/errors.pydocstring of discodo.errors.NodeNotConnected:1
+msgid ""
+"Exception that is thrown when there is no discodo node that is connected."
+msgstr ""

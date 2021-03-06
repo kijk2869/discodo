@@ -1,4 +1,6 @@
 class CallbackList(list):
+    """A list that has callback when the value is changed."""
+
     CALLBACK_METHOD = [
         "append",
         "extend",
@@ -11,6 +13,8 @@ class CallbackList(list):
 
     @staticmethod
     def callback(name, *args):
+        """Override this function to use callback"""
+
         ...
 
     def __setitem__(self, index: int, value):
@@ -41,6 +45,3 @@ class CallbackList(list):
             return wrapper
 
         return results
-
-    def sort(self):
-        raise ValueError("cannot use sort on queue.")

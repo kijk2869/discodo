@@ -18,6 +18,20 @@ Client
 .. autoclass:: discodo.DPYClient
     :members:
 
+Utils
+-----
+
+.. autoclass:: discodo.utils.EventDispatcher
+    :members:
+
+.. automodule:: discodo.utils.status
+    :members:
+
+.. autoclass:: discodo.utils.CallbackList
+    :members:
+
+.. automethod:: discodo.utils.tcp.getFreePort
+
 Node
 ----
 
