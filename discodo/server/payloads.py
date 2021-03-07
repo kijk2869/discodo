@@ -189,7 +189,6 @@ class WebsocketPayloads:
             "d": {
                 "guild_id": data["guild_id"],
                 "identify": _identify_token,
-                "lang": data["lang"],
             },
         }
         return await self.sendJson(payload)
