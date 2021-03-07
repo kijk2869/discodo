@@ -327,8 +327,6 @@ class VoiceClient:
 
         data = await self.query("getState")
 
-        data["current"] = ensureQueueObjectType(self, data["current"])
-
         return data
 
     async def fetchQueue(self, ws=True):
