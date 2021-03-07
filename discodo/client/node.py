@@ -11,6 +11,7 @@ from .. import __dirname
 from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils import EventDispatcher, tcp
 from .gateway import NodeConnection
+from .models import ensureQueueObjectType
 from .voice_client import VoiceClient
 
 LocalNodeProc = None
@@ -213,6 +214,13 @@ class Node:
 
                 return
 
+            if Data and isinstance(Data, dict) and "guild_id" in Data:
+                VC = self.getVC(Data["guild_id"], safe=True)
+                if VC:
+                    Data = ensureQueueObjectType(VC, Data)
+
+                    VC.dispatcher.dispatch(Operation, Data)
+
             self.dispatcher.dispatch(Operation, Data)
 
     async def send(self, op, data=None):
@@ -243,11 +251,6 @@ class Node:
         if Operation == "VC_CREATED":
             guild_id = int(Data["guild_id"])
             self.voiceClients[guild_id] = VoiceClient(self, Data["id"], guild_id)
-
-        if Data and isinstance(Data, dict) and "guild_id" in Data:
-            vc = self.getVC(Data["guild_id"], safe=True)
-            if vc:
-                vc.dispatcher.dispatch(Operation, Data)
 
         if Operation == "VC_DESTROYED":
             guild_id = int(Data["guild_id"])

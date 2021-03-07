@@ -3,7 +3,7 @@ import asyncio
 from ..errors import NodeException
 from ..utils import EventDispatcher
 from .http import HTTPClient
-from .models import Queue, ensureQueueObjectType
+from .models import Queue
 
 
 class VoiceClient:
@@ -181,7 +181,7 @@ class VoiceClient:
 
         data = await self.http.getSource(query)
 
-        return ensureQueueObjectType(self, data["source"])
+        return data["source"]
 
     async def searchSources(self, query):
         r"""Search the query and get sources from extractor
@@ -192,7 +192,7 @@ class VoiceClient:
 
         data = await self.http.searchSources(query)
 
-        return ensureQueueObjectType(self, data["sources"])
+        return data["sources"]
 
     async def putSource(self, source):
         r"""Search the query and get sources from extractor
@@ -208,7 +208,7 @@ class VoiceClient:
             else source.data
         )
 
-        return ensureQueueObjectType(self, data["source"])
+        return data["source"]
 
     async def loadSource(self, query):
         r"""Search the query and put source to the queue
@@ -219,7 +219,7 @@ class VoiceClient:
 
         data = await self.http.loadSource(query)
 
-        return ensureQueueObjectType(self, data["source"])
+        return data["source"]
 
     async def skip(self, offset=1):
         r"""Skip the source

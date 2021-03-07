@@ -62,6 +62,9 @@ class AudioData:
         for key, value in data.items():
             setattr(self, key, value)
 
+    def __getitem__(self, key):
+        return self.data.get(key)
+
     def __repr__(self) -> str:
         return f"<AudioData id={self.id} title='{self.title}' duration={self.duration}>"
 
@@ -180,6 +183,9 @@ class AudioSource:
         for key, value in data.items():
             setattr(self, key, value)
 
+    def __getitem__(self, key):
+        return self.data.get(key)
+
     def __repr__(self) -> str:
         return (
             f"<AudioSource id={self.id} title='{self.title}' duration={self.duration}"
@@ -228,13 +234,20 @@ def ensureQueueObjectType(VoiceClient, argument):
         return list(map(lambda x: ensureQueueObjectType(VoiceClient, x), argument))
 
     _type = argument.get("_type") if isinstance(argument, dict) else None
-    if not _type:
-        return argument
 
     typeObject = ARGUMENT_MAPPING.get(_type)
 
-    if not typeObject:
-        log.warning(f"queue object argument type {_type} not found, ignored.")
+    if not _type or not typeObject:
+        if isinstance(argument, dict):
+            return dict(
+                list(
+                    map(
+                        lambda x: (x[0], ensureQueueObjectType(VoiceClient, x[1])),
+                        argument.items(),
+                    )
+                )
+            )
+
         return argument
 
     return typeObject(VoiceClient, argument)
