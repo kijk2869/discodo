@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 11:54+0900\n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
 "PO-Revision-Date: 2021-02-28 08:54+0000\n"
 "Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
 "Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
@@ -29,9 +29,9 @@ msgstr "소개"
 msgid "Node"
 msgstr "노드"
 
-#: ../../index.rst:56 ../../index.rst:56
+#: ../../index.rst:57 ../../index.rst:57
 msgid "API Reference"
-msgstr ""
+msgstr "API 레퍼런스"
 
 #: ../../index.rst:7
 msgid "Welcome to discodo's documentation!"

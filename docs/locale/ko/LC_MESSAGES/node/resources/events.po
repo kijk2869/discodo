@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-07 18:34+0900\n"
+"POT-Creation-Date: 2021-03-09 10:43+0900\n"
 "PO-Revision-Date: 2021-03-07 09:35+0000\n"
 "Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -48,9 +48,10 @@ msgstr ""
 #: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
 #: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
 #: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
-#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
-#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
-#: ../../node/resources/events.rst:237
+#: ../../node/resources/events.rst:167 ../../node/resources/events.rst:194
+#: ../../node/resources/events.rst:207 ../../node/resources/events.rst:222
+#: ../../node/resources/events.rst:241 ../../node/resources/events.rst:254
+#: ../../node/resources/events.rst:267
 msgid "Field"
 msgstr ""
 
@@ -59,9 +60,10 @@ msgstr ""
 #: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
 #: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
 #: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
-#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
-#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
-#: ../../node/resources/events.rst:237
+#: ../../node/resources/events.rst:167 ../../node/resources/events.rst:194
+#: ../../node/resources/events.rst:207 ../../node/resources/events.rst:222
+#: ../../node/resources/events.rst:241 ../../node/resources/events.rst:254
+#: ../../node/resources/events.rst:267
 msgid "Type"
 msgstr ""
 
@@ -70,9 +72,10 @@ msgstr ""
 #: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
 #: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
 #: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
-#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
-#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
-#: ../../node/resources/events.rst:237
+#: ../../node/resources/events.rst:167 ../../node/resources/events.rst:194
+#: ../../node/resources/events.rst:207 ../../node/resources/events.rst:222
+#: ../../node/resources/events.rst:241 ../../node/resources/events.rst:254
+#: ../../node/resources/events.rst:267
 msgid "Description"
 msgstr ""
 
@@ -171,9 +174,10 @@ msgstr ""
 #: ../../node/resources/events.rst:76 ../../node/resources/events.rst:91
 #: ../../node/resources/events.rst:104 ../../node/resources/events.rst:117
 #: ../../node/resources/events.rst:130 ../../node/resources/events.rst:143
-#: ../../node/resources/events.rst:156 ../../node/resources/events.rst:179
-#: ../../node/resources/events.rst:194 ../../node/resources/events.rst:213
-#: ../../node/resources/events.rst:226 ../../node/resources/events.rst:239
+#: ../../node/resources/events.rst:156 ../../node/resources/events.rst:169
+#: ../../node/resources/events.rst:196 ../../node/resources/events.rst:209
+#: ../../node/resources/events.rst:224 ../../node/resources/events.rst:243
+#: ../../node/resources/events.rst:256 ../../node/resources/events.rst:269
 msgid "guild_id"
 msgstr ""
 
@@ -182,9 +186,10 @@ msgstr ""
 #: ../../node/resources/events.rst:93 ../../node/resources/events.rst:104
 #: ../../node/resources/events.rst:117 ../../node/resources/events.rst:130
 #: ../../node/resources/events.rst:143 ../../node/resources/events.rst:156
-#: ../../node/resources/events.rst:179 ../../node/resources/events.rst:194
-#: ../../node/resources/events.rst:213 ../../node/resources/events.rst:226
-#: ../../node/resources/events.rst:239
+#: ../../node/resources/events.rst:183 ../../node/resources/events.rst:196
+#: ../../node/resources/events.rst:209 ../../node/resources/events.rst:224
+#: ../../node/resources/events.rst:243 ../../node/resources/events.rst:256
+#: ../../node/resources/events.rst:269
 msgid "int"
 msgstr ""
 
@@ -192,9 +197,10 @@ msgstr ""
 #: ../../node/resources/events.rst:91 ../../node/resources/events.rst:104
 #: ../../node/resources/events.rst:117 ../../node/resources/events.rst:130
 #: ../../node/resources/events.rst:143 ../../node/resources/events.rst:156
-#: ../../node/resources/events.rst:179 ../../node/resources/events.rst:194
-#: ../../node/resources/events.rst:213 ../../node/resources/events.rst:226
-#: ../../node/resources/events.rst:239
+#: ../../node/resources/events.rst:169 ../../node/resources/events.rst:196
+#: ../../node/resources/events.rst:209 ../../node/resources/events.rst:224
+#: ../../node/resources/events.rst:243 ../../node/resources/events.rst:256
+#: ../../node/resources/events.rst:269
 msgid "The guild id of the voice client"
 msgstr ""
 
@@ -203,11 +209,12 @@ msgid "id"
 msgstr ""
 
 #: ../../node/resources/events.rst:51 ../../node/resources/events.rst:78
-#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:183
-#: ../../node/resources/events.rst:196 ../../node/resources/events.rst:198
-#: ../../node/resources/events.rst:200 ../../node/resources/events.rst:202
-#: ../../node/resources/events.rst:215 ../../node/resources/events.rst:228
-#: ../../node/resources/events.rst:243
+#: ../../node/resources/events.rst:169 ../../node/resources/events.rst:171
+#: ../../node/resources/events.rst:173 ../../node/resources/events.rst:211
+#: ../../node/resources/events.rst:213 ../../node/resources/events.rst:226
+#: ../../node/resources/events.rst:228 ../../node/resources/events.rst:230
+#: ../../node/resources/events.rst:232 ../../node/resources/events.rst:245
+#: ../../node/resources/events.rst:258 ../../node/resources/events.rst:273
 msgid "str"
 msgstr ""
 
@@ -256,6 +263,7 @@ msgid "args"
 msgstr ""
 
 #: ../../node/resources/events.rst:80 ../../node/resources/events.rst:106
+#: ../../node/resources/events.rst:198
 msgid "list"
 msgstr ""
 
@@ -271,11 +279,11 @@ msgstr ""
 msgid "Called when the voice channel of the voice client is changed."
 msgstr ""
 
-#: ../../node/resources/events.rst:93
+#: ../../node/resources/events.rst:93 ../../node/resources/events.rst:171
 msgid "channel_id"
 msgstr ""
 
-#: ../../node/resources/events.rst:93
+#: ../../node/resources/events.rst:93 ../../node/resources/events.rst:171
 msgid "The channel id of the voice client"
 msgstr ""
 
@@ -304,7 +312,7 @@ msgid "Called when some sources are searched and put in the queue."
 msgstr ""
 
 #: ../../node/resources/events.rst:119 ../../node/resources/events.rst:145
-#: ../../node/resources/events.rst:158 ../../node/resources/events.rst:241
+#: ../../node/resources/events.rst:158 ../../node/resources/events.rst:271
 msgid "source"
 msgstr ""
 
@@ -326,12 +334,13 @@ msgid ""
 " ``True``, the related source will be put after this event."
 msgstr ""
 
-#: ../../node/resources/events.rst:132 ../../node/resources/events.rst:200
+#: ../../node/resources/events.rst:132 ../../node/resources/events.rst:175
+#: ../../node/resources/events.rst:230
 msgid "current"
 msgstr ""
 
 #: ../../node/resources/events.rst:132 ../../node/resources/events.rst:145
-#: ../../node/resources/events.rst:158
+#: ../../node/resources/events.rst:158 ../../node/resources/events.rst:175
 msgid "AudioSource"
 msgstr ""
 
@@ -371,111 +380,180 @@ msgstr ""
 msgid "Called when the client requests the player state by ``getState``."
 msgstr ""
 
-#: ../../node/resources/events.rst:167
+#: ../../node/resources/events.rst:173
+msgid "state"
+msgstr ""
+
+#: ../../node/resources/events.rst:173
+msgid "Current state of the voice client"
+msgstr ""
+
+#: ../../node/resources/events.rst:175
+msgid "Current source of the player"
+msgstr ""
+
+#: ../../node/resources/events.rst:177
+msgid "duration"
+msgstr ""
+
+#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:179
+#: ../../node/resources/events.rst:181
+msgid "float"
+msgstr ""
+
+#: ../../node/resources/events.rst:177
+msgid "Current duration of the source that is playing"
+msgstr ""
+
+#: ../../node/resources/events.rst:179
+msgid "position"
+msgstr ""
+
+#: ../../node/resources/events.rst:179
+msgid "Current position of the source that is playing"
+msgstr ""
+
+#: ../../node/resources/events.rst:181
+msgid "remain"
+msgstr ""
+
+#: ../../node/resources/events.rst:181
+msgid "(duration value) - (position value)"
+msgstr ""
+
+#: ../../node/resources/events.rst:183
+msgid "remainQueue"
+msgstr ""
+
+#: ../../node/resources/events.rst:183
+msgid "Current queue length of the player"
+msgstr ""
+
+#: ../../node/resources/events.rst:185
+msgid "options"
+msgstr ""
+
+#: ../../node/resources/events.rst:185
+msgid "JSON"
+msgstr ""
+
+#: ../../node/resources/events.rst:185
+msgid "Current options of the player"
+msgstr ""
+
+#: ../../node/resources/events.rst:189
 msgid "getQueue"
 msgstr ""
 
-#: ../../node/resources/events.rst:169
+#: ../../node/resources/events.rst:191
 msgid "Called when the client requests the player queue by ``getQueue``."
 msgstr ""
 
-#: ../../node/resources/events.rst:172
+#: ../../node/resources/events.rst:198
+msgid "entries"
+msgstr ""
+
+#: ../../node/resources/events.rst:198
+msgid "The entries of the queue"
+msgstr ""
+
+#: ../../node/resources/events.rst:202
 msgid "requestSubtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:174
+#: ../../node/resources/events.rst:204
 msgid ""
 "Called when the client requests synced subtitles by ``requestSubtitle``."
 msgstr ""
 
-#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:196
-#: ../../node/resources/events.rst:215
+#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:226
+#: ../../node/resources/events.rst:245
 msgid "identify"
 msgstr ""
 
-#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:196
-#: ../../node/resources/events.rst:215
+#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:226
+#: ../../node/resources/events.rst:245
 msgid "The id to identify the subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:183
+#: ../../node/resources/events.rst:213
 msgid "url"
 msgstr ""
 
-#: ../../node/resources/events.rst:183
+#: ../../node/resources/events.rst:213
 msgid "The url of the subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:187
+#: ../../node/resources/events.rst:217
 msgid "Subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:189
+#: ../../node/resources/events.rst:219
 msgid ""
 "This event is for sending the sync subtitle. This event is sent according to"
 " the player's position."
 msgstr ""
 
-#: ../../node/resources/events.rst:198
+#: ../../node/resources/events.rst:228
 msgid "previous"
 msgstr ""
 
-#: ../../node/resources/events.rst:198
+#: ../../node/resources/events.rst:228
 msgid "The content of previous subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:200
+#: ../../node/resources/events.rst:230
 msgid "The content of current subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:202
+#: ../../node/resources/events.rst:232
 msgid "next"
 msgstr ""
 
-#: ../../node/resources/events.rst:202
+#: ../../node/resources/events.rst:232
 msgid "The content of next subtitle"
 msgstr ""
 
-#: ../../node/resources/events.rst:206
+#: ../../node/resources/events.rst:236
 msgid "subtitleDone"
 msgstr ""
 
-#: ../../node/resources/events.rst:208
+#: ../../node/resources/events.rst:238
 msgid "Called when the subtitle is done."
 msgstr ""
 
-#: ../../node/resources/events.rst:219
+#: ../../node/resources/events.rst:249
 msgid "PLAYER_TRACEBACK"
 msgstr ""
 
-#: ../../node/resources/events.rst:221
+#: ../../node/resources/events.rst:251
 msgid ""
 "Called when the player gets some traceback while trying to send packets to "
 "discord server."
 msgstr ""
 
-#: ../../node/resources/events.rst:228 ../../node/resources/events.rst:243
+#: ../../node/resources/events.rst:258 ../../node/resources/events.rst:273
 msgid "traceback"
 msgstr ""
 
-#: ../../node/resources/events.rst:228 ../../node/resources/events.rst:243
+#: ../../node/resources/events.rst:258 ../../node/resources/events.rst:273
 msgid "The traceback information which the player gets"
 msgstr ""
 
-#: ../../node/resources/events.rst:232
+#: ../../node/resources/events.rst:262
 msgid "SOURCE_TRACEBACK"
 msgstr ""
 
-#: ../../node/resources/events.rst:234
+#: ../../node/resources/events.rst:264
 msgid ""
 "Called when the player gets some traceback while trying to play the source. "
 "That source will be automatically removed from the queue."
 msgstr ""
 
-#: ../../node/resources/events.rst:241
+#: ../../node/resources/events.rst:271
 msgid "Union[AudioData, AudioSource]"
 msgstr ""
 
-#: ../../node/resources/events.rst:241
+#: ../../node/resources/events.rst:271
 msgid "The source which the player gets traceback while trying to play"
 msgstr ""
