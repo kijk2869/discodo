@@ -45,7 +45,7 @@ class HTTPClient:
         return await self.fetch("GET", "/context")
 
     async def setVCContext(self, data):
-        return await self.fetch("POST", "/context", params={"context": data})
+        return await self.fetch("POST", "/context", json={"context": data})
 
     async def putSource(self, source):
         return await self.fetch("POST", "/putSource", json={"source": source})
