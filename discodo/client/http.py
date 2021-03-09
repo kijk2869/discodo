@@ -1,4 +1,5 @@
 from ..errors import HTTPException
+from .models import ensureQueueObjectType
 
 
 class HTTPClient:
@@ -25,7 +26,9 @@ class HTTPClient:
         kwargs["headers"].update(self.headers)
 
         async with self.Node.session.request(method, URL, **kwargs) as response:
-            data = await response.json(content_type=None)
+            data = ensureQueueObjectType(
+                self.VoiceClient, await response.json(content_type=None)
+            )
 
             if 200 <= response.status < 300:
                 return data
