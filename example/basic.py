@@ -63,4 +63,4 @@ async def on_message(message):
 
 
 codo.registerNode()
-app.run("your discord bot token here")
+client.run("your discord bot token here")
