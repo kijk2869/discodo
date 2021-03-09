@@ -39,7 +39,8 @@ Get State
                 "volume": "volume float",
                 "crossfade": "crossfade float",
                 "filter": {}
-            }
+            },
+            "context": {}
         }
     }
 

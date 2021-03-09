@@ -82,6 +82,7 @@ class WebsocketPayloads:
                     "crossfade": VoiceClient.crossfade,
                     "filter": VoiceClient.filter,
                 },
+                "context": VoiceClient.Context,
             },
         }
 
