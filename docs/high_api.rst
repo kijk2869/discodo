@@ -1,6 +1,6 @@
 .. currentmodule:: discodo
 
-High-level API
+High Level API
 ==============
 
 This section outlines the API of discodo.

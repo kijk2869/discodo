@@ -52,9 +52,11 @@ Client libraries
    node/connection.rst
    node/resources/voice_client.rst
    node/resources/source.rst
+   node/resources/events.rst
 
 .. toctree::
    :caption: API Reference
    :maxdepth: 1
 
    high_api.rst
+   events.rst

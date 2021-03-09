@@ -43,8 +43,20 @@ source_file = _build/gettext/node/resources/source.pot
 source_lang = en
 type = PO
 
+[discodo.docs__build_gettext_node_resources_events]
+file_filter = locale/<lang>/LC_MESSAGES/node/resources/events.po
+source_file = _build/gettext/node/resources/events.pot
+source_lang = en
+type = PO
+
 [discodo.docs__build_gettext_high_api]
 file_filter = locale/<lang>/LC_MESSAGES/high_api.po
 source_file = _build/gettext/high_api.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_events]
+file_filter = locale/<lang>/LC_MESSAGES/events.po
+source_file = _build/gettext/events.pot
 source_lang = en
 type = PO

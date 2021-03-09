@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: discodo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 11:54+0900\n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
 "PO-Revision-Date: 2021-03-06 02:55+0000\n"
 "Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../../high_api.rst:4
-msgid "High-level API"
+msgid "High Level API"
 msgstr ""
 
 #: ../../high_api.rst:6

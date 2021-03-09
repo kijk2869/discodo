@@ -1,0 +1,278 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
+"PO-Revision-Date: 2021-03-07 09:35+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../events.rst:4
+msgid "Event Reference"
+msgstr ""
+
+#: ../../events.rst:6
+msgid ""
+"This section outlines the different types of events dispatched by discodo "
+"client."
+msgstr ""
+
+#: ../../events.rst:9
+msgid ""
+"If you are using a standalone discodo node server while not using "
+":py:class:`DPYClient`, the events that you get will have something "
+"different. See this :ref:`node_events`."
+msgstr ""
+
+#: ../../events.rst:11
+msgid ""
+"To listen an event, use :py:class:`EventDispatcher` of the "
+":py:class:`DPYClient`"
+msgstr ""
+
+#: ../../events.rst:35
+msgid "VC_CREATED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:37
+msgid ""
+"Called when the new voice client has successfully created. This is not the "
+"same as the client being fully connected."
+msgstr ""
+
+#: ../../events.rst:42 ../../events.rst:60 ../../events.rst:80
+#: ../../events.rst:98 ../../events.rst:116 ../../events.rst:134
+#: ../../events.rst:152 ../../events.rst:170 ../../events.rst:188
+#: ../../events.rst:206
+msgid "Data Structure"
+msgstr ""
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Field"
+msgstr ""
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Type"
+msgstr ""
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Description"
+msgstr ""
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:103 ../../events.rst:121 ../../events.rst:139
+#: ../../events.rst:157 ../../events.rst:175 ../../events.rst:193
+#: ../../events.rst:211
+msgid "guild_id"
+msgstr ""
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:87 ../../events.rst:103 ../../events.rst:121
+#: ../../events.rst:139 ../../events.rst:157 ../../events.rst:175
+#: ../../events.rst:193 ../../events.rst:211
+msgid "int"
+msgstr ""
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:103 ../../events.rst:121 ../../events.rst:139
+#: ../../events.rst:157 ../../events.rst:175 ../../events.rst:193
+#: ../../events.rst:211
+msgid "The guild id of the voice client"
+msgstr ""
+
+#: ../../events.rst:49
+msgid "id"
+msgstr ""
+
+#: ../../events.rst:49 ../../events.rst:67 ../../events.rst:195
+#: ../../events.rst:215
+msgid "str"
+msgstr ""
+
+#: ../../events.rst:49
+msgid "The id of the voice client"
+msgstr ""
+
+#: ../../events.rst:53
+msgid "QUEUE_EVENT(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:55
+msgid ""
+"Called when there is something changed in the queue of the voice client. If "
+"you are using :py:class:`DPYClient`, Ignore this event."
+msgstr ""
+
+#: ../../events.rst:67
+msgid "name"
+msgstr ""
+
+#: ../../events.rst:67
+msgid "The name of the method"
+msgstr ""
+
+#: ../../events.rst:69
+msgid "args"
+msgstr ""
+
+#: ../../events.rst:69 ../../events.rst:105
+msgid "list"
+msgstr ""
+
+#: ../../events.rst:69
+msgid "The arguments of the method"
+msgstr ""
+
+#: ../../events.rst:73
+msgid "VC_CHANNEL_EDITED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:75
+msgid "Called when the voice channel of the voice client is changed."
+msgstr ""
+
+#: ../../events.rst:87
+msgid "channel_id"
+msgstr ""
+
+#: ../../events.rst:87
+msgid "The channel id of the voice client"
+msgstr ""
+
+#: ../../events.rst:91
+msgid "putSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:93
+msgid "Called when some sources are put in the queue."
+msgstr ""
+
+#: ../../events.rst:105
+msgid "sources"
+msgstr ""
+
+#: ../../events.rst:105
+msgid "The sources which is put"
+msgstr ""
+
+#: ../../events.rst:109
+msgid "loadSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:111
+msgid "Called when some sources are searched and put in the queue."
+msgstr ""
+
+#: ../../events.rst:123 ../../events.rst:159 ../../events.rst:177
+#: ../../events.rst:213
+msgid "source"
+msgstr ""
+
+#: ../../events.rst:123
+msgid "Union[AudioData, list]"
+msgstr ""
+
+#: ../../events.rst:123
+msgid "The sources which is searched and put"
+msgstr ""
+
+#: ../../events.rst:127
+msgid "REQUIRE_NEXT_SOURCE(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:129
+msgid ""
+"Called when the player needs next source to play. If you set ``autoplay`` as"
+" ``True``, the related source will be put after this event."
+msgstr ""
+
+#: ../../events.rst:141
+msgid "current"
+msgstr ""
+
+#: ../../events.rst:141 ../../events.rst:159 ../../events.rst:177
+msgid "AudioSource"
+msgstr ""
+
+#: ../../events.rst:141
+msgid "The source which the player is currently playing"
+msgstr ""
+
+#: ../../events.rst:145
+msgid "SOURCE_START(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:147
+msgid "Called when the player starts to play the source."
+msgstr ""
+
+#: ../../events.rst:159
+msgid "The source which the player starts to play"
+msgstr ""
+
+#: ../../events.rst:163
+msgid "SOURCE_STOP(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:165
+msgid "Called when the player stops to play the source."
+msgstr ""
+
+#: ../../events.rst:177
+msgid "The source which the player stops to play"
+msgstr ""
+
+#: ../../events.rst:181
+msgid "PLAYER_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:183
+msgid ""
+"Called when the player gets some traceback while trying to send packets to "
+"discord server."
+msgstr ""
+
+#: ../../events.rst:195 ../../events.rst:215
+msgid "traceback"
+msgstr ""
+
+#: ../../events.rst:195 ../../events.rst:215
+msgid "The traceback information which the player gets"
+msgstr ""
+
+#: ../../events.rst:199
+msgid "SOURCE_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr ""
+
+#: ../../events.rst:201
+msgid ""
+"Called when the player gets some traceback while trying to play the source. "
+"That source will be automatically removed from the queue."
+msgstr ""
+
+#: ../../events.rst:213
+msgid "Union[AudioData, AudioSource]"
+msgstr ""
+
+#: ../../events.rst:213
+msgid "The source which the player gets traceback while trying to play"
+msgstr ""

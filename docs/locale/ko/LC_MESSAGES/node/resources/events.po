@@ -1,0 +1,481 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
+"PO-Revision-Date: 2021-03-07 09:35+0000\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../node/resources/events.rst:4
+msgid "Event Reference"
+msgstr ""
+
+#: ../../node/resources/events.rst:6
+msgid ""
+"This section outlines the different types of events dispatched by discodo "
+"node with websocket."
+msgstr ""
+
+#: ../../node/resources/events.rst:9
+msgid ""
+"If you are using :py:class:`DPYClient`, the events that you get will have "
+"something different. See this :ref:`client_events`."
+msgstr ""
+
+#: ../../node/resources/events.rst:12
+msgid "STATUS"
+msgstr ""
+
+#: ../../node/resources/events.rst:14
+msgid ""
+"Called when the client requests system information by ``getStatus``. the "
+"unit is mega bytes or percent."
+msgstr ""
+
+#: ../../node/resources/events.rst:17 ../../node/resources/events.rst:47
+#: ../../node/resources/events.rst:63 ../../node/resources/events.rst:74
+#: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
+#: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
+#: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
+#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
+#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
+#: ../../node/resources/events.rst:237
+msgid "Field"
+msgstr ""
+
+#: ../../node/resources/events.rst:17 ../../node/resources/events.rst:47
+#: ../../node/resources/events.rst:63 ../../node/resources/events.rst:74
+#: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
+#: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
+#: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
+#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
+#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
+#: ../../node/resources/events.rst:237
+msgid "Type"
+msgstr ""
+
+#: ../../node/resources/events.rst:17 ../../node/resources/events.rst:47
+#: ../../node/resources/events.rst:63 ../../node/resources/events.rst:74
+#: ../../node/resources/events.rst:89 ../../node/resources/events.rst:102
+#: ../../node/resources/events.rst:115 ../../node/resources/events.rst:128
+#: ../../node/resources/events.rst:141 ../../node/resources/events.rst:154
+#: ../../node/resources/events.rst:177 ../../node/resources/events.rst:192
+#: ../../node/resources/events.rst:211 ../../node/resources/events.rst:224
+#: ../../node/resources/events.rst:237
+msgid "Description"
+msgstr ""
+
+#: ../../node/resources/events.rst:19
+msgid "UsedMemory"
+msgstr ""
+
+#: ../../node/resources/events.rst:19 ../../node/resources/events.rst:21
+#: ../../node/resources/events.rst:23 ../../node/resources/events.rst:25
+#: ../../node/resources/events.rst:27 ../../node/resources/events.rst:29
+#: ../../node/resources/events.rst:31 ../../node/resources/events.rst:33
+msgid "integer"
+msgstr ""
+
+#: ../../node/resources/events.rst:19
+msgid "The process memory usage"
+msgstr ""
+
+#: ../../node/resources/events.rst:21
+msgid "TotalMemory"
+msgstr ""
+
+#: ../../node/resources/events.rst:21
+msgid "The system memory usage"
+msgstr ""
+
+#: ../../node/resources/events.rst:23
+msgid "ProcessLoad"
+msgstr ""
+
+#: ../../node/resources/events.rst:23
+msgid "The process cpu usage"
+msgstr ""
+
+#: ../../node/resources/events.rst:25
+msgid "TotalLoad"
+msgstr ""
+
+#: ../../node/resources/events.rst:25
+msgid "The system cpu usage"
+msgstr ""
+
+#: ../../node/resources/events.rst:27
+msgid "Cores"
+msgstr ""
+
+#: ../../node/resources/events.rst:27
+msgid "The cpu core count"
+msgstr ""
+
+#: ../../node/resources/events.rst:29
+msgid "Threads"
+msgstr ""
+
+#: ../../node/resources/events.rst:29
+msgid "The process thread count"
+msgstr ""
+
+#: ../../node/resources/events.rst:31
+msgid "NetworkInbound"
+msgstr ""
+
+#: ../../node/resources/events.rst:31
+msgid "The network inbound counters"
+msgstr ""
+
+#: ../../node/resources/events.rst:33
+msgid "NetworkOutbound"
+msgstr ""
+
+#: ../../node/resources/events.rst:33
+msgid "The network outbound counters"
+msgstr ""
+
+#: ../../node/resources/events.rst:37
+msgid "HEARTBEAT_ACK"
+msgstr ""
+
+#: ../../node/resources/events.rst:39
+msgid ""
+"Called when the client send ``HEARTBEAT`` payload. The data of this event is"
+" payload data."
+msgstr ""
+
+#: ../../node/resources/events.rst:42
+msgid "IDENTIFIED"
+msgstr ""
+
+#: ../../node/resources/events.rst:44
+msgid ""
+"Called when the new voice client has successfully created. This is not the "
+"same as the client being fully connected."
+msgstr ""
+
+#: ../../node/resources/events.rst:49 ../../node/resources/events.rst:65
+#: ../../node/resources/events.rst:76 ../../node/resources/events.rst:91
+#: ../../node/resources/events.rst:104 ../../node/resources/events.rst:117
+#: ../../node/resources/events.rst:130 ../../node/resources/events.rst:143
+#: ../../node/resources/events.rst:156 ../../node/resources/events.rst:179
+#: ../../node/resources/events.rst:194 ../../node/resources/events.rst:213
+#: ../../node/resources/events.rst:226 ../../node/resources/events.rst:239
+msgid "guild_id"
+msgstr ""
+
+#: ../../node/resources/events.rst:49 ../../node/resources/events.rst:65
+#: ../../node/resources/events.rst:76 ../../node/resources/events.rst:91
+#: ../../node/resources/events.rst:93 ../../node/resources/events.rst:104
+#: ../../node/resources/events.rst:117 ../../node/resources/events.rst:130
+#: ../../node/resources/events.rst:143 ../../node/resources/events.rst:156
+#: ../../node/resources/events.rst:179 ../../node/resources/events.rst:194
+#: ../../node/resources/events.rst:213 ../../node/resources/events.rst:226
+#: ../../node/resources/events.rst:239
+msgid "int"
+msgstr ""
+
+#: ../../node/resources/events.rst:49 ../../node/resources/events.rst:76
+#: ../../node/resources/events.rst:91 ../../node/resources/events.rst:104
+#: ../../node/resources/events.rst:117 ../../node/resources/events.rst:130
+#: ../../node/resources/events.rst:143 ../../node/resources/events.rst:156
+#: ../../node/resources/events.rst:179 ../../node/resources/events.rst:194
+#: ../../node/resources/events.rst:213 ../../node/resources/events.rst:226
+#: ../../node/resources/events.rst:239
+msgid "The guild id of the voice client"
+msgstr ""
+
+#: ../../node/resources/events.rst:51
+msgid "id"
+msgstr ""
+
+#: ../../node/resources/events.rst:51 ../../node/resources/events.rst:78
+#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:183
+#: ../../node/resources/events.rst:196 ../../node/resources/events.rst:198
+#: ../../node/resources/events.rst:200 ../../node/resources/events.rst:202
+#: ../../node/resources/events.rst:215 ../../node/resources/events.rst:228
+#: ../../node/resources/events.rst:243
+msgid "str"
+msgstr ""
+
+#: ../../node/resources/events.rst:51
+msgid "The id of the voice client"
+msgstr ""
+
+#: ../../node/resources/events.rst:55
+msgid "VC_DESTROYED"
+msgstr ""
+
+#: ../../node/resources/events.rst:57
+msgid "Called when the voice client has successfully destroyed."
+msgstr ""
+
+#: ../../node/resources/events.rst:60
+msgid ""
+"This does not mean that the bot have disconnected from the voice channel. "
+"When the client receives this event, it should disconnect from the voice "
+"channel."
+msgstr ""
+
+#: ../../node/resources/events.rst:65
+msgid "The guild id of the voice client that is destroyed"
+msgstr ""
+
+#: ../../node/resources/events.rst:69
+msgid "QUEUE_EVENT"
+msgstr ""
+
+#: ../../node/resources/events.rst:71
+msgid ""
+"Called when there is something changed in the queue of the voice client."
+msgstr ""
+
+#: ../../node/resources/events.rst:78
+msgid "name"
+msgstr ""
+
+#: ../../node/resources/events.rst:78
+msgid "The name of the method"
+msgstr ""
+
+#: ../../node/resources/events.rst:80
+msgid "args"
+msgstr ""
+
+#: ../../node/resources/events.rst:80 ../../node/resources/events.rst:106
+msgid "list"
+msgstr ""
+
+#: ../../node/resources/events.rst:80
+msgid "The arguments of the method"
+msgstr ""
+
+#: ../../node/resources/events.rst:84
+msgid "VC_CHANNEL_EDITED"
+msgstr ""
+
+#: ../../node/resources/events.rst:86
+msgid "Called when the voice channel of the voice client is changed."
+msgstr ""
+
+#: ../../node/resources/events.rst:93
+msgid "channel_id"
+msgstr ""
+
+#: ../../node/resources/events.rst:93
+msgid "The channel id of the voice client"
+msgstr ""
+
+#: ../../node/resources/events.rst:97
+msgid "putSource"
+msgstr ""
+
+#: ../../node/resources/events.rst:99
+msgid "Called when some sources are put in the queue."
+msgstr ""
+
+#: ../../node/resources/events.rst:106
+msgid "sources"
+msgstr ""
+
+#: ../../node/resources/events.rst:106
+msgid "The sources which is put"
+msgstr ""
+
+#: ../../node/resources/events.rst:110
+msgid "loadSource"
+msgstr ""
+
+#: ../../node/resources/events.rst:112
+msgid "Called when some sources are searched and put in the queue."
+msgstr ""
+
+#: ../../node/resources/events.rst:119 ../../node/resources/events.rst:145
+#: ../../node/resources/events.rst:158 ../../node/resources/events.rst:241
+msgid "source"
+msgstr ""
+
+#: ../../node/resources/events.rst:119
+msgid "list or AudioData"
+msgstr ""
+
+#: ../../node/resources/events.rst:119
+msgid "The sources which is searched and put"
+msgstr ""
+
+#: ../../node/resources/events.rst:123
+msgid "REQUIRE_NEXT_SOURCE"
+msgstr ""
+
+#: ../../node/resources/events.rst:125
+msgid ""
+"Called when the player needs next source to play. If you set ``autoplay`` as"
+" ``True``, the related source will be put after this event."
+msgstr ""
+
+#: ../../node/resources/events.rst:132 ../../node/resources/events.rst:200
+msgid "current"
+msgstr ""
+
+#: ../../node/resources/events.rst:132 ../../node/resources/events.rst:145
+#: ../../node/resources/events.rst:158
+msgid "AudioSource"
+msgstr ""
+
+#: ../../node/resources/events.rst:132
+msgid "The source which the player is currently playing"
+msgstr ""
+
+#: ../../node/resources/events.rst:136
+msgid "SOURCE_START"
+msgstr ""
+
+#: ../../node/resources/events.rst:138
+msgid "Called when the player starts to play the source."
+msgstr ""
+
+#: ../../node/resources/events.rst:145
+msgid "The source which the player starts to play"
+msgstr ""
+
+#: ../../node/resources/events.rst:149
+msgid "SOURCE_STOP"
+msgstr ""
+
+#: ../../node/resources/events.rst:151
+msgid "Called when the player stops to play the source."
+msgstr ""
+
+#: ../../node/resources/events.rst:158
+msgid "The source which the player stops to play"
+msgstr ""
+
+#: ../../node/resources/events.rst:162
+msgid "getState"
+msgstr ""
+
+#: ../../node/resources/events.rst:164
+msgid "Called when the client requests the player state by ``getState``."
+msgstr ""
+
+#: ../../node/resources/events.rst:167
+msgid "getQueue"
+msgstr ""
+
+#: ../../node/resources/events.rst:169
+msgid "Called when the client requests the player queue by ``getQueue``."
+msgstr ""
+
+#: ../../node/resources/events.rst:172
+msgid "requestSubtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:174
+msgid ""
+"Called when the client requests synced subtitles by ``requestSubtitle``."
+msgstr ""
+
+#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:196
+#: ../../node/resources/events.rst:215
+msgid "identify"
+msgstr ""
+
+#: ../../node/resources/events.rst:181 ../../node/resources/events.rst:196
+#: ../../node/resources/events.rst:215
+msgid "The id to identify the subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:183
+msgid "url"
+msgstr ""
+
+#: ../../node/resources/events.rst:183
+msgid "The url of the subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:187
+msgid "Subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:189
+msgid ""
+"This event is for sending the sync subtitle. This event is sent according to"
+" the player's position."
+msgstr ""
+
+#: ../../node/resources/events.rst:198
+msgid "previous"
+msgstr ""
+
+#: ../../node/resources/events.rst:198
+msgid "The content of previous subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:200
+msgid "The content of current subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:202
+msgid "next"
+msgstr ""
+
+#: ../../node/resources/events.rst:202
+msgid "The content of next subtitle"
+msgstr ""
+
+#: ../../node/resources/events.rst:206
+msgid "subtitleDone"
+msgstr ""
+
+#: ../../node/resources/events.rst:208
+msgid "Called when the subtitle is done."
+msgstr ""
+
+#: ../../node/resources/events.rst:219
+msgid "PLAYER_TRACEBACK"
+msgstr ""
+
+#: ../../node/resources/events.rst:221
+msgid ""
+"Called when the player gets some traceback while trying to send packets to "
+"discord server."
+msgstr ""
+
+#: ../../node/resources/events.rst:228 ../../node/resources/events.rst:243
+msgid "traceback"
+msgstr ""
+
+#: ../../node/resources/events.rst:228 ../../node/resources/events.rst:243
+msgid "The traceback information which the player gets"
+msgstr ""
+
+#: ../../node/resources/events.rst:232
+msgid "SOURCE_TRACEBACK"
+msgstr ""
+
+#: ../../node/resources/events.rst:234
+msgid ""
+"Called when the player gets some traceback while trying to play the source. "
+"That source will be automatically removed from the queue."
+msgstr ""
+
+#: ../../node/resources/events.rst:241
+msgid "Union[AudioData, AudioSource]"
+msgstr ""
+
+#: ../../node/resources/events.rst:241
+msgid "The source which the player gets traceback while trying to play"
+msgstr ""
