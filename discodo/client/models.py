@@ -211,9 +211,14 @@ class AudioSource:
 
         :rtype: dict"""
 
-        data = await self.VoiceClient.http.getQueueSource(self.tag)
+        if self in self.VoiceClient.Queue:
+            data = await self.VoiceClient.http.getQueueSource(self.tag)
 
-        return data.get("context")
+            return data.get("context")
+        else:
+            data = await self.VoiceClient.http.getCurrent()
+
+            return data["context"]
 
     @isInQueue
     async def setContext(self, data):
@@ -223,7 +228,12 @@ class AudioSource:
 
         :rtype: dict"""
 
-        return await self.VoiceClient.http.setQueueSource(self.tag, {"context": data})
+        if self in self.VoiceClient.Queue:
+            return await self.VoiceClient.http.setQueueSource(
+                self.tag, {"context": data}
+            )
+        else:
+            return await self.VoiceClient.http.setCurrent({"context": data})
 
 
 ARGUMENT_MAPPING = {"AudioData": AudioData, "AudioSource": AudioSource}

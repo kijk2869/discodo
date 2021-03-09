@@ -89,6 +89,32 @@ AudioSource Structure
  position         ?float                source current position
 ================ ===================== ==================================
 
+Get Current
+-----------
+
+.. http:get:: /current
+
+    The source object that is currently playing
+
+    **Example response**:
+
+    .. code-block:: json5
+
+        {
+            // source object
+        }
+
+    :reqheader Authorization: Password for discodo server
+
+    :reqheader User-ID: the bot user id
+    :reqheader ?Shard-ID: the bot shard id
+    :reqheader Guild-ID: the guild id of queue
+    :reqheader VoiceClient-ID: the voiceclient id
+
+    :statuscode 200: no error
+    :statuscode 403: authorization failed or VoiceClient-ID mismatched
+    :statuscode 404: ClientManager or VoiceClient not found
+
 Get From The Queue
 ------------------
 
@@ -113,6 +139,34 @@ Get From The Queue
     :reqheader ?Shard-ID: the bot shard id
     :reqheader Guild-ID: the guild id of queue
     :reqheader VoiceClient-ID: the voiceclient id
+
+    :statuscode 200: no error
+    :statuscode 403: authorization failed or VoiceClient-ID mismatched
+    :statuscode 404: ClientManager or VoiceClient not found
+
+Edit Current
+------------
+
+.. http:post:: /current
+
+    Edit the source object that is currently playing
+
+    **Example response**:
+
+    .. code-block:: json5
+
+        {
+            // source object
+        }
+
+    :reqheader Authorization: Password for discodo server
+
+    :reqheader User-ID: the bot user id
+    :reqheader ?Shard-ID: the bot shard id
+    :reqheader Guild-ID: the guild id of queue
+    :reqheader VoiceClient-ID: the voiceclient id
+
+    :jsonparam json ?context: context to save on the object
 
     :statuscode 200: no error
     :statuscode 403: authorization failed or VoiceClient-ID mismatched

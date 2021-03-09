@@ -266,6 +266,13 @@ async def shuffle(request, VoiceClient):
     return JSONResponse({"entries": VoiceClient.Queue})
 
 
+@app.get("/current")
+@authorized
+@need_voiceclient
+async def current(request, VoiceClient):
+    return JSONResponse(VoiceClient.current)
+
+
 @app.get("/queue")
 @authorized
 @need_voiceclient
@@ -291,6 +298,18 @@ async def queueItemTag(request, VoiceClient, tag):
     searched = list(filter(lambda x: x.tag == tag, VoiceClient.Queue))
 
     return JSONResponse(searched.pop(0))
+
+
+@app.post("/current")
+@authorized
+@need_voiceclient
+async def changeCurrent(request, VoiceClient):
+    source = VoiceClient.current
+
+    if "context" in request.json:
+        source.Context = request.json["context"]
+
+    return JSONResponse(source)
 
 
 @app.post("/queue/<index:int>")

@@ -80,8 +80,14 @@ class HTTPClient:
     async def queue(self):
         return await self.fetch("GET", "/queue")
 
+    async def getCurrent(self):
+        return await self.fetch("GET", "/current")
+
     async def getQueueSource(self, tag):
         return await self.fetch("GET", f"/queue/{tag}")
+
+    async def setCurrent(self, data):
+        return await self.fetch("GET", "/current", json=data)
 
     async def setQueueSource(self, tag, data):
         return await self.fetch("POST", f"/queue/{tag}", json=data)

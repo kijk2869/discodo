@@ -320,6 +320,13 @@ class VoiceClient:
 
         return self.Queue
 
+    async def getCurrent(self):
+        r"""Fetch current playing source
+
+        :rtype: AudioSource"""
+
+        return await self.http.getCurrent()
+
     async def getState(self):
         r"""Fetch current player state.
 
