@@ -205,7 +205,6 @@ class AudioSource:
 
         return self.id != other.id
 
-    @isInQueue
     async def getContext(self):
         r"""Get the context from the node.
 
@@ -220,7 +219,6 @@ class AudioSource:
 
             return data["context"]
 
-    @isInQueue
     async def setContext(self, data):
         r"""Set the context to the node.
 
