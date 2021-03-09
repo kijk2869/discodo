@@ -64,8 +64,8 @@ It looks like this:
 
             return await message.channel.send("I stopped the player and cleaned the queue.")
 
-        codo.registerNode()
-        app.run("your discord bot token here")
+    codo.registerNode()
+    app.run("your discord bot token here")
 
 
 Let's name this file ``simple_musicbot.py``
