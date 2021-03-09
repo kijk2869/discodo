@@ -37,14 +37,14 @@ msgid ""
 ":py:class:`DPYClient`, the events that you get will have something "
 "different. See this :ref:`node_events`."
 msgstr ""
-":py:class:`DPYClient`를 사용하지 않는 동안 독립 실행형 discodo 노드 서버를 사용하는 경우 가져오는 이벤트가 다를"
-" 수 있습니다. 대신 :ref:`node_events`를 참조하십시오."
+":py:class:`DPYClient` 를 사용하지 않는 동안 독립 실행형 discodo 노드 서버를 사용하는 경우 가져오는 이벤트가 "
+"다를 수 있습니다. 대신 :ref:`node_events` 를 참조하십시오."
 
 #: ../../events.rst:11
 msgid ""
 "To listen an event, use :py:class:`EventDispatcher` of the "
 ":py:class:`DPYClient`"
-msgstr "이벤트를 수신하려면 :py:class:`EventDispatcher`를 사용하십시오."
+msgstr "이벤트를 수신하려면 :py:class:`EventDispatcher` 를 사용하십시오."
 
 #: ../../events.rst:35
 msgid "VC_CREATED(:py:class:`VoiceClient`, :py:class:`dict` data)"
@@ -127,7 +127,7 @@ msgid ""
 "Called when there is something changed in the queue of the voice client. If "
 "you are using :py:class:`DPYClient`, Ignore this event."
 msgstr ""
-"음성 클라이언트의 대기열에 변경된 내용이 있으면 호출됩니다. :py:class:`DPYClient`를 사용하는 경우 이 이벤트를 "
+"음성 클라이언트의 대기열에 변경된 내용이 있으면 호출됩니다. :py:class:`DPYClient` 를 사용하는 경우 이 이벤트를 "
 "무시하십시오."
 
 #: ../../events.rst:67
