@@ -14,7 +14,7 @@ It looks like this:
     import discord
     import discodo
 
-    client = discodo.Client()
+    client = discord.Client()
     codo = discodo.DPYClient(client)
 
     @client.event
@@ -23,7 +23,7 @@ It looks like this:
 
     @codo.event("SOURCE_START")
     async def sendPlaying(VC, Data):
-        await VC.channel.send(f"I'm now playing {Data["source"]["title"]}")
+        await VC.channel.send(f"I'm now playing {Data['source']['title']}")
 
     @client.event
     async def on_message(message):
@@ -52,7 +52,7 @@ It looks like this:
             if isinstance(source, list):
                 return await message.channel.send(f"{len(source) - 1} songs except {source[0].title} added.")
             else:
-                return await message.channel.send(f"{source.title} added."
+                return await message.channel.send(f"{source.title} added.")
 
         if message.content.startswith("!stop"):
             VC = codo.getVC(message.guild, safe=True)
