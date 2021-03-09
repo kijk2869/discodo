@@ -11,6 +11,7 @@ class AudioSource(PyAVSource):
         self.AudioData = AudioData
         self.address = self.AudioData.address if self.AudioData else None
 
+        self.Context = AudioData.Context
         self._skipped: bool = False
 
     def toDict(self) -> dict:
@@ -19,6 +20,7 @@ class AudioSource(PyAVSource):
         Value["_type"] = "AudioSource"
         Value["seekable"] = self.seekable
         Value["duration"] = self.duration
+        Value["context"] = self.Context
         if hasattr(self, "position"):
             Value["position"] = self.position
 
