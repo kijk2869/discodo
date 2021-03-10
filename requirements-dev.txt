@@ -8,7 +8,7 @@ black==20.8b1
 isort==5.7.0
 
 # Git pre commit
-pre-commit==2.11.0
+pre-commit==2.11.1
 
 # Test code
 pytest==6.2.2
