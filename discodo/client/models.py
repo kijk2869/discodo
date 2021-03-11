@@ -65,6 +65,9 @@ class AudioData:
     def __getitem__(self, key):
         return self.data.get(key)
 
+    def get(self, *args, **kwargs):
+        return self.data.get(*args, **kwargs)
+
     def __repr__(self) -> str:
         return f"<AudioData id={self.id} title='{self.title}' duration={self.duration}>"
 
@@ -72,13 +75,13 @@ class AudioData:
         if not isinstance(other, (type(self), AudioSource)):
             return False
 
-        return self.id == other.id
+        return self.tag == other.tag
 
     def __ne__(self, other):
         if not isinstance(other, (type(self), AudioSource)):
             return False
 
-        return self.id == other.id
+        return self.tag == other.tag
 
     @isNotInQueue
     async def put(self):
@@ -97,8 +100,9 @@ class AudioData:
         :rtype: dict"""
 
         data = await self.VoiceClient.http.getQueueSource(self.tag)
+        self.context = data.get("context", {})
 
-        return data.get("context")
+        return self.context
 
     @isInQueue
     async def setContext(self, data):
@@ -108,7 +112,10 @@ class AudioData:
 
         :rtype: dict"""
 
-        return await self.VoiceClient.http.setQueueSource(self.tag, {"context": data})
+        data = await self.VoiceClient.http.setQueueSource(self.tag, {"context": data})
+        self.context = data.get("context", {})
+
+        return self.context
 
     @isInQueue
     async def moveTo(self, index):
@@ -186,6 +193,9 @@ class AudioSource:
     def __getitem__(self, key):
         return self.data.get(key)
 
+    def get(self, *args, **kwargs):
+        return self.data.get(*args, **kwargs)
+
     def __repr__(self) -> str:
         return (
             f"<AudioSource id={self.id} title='{self.title}' duration={self.duration}"
@@ -197,13 +207,13 @@ class AudioSource:
         if not isinstance(other, (AudioData, type(self))):
             return False
 
-        return self.id == other.id
+        return self.tag == other.tag
 
     def __ne__(self, other):
         if not isinstance(other, (AudioData, type(self))):
             return False
 
-        return self.id != other.id
+        return self.tag != other.tag
 
     async def getContext(self):
         r"""Get the context from the node.
@@ -212,12 +222,12 @@ class AudioSource:
 
         if self in self.VoiceClient.Queue:
             data = await self.VoiceClient.http.getQueueSource(self.tag)
-
-            return data.get("context")
         else:
             data = await self.VoiceClient.http.getCurrent()
 
-            return data["context"]
+        self.context = data.get("context", {})
+
+        return self.context
 
     async def setContext(self, data):
         r"""Set the context to the node.
@@ -227,11 +237,15 @@ class AudioSource:
         :rtype: dict"""
 
         if self in self.VoiceClient.Queue:
-            return await self.VoiceClient.http.setQueueSource(
+            data = await self.VoiceClient.http.setQueueSource(
                 self.tag, {"context": data}
             )
         else:
-            return await self.VoiceClient.http.setCurrent({"context": data})
+            data = await self.VoiceClient.http.setCurrent({"context": data})
+
+        self.context = data.get("context", {})
+
+        return self.context
 
 
 ARGUMENT_MAPPING = {"AudioData": AudioData, "AudioSource": AudioSource}

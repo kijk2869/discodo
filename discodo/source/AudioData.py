@@ -15,7 +15,7 @@ from .AudioSource import AudioSource
 class AudioData:
     _source = None
 
-    def __init__(self, data) -> None:
+    def __init__(self, data, context=None) -> None:
         if data.get("_type") in ["AudioData", "AudioSource"]:
             self.address = Config.RoutePlanner.get() if Config.RoutePlanner else None
 
@@ -89,6 +89,9 @@ class AudioData:
             self.related: bool = False
             self.Context = {}
 
+        if context:
+            self.Context = context
+
     def toDict(self) -> dict:
         return {
             "_type": "AudioData",
@@ -143,7 +146,7 @@ class AudioData:
 
             raise exc
 
-        self.__init__(Data)
+        self.__init__(Data, context=self.Context)
 
         return self
 
