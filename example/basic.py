@@ -46,8 +46,7 @@ async def on_message(message):
             return await message.channel.send(
                 f"{len(source) - 1} songs except {source[0].title} added."
             )
-        else:
-            return await message.channel.send(f"{source.title} added.")
+        return await message.channel.send(f"{source.title} added.")
 
     if message.content.startswith("!stop"):
         VC = codo.getVC(message.guild, safe=True)
