@@ -111,11 +111,11 @@ class Music(commands.Cog):
 
         self.Audio.dispatcher.on("SOURCE_START", self.on_source_start)
 
-    async def on_source_start(self, voice_client, source):
+    async def on_source_start(self, voice_client, data):
         context = await voice_client.getContext()
         channel = await self.Bot.fetch_channel(context.get("text_channel"))
 
-        await channel.send(f"Now playing {source.title}...")
+        await channel.send(f"Now playing {data['source'].title}...")
 
     @commands.command()
     async def join(self, ctx):
