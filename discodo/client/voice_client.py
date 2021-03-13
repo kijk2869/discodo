@@ -1,4 +1,5 @@
 import asyncio
+import copy
 
 from ..errors import NodeException
 from ..utils import EventDispatcher
@@ -99,7 +100,7 @@ class VoiceClient:
 
         :rtype: bool"""
 
-        return self._filter
+        return copy.copy(self._filter)
 
     def handleGetState(self, data):
         options = data["options"]
