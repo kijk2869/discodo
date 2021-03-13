@@ -58,8 +58,8 @@ class smi(SubtitleFormat):
     @classmethod
     async def load(cls, URL: str):
         async with aiohttp.ClientSession() as session:
-            async with session.get(URL) as session:
-                Data = await session.text()
+            async with session.get(URL) as resp:
+                Data = await resp.text()
 
         # Blocking is suspicious
         return cls(Data)
@@ -94,7 +94,7 @@ class srv1(SubtitleFormat):
     @classmethod
     async def load(cls, URL: str):
         async with aiohttp.ClientSession() as session:
-            async with session.get(URL) as session:
-                Data = await session.text()
+            async with session.get(URL) as resp:
+                Data = await resp.text()
 
         return cls(Data)
