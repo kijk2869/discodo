@@ -62,7 +62,7 @@ class EventDispatcher:
         return self
 
     def dispatch(self, event_: str, *args, **kwargs) -> None:
-        """Call the listeners which is matched with event name.
+        r"""Call the listeners which is matched with event name.
 
         :param str event_: The event name to dispatch.
         :param \*args: An argument list of data to dispatch with.
