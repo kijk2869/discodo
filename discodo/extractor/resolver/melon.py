@@ -1,5 +1,6 @@
 import re
 from typing import Union
+
 from bs4 import BeautifulSoup
 
 MELON_REGEX = re.compile(
