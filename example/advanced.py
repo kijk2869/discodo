@@ -205,7 +205,7 @@ class Music(commands.Cog):
         if len(Current["context"]["skip_votes"]) >= round(
             (len(channel.members) - 1) / 2
         ):
-            await ctx.reply(
+            await ctx.send(
                 "More than half of the votes for skipping music, skipping the source."
             )
 
