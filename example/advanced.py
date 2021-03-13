@@ -109,6 +109,14 @@ class Music(commands.Cog):
         self.Bot = Bot
         self.Audio = Bot.Audio
 
+        self.Audio.dispatcher.on("SOURCE_START", self.on_source_start)
+
+    async def on_source_start(self, voice_client, source):
+        context = await voice_client.getContext()
+        channel = await self.Bot.fetch_channel(context.get("text_channel"))
+
+        await channel.send(f"Now playing {source.title}...")
+
     @commands.command()
     async def join(self, ctx):
         """Connect to the voice channel."""
