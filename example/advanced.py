@@ -80,7 +80,9 @@ class Bot(commands.Bot):
                 position += 1
 
             await message.edit(**callback(position))
-            await message.remove_reaction(reaction.emoji, user)
+
+            with contextlib.suppress(discord.Forbidden):
+                await message.remove_reaction(reaction.emoji, user)
 
 
 class SubtitleCallback:
