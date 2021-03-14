@@ -28,9 +28,6 @@ async def launchLocalNode(**options):
     if LocalNodeProc and LocalNodeProc.returncode is not None:
         raise ValueError("LocalNode already launched.")
 
-    if isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-        raise SystemError("Can't use LocalNode on ProactorEventLoop.")
-
     options["HOST"] = "127.0.0.1"
     options["PORT"] = tcp.getFreePort()
     options["PASSWORD"] = secrets.token_hex()

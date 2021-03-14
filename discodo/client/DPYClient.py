@@ -180,8 +180,10 @@ class DPYClient:
 
         self.dispatcher.dispatch(event, vc, data)
 
-    def getBestNode(self):
+    def getBestNode(self, exceptNode=None):
         r"""Get the node with the fewest connected players.
+
+        :param Optional[discodo.Node] exceptNode: The host to except from the list.
 
         :rtype: discodo.Node"""
 
@@ -189,6 +191,9 @@ class DPYClient:
             [Node for Node in self.Nodes if Node.is_connected],
             key=lambda Node: len(Node.voiceClients),
         )
+
+        if exceptNode and exceptNode in SortedWithPerformance:
+            SortedWithPerformance.remove(exceptNode)
 
         return SortedWithPerformance[0] if SortedWithPerformance else None
 
