@@ -117,6 +117,26 @@ class Music(commands.Cog):
 
         await channel.send(f"Now playing {data['source'].title}...")
 
+    @commands.is_owner()
+    @commands.command()
+    async def connectnodes(self, ctx):
+        """Connect to the discodo nodes."""
+
+        def getText():
+            return f"""
+> **Discodo Node Connection**
+>
+{NEWLINE.join(map(lambda x: '> '+('🛠️  `' if not x.is_connected else '✅  `') + x.region + '`', ctx.bot.Audio.Nodes))}
+"""
+
+        message = await ctx.send(getText())
+
+        for Node in ctx.bot.Audio.Nodes:
+            try:
+                await Node.connect()
+            finally:
+                await message.edit(content=getText())
+
     @commands.command()
     async def join(self, ctx):
         """Connect to the voice channel."""
