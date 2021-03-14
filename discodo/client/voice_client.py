@@ -443,6 +443,9 @@ class VoiceClient:
             filter=self.filter,
         )
 
+        if State["context"]:
+            await VC.setContext(State["context"])
+
         if State["current"]:
             await VC.putSource(State["current"])
 

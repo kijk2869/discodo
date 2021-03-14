@@ -27,6 +27,7 @@ class AudioData:
             self.stream_url = data["url"]
             self.duration = data["duration"]
             self.is_live = data["is_live"]
+            self.is_file = data["is_file"]
             self.uploader = data["uploader"]
             self.description = data["description"]
             self.subtitles = data["subtitles"]
@@ -103,6 +104,7 @@ class AudioData:
             "url": self.stream_url,
             "duration": self.duration,
             "is_live": self.is_live,
+            "is_file": self.is_file,
             "uploader": self.uploader,
             "description": self.description,
             "subtitles": self.subtitles,
