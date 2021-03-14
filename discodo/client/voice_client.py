@@ -432,8 +432,6 @@ class VoiceClient:
 
         State = await self.getState()
 
-        await self.destroy()
-
         VC = await self.client.connect(channel, node)
 
         await VC.setOptions(

@@ -268,6 +268,9 @@ class DPYClient:
 
         VC = self.getVC(channel.guild, safe=True)
 
+        if VC and VC.Node != node:
+            await VC.destroy()
+
         Task = (
             self.loop.create_task(
                 self.dispatcher.wait_for(
