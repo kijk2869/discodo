@@ -3,7 +3,6 @@ import json
 import os
 import secrets
 import sys
-from asyncio.windows_events import ProactorEventLoop
 
 import aiohttp
 from websockets import ConnectionClosed
