@@ -1,5 +1,6 @@
 import functools
 import logging
+import time
 
 log = logging.getLogger("discodo.client.models")
 
@@ -59,8 +60,9 @@ class AudioData:
         self.VoiceClient = VoiceClient
 
         self.data = data
-        for key, value in data.items():
-            setattr(self, key, value)
+
+    def __getattr__(self, key):
+        return self.data.get(key)
 
     def __getitem__(self, key):
         return self.data.get(key)
@@ -187,14 +189,27 @@ class AudioSource:
         self.VoiceClient = VoiceClient
 
         self.data = data
-        for key, value in data.items():
-            setattr(self, key, value)
 
-    def __getitem__(self, key):
+    def __getattr__(self, key):
         return self.data.get(key)
 
-    def get(self, *args, **kwargs):
-        return self.data.get(*args, **kwargs)
+    def __getitem__(self, key):
+        if key == "position":
+            return self.position
+
+        return self.data.get(key)
+
+    def get(self, key, *args, **kwargs):
+        if key == "position":
+            return self.position
+
+        return self.data.get(key, *args, **kwargs)
+
+    @property
+    def position(self):
+        return self.data["position"] + (
+            round(time.time() - self.as_of, 2) if "as_of" in self.data else 0
+        )
 
     def __repr__(self) -> str:
         return (

@@ -36,14 +36,18 @@ class VoiceClient:
             lambda data: setattr(self, "channel_id", data["channel_id"]),
         )
 
+        self._state = None
         self._volume = 1.0
         self._crossfade = 10.0
         self._autoplay = True
         self._filter = {}
+        self._context = {}
+
+        self._current = None
 
         self.dispatcher.on("getState", self.handleGetState)
 
-        self.loop.create_task(self.send("getState", {}))
+        self.syncTask = self.loop.create_task(self.syncWithNode())
 
         self.Queue = Queue(self)
 
@@ -56,9 +60,18 @@ class VoiceClient:
         return f"<VoiceClient id={self.id} guild_id={self.guild_id} channel_id={self.channel_id} Node={self.Node}>"
 
     def __del__(self):
+        if self.syncTask and not self.syncTask.done():
+            self.syncTask.cancel()
+
         vc = self.Node.voiceClients.get(self.guild_id)
         if vc and vc == self:
             self.Node.voiceClients.pop(self.guild_id)
+
+    async def syncWithNode(self):
+        while True:
+            await self.send("getState", {})
+
+            await asyncio.sleep(5.0)
 
     @property
     def volume(self):
@@ -102,6 +115,18 @@ class VoiceClient:
 
         return copy.copy(self._filter)
 
+    @property
+    def current(self):
+        return self._current
+
+    @property
+    def context(self):
+        return self._context
+
+    @property
+    def state(self):
+        return self._state
+
     def handleGetState(self, data):
         options = data["options"]
 
@@ -109,6 +134,10 @@ class VoiceClient:
         self._crossfade = options["crossfade"]
         self._autoplay = options["autoplay"]
         self._filter = options["filter"]
+
+        self._current = data["current"]
+        self._context = data["context"]
+        self._state = data["state"]
 
         self.channel_id = data["channel_id"]
 
@@ -157,12 +186,14 @@ class VoiceClient:
 
         return Data
 
-    async def getContext(self):
-        r"""Get the context from the node.
+    async def fetchContext(self):
+        r"""Fetch the context from the node.
 
         :rtype: dict"""
 
-        return await self.http.getVCContext()
+        self._context = await self.http.getVCContext()
+
+        return self.context
 
     async def setContext(self, data):
         r"""Set the context to the node.
@@ -171,7 +202,9 @@ class VoiceClient:
 
         :rtype: dict"""
 
-        return await self.http.setVCContext(data)
+        self._context = await self.http.setVCContext(data)
+
+        return self.context
 
     async def getSource(self, query):
         r"""Search the query and get source from extractor
@@ -326,9 +359,11 @@ class VoiceClient:
 
         :rtype: AudioSource"""
 
-        return await self.http.getCurrent()
+        self._current = await self.http.getCurrent()
 
-    async def getState(self):
+        return self._current
+
+    async def fetchState(self):
         r"""Fetch current player state.
 
         :rtype: dict"""
@@ -430,7 +465,7 @@ class VoiceClient:
         if not channel:
             raise ValueError("this voice client is not connected to the channel.")
 
-        State = await self.getState()
+        await self.fetchState()
 
         VC = await self.client.connect(channel, node)
 
@@ -441,11 +476,11 @@ class VoiceClient:
             filter=self.filter,
         )
 
-        if State["context"]:
-            await VC.setContext(State["context"])
+        if self.context:
+            await VC.setContext(self.context)
 
-        if State["current"]:
-            await VC.putSource(State["current"])
+        if self.current:
+            await VC.putSource(self.current)
 
         if self.Queue:
             await VC.putSource(self.Queue)

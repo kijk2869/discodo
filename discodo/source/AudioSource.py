@@ -1,3 +1,4 @@
+import time
 from typing import Any, Coroutine, NoReturn
 
 from ..errors import NotSeekable
@@ -21,6 +22,7 @@ class AudioSource(PyAVSource):
         Value["seekable"] = self.seekable
         Value["duration"] = self.duration
         Value["context"] = self.Context
+        Value["as_of"] = time.time()
         if hasattr(self, "position"):
             Value["position"] = self.position
 
