@@ -241,7 +241,16 @@ if __name__ == "__main__":
     if hasattr(psutil, "HIGH_PRIORITY_CLASS"):
         psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
 
-    loop = asyncio.get_event_loop()
+    try:
+        import uvloop
+    except ModuleNotFoundError:
+        loop = asyncio.get_event_loop()
+    else:
+        loop = uvloop.new_event_loop()
+
+        log.debug(f"uvloop {uvloop.__version__} detected, will use {loop}")
+
+    asyncio.set_event_loop(loop)
 
     if log.level == logging.DEBUG:
         loop.set_debug(True)
