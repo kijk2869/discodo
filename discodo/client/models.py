@@ -207,8 +207,10 @@ class AudioSource:
 
     @property
     def position(self):
-        return self.data["position"] + (
-            round(time.time() - self.as_of, 2) if "as_of" in self.data else 0
+        return round(
+            self.data["position"]
+            + (time.time() - self.as_of if "as_of" in self.data else 0),
+            2,
         )
 
     def __repr__(self) -> str:

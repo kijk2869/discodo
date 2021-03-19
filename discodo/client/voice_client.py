@@ -120,6 +120,21 @@ class VoiceClient:
         return self._current
 
     @property
+    def duration(self):
+        return self._current.duration if self._current else None
+
+    @property
+    def position(self):
+        return self._current.position if self._current else None
+
+    @property
+    def remain(self):
+        return round(
+            self._current.duration - self._current.position if self._current else None,
+            2,
+        )
+
+    @property
     def context(self):
         return self._context
 
