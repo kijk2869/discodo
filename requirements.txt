@@ -8,12 +8,12 @@ asyncspotify==0.12.1
 # Source extractor
 av==8.0.3
 PyNaCl==1.4.0
-youtube-dl==2021.3.14
+youtube-dl==2021.3.25
 youtube-related==1.0.2
 
 # Subtitle parser
 bs4==0.0.1
-lxml==4.6.2
+lxml==4.6.3
 defusedxml==0.7.1
 markdownify==0.6.5
 
