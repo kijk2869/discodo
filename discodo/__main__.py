@@ -145,9 +145,9 @@ playerGroup = parser.add_argument_group("Player Option")
 
 playerGroup.add_argument(
     "--default-volume",
-    type=int,
-    default=100,
-    help="player's default volume (default: 100)",
+    type=float,
+    default=1.0,
+    help="player's default volume (default: 1.0)",
 )
 playerGroup.add_argument(
     "--default-crossfade",
@@ -220,7 +220,7 @@ if not args.config and not args.config_json:
     Config.IPBLOCKS = args.ip
     Config.EXCLUDEIPS = args.exclude_ip
     Config.DEFAULT_AUTOPLAY = args.default_autoplay
-    Config.DEFAULT_VOLUME = round(args.default_volume / 100, 3)
+    Config.DEFAULT_VOLUME = args.default_volume
     Config.DEFAULT_CROSSFADE = args.default_crossfade
     Config.BUFFERLIMIT = args.bufferlimit
     Config.VCTIMEOUT = args.timeout
