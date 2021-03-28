@@ -48,8 +48,3 @@ class AudioFifo(av.AudioFifo):
             log.warning("while writing on fifo, an error occured, ignored.")
 
         self.check_buffer()
-
-    def reset(self) -> None:
-        super().read(
-            samples=max(self.samples - self.SAMPLES_PER_FRAME, 0), partial=True
-        )

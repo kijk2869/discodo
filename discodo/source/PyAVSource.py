@@ -35,6 +35,7 @@ class PyAVSource:
         self._waitforread = threading.Lock()
         self._loading = threading.Lock()
         self._seeking = threading.Lock()
+        self._seeked = False
         self.BufferLoader: Loader = None
 
         self.AudioFifo = AudioFifo()
@@ -105,6 +106,8 @@ class PyAVSource:
 
     def _seek(self, offset: float, *args, **kwargs) -> None:
         with withLock(self._seeking):
+            self._seeked = True
+
             if not self.Container:
                 if not self._loading.locked():
                     self.Container = av.open(
@@ -208,7 +211,11 @@ class Loader(threading.Thread):
 
                 if _seek_locked:
                     self.Source._seeking.release()
-                    self.Source.AudioFifo.reset()
+
+                if self.Source._seeked:
+                    self.Source._seeked = False
+
+                    self.Source.AudioFifo = AudioFifo()
 
                 if not Frame:
                     self.Source.stop()
