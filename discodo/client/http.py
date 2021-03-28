@@ -1,5 +1,9 @@
+import logging
+
 from ..errors import HTTPException
 from .models import ensureQueueObjectType
+
+log = logging.getLogger("discodo.client.http")
 
 
 class HTTPClient:
@@ -26,6 +30,8 @@ class HTTPClient:
         kwargs["headers"].update(self.headers)
 
         async with self.Node.session.request(method, URL, **kwargs) as response:
+            log.debug(f"{method} {URL} with {kwargs} has returned {response.status}")
+
             data = ensureQueueObjectType(
                 self.VoiceClient, await response.json(content_type=None)
             )

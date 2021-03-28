@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 import secrets
 import sys
@@ -13,6 +14,8 @@ from ..utils import EventDispatcher, tcp
 from .gateway import NodeConnection
 from .models import ensureQueueObjectType
 from .voice_client import VoiceClient
+
+log = logging.getLogger("discodo.client.node")
 
 LocalNodeProc = None
 
@@ -31,6 +34,10 @@ async def launchLocalNode(**options):
     options["PORT"] = tcp.getFreePort()
     options["PASSWORD"] = secrets.token_hex()
 
+    log.info(
+        f"trying to spawn local node process on {options['HOST']}:{options['PORT']}"
+    )
+
     os.environ["PYTHONPATH"] = os.path.dirname(__dirname)
 
     LocalNodeProc = await asyncio.create_subprocess_exec(
@@ -42,6 +49,10 @@ async def launchLocalNode(**options):
     LocalNodeProc.PASSWORD = options["PASSWORD"]
 
     if LocalNodeProc.returncode:
+        log.debug(
+            f"while launching local node process, returned {LocalNodeProc.returncode}"
+        )
+
         raise SystemError("Cannot launch discodo subprocess.")
 
     loop = asyncio.get_event_loop()

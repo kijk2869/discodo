@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import json
+import logging
 import time
 import warnings
 from typing import Optional
@@ -8,6 +9,8 @@ from typing import Optional
 import websockets
 
 from .. import __version__
+
+log = logging.getLogger("discodo.client.gateway")
 
 
 class NodeConnection(websockets.client.WebSocketClientProtocol):
@@ -52,6 +55,10 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
     async def sendJson(self, data: dict) -> None:
         await self.send(json.dumps(data))
 
+    async def send(self, data):
+        log.debug(f"{self.Node.host}:{self.Node.port} < {data}")
+        return await super().send(data)
+
     async def handleHeartbeat(self):
         while True:
             if self._lastAck + self.heartbeatTimeout < time.perf_counter():
@@ -66,6 +73,8 @@ class NodeConnection(websockets.client.WebSocketClientProtocol):
 
     async def poll(self):
         message = json.loads(await asyncio.wait_for(self.recv(), timeout=30.0))
+
+        log.debug(f"{self.Node.host}:{self.Node.port} > {message}")
 
         Operation, Data = message["op"], message.get("d")
 
