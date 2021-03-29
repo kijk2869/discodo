@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import ipaddress
 import re
 import urllib.parse
@@ -46,10 +47,8 @@ async def extract(
 
             Results = []
             for Task in Tasks:
-                try:
+                with contextlib.suppress(Exception):
                     Results.append(Task.result())
-                except:
-                    pass
 
             return Results
 
