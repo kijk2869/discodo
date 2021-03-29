@@ -149,47 +149,48 @@ class WebsocketPayloads:
         }
         await self.sendJson(payload)
 
-        Previous = Now = Next = ""
-        Elements = list(Subtitle.TextElements.values())
-        while not Subtitle.is_done and not current.stopped:
-            Element = Subtitle.seek(current.position)
+        try:
+            Previous = Now = Next = ""
+            Elements = list(Subtitle.TextElements.values())
+            while not Subtitle.is_done and not current.stopped:
+                Element = Subtitle.seek(current.position)
 
-            if Element and Element["markdown"] and Element["markdown"] != Now:
-                if not Element["markdown"].startswith(Now) and not Element[
-                    "markdown"
-                ].endswith(Now):
-                    Previous = Now
-                Now = Element["markdown"]
+                if Element and Element["markdown"] and Element["markdown"] != Now:
+                    if not Element["markdown"].startswith(Now) and not Element[
+                        "markdown"
+                    ].endswith(Now):
+                        Previous = Now
+                    Now = Element["markdown"]
 
-                NextElements = [
-                    NextElement["markdown"]
-                    for NextElement in Elements[Elements.index(Element) + 1 :]
-                    if NextElement["markdown"] != Now
-                    if not NextElement["markdown"].startswith(Now)
-                    and not NextElement["markdown"].endswith(Now)
-                ]
+                    NextElements = [
+                        NextElement["markdown"]
+                        for NextElement in Elements[Elements.index(Element) + 1 :]
+                        if NextElement["markdown"] != Now
+                        if not NextElement["markdown"].startswith(Now)
+                        and not NextElement["markdown"].endswith(Now)
+                    ]
 
-                Next = NextElements[0] if NextElements else None
+                    Next = NextElements[0] if NextElements else None
 
-                payload = {
-                    "op": "Subtitle",
-                    "d": {
-                        "guild_id": data["guild_id"],
-                        "identify": _identify_token,
-                        "previous": Previous,
-                        "current": Now,
-                        "next": Next,
-                    },
-                }
-                await self.sendJson(payload)
+                    payload = {
+                        "op": "Subtitle",
+                        "d": {
+                            "guild_id": data["guild_id"],
+                            "identify": _identify_token,
+                            "previous": Previous,
+                            "current": Now,
+                            "next": Next,
+                        },
+                    }
+                    await self.sendJson(payload)
 
-            await asyncio.sleep(0.1)
-
-        payload = {
-            "op": "subtitleDone",
-            "d": {
-                "guild_id": data["guild_id"],
-                "identify": _identify_token,
-            },
-        }
-        return await self.sendJson(payload)
+                await asyncio.sleep(0.1)
+        finally:
+            payload = {
+                "op": "subtitleDone",
+                "d": {
+                    "guild_id": data["guild_id"],
+                    "identify": _identify_token,
+                },
+            }
+            return await self.sendJson(payload)
