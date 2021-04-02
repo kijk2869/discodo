@@ -2,6 +2,9 @@
 aiohttp[speedups]>=3.6.0,<3.8.0
 websockets==8.1
 
+# For performance
+uvloop>=0.5.3; sys_platform != "win32" and implementation_name == "cpython"
+
 # Extra extractor resolver
 asyncspotify==0.12.1
 
