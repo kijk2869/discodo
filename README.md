@@ -43,7 +43,7 @@ python -m discodo
 ### Client libraries
 
 * [discodo](https://github.com/kijk2869/discodo) (Python)
-* ~~[discodo.js](Under Developing) (Node.JS)~~
+* [discodo.js](https://github.com/kijk2869/discodo.js) (Node.JS)
 
 ## Supported sources
 
