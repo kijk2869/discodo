@@ -64,10 +64,10 @@ class VoiceConnector:
 
     @channel_id.setter
     def channel_id(self, value):
-        self._channel_id = value
+        self._channel_id = str(value)
 
     @property
-    def user_id(self) -> int:
+    def user_id(self) -> str:
         return self.manager.id
 
     @property

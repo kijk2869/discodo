@@ -40,7 +40,7 @@ class DiscordVoiceClient(VoiceConnector):
         self._crossfade = Config.DEFAULT_CROSSFADE
 
     def __del__(self):
-        guild_id = int(self.guild_id) if self.guild_id else None
+        guild_id = self.guild_id if self.guild_id else None
 
         if self.manager.voiceClients.get(guild_id) == self:
             self.dispatcher.dispatch("VC_DESTROYED")

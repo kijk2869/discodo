@@ -9,8 +9,8 @@ class ClientManager:
     def __init__(self, **kwargs):
         self.loop = asyncio.get_event_loop()
 
-        self.id = kwargs.get("user_id")
-        self.session_id = kwargs.get("session_id")
+        self.id = str(kwargs.get("user_id"))
+        self.session_id = str(kwargs.get("session_id"))
 
         self.voiceClients = {}
 
@@ -28,10 +28,10 @@ class ClientManager:
         return self.discordEvent.dispatch(data["t"], data=data["d"])
 
     def getVC(self, guildID, safe=False):
-        if int(guildID) not in self.voiceClients and not safe:
+        if str(guildID) not in self.voiceClients and not safe:
             raise VoiceClientNotFound
 
-        return self.voiceClients.get(int(guildID))
+        return self.voiceClients.get(str(guildID))
 
-    def delVC(self, guildID: int) -> None:
+    def delVC(self, guildID: str) -> None:
         self.getVC(guildID).__del__()

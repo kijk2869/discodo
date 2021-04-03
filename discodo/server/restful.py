@@ -60,7 +60,7 @@ def need_voiceclient(func):
 
         manager = request.app.ClientManagers[tag]
 
-        guild_id = int(request.headers.get("Guild-ID"))
+        guild_id = str(request.headers.get("Guild-ID"))
 
         VoiceClient = manager.getVC(guild_id, safe=True)
 

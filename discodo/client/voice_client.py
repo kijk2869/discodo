@@ -163,7 +163,7 @@ class VoiceClient:
         :param str op: Operation name of the payload
         :param Optional[dict] data: Operation data to send with"""
 
-        data["guild_id"] = self.guild_id
+        data["guild_id"] = str(self.guild_id)
 
         return await self.Node.send(op, data)
 
@@ -188,7 +188,7 @@ class VoiceClient:
         Task = self.loop.create_task(
             self.dispatcher.wait_for(
                 event,
-                condition=lambda d: int(d["guild_id"]) == int(self.guild_id),
+                condition=lambda d: d["guild_id"] == str(self.guild_id),
                 timeout=timeout,
             )
         )

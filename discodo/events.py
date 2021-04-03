@@ -16,19 +16,19 @@ class DiscordEvent:
         return self.dispatcher.dispatch(event, *args, **kwargs)
 
     async def READY(self, data):
-        self.manager.id = int(data["user"]["id"])
+        self.manager.id = str(data["user"]["id"])
         self.manager.session_id = data["session_id"]
 
     async def RESUME(self, data):
-        self.manager.id = int(data["user"]["id"])
+        self.manager.id = str(data["user"]["id"])
         self.manager.session_id = data["session_id"]
 
     async def VOICE_STATE_UPDATE(self, data):
-        if not self.manager.id or int(data["user_id"]) != self.manager.id:
+        if not self.manager.id or str(data["user_id"]) != self.manager.id:
             if self.manager.getVC(data["guild_id"], safe=True):
                 vc = self.manager.getVC(data["guild_id"])
 
-                if data.get("channel_id") and int(data["channel_id"]) == vc.channel_id:
+                if data.get("channel_id") and str(data["channel_id"]) == vc.channel_id:
                     vc.speakState = False
             return
 
@@ -36,14 +36,14 @@ class DiscordEvent:
 
         if self.manager.getVC(data["guild_id"], safe=True):
             self.manager.getVC(data["guild_id"]).channel_id = (
-                int(data["channel_id"]) if data.get("channel_id") else None
+                str(data["channel_id"]) if data.get("channel_id") else None
             )
         elif data.get("channel_id"):
-            vc = self.manager.voiceClients[int(data["guild_id"])] = DiscordVoiceClient(
+            vc = self.manager.voiceClients[str(data["guild_id"])] = DiscordVoiceClient(
                 self.manager
             )
-            vc.guild_id = int(data["guild_id"])
-            vc.channel_id = int(data["channel_id"])
+            vc.guild_id = str(data["guild_id"])
+            vc.channel_id = str(data["channel_id"])
 
             vc.dispatcher.dispatch("VC_CREATED", id=vc.id)
 
@@ -51,7 +51,7 @@ class DiscordEvent:
         if self.manager.getVC(data["guild_id"], safe=True):
             await self.manager.getVC(data["guild_id"]).createSocket(data)
         else:
-            vc = self.manager.voiceClients[int(data["guild_id"])] = DiscordVoiceClient(
+            vc = self.manager.voiceClients[str(data["guild_id"])] = DiscordVoiceClient(
                 self.manager, data
             )
 
