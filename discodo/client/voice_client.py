@@ -283,7 +283,11 @@ class VoiceClient:
 
         :param float offset: The position to seek"""
 
-        return await self.http.seek(offset)
+        await self.http.seek(offset)
+
+        await self.fetchState()
+
+        return
 
     async def getOptions(self):
         r"""Get options of the player
@@ -352,12 +356,20 @@ class VoiceClient:
     async def pause(self):
         r"""Pause the player"""
 
-        return await self.http.pause()
+        await self.http.pause()
+
+        await self.fetchState()
+
+        return
 
     async def resume(self):
         r"""Resume the player"""
 
-        return await self.http.resume()
+        await self.http.resume()
+
+        await self.fetchState()
+
+        return
 
     async def shuffle(self):
         r"""Shuffle the queue

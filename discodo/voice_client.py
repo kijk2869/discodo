@@ -1,6 +1,5 @@
 import random
 import re
-import time
 
 from youtube_related import RateLimited
 from youtube_related import preventDuplication as relatedClient
@@ -34,7 +33,6 @@ class DiscordVoiceClient(VoiceConnector):
 
         self.player = None
         self.paused = False
-        self.paused_at = None
 
         self.filter = {}
         self.autoplay = Config.DEFAULT_AUTOPLAY
@@ -190,13 +188,11 @@ class DiscordVoiceClient(VoiceConnector):
 
     def pause(self):
         self.paused = True
-        self.paused_at = time.time()
 
         return self.paused
 
     def resume(self):
         self.paused = False
-        self.paused_at = None
 
         return self.paused
 

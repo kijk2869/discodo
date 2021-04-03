@@ -2,6 +2,8 @@ import functools
 import logging
 import time
 
+from ..enums import PlayerState
+
 log = logging.getLogger("discodo.client.models")
 
 
@@ -207,11 +209,15 @@ class AudioSource:
 
     @property
     def position(self):
-        return round(
-            self.data["position"]
-            + (time.time() - self.as_of if "as_of" in self.data else 0),
-            2,
-        )
+        if self.VoiceClient.state != PlayerState.PAUSED:
+            self.data["position"] = round(
+                self.data["position"]
+                + (time.time() - self.as_of if "as_of" in self.data else 0),
+                2,
+            )
+            self.as_of = time.time()
+
+        return self.data["position"]
 
     def __repr__(self) -> str:
         return (
