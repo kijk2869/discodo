@@ -6,6 +6,7 @@ from youtube_related import preventDuplication as relatedClient
 
 from .config import Config
 from .connector import VoiceConnector
+from .enums import PlayerState
 from .errors import NotPlaying
 from .player import Player
 from .source import AudioData, AudioSource
@@ -32,6 +33,7 @@ class DiscordVoiceClient(VoiceConnector):
 
         self.player = None
         self.paused = False
+        self.paused_at = None
 
         self.filter = {}
         self.autoplay = Config.DEFAULT_AUTOPLAY
@@ -104,13 +106,13 @@ class DiscordVoiceClient(VoiceConnector):
     @property
     def state(self):
         if not self.player:
-            return "disconnected"
+            return PlayerState.DISCONNECTED
         elif not self.Queue and not self.player.current:
-            return "stopped"
+            return PlayerState.STOPPED
         elif self.paused:
-            return "paused"
+            return PlayerState.PAUSED
         else:
-            return "playing"
+            return PlayerState.PLAYING
 
     @property
     def volume(self) -> float:
@@ -187,11 +189,13 @@ class DiscordVoiceClient(VoiceConnector):
 
     def pause(self):
         self.paused = True
+        self.paused_at = time.time()
 
         return self.paused
 
     def resume(self):
         self.paused = False
+        self.paused_at = None
 
         return self.paused
 

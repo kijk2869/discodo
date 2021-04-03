@@ -51,3 +51,18 @@ class WebsocketCloseCode(enum.Enum):
     @property
     def resume(self) -> bool:
         return self.value in self.RESUME_CODES.value
+
+
+class PlayerState(enum.Enum):
+    UNKNOWN = -1
+    DISCONNECTED = 0
+    STOPPED = 1
+    PAUSED = 2
+    PLAYING = 3
+
+    @classmethod
+    def __missing__(cls, _):
+        return cls.UNKNOWN
+
+    def toDict(self):
+        return self.value

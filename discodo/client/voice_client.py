@@ -1,6 +1,7 @@
 import asyncio
 import copy
 
+from ..enums import PlayerState
 from ..errors import NodeException
 from ..utils import EventDispatcher
 from .http import HTTPClient
@@ -152,7 +153,7 @@ class VoiceClient:
 
         self._current = data["current"]
         self._context = data["context"]
-        self._state = data["state"]
+        self._state = PlayerState(data["state"])
 
         self.channel_id = data["channel_id"]
 
