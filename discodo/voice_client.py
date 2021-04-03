@@ -89,7 +89,7 @@ class DiscordVoiceClient(VoiceConnector):
 
     @channel_id.setter
     def channel_id(self, value) -> None:
-        self._channel_id = int(value)
+        self._channel_id = value
 
         self.dispatcher.dispatch("VC_CHANNEL_EDITED", channel_id=self._channel_id)
 
