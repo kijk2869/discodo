@@ -67,6 +67,7 @@ class WebsocketPayloads:
                 "guild_id": VoiceClient.guild_id,
                 "channel_id": VoiceClient.channel_id,
                 "state": VoiceClient.state,
+                "paused_at": VoiceClient.paused_at,
                 "current": VoiceClient.current,
                 "duration": VoiceClient.current.duration
                 if VoiceClient.current
