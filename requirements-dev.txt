@@ -11,6 +11,6 @@ isort==5.8.0
 pre-commit==2.11.1
 
 # Test code
-pytest==6.2.2
+pytest==6.2.3
 pytest-cov==2.11.1
 pytest-asyncio==0.14.0
