@@ -405,15 +405,15 @@ class Music(commands.Cog):
         if not ctx.voice_client:
             return await ctx.reply("I'm not playing anything.")
 
-        State = await ctx.voice_client.getState()
-
-        if not State.get("current"):
+        if not ctx.voice_client.current:
             embed = discord.Embed(title="I'm not playing anything!")
         else:
             Chapters = list(
                 filter(
-                    lambda x: x["start_time"] <= State["position"] < x["end_time"],
-                    State["current"].get("chapters") or [],
+                    lambda x: x["start_time"]
+                    <= ctx.voice_client.current.position
+                    < x["end_time"],
+                    ctx.voice_client.current.get("chapters") or [],
                 )
             )
             Chapter = Chapters[0] if Chapters else None
@@ -421,8 +421,8 @@ class Music(commands.Cog):
             STATE_EMOJI = {"playing": "▶️", "paused": "⏸️", "stopped": "⏹️"}
 
             embed = discord.Embed(
-                title=State["current"].title,
-                url=State["current"].webpage_url,
+                title=ctx.voice_client.current.title,
+                url=ctx.voice_client.current.webpage_url,
                 description=(
                     (
                         f"- `[{formatDuration(Chapter['start_time'])} ~ {formatDuration(Chapter['end_time'])}]` **{Chapter['title']}**\n\n"
@@ -430,17 +430,19 @@ class Music(commands.Cog):
                         else ""
                     )
                     + f"> ❤️ Audio Node: **{ctx.voice_client.Node.region}**\n"
-                    + f"{STATE_EMOJI[State['state']]} "
-                    + getProgress(State["position"], State["duration"])
-                    + f" `[{formatDuration(State['position'])}/{formatDuration(State['duration'])}]`"
-                    + f" 🔉 **{round(State['options']['volume'] * 100)}%**"
+                    + f"{STATE_EMOJI[ctx.voice_client.current]} "
+                    + getProgress(
+                        ctx.voice_client.current.position, ctx.voice_client.duration
+                    )
+                    + f" `[{formatDuration(ctx.voice_client.current.position)}/{formatDuration(ctx.voice_client.current.duration)}]`"
+                    + f" 🔉 **{round(ctx.voice_client.volume * 100)}%**"
                 ),
             )
-            if State["current"].thumbnail:
-                embed.set_thumbnail(url=State["current"].thumbnail)
+            if ctx.voice_client.current.thumbnail:
+                embed.set_thumbnail(url=ctx.voice_client.current.thumbnail)
 
             embed.set_footer(
-                text=f"From {State['current']['uploader']} | {State.get('remainQueue', 0)} sources left"
+                text=f"From {ctx.voice_client.current.uploader} | {len(ctx.voice_client.Queue)} sources left"
             )
 
         embed.colour = ctx.guild.me.colour
@@ -450,9 +452,11 @@ class Music(commands.Cog):
     @commands.command(aliases=["subtitle", "lyrics"])
     async def subtitles(self, ctx, value: str = None):
         """Print the synced subtitle of the currently playing source."""
-
-        Current = await ctx.voice_client.getCurrent()
-        usableSubtitles = Current.get("subtitles", {}).keys() if Current else []
+        usableSubtitles = (
+            ctx.voice_client.current.get("subtitles", {}).keys()
+            if ctx.voice_client.current
+            else []
+        )
 
         if not value:
             return await ctx.reply(
