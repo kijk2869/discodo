@@ -31,14 +31,14 @@ class VoiceSocket(websockets.client.WebSocketClientProtocol):
 
     @classmethod
     async def connect(cls, client, resume=False) -> WebSocketClientProtocol:
-        cls.client = client
-
         ws = await websockets.connect(
             f"wss://{client.endpoint}/?v=4",
             loop=client.loop,
             klass=cls,
             compression=None,
         )
+
+        ws.client = client
 
         if not resume:
             await ws.identify()  # type: ignore
