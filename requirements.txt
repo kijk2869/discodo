@@ -18,11 +18,15 @@ youtube-related==1.0.2
 bs4==0.0.1
 lxml==4.6.3
 defusedxml==0.7.1
-markdownify==0.6.5
+markdownify==0.7.0
 
 # Logging
 rich==9.11.0
 
 # Node webserver
-sanic==20.12.3
+sanic==21.3.4
+colorlog==5.0.1
+
+# Node webserver
+sanic==21.3.4
 psutil==5.8.0
