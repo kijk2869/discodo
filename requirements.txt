@@ -15,7 +15,7 @@ youtube-related==1.0.2
 bs4==0.0.1
 lxml==4.6.3
 defusedxml==0.7.1
-markdownify==0.6.5
+markdownify==0.7.0
 
 # Logging
 colorlog==5.0.1
