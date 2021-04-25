@@ -253,9 +253,9 @@ class VoiceClient:
         :rtype: AudioData or AudioSource or list"""
 
         data = await self.http.putSource(
-            list(map(lambda x: x.data, source))
+            list(map(lambda x: x.toDict(), source))
             if isinstance(source, list)
-            else source.data
+            else source.toDict()
         )
 
         return data["source"]

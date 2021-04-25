@@ -72,6 +72,9 @@ class AudioData:
     def get(self, *args, **kwargs):
         return self.data.get(*args, **kwargs)
 
+    def toDict(self):
+        return self.data
+
     def __repr__(self) -> str:
         return f"<AudioData id={self.id} title='{self.title}' duration={self.duration}>"
 
@@ -206,6 +209,9 @@ class AudioSource:
             return self.position
 
         return self.data.get(key, *args, **kwargs)
+
+    def toDict(self):
+        return self.data
 
     @property
     def position(self):
