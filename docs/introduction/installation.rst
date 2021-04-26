@@ -65,7 +65,7 @@ Docker
 
 .. code-block:: console
 
-    $ docker pull kijk2869/discodo:release-2.3.13
+    $ docker pull kijk2869/discodo:release-3.0.0
 
 Execution
 ---------
