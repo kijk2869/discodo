@@ -5,65 +5,50 @@ import logging
 import os
 import sys
 
-import colorlog
 import psutil
+from rich.logging import RichHandler
 
 from . import __version__
 from .config import Config
+from .errors import OpusLoadError
 from .natives import opus
 
 log = logging.getLogger("discodo")
 
 
 if not opus.isLoaded() and not opus.loadDefaultOpus():
-    raise ValueError(
-        "Cannot load libopus, please install `libopus-dev` if you are using linux."
+    raise OpusLoadError(
+        "Cannot load libopus, please check your python architecture."
+        if sys.platform == "win32"
+        else "Cannot load libopus, please install `libopus-dev` if you are using linux."
     )
 
+accessHandler = RichHandler(rich_tracebacks=True)
+accessHandler.setFormatter(
+    logging.Formatter("%(name)s :\t%(request)s %(message)s %(status)d %(byte)d")
+)
 
-class loggingFilter(logging.Filter):
-    def __init__(self, level) -> None:
-        self.level = level
-
-    def filter(self, record) -> bool:
-        return record.levelno < self.level
-
-
-stdoutHandler = logging.StreamHandler(sys.stdout)
-stderrHandler = logging.StreamHandler(sys.stderr)
-stdoutHandler.addFilter(loggingFilter(logging.WARNING))
+genericHandler = RichHandler(rich_tracebacks=True)
+genericHandler.setFormatter(logging.Formatter("%(name)s :\t%(message)s"))
 
 
 def setLoggingLevel(level) -> None:
     for logger in [log, logging.getLogger("libav")]:
-        addLoggingHandler(logger)
-        logger.setLevel(logging.DEBUG)
-        stdoutHandler.setLevel(level)
-        stderrHandler.setLevel(max(level, logging.WARNING))
+        logger.setLevel(level)
+        logger.addHandler(genericHandler)
 
 
-ColoredFormatter = colorlog.ColoredFormatter(
-    "[%(asctime)s] [%(filename)s] [%(name)s:%(bold)s%(module)s%(reset)s] %(log_color)s[%(levelname)s]%(reset)s: %(message)s",
-    datefmt=None,
-    reset=True,
-    log_colors={
-        "DEBUG": "green",
-        "INFO": "cyan",
-        "WARNING": "yellow",
-        "ERROR": "red",
-        "CRITICAL": "red,bg_white",
-    },
-    secondary_log_colors={},
-    style="%",
-)
-stdoutHandler.setFormatter(ColoredFormatter)
-stderrHandler.setFormatter(ColoredFormatter)
+logging.getLogger("sanic").setLevel(logging.INFO)
 
+logging.getLogger("sanic.root").addHandler(genericHandler)
 
-def addLoggingHandler(logger) -> None:
-    logger.addHandler(stdoutHandler)
-    logger.addHandler(stderrHandler)
+errorLogger = logging.getLogger("sanic.error")
+errorLogger.propagate = True
+errorLogger.addHandler(genericHandler)
 
+accessLogger = logging.getLogger("sanic.access")
+accessLogger.propagate = True
+accessLogger.addHandler(accessHandler)
 
 parser = argparse.ArgumentParser("discodo")
 
@@ -160,9 +145,9 @@ playerGroup = parser.add_argument_group("Player Option")
 
 playerGroup.add_argument(
     "--default-volume",
-    type=int,
-    default=100,
-    help="player's default volume (default: 100)",
+    type=float,
+    default=1.0,
+    help="player's default volume (default: 1.0)",
 )
 playerGroup.add_argument(
     "--default-crossfade",
@@ -235,7 +220,7 @@ if not args.config and not args.config_json:
     Config.IPBLOCKS = args.ip
     Config.EXCLUDEIPS = args.exclude_ip
     Config.DEFAULT_AUTOPLAY = args.default_autoplay
-    Config.DEFAULT_VOLUME = round(args.default_volume / 100, 3)
+    Config.DEFAULT_VOLUME = args.default_volume
     Config.DEFAULT_CROSSFADE = args.default_crossfade
     Config.BUFFERLIMIT = args.bufferlimit
     Config.VCTIMEOUT = args.timeout
@@ -256,7 +241,16 @@ if __name__ == "__main__":
     if hasattr(psutil, "HIGH_PRIORITY_CLASS"):
         psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
 
-    loop = asyncio.get_event_loop()
+    try:
+        import uvloop
+    except ModuleNotFoundError:
+        loop = asyncio.get_event_loop()
+    else:
+        loop = uvloop.new_event_loop()
+
+        log.debug(f"uvloop {uvloop.__version__} detected, will use {loop}")
+
+    asyncio.set_event_loop(loop)
 
     if log.level == logging.DEBUG:
         loop.set_debug(True)

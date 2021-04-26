@@ -1,4 +1,5 @@
-from typing import Any, Coroutine
+import time
+from typing import Any, Coroutine, NoReturn
 
 from ..errors import NotSeekable
 from .PyAVSource import PyAVSource
@@ -11,18 +12,25 @@ class AudioSource(PyAVSource):
         self.AudioData = AudioData
         self.address = self.AudioData.address if self.AudioData else None
 
+        self.Context = AudioData.Context
         self._skipped: bool = False
 
-    def __dict__(self) -> dict:
-        Value = self.AudioData.__dict__() if self.AudioData else {}
+    def toDict(self) -> dict:
+        Value = self.AudioData.toDict() if self.AudioData else {}
 
         Value["_type"] = "AudioSource"
         Value["seekable"] = self.seekable
         Value["duration"] = self.duration
+        Value["context"] = self.Context
+        Value["as_of"] = time.time()
         if hasattr(self, "position"):
             Value["position"] = self.position
 
         return Value
+
+    @classmethod
+    def fromDict(cls, data):
+        raise TypeError("AudioSource cannot be made from dictionary.")
 
     def __repr__(self) -> str:
         return (
@@ -38,7 +46,7 @@ class AudioSource(PyAVSource):
     def seekable(self) -> bool:
         return not self.AudioData.is_live if self.AudioData else True
 
-    def seek(self, *args, **kwargs) -> Coroutine:
+    def seek(self, *args, **kwargs):
         if not self.seekable:
             raise NotSeekable
 
@@ -57,7 +65,7 @@ class AudioSource(PyAVSource):
         return self._filter
 
     @filter.setter
-    def filter(self, value: dict) -> dict:
+    def filter(self, value: dict) -> None:
         if self.AudioData and self.AudioData.is_live and "atempo" in value:
             raise ValueError("Cannot use `atempo` filter in live streaming.")
 

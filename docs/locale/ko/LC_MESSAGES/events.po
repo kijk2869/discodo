@@ -1,0 +1,288 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Translators:
+# Mary <mareowst@gmail.com>, 2021
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
+"PO-Revision-Date: 2021-03-07 09:35+0000\n"
+"Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../events.rst:4
+msgid "Event Reference"
+msgstr "이벤트 레퍼런스"
+
+#: ../../events.rst:6
+msgid ""
+"This section outlines the different types of events dispatched by discodo "
+"client."
+msgstr "이 부분에서는 discodo 클라이언트에서 발송한 여러 유형의 이벤트에 대해 설명합니다."
+
+#: ../../events.rst:9
+msgid ""
+"If you are using a standalone discodo node server while not using "
+":py:class:`DPYClient`, the events that you get will have something "
+"different. See this :ref:`node_events`."
+msgstr ""
+":py:class:`DPYClient` 를 사용하지 않는 동안 독립 실행형 discodo 노드 서버를 사용하는 경우 가져오는 이벤트가 "
+"다를 수 있습니다. 대신 :ref:`node_events` 를 참조하십시오."
+
+#: ../../events.rst:11
+msgid ""
+"To listen an event, use :py:class:`EventDispatcher` of the "
+":py:class:`DPYClient`"
+msgstr "이벤트를 수신하려면 :py:class:`EventDispatcher` 를 사용하십시오."
+
+#: ../../events.rst:35
+msgid "VC_CREATED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "VC_CREATED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:37
+msgid ""
+"Called when the new voice client has successfully created. This is not the "
+"same as the client being fully connected."
+msgstr "새로운 음성 클라이언트가 성공적으로 생성되었을 때 호출됩니다. 이것은 클라이언트가 완전히 연결되었다는 의미는 아닙니다."
+
+#: ../../events.rst:42 ../../events.rst:60 ../../events.rst:80
+#: ../../events.rst:98 ../../events.rst:116 ../../events.rst:134
+#: ../../events.rst:152 ../../events.rst:170 ../../events.rst:188
+#: ../../events.rst:206
+msgid "Data Structure"
+msgstr "데이터 구조"
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Field"
+msgstr "이름"
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Type"
+msgstr "자료형"
+
+#: ../../events.rst:45 ../../events.rst:63 ../../events.rst:83
+#: ../../events.rst:101 ../../events.rst:119 ../../events.rst:137
+#: ../../events.rst:155 ../../events.rst:173 ../../events.rst:191
+#: ../../events.rst:209
+msgid "Description"
+msgstr "설명"
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:103 ../../events.rst:121 ../../events.rst:139
+#: ../../events.rst:157 ../../events.rst:175 ../../events.rst:193
+#: ../../events.rst:211
+msgid "guild_id"
+msgstr "guild_id"
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:87 ../../events.rst:103 ../../events.rst:121
+#: ../../events.rst:139 ../../events.rst:157 ../../events.rst:175
+#: ../../events.rst:193 ../../events.rst:211
+msgid "int"
+msgstr "정수"
+
+#: ../../events.rst:47 ../../events.rst:65 ../../events.rst:85
+#: ../../events.rst:103 ../../events.rst:121 ../../events.rst:139
+#: ../../events.rst:157 ../../events.rst:175 ../../events.rst:193
+#: ../../events.rst:211
+msgid "The guild id of the voice client"
+msgstr "음성 클라이언트의 길드 아이디"
+
+#: ../../events.rst:49
+msgid "id"
+msgstr "id"
+
+#: ../../events.rst:49 ../../events.rst:67 ../../events.rst:195
+#: ../../events.rst:215
+msgid "str"
+msgstr "문자열"
+
+#: ../../events.rst:49
+msgid "The id of the voice client"
+msgstr "음성 클라이언트의 아이디"
+
+#: ../../events.rst:53
+msgid "QUEUE_EVENT(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "QUEUE_EVENT(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:55
+msgid ""
+"Called when there is something changed in the queue of the voice client. If "
+"you are using :py:class:`DPYClient`, Ignore this event."
+msgstr ""
+"음성 클라이언트의 대기열에 변경된 내용이 있으면 호출됩니다. :py:class:`DPYClient` 를 사용하는 경우 이 이벤트를 "
+"무시하십시오."
+
+#: ../../events.rst:67
+msgid "name"
+msgstr "name"
+
+#: ../../events.rst:67
+msgid "The name of the method"
+msgstr "함수의 이름"
+
+#: ../../events.rst:69
+msgid "args"
+msgstr "args"
+
+#: ../../events.rst:69 ../../events.rst:105
+msgid "list"
+msgstr "리스트"
+
+#: ../../events.rst:69
+msgid "The arguments of the method"
+msgstr "함수의 인자들"
+
+#: ../../events.rst:73
+msgid "VC_CHANNEL_EDITED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "VC_CHANNEL_EDITED(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:75
+msgid "Called when the voice channel of the voice client is changed."
+msgstr "음성 클라이언트의 음성 채널이 변경되면 호출됩니다."
+
+#: ../../events.rst:87
+msgid "channel_id"
+msgstr "channel_id"
+
+#: ../../events.rst:87
+msgid "The channel id of the voice client"
+msgstr "음성 클라이언트의 채널 아이디"
+
+#: ../../events.rst:91
+msgid "putSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "putSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:93
+msgid "Called when some sources are put in the queue."
+msgstr "일부 소스를 대기열에 넣으면 호출됩니다."
+
+#: ../../events.rst:105
+msgid "sources"
+msgstr "sources"
+
+#: ../../events.rst:105
+msgid "The sources which is put"
+msgstr "추가된 소스"
+
+#: ../../events.rst:109
+msgid "loadSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "loadSource(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:111
+msgid "Called when some sources are searched and put in the queue."
+msgstr "일부 소스를 검색하여 대기열에 넣으면 호출됩니다."
+
+#: ../../events.rst:123 ../../events.rst:159 ../../events.rst:177
+#: ../../events.rst:213
+msgid "source"
+msgstr "source"
+
+#: ../../events.rst:123
+msgid "Union[AudioData, list]"
+msgstr "Union[AudioData, 리스트]"
+
+#: ../../events.rst:123
+msgid "The sources which is searched and put"
+msgstr "검색되고 추가되는 소스"
+
+#: ../../events.rst:127
+msgid "REQUIRE_NEXT_SOURCE(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "REQUIRE_NEXT_SOURCE(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:129
+msgid ""
+"Called when the player needs next source to play. If you set ``autoplay`` as"
+" ``True``, the related source will be put after this event."
+msgstr ""
+"플레이어가 다음 소스를 필요로 할 때 호출됩니다. ``autoplay``를 ``True``로 설정하면 추천 영상이 이 이벤트 후에 "
+"추가됩니다."
+
+#: ../../events.rst:141
+msgid "current"
+msgstr "current"
+
+#: ../../events.rst:141 ../../events.rst:159 ../../events.rst:177
+msgid "AudioSource"
+msgstr "AudioSource"
+
+#: ../../events.rst:141
+msgid "The source which the player is currently playing"
+msgstr "플레이어가 현재 재생 중인 소스"
+
+#: ../../events.rst:145
+msgid "SOURCE_START(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "SOURCE_START(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:147
+msgid "Called when the player starts to play the source."
+msgstr "플레이어가 소스를 재생하기 시작하면 호출됩니다."
+
+#: ../../events.rst:159
+msgid "The source which the player starts to play"
+msgstr "플레이어가 재생하기 시작하는 소스"
+
+#: ../../events.rst:163
+msgid "SOURCE_STOP(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "SOURCE_STOP(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:165
+msgid "Called when the player stops to play the source."
+msgstr "플레이어가 재생중인 소스를 중지하면 호출됩니다."
+
+#: ../../events.rst:177
+msgid "The source which the player stops to play"
+msgstr "재생이 중지되는 소스"
+
+#: ../../events.rst:181
+msgid "PLAYER_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "PLAYER_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:183
+msgid ""
+"Called when the player gets some traceback while trying to send packets to "
+"discord server."
+msgstr "플레이어가 디스코드 서버로 패킷을 보내려고 하는 동안 예외가 발생하면 호출됩니다."
+
+#: ../../events.rst:195 ../../events.rst:215
+msgid "traceback"
+msgstr "traceback"
+
+#: ../../events.rst:195 ../../events.rst:215
+msgid "The traceback information which the player gets"
+msgstr "발생한 예외 정보"
+
+#: ../../events.rst:199
+msgid "SOURCE_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+msgstr "SOURCE_TRACEBACK(:py:class:`VoiceClient`, :py:class:`dict` data)"
+
+#: ../../events.rst:201
+msgid ""
+"Called when the player gets some traceback while trying to play the source. "
+"That source will be automatically removed from the queue."
+msgstr "플레이어에서 소스를 재생하려고 시도하는 동안 예외가 발생하면 호출됩니다. 해당 소스는 대기열에서 자동으로 제거됩니다."
+
+#: ../../events.rst:213
+msgid "Union[AudioData, AudioSource]"
+msgstr "Union[AudioData, AudioSource]"
+
+#: ../../events.rst:213
+msgid "The source which the player gets traceback while trying to play"
+msgstr "플레이어가 재생을 시도하는 동안 예외가 발생한 소스"

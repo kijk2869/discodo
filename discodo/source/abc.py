@@ -22,7 +22,7 @@ class SubtitleFormat(abc.ABC):
 
         return self.lyrics
 
-    def __dict__(self) -> dict:
+    def toDict(self) -> dict:
         return self.TextElements
 
     @property

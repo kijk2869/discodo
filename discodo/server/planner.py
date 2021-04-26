@@ -1,5 +1,5 @@
+import functools
 import ipaddress
-from typing import Coroutine
 
 from sanic import Blueprint, response
 from sanic.exceptions import abort
@@ -9,8 +9,9 @@ from ..config import Config
 app = Blueprint(__name__)
 
 
-def authorized(func: Coroutine) -> Coroutine:
-    def wrapper(request, *args, **kwargs) -> Coroutine:
+def authorized(func):
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
         if request.headers.get("Authorization") != Config.PASSWORD:
             abort(403, "Password mismatch.")
 
@@ -21,7 +22,7 @@ def authorized(func: Coroutine) -> Coroutine:
 
 @app.get("/planner")
 @authorized
-async def plannerStatus(request) -> response.json:
+async def plannerStatus(request):
     if not Config.RoutePlanner:
         abort(404, "RoutePlanner is not enabled.")
 
@@ -45,7 +46,7 @@ async def plannerStatus(request) -> response.json:
 
 @app.post("/planner/unmark")
 @authorized
-async def plannerUnmark(request) -> response.json:
+async def plannerUnmark(request):
     if not Config.RoutePlanner:
         abort(404, "RoutePlanner is not enabled.")
 
@@ -60,7 +61,7 @@ async def plannerUnmark(request) -> response.json:
 
 @app.post("/planner/unmark/all")
 @authorized
-async def plannerUnmark(request) -> response.json:
+async def plannerUnmarkAll(request):
     if not Config.RoutePlanner:
         abort(404, "RoutePlanner is not enabled.")
 

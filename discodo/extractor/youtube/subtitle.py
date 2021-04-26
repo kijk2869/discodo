@@ -6,19 +6,16 @@ try:
 except ImportError:
     from defusedxml import ElementTree
 
-import aiohttp
-
 log = logging.getLogger("discodo.extractor.youtube")
 
 
-async def get_subtitle(videoId: str, connector: aiohttp.TCPConnector = None) -> list:
+async def get_subtitle(videoId: str, session):
     log.info(f"Downloading subtitle page of {videoId}")
-    async with aiohttp.ClientSession(connector=connector) as session:
-        async with session.get(
-            "https://video.google.com/timedtext",
-            params={"hl": "en", "type": "list", "v": videoId},
-        ) as resp:
-            Body: str = await resp.text()
+    async with session.get(
+        "https://video.google.com/timedtext",
+        params={"hl": "en", "type": "list", "v": videoId},
+    ) as resp:
+        Body: str = await resp.text()
 
     Tree = ElementTree.fromstring(Body)
 
