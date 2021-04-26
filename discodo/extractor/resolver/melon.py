@@ -1,7 +1,6 @@
 import re
 from typing import Union
 
-import aiohttp
 from bs4 import BeautifulSoup
 
 MELON_REGEX = re.compile(
@@ -9,15 +8,14 @@ MELON_REGEX = re.compile(
 )
 
 
-async def get_album(url: str, connector: aiohttp.TCPConnector = None) -> list:
-    async with aiohttp.ClientSession(
+async def get_album(url: str, session) -> list:
+    async with session.get(
+        url,
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
         },
-        connector=connector,
-    ) as session:
-        async with session.get(url) as resp:
-            Body = await resp.text()
+    ) as resp:
+        Body = await resp.text()
 
     soup = BeautifulSoup(Body, "html.parser")
 
@@ -36,13 +34,11 @@ async def get_album(url: str, connector: aiohttp.TCPConnector = None) -> list:
     ]
 
 
-async def resolve(
-    query: str, connector: aiohttp.TCPConnector = None
-) -> Union[str, list]:
+async def resolve(query: str, session):
     is_album = MELON_REGEX.match(query)
 
     if is_album:
-        Album = await get_album(query, connector)
+        Album = await get_album(query, session)
 
         if len(Album) == 1:
             return Album[0]

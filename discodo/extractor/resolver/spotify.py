@@ -37,19 +37,19 @@ async def create_client():
 async def get_track(id: str) -> str:
     Track = await spotify.get_track(id)
 
-    return f'{Track.artists.pop().name} - {Track.name} "topic"'
+    return f"{Track.artists.pop().name} - {Track.name}"
 
 
 async def get_album(id: str) -> list:
     Tracks = await spotify.get_album_tracks(id)
 
-    return [f'{Track.artists.pop().name} - {Track.name} "topic"' for Track in Tracks]
+    return [f"{Track.artists.pop().name} - {Track.name}" for Track in Tracks]
 
 
 async def get_playlist(id: str) -> list:
     Tracks = await spotify.get_playlist_tracks(id)
 
-    return [f'{Track.artists.pop().name} - {Track.name} "topic"' for Track in Tracks]
+    return [f"{Track.artists.pop().name} - {Track.name}" for Track in Tracks]
 
 
 async def resolve(query: str) -> Union[str, list]:

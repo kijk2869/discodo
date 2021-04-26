@@ -1,18 +1,18 @@
+import functools
 import json
-from typing import Coroutine
 
 from sanic import Blueprint, response
 from sanic.exceptions import abort
 
 from ..config import Config
-from ..extractor import search
 from ..source import AudioData
 
 app = Blueprint(__name__)
 
 
-def authorized(func: Coroutine) -> Coroutine:
-    def wrapper(request, *args, **kwargs) -> Coroutine:
+def authorized(func):
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
         if request.headers.get("Authorization") != Config.PASSWORD:
             abort(403, "Password mismatch.")
 
@@ -21,36 +21,46 @@ def authorized(func: Coroutine) -> Coroutine:
     return wrapper
 
 
-def need_manager(func: Coroutine) -> Coroutine:
+def need_manager(func):
+    @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
-        user_id = int(request.headers.get("User-ID"))
+        tag = str(request.headers.get("User-ID")) + (
+            f"-{request.headers.get('Shard-ID')}"
+            if request.headers.get("Shard-ID") is not None
+            else ""
+        )
 
         if (
-            not hasattr(request.app, "ClientManagers")
-            or not user_id in request.app.ClientManagers
+            not hasattr(request.app.ctx, "ClientManagers")
+            or not tag in request.app.ctx.ClientManagers
         ):
             abort(404, "ClientManager not found.")
 
-        manager = request.app.ClientManagers[user_id]
+        manager = request.app.ctx.ClientManagers[tag]
 
         return func(request, manager, *args, **kwargs)
 
     return wrapper
 
 
-def need_voiceclient(func: Coroutine) -> Coroutine:
+def need_voiceclient(func):
+    @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
-        user_id = int(request.headers.get("User-ID"))
+        tag = str(request.headers.get("User-ID")) + (
+            f"-{request.headers.get('Shard-ID')}"
+            if request.headers.get("Shard-ID") is not None
+            else ""
+        )
 
         if (
-            not hasattr(request.app, "ClientManagers")
-            or not user_id in request.app.ClientManagers
+            not hasattr(request.app.ctx, "ClientManagers")
+            or not tag in request.app.ctx.ClientManagers
         ):
             abort(404, "ClientManager not found.")
 
-        manager = request.app.ClientManagers[user_id]
+        manager = request.app.ctx.ClientManagers[tag]
 
-        guild_id = int(request.headers.get("Guild-ID"))
+        guild_id = str(request.headers.get("Guild-ID"))
 
         VoiceClient = manager.getVC(guild_id, safe=True)
 
@@ -68,8 +78,9 @@ def need_voiceclient(func: Coroutine) -> Coroutine:
 
 
 class Encoder(json.JSONEncoder):
-    def default(self, o):
-        return o.__dict__()
+    @staticmethod
+    def default(o):
+        return o.toDict()
 
 
 def JSONResponse(
@@ -87,47 +98,9 @@ def JSONResponse(
     )
 
 
-@app.get("/getContext")
-@authorized
-@need_manager
-async def getContext(request, manager) -> JSONResponse:
-    return JSONResponse({"context": manager.Context})
-
-
-@app.get("/setContext")
-@authorized
-@need_manager
-async def setContext(request, manager) -> JSONResponse:
-    if "context" not in request.json:
-        abort(400, "Bad data `context`")
-
-    manager.Context.update(request.json["context"])
-
-    return JSONResponse({"context": manager.Context})
-
-
-@app.get("/getVCContext")
-@authorized
-@need_voiceclient
-async def getVCContext(request, VoiceClient) -> JSONResponse:
-    return JSONResponse({"context": VoiceClient.Context})
-
-
-@app.get("/setVCContext")
-@authorized
-@need_voiceclient
-async def setVCContext(request, VoiceClient) -> JSONResponse:
-    if "context" not in request.json:
-        abort(400, "Bad data `context`")
-
-    VoiceClient.Context.update(request.json["context"])
-
-    return JSONResponse({"context": VoiceClient.Context})
-
-
 @app.get("/getSource")
 @authorized
-async def getSource(request) -> JSONResponse:
+async def getSource(request):
     Query = "".join(request.args.get("query", [])).strip()
     if not Query:
         abort(400, "Missing parameter query.")
@@ -137,32 +110,51 @@ async def getSource(request) -> JSONResponse:
 
 @app.get("/searchSources")
 @authorized
-async def searchSources(request) -> JSONResponse:
+async def searchSources(request):
     Query = "".join(request.args.get("query", [])).strip()
     if not Query:
         abort(400, "Missing parameter query.")
 
-    return JSONResponse(
-        {"sources": filter(lambda Source: AudioData(Source), await search(Query))}
-    )
+    return JSONResponse({"sources": await AudioData.create(Query, search=True)})
+
+
+@app.get("/context")
+@authorized
+@need_voiceclient
+async def getContext(request, VoiceClient):
+    return JSONResponse(VoiceClient.Context)
+
+
+@app.post("/context")
+@authorized
+@need_voiceclient
+async def setContext(request, VoiceClient):
+    VoiceClient.Context = request.json["context"]
+
+    return JSONResponse(VoiceClient.Context)
 
 
 @app.post("/putSource")
 @authorized
 @need_voiceclient
-async def putSource(request, VoiceClient) -> JSONResponse:
+async def putSource(request, VoiceClient):
     if "source" not in request.json:
         abort(400, "Bad data `source`")
 
-    index = VoiceClient.putSource(request.json["source"])
+    source = (
+        list(map(AudioData, request.json["source"]))
+        if isinstance(request.json["source"], list)
+        else AudioData(request.json["source"])
+    )
+    VoiceClient.putSource(source)
 
-    return JSONResponse({"index": index})
+    return JSONResponse({"source": source})
 
 
 @app.post("/loadSource")
 @authorized
 @need_voiceclient
-async def loadSource(request, VoiceClient) -> JSONResponse:
+async def loadSource(request, VoiceClient):
     if "query" not in request.json:
         abort(400, "Bad data `query`")
 
@@ -171,61 +163,64 @@ async def loadSource(request, VoiceClient) -> JSONResponse:
     return JSONResponse({"source": Source})
 
 
-@app.post("/setVolume")
+@app.get("/options")
 @authorized
 @need_voiceclient
-async def setVolume(request, VoiceClient) -> response.empty:
-    if "volume" not in request.json or not isinstance(request.json["volume"], float):
-        abort(400, "Bad data `volume`")
+async def getOptions(request, VoiceClient):
+    return JSONResponse(
+        {
+            "autoplay": VoiceClient.autoplay,
+            "volume": VoiceClient.volume,
+            "crossfade": VoiceClient.crossfade,
+            "filter": VoiceClient.filter,
+        }
+    )
 
-    VoiceClient.volume = request.json["volume"]
 
-    return response.empty()
-
-
-@app.post("/setCrossfade")
+@app.post("/options")
 @authorized
 @need_voiceclient
-async def setCrossfade(request, VoiceClient) -> response.empty:
-    if "crossfade" not in request.json or not isinstance(
-        request.json["crossfade"], float
-    ):
-        abort(400, "Bad data `crossfade`")
+async def setOptions(request, VoiceClient):
+    if "volume" in request.json:
+        VoiceClient.volume = request.json["volume"]
 
-    VoiceClient.crossfade = request.json["crossfade"]
+    if "crossfade" in request.json:
+        VoiceClient.crossfade = request.json["crossfade"]
 
-    return response.empty()
+    if "autoplay" in request.json:
+        VoiceClient.autoplay = request.json["autoplay"]
+
+    if "filter" in request.json:
+        VoiceClient.filter = request.json["filter"]
+
+    return JSONResponse(
+        {
+            "autoplay": VoiceClient.autoplay,
+            "volume": VoiceClient.volume,
+            "crossfade": VoiceClient.crossfade,
+            "filter": VoiceClient.filter,
+        }
+    )
 
 
-@app.post("/setAutoplay")
+@app.get("/seek")
 @authorized
 @need_voiceclient
-async def setAutoplay(request, VoiceClient) -> response.empty:
-    if "autoplay" not in request.json or not isinstance(request.json["autoplay"], bool):
-        abort(400, "Bad data `autoplay`")
-
-    VoiceClient.autoplay = request.json["autoplay"]
-
-    return response.empty()
-
-
-@app.post("/setFilter")
-@authorized
-@need_voiceclient
-async def setFilter(request, VoiceClient) -> response.empty:
-    if "filter" not in request.json or not isinstance(request.json["filter"], dict):
-        abort(400, "Bad data `filter`")
-
-    VoiceClient.filter = request.json["filter"]
-
-    return response.empty()
+async def getSeek(request, VoiceClient):
+    return JSONResponse(
+        {
+            "duration": VoiceClient.current.duration,
+            "position": VoiceClient.current.position,
+            "remain": VoiceClient.current.remain,
+        }
+    )
 
 
 @app.post("/seek")
 @authorized
 @need_voiceclient
-async def seek(request, VoiceClient) -> response.empty:
-    if "offset" not in request.json or not isinstance(request.json["offset"], float):
+async def seek(request, VoiceClient):
+    if "offset" not in request.json:
         abort(400, "Bad data `offset`")
 
     await VoiceClient.seek(request.json["offset"])
@@ -236,19 +231,18 @@ async def seek(request, VoiceClient) -> response.empty:
 @app.post("/skip")
 @authorized
 @need_voiceclient
-async def skip(request, VoiceClient) -> JSONResponse:
-    if "offset" not in request.json or not isinstance(request.json["offset"], int):
-        abort(400, "Bad data `offset`")
+async def skip(request, VoiceClient):
+    offset = request.json.get("offset", 1)
 
-    VoiceClient.skip(request.json["offset"])
+    VoiceClient.skip(offset)
 
-    return JSONResponse({"remain": len(VoiceClient.Queue)})
+    return response.empty()
 
 
 @app.post("/pause")
 @authorized
 @need_voiceclient
-async def pause(request, VoiceClient) -> response.empty:
+async def pause(request, VoiceClient):
     VoiceClient.pause()
 
     return response.empty()
@@ -257,7 +251,7 @@ async def pause(request, VoiceClient) -> response.empty:
 @app.post("/resume")
 @authorized
 @need_voiceclient
-async def resume(request, VoiceClient) -> response.empty:
+async def resume(request, VoiceClient):
     VoiceClient.resume()
 
     return response.empty()
@@ -266,56 +260,115 @@ async def resume(request, VoiceClient) -> response.empty:
 @app.post("/shuffle")
 @authorized
 @need_voiceclient
-async def shuffle(request, VoiceClient) -> JSONResponse:
+async def shuffle(request, VoiceClient):
     VoiceClient.shuffle()
 
     return JSONResponse({"entries": VoiceClient.Queue})
 
 
-@app.post("/remove")
+@app.get("/current")
 @authorized
 @need_voiceclient
-async def remove(request, VoiceClient) -> JSONResponse:
-    if "index" not in request.json or not isinstance(request.json["index"], int):
-        abort(400, "Bad data `index`")
-
-    removed = VoiceClient.Queue[request.json["index"] - 1]
-    del VoiceClient.Queue[request.json["index"] - 1]
-
-    return JSONResponse({"removed": removed, "entries": VoiceClient.Queue})
-
-
-@app.get("/state")
-@authorized
-@need_voiceclient
-async def state(request, VoiceClient) -> JSONResponse:
-    return JSONResponse(
-        {
-            "id": VoiceClient.id,
-            "guild_id": VoiceClient.guild_id,
-            "channel_id": VoiceClient.channel_id,
-            "state": VoiceClient.state,
-            "current": VoiceClient.current,
-            "duration": VoiceClient.current.duration,
-            "position": VoiceClient.current.position,
-            "remain": VoiceClient.current.remain,
-            "remainQueue": len(VoiceClient.Queue),
-            "options": {
-                "autoplay": VoiceClient.autoplay,
-                "volume": VoiceClient.volume,
-                "crossfade": VoiceClient.crossfade,
-                "filter": VoiceClient.filter,
-            },
-        }
-    )
+async def current(request, VoiceClient):
+    return JSONResponse(VoiceClient.current)
 
 
 @app.get("/queue")
 @authorized
 @need_voiceclient
-async def queue(request, VoiceClient) -> JSONResponse:
+async def queue(request, VoiceClient):
     return JSONResponse(
         {
             "entries": VoiceClient.Queue,
         }
     )
+
+
+@app.get("/queue/<index:int>")
+@authorized
+@need_voiceclient
+async def queueItem(request, VoiceClient, index):
+    return JSONResponse(VoiceClient.Queue[index])
+
+
+@app.get("/queue/<tag:string>")
+@authorized
+@need_voiceclient
+async def queueItemTag(request, VoiceClient, tag):
+    searched = list(filter(lambda x: x.tag == tag, VoiceClient.Queue))
+
+    return JSONResponse(searched.pop(0))
+
+
+@app.post("/current")
+@authorized
+@need_voiceclient
+async def changeCurrent(request, VoiceClient):
+    source = VoiceClient.current
+
+    if "context" in request.json:
+        source.Context = request.json["context"]
+
+    return JSONResponse(source)
+
+
+@app.post("/queue/<index:int>")
+@authorized
+@need_voiceclient
+async def changeQueueItem(request, VoiceClient, index):
+    source = VoiceClient.Queue[index]
+
+    if "index" in request.json:
+        source = VoiceClient.Queue.pop(index)
+        VoiceClient.Queue.insert(index, source)
+
+    if "context" in request.json:
+        source.Context = request.json["context"]
+
+    if "start_position" in request.json:
+        source.start_position = request.json["start_position"]
+
+    return JSONResponse(source)
+
+
+@app.post("/queue/<tag:string>")
+@authorized
+@need_voiceclient
+async def changeQueueItemTag(request, VoiceClient, tag):
+    searched = list(filter(lambda x: x.tag == tag, VoiceClient.Queue))
+    source, index = searched[0], VoiceClient.Queue.index(searched[0])
+
+    if "index" in request.json:
+        source = VoiceClient.Queue.pop(index)
+        VoiceClient.Queue.insert(index, source)
+
+    if "context" in request.json:
+        source.Context = request.json["context"]
+
+    if "start_position" in request.json:
+        source.start_position = request.json["start_position"]
+
+    return JSONResponse(source)
+
+
+@app.delete("/queue/<index:int>")
+@authorized
+@need_voiceclient
+async def removeQueueItem(request, VoiceClient, index):
+    removed = VoiceClient.Queue[index]
+    del VoiceClient.Queue[index]
+
+    return JSONResponse({"removed": removed, "entries": VoiceClient.Queue})
+
+
+@app.delete("/queue/<tag:string>")
+@authorized
+@need_voiceclient
+async def removeQueueItemTag(request, VoiceClient, tag):
+    searched = list(filter(lambda x: x.tag == tag, VoiceClient.Queue))
+    index = VoiceClient.Queue.index(searched[0])
+
+    removed = VoiceClient.Queue[index]
+    del VoiceClient.Queue[index]
+
+    return JSONResponse({"removed": removed, "entries": VoiceClient.Queue})

@@ -44,5 +44,5 @@ class AudioFilter:
 
         try:
             return self.Graph.pull()
-        except av.error.BlockingIOError:
+        except av.BlockingIOError:  # type: ignore
             return None

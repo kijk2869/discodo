@@ -1,4 +1,6 @@
-from .node import Node
+from . import models
+from .node import Node, Nodes
+from .voice_client import VoiceClient
 
 try:
     import discord

@@ -1,0 +1,62 @@
+[main]
+host = https://www.transifex.com
+
+[discodo.docs__build_gettext_index]
+file_filter = locale/<lang>/LC_MESSAGES/index.po
+source_file = _build/gettext/index.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_introduction_installation]
+file_filter = locale/<lang>/LC_MESSAGES/introduction/installation.po
+source_file = _build/gettext/introduction/installation.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_introduction_logging]
+file_filter = locale/<lang>/LC_MESSAGES/introduction/logging.po
+source_file = _build/gettext/introduction/logging.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_introduction_quickstart]
+file_filter = locale/<lang>/LC_MESSAGES/introduction/quickstart.po
+source_file = _build/gettext/introduction/quickstart.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_node_connection]
+file_filter = locale/<lang>/LC_MESSAGES/node/connection.po
+source_file = _build/gettext/node/connection.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_node_resources_voice_client]
+file_filter = locale/<lang>/LC_MESSAGES/node/resources/voice_client.po
+source_file = _build/gettext/node/resources/voice_client.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_node_resources_source]
+file_filter = locale/<lang>/LC_MESSAGES/node/resources/source.po
+source_file = _build/gettext/node/resources/source.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_node_resources_events]
+file_filter = locale/<lang>/LC_MESSAGES/node/resources/events.po
+source_file = _build/gettext/node/resources/events.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_high_api]
+file_filter = locale/<lang>/LC_MESSAGES/high_api.po
+source_file = _build/gettext/high_api.pot
+source_lang = en
+type = PO
+
+[discodo.docs__build_gettext_events]
+file_filter = locale/<lang>/LC_MESSAGES/events.po
+source_file = _build/gettext/events.pot
+source_lang = en
+type = PO

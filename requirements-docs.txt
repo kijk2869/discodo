@@ -1,0 +1,14 @@
+-r requirements.txt
+
+# Document generator
+Sphinx==3.4.3
+pygments
+sphinx-rtd-theme==0.5.1
+sphinxcontrib-httpdomain==1.7.0
+
+# Translation
+sphinx-intl==2.0.1
+transifex-client==0.14.2
+
+# For rtfd.io
+discord.py

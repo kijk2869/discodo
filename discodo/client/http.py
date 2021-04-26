@@ -1,18 +1,13 @@
-from http.client import responses
-from typing import Union
+import logging
 
-import aiohttp
+from ..errors import HTTPException
+from .models import ensureQueueObjectType
 
-from ..errors import DiscodoException
-
-
-class HTTPException(DiscodoException):
-    def __init__(self, status: int) -> None:
-        super().__init__(f"{status} {responses.get(status, 'Unknown Status Code')}")
+log = logging.getLogger("discodo.client.http")
 
 
 class HTTPClient:
-    def __init__(self, client) -> None:
+    def __init__(self, client):
         self.VoiceClient = client
         self.Node = client.Node
         self.loop = client.Node.loop
@@ -26,82 +21,82 @@ class HTTPClient:
             "VoiceClient-ID": str(self.VoiceClient.id),
         }
 
-    async def fetch(self, method: str, endpoint: str, **kwargs) -> dict:
+    async def fetch(self, method, endpoint, **kwargs):
         URL = self.Node.URL + endpoint
 
-        async with aiohttp.ClientSession(headers=self.headers) as session:
-            async with session.request(method, URL, **kwargs) as response:
-                if 200 <= response.status < 300:
-                    return await response.json(content_type=None)
+        if "headers" not in kwargs:
+            kwargs["headers"] = {}
 
-                raise HTTPException(response.status)
+        kwargs["headers"].update(self.headers)
 
-    async def getVCContext(self) -> dict:
-        return (await self.fetch("GET", "/getVCContext"))["source"]
+        async with self.Node.session.request(method, URL, **kwargs) as response:
+            log.debug(f"{method} {URL} with {kwargs} has returned {response.status}")
 
-    async def setVCContext(self, context: dict) -> dict:
-        return (await self.fetch("POST", "/setVCContext", json={"context": context}))[
-            "context"
-        ]
+            data = ensureQueueObjectType(
+                self.VoiceClient, await response.json(content_type=None)
+            )
 
-    async def getSource(self, query: str) -> dict:
-        return (await self.fetch("GET", "/getSource", params={"query": query}))[
-            "source"
-        ]
+            if 200 <= response.status < 300:
+                return data
 
-    async def searchSource(self, query: str) -> list:
-        return (await self.fetch("GET", "/searchSource", params={"query": query}))[
-            "sources"
-        ]
+            raise HTTPException(response.status, data)
 
-    async def putSource(self, source: dict) -> Union[int, list]:
-        return (await self.fetch("POST", "/putSource", json={"source": dict(source)}))[
-            "index"
-        ]
+    async def getSource(self, query):
+        return await self.fetch("GET", "/getSource", params={"query": query})
 
-    async def loadSource(self, query: str) -> dict:
-        return (await self.fetch("POST", "/loadSource", json={"query": str(query)}))[
-            "source"
-        ]
+    async def searchSources(self, query):
+        return await self.fetch("GET", "/searchSources", params={"query": query})
 
-    async def setVolume(self, volume: float) -> None:
-        return await self.fetch("POST", "/setVolume", json={"volume": float(volume)})
+    async def getVCContext(self):
+        return await self.fetch("GET", "/context")
 
-    async def setCrossfade(self, crossfade: float) -> None:
-        return await self.fetch(
-            "POST", "/setCrossfade", json={"crossfade": float(crossfade)}
-        )
+    async def setVCContext(self, data):
+        return await self.fetch("POST", "/context", json={"context": data})
 
-    async def setAutoplay(self, autoplay: bool) -> None:
-        return await self.fetch(
-            "POST", "/setAutoplay", json={"autoplay": bool(autoplay)}
-        )
+    async def putSource(self, source):
+        return await self.fetch("POST", "/putSource", json={"source": source})
 
-    async def setFilter(self, filter: dict) -> None:
-        return await self.fetch("POST", "/setFilter", json={"filter": dict(filter)})
+    async def loadSource(self, query):
+        return await self.fetch("POST", "/loadSource", json={"query": query})
 
-    async def seek(self, offset: float) -> None:
-        return await self.fetch("POST", "/seek", json={"offset": float(offset)})
+    async def getOptions(self):
+        return await self.fetch("GET", "/options")
 
-    async def skip(self, offset: int) -> None:
-        return (await self.fetch("POST", "/skip", json={"offset": int(offset)}))[
-            "remain"
-        ]
+    async def setOptions(self, options):
+        return await self.fetch("POST", "/options", json=options)
 
-    async def pause(self) -> None:
+    async def getSeek(self):
+        return await self.fetch("GET", "/seek")
+
+    async def seek(self, offset):
+        return await self.fetch("POST", "/seek", json={"offset": offset})
+
+    async def skip(self, offset):
+        return await self.fetch("POST", "/skip", json={"offset": offset})
+
+    async def pause(self):
         return await self.fetch("POST", "/pause")
 
-    async def resume(self) -> None:
-        return await self.fetch("POST", "/pause")
+    async def resume(self):
+        return await self.fetch("POST", "/resume")
 
-    async def shuffle(self) -> None:
+    async def shuffle(self):
         return await self.fetch("POST", "/shuffle")
 
-    async def remove(self, index: int) -> None:
-        return await self.fetch("POST", "/remove", json={"index": int(index)})
+    async def queue(self):
+        return await self.fetch("GET", "/queue")
 
-    async def getState(self) -> dict:
-        return await self.fetch("GET", "/state")
+    async def getCurrent(self):
+        return await self.fetch("GET", "/current")
 
-    async def getQueue(self) -> dict:
-        return (await self.fetch("GET", "/queue"))["entries"]
+    async def getQueueSource(self, tag):
+        return await self.fetch("GET", f"/queue/{tag}")
+
+    async def setCurrent(self, data):
+        return await self.fetch("POST", "/current", json=data)
+
+    async def setQueueSource(self, tag, data):
+        return await self.fetch("POST", f"/queue/{tag}", json=data)
+
+    async def removeQueueSource(self, tag):
+        return await self.fetch("DELETE", f"/queue/{tag}")

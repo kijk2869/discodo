@@ -1,0 +1,354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, kijk2869
+# This file is distributed under the same license as the discodo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Translators:
+# Mary <mareowst@gmail.com>, 2021
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: discodo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-07 18:34+0900\n"
+"PO-Revision-Date: 2021-03-05 03:56+0000\n"
+"Last-Translator: Mary <mareowst@gmail.com>, 2021\n"
+"Language-Team: Korean (https://www.transifex.com/mary-2/teams/117665/ko/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../node/resources/voice_client.rst:2
+msgid "Voice Client"
+msgstr "음성 클라이언트"
+
+#: ../../node/resources/voice_client.rst:5
+msgid "Get State"
+msgstr "상태 가져오기"
+
+#: ../../node/resources/voice_client.rst:8
+msgid "> Example getState"
+msgstr "> getState 예제"
+
+#: ../../node/resources/voice_client.rst:21
+msgid "< Example getState response"
+msgstr "< getState 응답 예제"
+
+#: ../../node/resources/voice_client.rst:47
+msgid "Get Context"
+msgstr "컨텍스트 가져오기"
+
+#: ../../node/resources/voice_client.rst:51
+msgid "Get context of the voice client"
+msgstr "음성 클라이언트의 컨텍스트를 가져옵니다"
+
+#: ../../node/resources/voice_client.rst:53
+#: ../../node/resources/voice_client.rst:79
+#: ../../node/resources/voice_client.rst:107
+#: ../../node/resources/voice_client.rst:137
+#: ../../node/resources/voice_client.rst:167
+#: ../../node/resources/voice_client.rst:196
+#: ../../node/resources/voice_client.rst:230
+#: ../../node/resources/voice_client.rst:332
+#: ../../node/resources/voice_client.rst:360
+msgid "**Example response**:"
+msgstr "**응답 예제**:"
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "Request Headers"
+msgstr "요청 헤더"
+
+#: ../../node/resources/voice_client.rst:61
+#: ../../node/resources/voice_client.rst:87
+#: ../../node/resources/voice_client.rst:117
+#: ../../node/resources/voice_client.rst:147
+#: ../../node/resources/voice_client.rst:178
+#: ../../node/resources/voice_client.rst:207
+#: ../../node/resources/voice_client.rst:240
+#: ../../node/resources/voice_client.rst:258
+#: ../../node/resources/voice_client.rst:278
+#: ../../node/resources/voice_client.rst:296
+#: ../../node/resources/voice_client.rst:314
+#: ../../node/resources/voice_client.rst:342
+#: ../../node/resources/voice_client.rst:370
+msgid "Password for discodo server"
+msgstr "discodo 서버의 비밀번호"
+
+#: ../../node/resources/voice_client.rst:63
+#: ../../node/resources/voice_client.rst:89
+#: ../../node/resources/voice_client.rst:119
+#: ../../node/resources/voice_client.rst:149
+#: ../../node/resources/voice_client.rst:180
+#: ../../node/resources/voice_client.rst:209
+#: ../../node/resources/voice_client.rst:242
+#: ../../node/resources/voice_client.rst:260
+#: ../../node/resources/voice_client.rst:280
+#: ../../node/resources/voice_client.rst:298
+#: ../../node/resources/voice_client.rst:316
+#: ../../node/resources/voice_client.rst:344
+#: ../../node/resources/voice_client.rst:372
+msgid "the bot user id"
+msgstr "봇 아이디"
+
+#: ../../node/resources/voice_client.rst:64
+#: ../../node/resources/voice_client.rst:90
+#: ../../node/resources/voice_client.rst:120
+#: ../../node/resources/voice_client.rst:150
+#: ../../node/resources/voice_client.rst:181
+#: ../../node/resources/voice_client.rst:210
+#: ../../node/resources/voice_client.rst:243
+#: ../../node/resources/voice_client.rst:261
+#: ../../node/resources/voice_client.rst:281
+#: ../../node/resources/voice_client.rst:299
+#: ../../node/resources/voice_client.rst:317
+#: ../../node/resources/voice_client.rst:345
+#: ../../node/resources/voice_client.rst:373
+msgid "the bot shard id"
+msgstr "봇 샤드 아이디"
+
+#: ../../node/resources/voice_client.rst:65
+#: ../../node/resources/voice_client.rst:91
+#: ../../node/resources/voice_client.rst:121
+#: ../../node/resources/voice_client.rst:151
+#: ../../node/resources/voice_client.rst:182
+#: ../../node/resources/voice_client.rst:211
+#: ../../node/resources/voice_client.rst:244
+#: ../../node/resources/voice_client.rst:262
+#: ../../node/resources/voice_client.rst:282
+#: ../../node/resources/voice_client.rst:300
+#: ../../node/resources/voice_client.rst:318
+#: ../../node/resources/voice_client.rst:346
+#: ../../node/resources/voice_client.rst:374
+msgid "the guild id of queue"
+msgstr "재생목록의 길드 아이디"
+
+#: ../../node/resources/voice_client.rst:66
+#: ../../node/resources/voice_client.rst:92
+#: ../../node/resources/voice_client.rst:122
+#: ../../node/resources/voice_client.rst:152
+#: ../../node/resources/voice_client.rst:183
+#: ../../node/resources/voice_client.rst:212
+#: ../../node/resources/voice_client.rst:245
+#: ../../node/resources/voice_client.rst:263
+#: ../../node/resources/voice_client.rst:283
+#: ../../node/resources/voice_client.rst:301
+#: ../../node/resources/voice_client.rst:319
+#: ../../node/resources/voice_client.rst:347
+#: ../../node/resources/voice_client.rst:375
+msgid "the voiceclient id"
+msgstr "음성 클라이언트 아이디"
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "Status Codes"
+msgstr "상태 코드"
+
+#: ../../node/resources/voice_client.rst:68
+#: ../../node/resources/voice_client.rst:96
+#: ../../node/resources/voice_client.rst:126
+#: ../../node/resources/voice_client.rst:156
+#: ../../node/resources/voice_client.rst:185
+#: ../../node/resources/voice_client.rst:219
+#: ../../node/resources/voice_client.rst:247
+#: ../../node/resources/voice_client.rst:267
+#: ../../node/resources/voice_client.rst:285
+#: ../../node/resources/voice_client.rst:303
+#: ../../node/resources/voice_client.rst:321
+#: ../../node/resources/voice_client.rst:349
+#: ../../node/resources/voice_client.rst:377
+msgid "no error"
+msgstr "에러 없음"
+
+#: ../../node/resources/voice_client.rst:69
+#: ../../node/resources/voice_client.rst:97
+#: ../../node/resources/voice_client.rst:127
+#: ../../node/resources/voice_client.rst:157
+#: ../../node/resources/voice_client.rst:186
+#: ../../node/resources/voice_client.rst:220
+#: ../../node/resources/voice_client.rst:248
+#: ../../node/resources/voice_client.rst:268
+#: ../../node/resources/voice_client.rst:286
+#: ../../node/resources/voice_client.rst:304
+#: ../../node/resources/voice_client.rst:322
+#: ../../node/resources/voice_client.rst:350
+#: ../../node/resources/voice_client.rst:378
+msgid "authorization failed or VoiceClient-ID mismatched"
+msgstr "인증이 실패했거나 VoiceClient-ID가 일치하지 않음"
+
+#: ../../node/resources/voice_client.rst:70
+#: ../../node/resources/voice_client.rst:98
+#: ../../node/resources/voice_client.rst:128
+#: ../../node/resources/voice_client.rst:158
+#: ../../node/resources/voice_client.rst:187
+#: ../../node/resources/voice_client.rst:221
+#: ../../node/resources/voice_client.rst:249
+#: ../../node/resources/voice_client.rst:269
+#: ../../node/resources/voice_client.rst:287
+#: ../../node/resources/voice_client.rst:305
+#: ../../node/resources/voice_client.rst:323
+#: ../../node/resources/voice_client.rst:351
+#: ../../node/resources/voice_client.rst:379
+msgid "ClientManager or VoiceClient not found"
+msgstr "클라이언트 매니저 혹은 음성 클라이언트를 찾을 수 없음"
+
+#: ../../node/resources/voice_client.rst:73
+msgid "Set Context"
+msgstr "컨텍스트 설정하기"
+
+#: ../../node/resources/voice_client.rst:77
+msgid "Set context of the voice client"
+msgstr "음성 클라이언트의 컨텍스트를 설정합니다"
+
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+#: ../../node/resources/voice_client.rst:0
+msgid "JSON Parameters"
+msgstr "JSON 파라미터"
+
+#: ../../node/resources/voice_client.rst:94
+msgid "context to set"
+msgstr "설정할 컨텍스트"
+
+#: ../../node/resources/voice_client.rst:101
+msgid "Put Source"
+msgstr "소스 추가하기"
+
+#: ../../node/resources/voice_client.rst:105
+msgid "Put the source object on Queue"
+msgstr "재생목록에 소스 객체를 추가합니다"
+
+#: ../../node/resources/voice_client.rst:124
+msgid "the source object to put"
+msgstr "추가할 소스 객체"
+
+#: ../../node/resources/voice_client.rst:131
+msgid "Load Source"
+msgstr "소스 로드하기"
+
+#: ../../node/resources/voice_client.rst:135
+msgid "Search query and put it on Queue"
+msgstr "요청을 검색하고 재생목록에 추가합니다"
+
+#: ../../node/resources/voice_client.rst:154
+msgid "query to search"
+msgstr "검색할 요청"
+
+#: ../../node/resources/voice_client.rst:161
+msgid "Get Options"
+msgstr "옵션 가져오기"
+
+#: ../../node/resources/voice_client.rst:165
+msgid "Get options of the voice_client"
+msgstr "음성 클라이언트의 옵션을 가져옵니다"
+
+#: ../../node/resources/voice_client.rst:190
+msgid "Set Options"
+msgstr "옵션 설정하기"
+
+#: ../../node/resources/voice_client.rst:194
+msgid "Set options of the voice_client"
+msgstr "음성 클라이언트의 옵션을 설정합니다"
+
+#: ../../node/resources/voice_client.rst:214
+msgid "volume value"
+msgstr "볼륨 값"
+
+#: ../../node/resources/voice_client.rst:215
+msgid "crossfade value"
+msgstr "크로스페이드 값"
+
+#: ../../node/resources/voice_client.rst:216
+msgid "autoplay value"
+msgstr "자동재생 값"
+
+#: ../../node/resources/voice_client.rst:217
+msgid "filter value"
+msgstr "필터 값"
+
+#: ../../node/resources/voice_client.rst:224
+msgid "Get Position"
+msgstr "위치 가져오기"
+
+#: ../../node/resources/voice_client.rst:228
+msgid "Get position of the voice_client"
+msgstr "음성 클라이언트의 위치를 가져옵니다<br>"
+
+#: ../../node/resources/voice_client.rst:252
+msgid "Set Position (Seek)"
+msgstr "위치 설정하기 (탐색)"
+
+#: ../../node/resources/voice_client.rst:256
+msgid "Set position of the voice_client"
+msgstr "음성 클라이언트의 위치를 설정합니다"
+
+#: ../../node/resources/voice_client.rst:265
+msgid "position to seek"
+msgstr "탐색할 위치"
+
+#: ../../node/resources/voice_client.rst:272
+msgid "Skip Current"
+msgstr "플레이어 스킵"
+
+#: ../../node/resources/voice_client.rst:276
+msgid "Skip current of the voice_client"
+msgstr "현재 재생중인 소스를 스킵합니다"
+
+#: ../../node/resources/voice_client.rst:290
+msgid "Pause"
+msgstr "일시 정지"
+
+#: ../../node/resources/voice_client.rst:294
+msgid "Pause current of the voice_client"
+msgstr "현재 재생중인 소스를 일시 정지합니다"
+
+#: ../../node/resources/voice_client.rst:308
+msgid "Resume"
+msgstr "재개"
+
+#: ../../node/resources/voice_client.rst:312
+msgid "Resume current of the voice_client"
+msgstr "현재 일시 정지 중인 소스를 재개합니다"
+
+#: ../../node/resources/voice_client.rst:326
+msgid "Shuffle Queue"
+msgstr "재생 목록 섞기"
+
+#: ../../node/resources/voice_client.rst:330
+msgid "Shuffle the queue of the voice_client"
+msgstr "음성 클라이언트의 재생 목록을 섞습니다"
+
+#: ../../node/resources/voice_client.rst:354
+msgid "Get Queue"
+msgstr "재생 목록 가져오기"
+
+#: ../../node/resources/voice_client.rst:358
+msgid "Get the queue of the voice_client"
+msgstr "음성 클라이언트의 재생 목록을 가져옵니다"
