@@ -86,12 +86,10 @@ async def resolve(query: str, session):
 
     if Match:
         if Match.group(1) == "chart":
-            got_query = await getChart(Match.group(2), session) or query
+            query = await getChart(Match.group(2), session) or query
         elif Match.group(1) == "track":
-            got_query = await getTrack(Match.group(2), session) or query
+            query = await getTrack(Match.group(2), session) or query
         elif Match.group(2) == "album":
-            got_query = await getAlbum(Match.group(2), session) or query
-        else:
-            got_query = None
+            query = await getAlbum(Match.group(2), session) or query
 
-        return got_query
+    return query
