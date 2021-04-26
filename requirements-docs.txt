@@ -1,7 +1,7 @@
 -r requirements.txt
 
 # Document generator
-Sphinx==3.4.3
+Sphinx==3.5.4
 pygments
 sphinx-rtd-theme==0.5.1
 sphinxcontrib-httpdomain==1.7.0
