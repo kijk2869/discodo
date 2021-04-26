@@ -18,7 +18,7 @@ Discodo is an enhanced audio player for discord.
 
 ## Documentation
 
-**More information can be found [here](https://discodo.readthedocs.io/en/3.0/).**
+**More information can be found [here](https://discodo.readthedocs.io/en/latest/).**
 
 ## Installation
 

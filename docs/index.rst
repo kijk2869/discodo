@@ -29,12 +29,12 @@ Client libraries
 ----------------
 
 - discodo_ (Python_)
-- discodo.js_ (Under Developing) (Node.js_)
+- discodo.js_ (Node.js_)
 
 .. _Python: https://www.python.org/
 .. _Node.js: https://nodejs.org/
 .. _discodo: https://github.com/kijk2869/discodo
-.. _discodo.js: Under Developing
+.. _discodo.js: https://github.com/kijk2869/discodo.js
 
 
 .. toctree::
