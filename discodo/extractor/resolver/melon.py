@@ -30,7 +30,7 @@ async def get_album(url: str, session) -> list:
     ]
 
     return [
-        f'{Item[1].find("a").text} - {Item[0].find("a").text}' for Item in Items if Item
+        f'{Item[1].find("a").text} - {Item[0].find("a").text} "topic"' for Item in Items if Item
     ]
 
 
