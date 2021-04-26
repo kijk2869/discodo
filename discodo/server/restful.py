@@ -31,12 +31,12 @@ def need_manager(func):
         )
 
         if (
-            not hasattr(request.app, "ClientManagers")
-            or not tag in request.app.ClientManagers
+            not hasattr(request.app.ctx, "ClientManagers")
+            or not tag in request.app.ctx.ClientManagers
         ):
             abort(404, "ClientManager not found.")
 
-        manager = request.app.ClientManagers[tag]
+        manager = request.app.ctx.ClientManagers[tag]
 
         return func(request, manager, *args, **kwargs)
 
@@ -53,12 +53,12 @@ def need_voiceclient(func):
         )
 
         if (
-            not hasattr(request.app, "ClientManagers")
-            or not tag in request.app.ClientManagers
+            not hasattr(request.app.ctx, "ClientManagers")
+            or not tag in request.app.ctx.ClientManagers
         ):
             abort(404, "ClientManager not found.")
 
-        manager = request.app.ClientManagers[tag]
+        manager = request.app.ctx.ClientManagers[tag]
 
         guild_id = str(request.headers.get("Guild-ID"))
 

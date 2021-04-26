@@ -45,8 +45,8 @@ class WebsocketHandler:
         self.request = request
         self.app = request.app
 
-        if not hasattr(self.app, "ClientManagers"):
-            self.app.ClientManagers = {}
+        if not hasattr(self.app.ctx, "ClientManagers"):
+            self.app.ctx.ClientManagers = {}
 
         self.ClientManager = None
 
@@ -76,7 +76,7 @@ class WebsocketHandler:
             )
         except asyncio.TimeoutError:
             self.ClientManager.__del__()
-            del self.app.ClientManagers[self.ClientManager.tag]
+            del self.app.ctx.ClientManagers[self.ClientManager.tag]
             self.ClientManager = None
 
     def join(self):
@@ -145,15 +145,15 @@ class WebsocketHandler:
     async def initializeManager(self, user_id, shard_id=None) -> None:
         tag = f"{user_id}{f'-{shard_id}' if shard_id is not None else ''}"
 
-        if tag in self.app.ClientManagers:
-            self.ClientManager = self.app.ClientManagers[tag]
+        if tag in self.app.ctx.ClientManagers:
+            self.ClientManager = self.app.ctx.ClientManagers[tag]
             self.ClientManager._binded.set()
 
             self.loop.create_task(self.resumed())
         else:
             self.ClientManager = ModifiedClientManager(user_id=user_id)
             self.ClientManager.tag = tag
-            self.app.ClientManagers[tag] = self.ClientManager
+            self.app.ctx.ClientManagers[tag] = self.ClientManager
 
         self.ClientManager.state = self.state
         self.ClientManager.dispatcher.onAny(self.managerEvent)
