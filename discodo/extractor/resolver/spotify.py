@@ -37,7 +37,7 @@ async def create_client():
 async def get_track(id: str) -> str:
     Track = await spotify.get_track(id)
 
-    return f"{Track.artists.pop().name} - {Track.name} \"topic\""
+    return f'{Track.artists.pop().name} - {Track.name} "topic"'
 
 
 async def get_album(id: str) -> list:
