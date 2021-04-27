@@ -45,7 +45,7 @@ async def getChart(type: str, session):
 
     return list(
         map(
-            lambda x: f"{', '.join(map(lambda y: y['artistName'], x['artists']))} - {x['trackTitle']}",
+            lambda x: f'{", ".join(map(lambda y: y["artistName"], x["artists"]))} - {x["trackTitle"]} "topic"',
             Data["response"]["result"]["chart"]["items"]["tracks"],
         )
     )
@@ -61,7 +61,7 @@ async def getTrack(id: str, session):
         Data = await resp.json()
 
     Track = Data["response"]["result"]["track"]
-    return f"{', '.join(map(lambda y: y['artistName'], Track['artists']))} - {Track['trackTitle']}"
+    return f'{", ".join(map(lambda y: y["artistName"], Track["artists"]))} - {Track["trackTitle"]} "topic"'
 
 
 async def getAlbum(id: str, session):
@@ -75,7 +75,7 @@ async def getAlbum(id: str, session):
 
     return list(
         map(
-            lambda x: f"{', '.join(map(lambda y: y['artistName'], x['artists']))} - {x['trackTitle']}",
+            lambda x: f'{", ".join(map(lambda y: y["artistName"], x["artists"]))} - {x["trackTitle"]} "topic"',
             Data["response"]["result"]["tracks"],
         )
     )
