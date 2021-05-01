@@ -430,7 +430,7 @@ class Music(commands.Cog):
                         else ""
                     )
                     + f"> ❤️ Audio Node: **{ctx.voice_client.Node.region}**\n"
-                    + f"{STATE_EMOJI[ctx.voice_client.current]} "
+                    + f"{STATE_EMOJI[ctx.voice_client.state]} "
                     + getProgress(
                         ctx.voice_client.current.position, ctx.voice_client.duration
                     )
