@@ -215,6 +215,9 @@ class AudioSource:
 
     @property
     def position(self):
+        if not self.data["position"]:
+            return
+
         if self.VoiceClient.state != PlayerState.PAUSED:
             self.data["position"] = round(
                 self.data["position"]
