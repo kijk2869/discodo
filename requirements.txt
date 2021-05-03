@@ -1,6 +1,6 @@
 # For networking
 aiohttp[speedups]>=3.6.0,<3.8.0
-websockets==8.1
+websockets==9.0.1
 
 # For performance
 uvloop>=0.5.3; sys_platform != "win32" and implementation_name == "cpython"
