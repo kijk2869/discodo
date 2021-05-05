@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 .vscode/settings.json
 bot.py
+
+# JetBrains Familly
+.idea
