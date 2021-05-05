@@ -17,8 +17,8 @@ class NodeClient(OriginNode):
 
         for guild_id, vc_data in Data["voice_clients"].items():
             guild = self.client.client.get_guild(int(guild_id))
-            if "channel" in vc_data:
-                channel = guild.get_channel(vc_data["channel"])
+            if "channel" in vc_data and vc_data["channel"]:
+                channel = guild.get_channel(int(vc_data["channel"]))
                 self.loop.create_task(self.client.connect(channel, self))
             else:
                 self.loop.create_task(self.client.disconnect(guild))
