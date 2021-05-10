@@ -4,13 +4,13 @@
 flake8==3.9.1
 
 # Coding style formatter
-black==21.4b2
+black==21.5b0
 isort==5.8.0
 
 # Git pre commit
 pre-commit==2.12.1
 
 # Test code
-pytest==6.2.3
+pytest==6.2.4
 pytest-cov==2.11.1
 pytest-asyncio==0.15.1
