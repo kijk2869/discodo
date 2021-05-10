@@ -25,6 +25,7 @@ YTDLOption = {
 
 def _extract(
     query: str,
+    ie_key: str = None,
     address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
     video: bool = False,
 ) -> dict:
@@ -37,7 +38,7 @@ def _extract(
         option["source_address"] = str(address)
 
     YoutubeDL = YoutubeDLClient(option)
-    Data = YoutubeDL.extract_info(query, download=False)
+    Data = YoutubeDL.extract_info(query, download=False, ie_key=ie_key)
 
     if not Data:
         raise NoSearchResults
@@ -66,6 +67,7 @@ def _clear_cache() -> None:
 
 def extract(
     query: str,
+    ie_key: str = None,
     address: Union[ipaddress.IPv4Address, ipaddress.IPv6Address] = None,
     video: bool = False,
     loop: asyncio.AbstractEventLoop = None,
@@ -73,7 +75,7 @@ def extract(
     if not loop:
         loop = asyncio.get_event_loop()
 
-    return loop.run_in_executor(None, _extract, query, address, video)
+    return loop.run_in_executor(None, _extract, query, ie_key, address, video)
 
 
 def clear_cache(loop: asyncio.AbstractEventLoop = None) -> Coroutine:

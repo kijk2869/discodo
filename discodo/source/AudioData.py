@@ -7,7 +7,7 @@ import youtube_dl
 
 from ..config import Config
 from ..errors import Forbidden, TooManyRequests
-from ..extractor import extract
+from ..extractor import YOUTUBE_VIDEO_ID_REGEX, extract
 from ..extractor.youtube_dl import clear_cache
 from .AudioSource import AudioSource
 
@@ -137,8 +137,14 @@ class AudioData:
         return cls(Data)
 
     async def gather(self):
+        ie_key = "Youtube" if YOUTUBE_VIDEO_ID_REGEX.match(self.webpage_url) else None
+
         try:
-            Data = await extract(self.webpage_url, address=self.address)
+            Data = await extract(
+                self.webpage_url,
+                address=self.address,
+                ie_key=ie_key,
+            )
         except youtube_dl.utils.DownloadError as exc:
             if Config.RoutePlanner and exc.exc_info[1].status == 429:
                 Config.RoutePlanner.mark_failed_address(self.address)
