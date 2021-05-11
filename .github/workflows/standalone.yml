@@ -1,0 +1,61 @@
+name: Standalone
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset_name_suffix: ''
+          - os: windows-latest
+            asset_name_suffix: .exe
+          - os: macOS-latest
+            asset_name_suffix: ''
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.2.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+    - name: Install pyinstaller
+      shell: bash
+      run: python -m pip install pyinstaller
+    - name: Write a standalone code
+      uses: DamianReeves/write-file-action
+      with:
+        path: app.py
+        contents: |
+          import discodo.__main__
+          if __name__ == "__main__":
+              discodo.__main__.main()
+        write-mode: overwrite
+    - name: Build with pyinstaller
+      shell: bash
+      run: pyinstaller -F --add-data "discodo/natives/bin/*;." ./app.py
+    - name: Upload executable
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.github_token }}
+        VERSION: $(echo $VERSION | sed -e 's/^v//')
+      with:
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        asset_path: dist/app${{ matrix.asset_name_suffix }}
+        asset_name: discodo-${{ VERSION }}${{ matrix.asset_name_suffix }}
+        asset_content_type: application/octet-stream
