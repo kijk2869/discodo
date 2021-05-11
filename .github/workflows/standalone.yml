@@ -1,22 +1,13 @@
-name: Standalone
+name: Standalone builds
 
 on:
   release:
     types: [created]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  windows:
 
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            asset_name_suffix: ''
-          - os: windows-latest
-            asset_name_suffix: .exe
-          - os: macOS-latest
-            asset_name_suffix: ''
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -48,7 +39,8 @@ jobs:
         write-mode: overwrite
     - name: Build with pyinstaller
       shell: bash
-      run: pyinstaller -F --add-data "discodo/natives/bin/*;." ./app.py
+      run: |
+        pyinstaller -F --add-data "discodo/natives/bin/*;." ./app.py
     - name: Upload executable
       uses: actions/upload-release-asset@v1
       env:
@@ -56,6 +48,6 @@ jobs:
         VERSION: $(echo $VERSION | sed -e 's/^v//')
       with:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
-        asset_path: dist/app${{ matrix.asset_name_suffix }}
-        asset_name: discodo-${ VERSION }${{ matrix.asset_name_suffix }}
+        asset_path: dist/app.exe
+        asset_name: discodo-${VERSION}.exe
         asset_content_type: application/octet-stream
