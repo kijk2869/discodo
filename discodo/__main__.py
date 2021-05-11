@@ -207,37 +207,38 @@ logParser.add_argument(
     "--verbose", "-v", action="store_true", help="Print various debugging information"
 )
 
-args = parser.parse_args()
 
-if not args.config and not args.config_json:
-    verbose = args.verbose
+def main():
+    args = parser.parse_args()
 
-    Config.HOST = args.host
-    Config.PORT = args.port
-    Config.PASSWORD = args.auth
-    Config.HANDSHAKE_INTERVAL = args.ws_interval
-    Config.HANDSHAKE_TIMEOUT = args.ws_timeout
-    Config.IPBLOCKS = args.ip
-    Config.EXCLUDEIPS = args.exclude_ip
-    Config.DEFAULT_AUTOPLAY = args.default_autoplay
-    Config.DEFAULT_VOLUME = args.default_volume
-    Config.DEFAULT_CROSSFADE = args.default_crossfade
-    Config.BUFFERLIMIT = args.bufferlimit
-    Config.VCTIMEOUT = args.timeout
-    Config.ENABLED_EXT_RESOLVER = args.enabled_resolver
-    Config.SPOTIFY_ID = args.spotify_id
-    Config.SPOTIFY_SECRET = args.spotify_secret
-else:
-    verbose = (args.config or args.config_json).pop("verbose", False)
+    if not args.config and not args.config_json:
+        verbose = args.verbose
 
-    Config.from_dict(args.config or args.config_json)
+        Config.HOST = args.host
+        Config.PORT = args.port
+        Config.PASSWORD = args.auth
+        Config.HANDSHAKE_INTERVAL = args.ws_interval
+        Config.HANDSHAKE_TIMEOUT = args.ws_timeout
+        Config.IPBLOCKS = args.ip
+        Config.EXCLUDEIPS = args.exclude_ip
+        Config.DEFAULT_AUTOPLAY = args.default_autoplay
+        Config.DEFAULT_VOLUME = args.default_volume
+        Config.DEFAULT_CROSSFADE = args.default_crossfade
+        Config.BUFFERLIMIT = args.bufferlimit
+        Config.VCTIMEOUT = args.timeout
+        Config.ENABLED_EXT_RESOLVER = args.enabled_resolver
+        Config.SPOTIFY_ID = args.spotify_id
+        Config.SPOTIFY_SECRET = args.spotify_secret
+    else:
+        verbose = (args.config or args.config_json).pop("verbose", False)
 
-if verbose:
-    setLoggingLevel(logging.DEBUG)
-else:
-    setLoggingLevel(logging.INFO)
+        Config.from_dict(args.config or args.config_json)
 
-if __name__ == "__main__":
+    if verbose:
+        setLoggingLevel(logging.DEBUG)
+    else:
+        setLoggingLevel(logging.INFO)
+
     if hasattr(psutil, "HIGH_PRIORITY_CLASS"):
         psutil.Process(os.getpid()).nice(psutil.HIGH_PRIORITY_CLASS)
 
@@ -265,3 +266,7 @@ if __name__ == "__main__":
         )
     )
     loop.run_forever()
+
+
+if __name__ == "__main__":
+    main()
