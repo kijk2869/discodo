@@ -43,13 +43,13 @@ async def get_track(id: str) -> str:
 async def get_album(id: str) -> list:
     Tracks = await spotify.get_album_tracks(id)
 
-    return [f'{", ".join(map(lambda x: x.name, Track.artists))} "topic"' for Track in Tracks]
+    return [f'{", ".join(map(lambda x: x.name, Track.artists))} - {Track.name} "topic"' for Track in Tracks]
 
 
 async def get_playlist(id: str) -> list:
     Tracks = await spotify.get_playlist_tracks(id)
 
-    return [f'{", ".join(map(lambda x: x.name, Track.artists))} "topic"' for Track in Tracks]
+    return [f'{", ".join(map(lambda x: x.name, Track.artists))} - {Track.name} "topic"' for Track in Tracks]
 
 
 async def resolve(query: str) -> Union[str, list]:
