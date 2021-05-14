@@ -40,7 +40,7 @@ jobs:
       run: |
         pyinstaller -F --add-data "discodo/natives/bin/*;." ./app.py
     - name: Upload executable
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
@@ -84,7 +84,7 @@ jobs:
       run: |
         pyinstaller -F --add-data "discodo/natives/bin/*:." ./app.py
     - name: Upload executable
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
@@ -128,7 +128,7 @@ jobs:
       run: |
         pyinstaller -F --add-data "discodo/natives/bin/*:." ./app.py
     - name: Upload executable
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
