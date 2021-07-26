@@ -9,6 +9,7 @@ import time
 from typing import Optional
 
 import websockets
+import websockets.legacy
 from websockets.legacy.client import WebSocketClientProtocol
 
 from .enums import VoicePayload

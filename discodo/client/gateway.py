@@ -7,6 +7,7 @@ import warnings
 from typing import Optional
 
 import websockets
+import websockets.legacy
 
 from .. import __version__
 
