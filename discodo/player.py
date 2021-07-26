@@ -270,6 +270,10 @@ class Player(threading.Thread):
                         "PLAYER_TRACEBACK", traceback=traceback.format_exc()
                     )
 
+        if self._current:
+            self.client.loop.call_soon_threadsafe(self._current.cleanup)
+            self._current = None
+
         self.stop()
 
     def stop(self):

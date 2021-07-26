@@ -150,7 +150,7 @@ class PyAVSource:
     def cleanup(self) -> None:
         self._end.set()
         if self.AudioFifo and not self.AudioFifo.haveToFillBuffer.is_set():
-            self.AudioFifo.haveToFillBuffer.clear()
+            self.AudioFifo.haveToFillBuffer.set()
         self.AudioFifo = None
 
 
@@ -241,6 +241,7 @@ class Loader(threading.Thread):
                     if not self.Source.AudioFifo.haveToFillBuffer.is_set():
                         self.Source.AudioFifo.haveToFillBuffer.wait()
 
+                if self.Source.AudioFifo:
                     self.Source.AudioFifo.write(Frame)
 
                 self.Source._position = _current_position
