@@ -14,7 +14,7 @@ from .. import __version__
 log = logging.getLogger("discodo.client.gateway")
 
 
-class NodeConnection(websockets.legacy.client.WebSocketClientProtocol):
+class NodeConnection(websockets.WebSocketClientProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

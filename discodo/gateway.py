@@ -10,7 +10,6 @@ from typing import Optional
 
 import websockets
 import websockets.legacy
-from websockets.legacy.client import WebSocketClientProtocol
 
 from .enums import VoicePayload
 from .natives import Cipher
@@ -18,7 +17,7 @@ from .natives import Cipher
 log = logging.getLogger("discodo.gateway")
 
 
-class VoiceSocket(websockets.legacy.client.WebSocketClientProtocol):
+class VoiceSocket(websockets.WebSocketClientProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -31,7 +30,7 @@ class VoiceSocket(websockets.legacy.client.WebSocketClientProtocol):
         self._lastAck = self._lastSend = time.perf_counter()
 
     @classmethod
-    async def connect(cls, client, resume=False) -> WebSocketClientProtocol:
+    async def connect(cls, client, resume=False) -> websockets.WebSocketClientProtocol:
         ws = await websockets.connect(
             f"wss://{client.endpoint}/?v=4",
             loop=client.loop,
