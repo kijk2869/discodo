@@ -9,7 +9,8 @@ import time
 from typing import Optional
 
 import websockets
-from websockets.client import WebSocketClientProtocol
+import websockets.legacy
+from websockets.legacy.client import WebSocketClientProtocol
 
 from .enums import VoicePayload
 from .natives import Cipher
@@ -17,7 +18,7 @@ from .natives import Cipher
 log = logging.getLogger("discodo.gateway")
 
 
-class VoiceSocket(websockets.client.WebSocketClientProtocol):
+class VoiceSocket(websockets.legacy.client.WebSocketClientProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
