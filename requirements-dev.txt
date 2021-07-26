@@ -5,7 +5,7 @@ flake8==3.9.2
 
 # Coding style formatter
 black==21.7b0
-isort==5.8.0
+isort==5.9.2
 
 # Git pre commit
 pre-commit==2.13.0
