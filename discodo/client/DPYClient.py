@@ -242,7 +242,7 @@ class DPYClient:
         :rtype: discord.gateway.DiscordWebSocket"""
 
         if isinstance(self.client, discord.AutoShardedClient):
-            return self.client.shards[id].ws
+            return self.client.shards[id]._parent.ws
         elif not self.client.shard_id or self.client.shard_id == id:
             return self.client.ws
 
