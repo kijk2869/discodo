@@ -488,7 +488,7 @@ class VoiceClient:
         if node == self.Node:
             raise ValueError("Already connected to this node.")
 
-        channel = self.client.client.get_channel(self.channel_id)
+        channel = self.client.client.get_channel(int(self.channel_id))
 
         if not channel:
             raise ValueError("this voice client is not connected to the channel.")
