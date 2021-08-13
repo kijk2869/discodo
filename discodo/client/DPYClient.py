@@ -3,7 +3,7 @@ import contextlib
 import itertools
 
 import discord
-import discord.ext
+from discord.ext import commands
 
 from ..errors import NodeNotConnected, VoiceClientNotFound
 from ..utils.eventDispatcher import EventDispatcher
@@ -75,17 +75,17 @@ class DPYClient:
             if originFunc:
                 return await originFunc()
 
-        if isinstance(self.client, discord.ext.commands.Bot):
-            originContextFunc = discord.ext.commands.Context.voice_client.fget
+        if isinstance(self.client, commands.Bot):
+            originContextFunc = commands.Context.voice_client.fget
 
-            @discord.ext.commands.Context.voice_client.getter
+            @commands.Context.voice_client.getter
             def voice_client(ctx):
                 if ctx.bot == self.client:
                     return self.getVC(ctx.guild, safe=True)
 
                 return originContextFunc(ctx)
 
-            discord.ext.commands.Context.voice_client = voice_client
+            commands.Context.voice_client = voice_client
 
     async def discordDispatch(self, payload) -> None:
         if payload["t"] in ["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"]:
@@ -242,7 +242,7 @@ class DPYClient:
         :rtype: discord.gateway.DiscordWebSocket"""
 
         if isinstance(self.client, discord.AutoShardedClient):
-            return self.client.shards[id].ws
+            return self.client.shards[id]._parent.ws
         elif not self.client.shard_id or self.client.shard_id == id:
             return self.client.ws
 
