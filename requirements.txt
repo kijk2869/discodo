@@ -21,7 +21,7 @@ defusedxml==0.7.1
 markdownify==0.9.4
 
 # Logging
-rich==10.7.0
+rich==10.9.0
 
 # Node webserver
 sanic==21.6.2
