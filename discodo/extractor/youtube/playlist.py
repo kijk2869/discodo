@@ -27,7 +27,10 @@ async def extract_playlist(playlistId: str, session):
     Data: dict = json.loads(Search.group(1))
 
     if Data.get("alerts"):
-        raise Exception(Data["alerts"][0]["alertRenderer"]["text"]["simpleText"])
+        if Data["alerts"][0]["alertWithButtonRenderer"]["type"] == "ERROR":
+            raise Exception(
+                Data["alerts"][0]["alertWithButtonRenderer"]["text"]["simpleText"]
+            )
 
     firstPlaylistData = Data["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0][
         "tabRenderer"
