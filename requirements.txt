@@ -6,7 +6,7 @@ websockets==9.1
 uvloop>=0.5.3; sys_platform != "win32" and implementation_name == "cpython"
 
 # Extra extractor resolver
-asyncspotify==0.12.1
+asyncspotify @ git+https://github.com/Run1e/asyncspotify.git@master
 
 # Source extractor
 av==8.0.3
