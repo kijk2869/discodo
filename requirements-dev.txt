@@ -1,10 +1,10 @@
 -r requirements.txt
 
 # Python PEP8 linter
-flake8==3.9.2
+flake8==4.0.1
 
 # Coding style formatter
-black==21.8b0
+black==21.9b0
 isort==5.9.3
 
 # Git pre commit
