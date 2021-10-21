@@ -75,7 +75,7 @@ class DPYClient:
             if originFunc:
                 return await originFunc()
 
-        if isinstance(self.client, commands.Bot):
+        if isinstance(self.client, (commands.Bot, commands.AutoShardedBot)):
             originContextFunc = commands.Context.voice_client.fget
 
             @commands.Context.voice_client.getter
