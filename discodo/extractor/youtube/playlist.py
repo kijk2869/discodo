@@ -2,7 +2,7 @@ import json
 import logging
 
 from ...config import Config
-from . import DATA_JSON, YOUTUBE_HEADERS
+from . import API_KEY, CONTINUATIONS_CONTEXT, DATA_JSON, YOUTUBE_HEADERS
 
 log = logging.getLogger("discodo.extractor.youtube")
 
@@ -82,27 +82,36 @@ async def extract_playlist(playlistId: str, session):
         if not continuationsTokens:
             return
 
-        return (
-            "https://www.youtube.com/browse_ajax?continuation="
-            + continuationsTokens[0]
-            + "&ctoken="
-            + continuationsTokens[0]
-            + "&hl=en"
-        )
+        return continuationsTokens[0]
 
-    continuations_url = extract_playlist(firstPlaylistData)
+    key = API_KEY.search(Body)
+
+    if not key:
+        raise ValueError
+
+    continuations_url = "https://www.youtube.com/youtubei/v1/browse?key=" + key.group(1)
+
+    continuations_key = extract_playlist(firstPlaylistData)
     for _ in range(Config.PLAYLIST_PAGE_LIMIT):
-        if not continuations_url:
+        if not continuations_key:
             break
 
         log.info(f"Downloading playlist continuation page of {playlistId}")
-        async with session.get(continuations_url, headers=YOUTUBE_HEADERS) as resp:
+
+        continuations_data = {
+            "context": CONTINUATIONS_CONTEXT,
+            "continuation": continuations_key,
+        }
+
+        async with session.post(
+            continuations_url, json=continuations_data, headers=YOUTUBE_HEADERS
+        ) as resp:
             Body = await resp.json()
 
-        nextPlaylistData = Body[1]["response"]["onResponseReceivedActions"][0][
+        nextPlaylistData = Body["onResponseReceivedActions"][0][
             "appendContinuationItemsAction"
         ]
 
-        continuations_url = extract_playlist(nextPlaylistData, name="continuationItems")
+        continuations_key = extract_playlist(nextPlaylistData, name="continuationItems")
 
     return list(filter(None, Sources))
