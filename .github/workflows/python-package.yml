@@ -61,6 +61,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install flake8
+        sudo apt update
         sudo apt install --no-install-recommends -y gcc libopus-dev python3-dev libnacl-dev
         sudo apt install --no-install-recommends -y pkg-config ffmpeg libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev
         python -m pip install -r requirements-dev.txt --no-binary av
