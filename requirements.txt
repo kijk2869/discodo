@@ -24,5 +24,5 @@ markdownify==0.9.4
 rich==10.12.0
 
 # Node webserver
-sanic==21.6.2
+sanic==21.12.1
 psutil==5.8.0
