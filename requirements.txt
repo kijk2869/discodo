@@ -12,7 +12,7 @@ asyncspotify @ git+https://github.com/Run1e/asyncspotify.git@69394b3931920e651b8
 av==8.0.3
 PyNaCl==1.4.0
 youtube-dl>=2021.12.17
-youtube-related==1.0.2
+youtube-related==1.0.3
 
 # Subtitle parser
 bs4==0.0.1
