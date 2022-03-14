@@ -4,7 +4,7 @@
 Sphinx==4.2.0
 pygments
 sphinx-rtd-theme==0.5.2
-sphinxcontrib-httpdomain==1.7.0
+sphinxcontrib-httpdomain==1.8.0
 
 # Translation
 sphinx-intl==2.0.1
